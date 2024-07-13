@@ -155,6 +155,8 @@ namespace Accounting.Controllers
           });
         }
 
+        model.SelectedItemType = model.SelectedItemType;
+
         return View(model);
       }
 

@@ -12,6 +12,13 @@
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
+<template id="item-type-selector-template">
+  <select v-model="selectedItemType" name="SelectedItemType" class="font-size-20px width-100">
+    <option value="">Select Item Type</option>
+    <option v-for="itemType in itemTypes" :value="itemType">{{ itemType }}</option>
+  </select>
+</template>
+
 <template id="chart-of-account-template">
   <a href="#" @@click.prevent="selectAccount(account.chartOfAccountID)">
     <div>{{ account.name }}</div>
@@ -51,16 +58,11 @@
     <textarea asp-for="Description" class="border-bottom-2px-solid-1a3b56 font-size-20px" rows="6"></textarea>
   </div>
 
-  <fieldset>
+<fieldset>
   <legend>Item Type</legend>
-  <select v-model="selectedItemType" class="font-size-20px width-100">
-    <option value="">Select Item Type</option>
-    @foreach (var itemType in Model.AvailableItemTypes)
-    {
-      <option value="@itemType">@itemType</option>
-    }
-  </select>
-  </fieldset>
+  <item-type-selector :item-types="itemTypes"></item-type-selector>
+</fieldset>
+
 
   <fieldset>
     <legend>Inventory Method</legend>
@@ -156,22 +158,35 @@
     }
   };
 
+  const ItemTypeSelector = {
+  name: 'ItemTypeSelector',
+  template: '#item-type-selector-template',
+  props: ['itemTypes'],
+  data() {
+    return {
+      selectedItemType: '@Model.SelectedItemType' || '',
+      };
+    },
+  };
+
   const app = createApp({
     components: {
-      'chart-of-account': ChartOfAccount
+      'chart-of-account': ChartOfAccount,
+      'item-type-selector': ItemTypeSelector,
     },
     data() {
       return {
         accounts: @Html.Raw(Json.Serialize(Model!.Accounts)),
         selectedRevenueAccountId: @Html.Raw(Model.SelectedRevenueChartOfAccountId.HasValue ? Model.SelectedRevenueChartOfAccountId.Value.ToString() : "null"),
         selectedAssetsAccountId: @Html.Raw(Model.SelectedAssetsChartOfAccountId.HasValue ? Model.SelectedAssetsChartOfAccountId.Value.ToString() : "null"),
-        selectedItemType: null,
+        itemTypes: @Html.Raw(Json.Serialize(Model.AvailableItemTypes)),
+        selectedItemType: '@Model.SelectedItemType' || '',
       }
     },
     methods: {
       updateSelectedAccountId(accountId) {
         const account = this.accounts.find(acc => acc.chartOfAccountID === accountId);
-
+  
         if (account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Revenue') {
           this.selectedRevenueAccountId = accountId;
         } else if (account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Assets') {
