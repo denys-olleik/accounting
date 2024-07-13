@@ -1,0 +1,30 @@
+﻿@model Accounting.Models.ToDoViewModels.ToDoViewModel
+
+<div class="display-flex flex-direction-column margin-bottom-5px border-2px-solid-lightgray @(Model.ParentToDoId.HasValue ? "margin-left-20px" : "")">
+  <h2 class="margin-0">@Model.Title</h2>
+  <div class="display-flex flex-direction-column">
+    <div>
+      @Html.Raw(Model.HtmlContent)
+    </div>
+    <div>
+      @if (Model.Children != null && Model.Children.Any())
+      {
+        foreach (var child in Model.Children)
+        {
+          @* @Html.Partial("_ToDoPartial", child) *@
+          <partial name="_ToDoPartial" model="child" />
+        }
+      }
+    </div>
+  </div>
+  <div class="display-flex">
+    <div>
+      @Model.Created.ToString()
+    </div>
+    <div class="flex-1">
+    </div>
+    <div>
+      <a asp-action="Create" asp-controller="ToDo" asp-route-parentToDoId="@Model.ToDoID" class="background-color-darkslategray color-white text-transform-uppercase text-decoration-none">Create Sub Task</a>
+    </div>
+  </div>
+</div>

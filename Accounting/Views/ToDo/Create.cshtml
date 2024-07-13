@@ -1,0 +1,168 @@
+﻿@model Accounting.Models.ToDoViewModels.CreateToDoViewModel
+
+@{
+  ViewData["Title"] = "Create Task - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Create Task";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<template id="tag-template">
+  <div class="display-flex margin-bottom-5px margin-right-5px"
+       :data-tag-id="tag.id">
+    <a href="" @@click.prevent="selectTag" class="text-decoration-none background-color-dodgerblue padding-2px color-white border-radius-5px padding-sides-5px">
+      {{ tag.name }}
+    </a>
+  </div>
+</template>
+
+<form id="app" asp-action="Create" asp-controller="ToDo" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+  <input type="hidden" asp-for="ParentToDoId" />
+  <input type="hidden" name="SelectedTagIds" v-model="selectedTagsValue">
+  <div class="display-flex flex-direction-column">
+    <label asp-for="Title"></label>
+    <input asp-for="Title" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+  </div>
+  <div class="display-flex flex-direction-column">
+    <label asp-for="Content"></label>
+    <textarea asp-for="Content" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" rows="6"></textarea>
+  </div>
+
+  <fieldset class="margin-bottom-5px">
+    <legend>Users</legend>
+    @if (Model != null && Model.Users != null)
+    {
+      foreach (var user in Model.Users)
+      {
+        <div>
+          <input type="checkbox" id="user-@user.UserID" name="SelectedUsers" value="@user.UserID" @(User.FindFirstValue(ClaimTypes.NameIdentifier) == user.UserID.ToString() ? "checked" : "")>
+          <label for="user-@user.UserID">@user.FirstName @user.LastName</label>
+        </div>
+      }
+    }
+  </fieldset>
+
+  <fieldset class="margin-bottom-5px">
+    <legend>Task Status</legend>
+    @if (Model != null && Model.ToDoStatuses != null)
+    {
+      foreach (var status in Model.ToDoStatuses)
+      {
+        <div>
+          <input type="radio" id="status-@status" name="SelectedToDoStatus" value="@status" @(status == "open" ? "checked" : "")>
+          <label for="status-@status">@status</label>
+        </div>
+      }
+    }
+  </fieldset>
+
+  <fieldset class="margin-bottom-5px">
+    <legend>Selected Tags</legend>
+    <div class="display-flex flex-wrap-wrap">
+      <tag v-for="tag in selectedTags"
+           :tag="tag"
+           :key="tag.id"
+           @@select="moveToAvailable">
+      </tag>
+    </div>
+  </fieldset>
+
+  <fieldset class="margin-bottom-5px">
+    <legend>Available Tags</legend>
+    <div class="display-flex flex-wrap-wrap">
+      <tag v-for="tag in availableTags"
+           :tag="tag"
+           :key="tag.id"
+           @@select="moveToSelected">
+      </tag>
+    </div>
+  </fieldset>
+
+  <button type="submit" class="full-width-regular-button">Create Task</button>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+  <div class="margin-bottom-5px">
+  </div>
+}
+
+@if (Model != null && Model.ParentToDo != null)
+{
+  <fieldset class="margin-bottom-5px">
+    <legend>Parent Task</legend>
+    <div class="display-flex flex-direction-column">
+      <div>
+        <h2>@Model.ParentToDo.Title</h2>
+      </div>
+      <div class="display-flex flex-direction-column">
+        <textarea asp-for="@Model.ParentToDo.HtmlContent" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" rows="6" disabled></textarea>
+      </div>
+    </div>
+  </fieldset>
+}
+
+<script>
+  const { createApp } = Vue;
+
+  const Tag = {
+    name: 'Tag',
+    template: '#tag-template',
+    props: ['tag'],
+    methods: {
+      selectTag() {
+        this.$emit('select', this.tag);
+      }
+    }
+  };
+
+  const app = createApp({
+    components: {
+      'tag': Tag
+    },
+    data() {
+      return {
+        availableTags: @Html.Raw(Json.Serialize(Model.AvailableTags)),
+        selectedTags: @Html.Raw(Model.SelectedTags != null ? Json.Serialize(Model.SelectedTags) : "[]"),
+      };
+    },
+    methods: {
+      addTag(event) {
+        event.preventDefault();
+      },
+      moveToSelected(tag) {
+        const index = this.availableTags.indexOf(tag);
+        console.log("Index of tag in availableTags:", index);
+        if (index > -1) {
+          this.availableTags = [...this.availableTags.slice(0, index), ...this.availableTags.slice(index + 1)];
+          this.selectedTags = [...this.selectedTags, tag];
+        }
+        console.log("Updated selectedTags:", this.selectedTags);
+      },
+      moveToAvailable(tag) {
+        const index = this.selectedTags.indexOf(tag);
+        if (index > -1) {
+          this.selectedTags = [...this.selectedTags.slice(0, index), ...this.selectedTags.slice(index + 1)];
+          this.availableTags = [...this.availableTags, tag];
+        }
+      }
+    },
+    computed: {
+      selectedTagsValue() {
+        return JSON.stringify(this.selectedTags.map(tag => tag.id));
+      }
+    }
+  });
+
+  app.mount('#app');
+</script>

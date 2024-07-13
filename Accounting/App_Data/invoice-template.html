@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .header, .footer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Invoice {{InvoiceNumber}}</h1>
+        </div>
+
+        <div>
+            <h3>Business Entity: {{CompanyName}}</h3>
+            <p>Invoice Date: {{Created}}</p>
+            <p>Due Date: {{DueDate}}</p>
+            <p>Total Amount: {{TotalAmount}}</p>
+            <p>Received Amount: {{ReceivedAmount}}</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through InvoiceLines -->
+                {{#each InvoiceLines}}
+                <tr>
+                    <td>{{Title}}</td>
+                    <td>{{Description}}</td>
+                    <td>{{Quantity}}</td>
+                    <td>{{Price}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p>Thank you for your business!</p>
+        </div>
+    </div>
+</body>
+</html>

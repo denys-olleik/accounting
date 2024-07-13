@@ -1,0 +1,41 @@
+﻿@model Accounting.Models.UserViewModels.UserDetailsViewModel
+
+@{
+    ViewData["Title"] = "User Details - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+@{
+  string headerText = "User Details";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<div class="display-flex margin-bottom-5px">
+    <div>
+        <a asp-action="Edit" asp-controller="User">Edit</a>
+    </div>
+    <div class="flex-1"></div>
+    <div>
+        <a asp-action="Users" asp-controller="User">Users</a>
+    </div>
+</div>
+
+<table class="width-100">
+    <thead>
+        <tr>
+            <th colspan="2">User Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="width-50 text-align-right">Email:</td>
+            <td class="width-50">@Model.Email</td>
+        </tr>
+        <tr>
+            <td class="width-50 text-align-right">First Name:</td>
+            <td class="width-50">@Model.FirstName</td>
+        </tr>
+        <tr>
+            <td class="width-50 text-align-right">Last Name:</td>
+            <td class="width-50">@Model.LastName</td>
+        </tr>
+    </tbody>
+</table>

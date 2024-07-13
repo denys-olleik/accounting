@@ -1,0 +1,664 @@
+﻿@model Accounting.Models.InvoiceViewModels.CreateInvoiceViewModel
+
+@{
+  ViewData["Title"] = "Create Invoice - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Create Invoice";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<template id="customer-selection-template">
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label for="customerSearch" hidden>Search Customer</label>
+    <input id="customerSearch" v-model="searchQuery" @@input="filterCustomers" class="border-bottom-2px-solid-1a3b56 font-size-20px" placeholder="Customer Search" />
+    <div v-if="filteredCustomers.length > 0"
+         class="background-color-black color-white border-radius-5px box-shaddow border-5px-dashed-dodgerblue padding-5px max-height-250px overflow-auto">
+      <div v-for="customer in filteredCustomers" :key="customer.id" @@click="selectCustomer(customer)">
+        {{ customer.firstName }} {{ customer.lastName }} {{ customer.companyName }}
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="invoice-line-removal-template">
+  <div class="display-flex flex-direction-column background-color-red justify-content-space-around">
+    <div v-if="!isRemoveConfirmationVisible" :class="{ 'border-bottom-2px-solid-white': isRemoveConfirmationVisible }">
+      <a href="#" class="color-white text-decoration-none" :class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }" @@click.prevent="toggleConfirmationVisibility">remove</a>
+    </div>
+    <div v-if="isRemoveConfirmationVisible" class="display-flex flex-1 flex-direction-column">
+      <div class="flex-1"></div>
+      <div class="display-flex flex-direction-column">
+        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="confirmRemoval">remove</a></div>
+        <div class="height-5px"></div>
+        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="toggleConfirmationVisibility">cancel</a></div>
+      </div>
+      <div class="flex-1"></div>
+    </div>
+  </div>
+</template>
+
+<template id="invoice-line-template">
+  <div class="display-flex margin-bottom-5px">
+    <div class="display-flex flex-1 flex-direction-column border-1px-solid-darkgray">
+      <div class="display-flex max-width-768-flex-direction-column">
+        <div class="display-flex flex-2 flex-direction-column">
+          <label>Title</label>
+          <input type="text"
+                 ref="titleInput"
+                 class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono width-100"
+                 v-model="invoiceLine.title"
+                 @@click="handleTitleClick"
+                 @@blur="handleTitleBlur" />
+        </div>
+        <div class="width-5px"></div>
+        <div class="display-flex flex-2 flex-direction-column">
+          <label>Quantity</label>
+          <input type="number" ref="quantityInput" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.quantity" />
+        </div>
+        <div class="width-5px"></div>
+        <div class="display-flex flex-2 flex-direction-column">
+          <label>Price</label>
+          <input type="number" step="0.01" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.price" />
+        </div>
+        <div class="width-5px"></div>
+        <div class="display-flex flex-1 flex-direction-column text-align-right">
+          <label>Total</label>
+          <div class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono width-100 background-color-lightgray">{{ lineTotal }}</div>
+        </div>
+      </div>
+      <div class="display-flex">
+        <div class="display-flex flex-1 flex-direction-column">
+          <label>Description</label>
+          <textarea v-model="invoiceLine.description" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono width-100"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="width-5px"></div>
+    <invoice-line-removal :invoice-line="invoiceLine"
+                          @@confirm-removal="$emit('confirm-removal', invoiceLine)"
+                          @@cancel-removal="$emit('cancel-removal', invoiceLine)">
+    </invoice-line-removal>
+  </div>
+</template>
+
+<template id="total-template">
+  <div class="display-flex margin-bottom-5px">
+    <div class="flex-1 max-width-768-display-none"></div>
+    <div class="flex-1 border-bottom-2px-solid-1a3b56">
+      <table class="width-100 border-collapse">
+        <thead>
+          <tr>
+            <th colspan="2">Subtotals</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-size-20px">Total</td>
+            <td class="text-align-right font-size-20px">{{ total }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<template id="payment-term-selector-template">
+  <div class="display-flex flex-direction-column">
+    <select class="font-size-20px margin-bottom-5px border-bottom-2px-solid-1a3b56"
+            v-model="selectedPaymentTermId"
+            name="SelectedPaymentTermId">
+      <option value="">Select Payment Term</option>
+      <option v-for="paymentTerm in paymentTerms"
+              :value="paymentTerm.id"
+              :key="paymentTerm.id">
+        {{ paymentTerm.displayText }}
+      </option>
+    </select>
+  </div>
+</template>
+
+<template id="invoice-detail-template">
+  <table>
+    <thead>
+      <tr>
+        <th colspan="2">Invoice Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="text-align-right">
+          Invoice Date:
+        </td>
+        <td>
+          <strong>
+            {{ formatDate(invoiceDate) }}
+          </strong>
+        </td>
+      </tr>
+      <tr>
+        <td class="text-align-right">Due Date:</td>
+        <td>{{ formatDate(dueDate) }}</td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+
+<template id="addresses-and-selected-address-template">
+  <div v-if="selectedAddress" class="border-sides-5px-solid-black margin-bottom-5px border-bottom-2px-solid-black">
+    <div class="color-white background-color-black">{{ addressType === 'billing' ? 'Selected Billing Address' : 'Selected Shipping Address' }}</div>
+    <div class="display-flex">
+      <div>
+        <div>{{ selectedAddress.extraAboveAddress }}</div>
+        <div>{{ selectedAddress.addressLine1 }}</div>
+        <div>{{ selectedAddress.addressLine2 }}</div>
+        <div>{{ selectedAddress.extraBelowAddress }}</div>
+        <div>{{ selectedAddress.city }}, {{ selectedAddress.stateProvince }} {{ selectedAddress.postalCode }}</div>
+        <div>{{ selectedAddress.country }}</div>
+      </div>
+      <div class="background-image-right flex-1">
+      </div>
+    </div>
+    
+  </div>
+  <div v-show="dropdownVisible">
+    <div v-for="address in addresses" :key="address.id" class="display-flex margin-bottom-5px">
+      <a href="" @@click.prevent="selectAddress(address)" class="display-flex flex-1 text-decoration-none">
+        <div class="flex-1 border-left-5px-solid-dodgerblue border-top-bottom-2px-solid-dodgerblue">
+          <div>{{ address.extraAboveAddress }}</div>
+          <div>{{ address.addressLine1 }}</div>
+          <div>{{ address.addressLine2 }}</div>
+          <div>{{ address.extraBelowAddress }}</div>
+          <div>{{ address.city }}, {{ address.stateProvince }} {{ address.postalCode }}</div>
+          <div>{{ address.country }}</div>
+        </div>
+        <div class="writing-mode-vertical-lr text-align-center color-white background-color-dodgerblue">
+          select
+        </div>
+      </a>
+    </div>
+  </div>
+  <a href="#" v-if="selectedCustomer" class="" @@click.prevent="dropdownVisible = !dropdownVisible">
+    <span v-if="dropdownVisible">Close Addresses</span>
+    <span v-else>{{ addressType === 'billing' ? 'Open Billing Addresses' : 'Open Shipping Addresses' }}</span>
+  </a>
+  <div v-if="!selectedCustomer" class="text-align-center color-white background-color-black">
+    select customer to see addresses
+  </div>
+</template>
+
+<partial name="_AttachmentsVueTemplate" />
+
+<form id="app" asp-action="Create" asp-controller="Invoice" method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
+
+  <customer-selection :customers="customers"
+                      :selected-customer="selectedCustomer"
+                      @@update:selected-customer="updateSelectedCustomer"></customer-selection>
+
+  <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
+    <div class="display-flex flex-direction-column flex-1 border-2px-solid-lightgray max-width-768-margin-bottom-5px">
+    </div>
+    <div class="width-5px"></div>
+    <div class="display-flex flex-1 flex-direction-column border-2px-solid-lightgray">
+      <invoice-detail :invoice-date="invoiceDate"
+                      :selected-payment-term="selectedPaymentTerm">
+      </invoice-detail>
+    </div>
+  </div>
+
+  <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
+    <div class="display-flex flex-direction-column flex-1 border-2px-solid-lightgray max-width-768-margin-bottom-5px">
+      <addresses-and-selected-address :selected-address="selectedBillingAddress"
+                                      @@update:selected-address="handleSelectedAddress($event, 'billing')"
+                                      :addresses="selectedCustomer ? selectedCustomer.addresses : []"
+                                      :selected-customer="selectedCustomer"
+                                      address-type="billing">
+      </addresses-and-selected-address>
+    </div>
+    <div class="width-5px"></div>
+    <div class="display-flex flex-direction-column flex-1 border-2px-solid-lightgray">
+      <addresses-and-selected-address :selected-address="selectedShippingAddress"
+                                      @@update:selected-address="handleSelectedAddress($event, 'shipping')"
+                                      :addresses="selectedCustomer ? selectedCustomer.addresses : []"
+                                      :selected-customer="selectedCustomer"
+                                      address-type="shipping">
+      </addresses-and-selected-address>
+    </div>
+  </div>
+
+  <products-and-services-search class="background-color-black color-white border-radius-5px border-5px-dashed-dodgerblue padding-5px max-height-250px overflow-auto margin-bottom-5px"
+                                :products-or-services="productsOrServices"
+                                @@product-or-service-selected="handleProductOrServiceSelected">
+  </products-and-services-search>
+
+  <invoice-line v-for="invoiceLine in invoiceLines"
+                :key="invoiceLine.id"
+                :invoice-line="invoiceLine"
+                @@confirm-removal="handleConfirmRemoval">
+  </invoice-line>
+
+  <fieldset class="margin-bottom-5px">
+    <legend>Payment Terms Selector</legend>
+    <payment-term-selector :payment-terms="paymentTerms"
+                           v-model:selected-payment-term="selectedPaymentTerm">
+    </payment-term-selector>
+  </fieldset>
+
+  <total :invoice-lines="invoiceLines"></total>
+
+  <input type="hidden" name="InvoiceLinesJson" :value="JSON.stringify(invoiceLines)" />
+  <input type="hidden" name="SelectedPaymentTermJSON" :value="JSON.stringify(selectedPaymentTerm)" />
+  <input type="hidden" name="InvoiceDate" value="@Model.InvoiceDate!.Value.ToString("o")" />
+  <input type="hidden" name="DueDate" :value="dueDate" />
+  <input type="hidden" name="SelectedBillingAddressId" :value="selectedBillingAddress?.id" />
+  <input type="hidden" name="SelectedShippingAddressId" :value="selectedShippingAddress?.id" />
+  <input type="hidden" name="SelectedCustomerId" :value="selectedCustomer?.id" />
+  <input type="hidden" name="InvoiceAttachmentsJSON" :value="JSON.stringify(attachments)" />
+
+  <div class="display-flex margin-bottom-5px">
+    <div class="flex-1">
+      @* <input type="file" @@change="uploadFile" ref="fileInput" /> *@
+    </div>
+    <div class="flex-1">
+      <button type="submit" class="full-width-regular-button width-100">Create Invoice</button>
+    </div>
+  </div>
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    @* <attachments :attachments="attachments"
+                 @@remove-attachment="removeAttachment"
+                 @@update-attachment-print-order="updateAttachmentPrintOrder"></attachments> *@
+  </div>
+  <div class="display-flex">
+    <div class="flex-1">
+      <fieldset>
+        <legend>Payment Instructions</legend>
+        <div class="display-flex flex-direction-column">
+          <div class="display-flex flex-direction-column">
+            <textarea asp-for="PaymentInstructions" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100" rows="5"></textarea>
+          </div>
+        </div>
+        <div class="display-flex">
+          <input type="checkbox" asp-for="RememberPaymentInstructions">
+          <label asp-for="RememberPaymentInstructions">Remember</label>
+        </div>
+      </fieldset>
+    </div>
+    <div class="width-5px"></div>
+    <div class="flex-1">
+    </div>
+  </div>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+  <div class="margin-bottom-5px">
+  </div>
+}
+
+<script src="~/js/ProductsAndServicesSearch.js" asp-append-version="true"></script>
+
+<script>
+  const { createApp } = Vue;
+
+  const Total = {
+    name: 'Total',
+    template: '#total-template',
+    props: ['invoiceLines'],
+    computed: {
+      total() {
+        let total = 0;
+        for (let line of this.invoiceLines) {
+          let lineTotal = line.quantity * line.price;
+          total += lineTotal;
+        }
+        return total;
+      }
+    }
+  };
+
+  const InvoiceLineRemoval = {
+    name: 'InvoiceLineRemoval',
+    template: '#invoice-line-removal-template',
+    props: ['invoiceLine'],
+    data() {
+      return {
+        isRemoveConfirmationVisible: false
+      }
+    },
+    methods: {
+      toggleConfirmationVisibility() {
+        this.isRemoveConfirmationVisible = !this.isRemoveConfirmationVisible;
+      },
+      confirmRemoval() {
+        this.$emit('confirm-removal', this.invoiceLine);
+      },
+    }
+  };
+
+  const InvoiceLine = {
+    name: 'InvoiceLine',
+    template: '#invoice-line-template',
+    components: {
+      'invoice-line-removal': InvoiceLineRemoval
+    },
+    props: ['invoiceLine'],
+    mounted() {
+      this.$nextTick(() => {
+        this.$refs.quantityInput.focus();
+      });
+    },
+    methods: {
+      confirmRemoval() {
+        this.$emit('remove-invoice-line', this.invoiceLine);
+      },
+      handleTitleClick() {
+        const rect = this.$refs.titleInput.getBoundingClientRect();
+        this.$emit('title-click', {
+          invoiceLine: this.invoiceLine,
+          position: {
+            top: rect.bottom,
+            left: rect.left
+          }
+        });
+      },
+      handleTitleBlur() {
+        this.$emit('title-blur');
+      },
+    },
+    computed: {
+      lineTotal() {
+        return this.invoiceLine.quantity * this.invoiceLine.price;
+      }
+    }
+  };
+
+  const CustomerSelection = {
+    name: 'CustomerSelection',
+    template: '#customer-selection-template',
+    props: ['customers', 'selectedCustomer'],
+    data() {
+      return {
+        searchQuery: '',
+        filteredCustomers: [],
+      };
+    },
+    mounted() {
+      document.addEventListener('click', this.clickOutside);
+    },
+    beforeDestroy() {
+      document.removeEventListener('click', this.clickOutside);
+    },
+    methods: {
+      clickOutside(event) {
+        if (!this.$el.contains(event.target)) {
+          this.filteredCustomers = [];
+        }
+      },
+      filterCustomers() {
+        if (this.searchQuery.trim() === '') {
+          this.filteredCustomers = [];
+          return;
+        }
+        this.filteredCustomers = this.customers.filter(customer => {
+          const combinedString = [
+            customer.firstName ?? '',
+            customer.lastName ?? '',
+            customer.companyName ?? ''
+          ].join(' ').toLowerCase();
+
+          return combinedString.includes(this.searchQuery.toLowerCase());
+        });
+      },
+      selectCustomer(customer) {
+        this.$emit('update:selected-customer', customer);
+        this.filteredCustomers = [];
+
+        this.searchQuery = [customer.firstName, customer.lastName, customer.companyName]
+          .filter(value => value !== null && value !== undefined)
+          .join(' ');
+      }
+    },
+  };
+
+  const PaymentTermSelector = {
+    name: 'PaymentTermSelector',
+    template: '#payment-term-selector-template',
+    props: ['paymentTerms', 'selectedPaymentTerm'],
+    computed: {
+      selectedPaymentTermId: {
+        get() {
+          return this.selectedPaymentTerm && this.selectedPaymentTerm.id ? this.selectedPaymentTerm.id : '';
+        },
+        set(newValue) {
+          let selected = this.paymentTerms.find(paymentTerm => paymentTerm.id === newValue);
+          if (selected) {
+            this.$emit('update:selectedPaymentTerm', selected);
+          } else {
+            this.$emit('update:selectedPaymentTerm', null);
+          }
+        }
+      }
+    }
+  };
+
+  const InvoiceDetail = {
+    name: 'InvoiceDetail',
+    template: '#invoice-detail-template',
+    props: ['invoiceDate', 'selectedPaymentTerm'],
+    computed: {
+      dueDate() {
+        if (!this.selectedPaymentTerm) {
+          return null;
+        }
+        let dueDate = new Date(this.invoiceDate);
+        dueDate.setDate(dueDate.getDate() + this.selectedPaymentTerm.daysUntilDue);
+        return dueDate;
+      }
+    },
+    methods: {
+      formatDate(date) {
+        if (!date) {
+          return '';
+        }
+        let d = new Date(date),
+          localDate = new Date(d.getTime() - d.getTimezoneOffset() * 60000),
+          month = '' + (localDate.getMonth() + 1),
+          day = '' + localDate.getDate(),
+          year = localDate.getFullYear();
+
+        if (month.length < 2)
+          month = '0' + month;
+        if (day.length < 2)
+          day = '0' + day;
+
+        return [month, day, year].join('/');
+      }
+    }
+  };
+
+  const AddressesAndSelectedAddress = {
+    name: 'AddressesAndSelectedAddress',
+    template: '#addresses-and-selected-address-template',
+    props: ['addresses', 'selectedAddress', 'selectedCustomer', 'addressType'],
+    data: function () {
+      return {
+        dropdownVisible: false
+      };
+    },
+    watch: {
+      addresses: {
+        handler() {
+          this.dropdownVisible = false;
+        },
+        deep: true
+      }
+    },
+    methods: {
+      selectAddress(address) {
+        this.dropdownVisible = false;
+        this.$emit('update:selected-address', { address, type: this.addressType });
+      },
+    },
+  };
+
+  const Attachments = {
+    name: 'Attachments',
+    template: '#attachments-template',
+    props: ['attachments'],
+    methods: {
+      removeAttachment(attachment) {
+        this.$emit('remove-attachment', attachment);
+      },
+      updatePrintOrder(attachment) {
+        this.$emit('update-attachment-print-order', attachment);
+      }
+    }
+  };
+
+  const app = createApp({
+    components: {
+      'invoice-detail': InvoiceDetail,
+      'payment-term-selector': PaymentTermSelector,
+      'invoice-line': InvoiceLine,
+      'invoice-line-removal': InvoiceLineRemoval,
+      'total': Total,
+      'customer-selection': CustomerSelection,
+      'addresses-and-selected-address': AddressesAndSelectedAddress,
+      'products-and-services-search': ProductsAndServicesSearch,
+      'attachments': Attachments,
+    },
+    data() {
+      return { // TODO: Make Raw usage is appropriate
+        customers: @Html.Raw(Json.Serialize(Model!.Customers).ToString() ?? "[]"),
+        selectedCustomer: @Html.Raw(Json.Serialize(Model.SelectedCustomer).ToString() ?? "null"),
+        selectedBillingAddress: @Html.Raw(Json.Serialize(Model.SelectedBillingAddress).ToString() ?? "null"),
+        selectedShippingAddress: @Html.Raw(Json.Serialize(Model.SelectedShippingAddress).ToString() ?? "null"),
+        invoiceLines: @Html.Raw(Model.InvoiceLinesJson ?? "[]"),
+        paymentTerms: @Html.Raw(Json.Serialize(Model.PaymentTerms).ToString() ?? "[]"),
+        selectedPaymentTerm: @Html.Raw(Json.Serialize(Model.SelectedPaymentTerm).ToString() ?? "null"),
+        invoiceDate: @Html.Raw(Json.Serialize(Model.InvoiceDate).ToString() ?? "null"),
+        dueDate: @Html.Raw(Json.Serialize(Model.DueDate).ToString() ?? "null"),
+        productsOrServices: @Html.Raw(Json.Serialize(Model.ProductsAndServices).ToString() ?? "[]"),
+        attachments: @Html.Raw(Model?.InvoiceAttachments != null ? Json.Serialize(Model.InvoiceAttachments) : "[]"),
+        searchQuery: '',
+        isSearchActive: false,
+      };
+    },
+    watch: {
+      selectedCustomer(newCustomer) {
+        this.selectedBillingAddress = newCustomer.addresses[0];
+        this.selectedShippingAddress = newCustomer.addresses[0];
+      },
+      invoiceDate: 'calculateDueDate',
+      selectedPaymentTerm: 'calculateDueDate',
+    },
+    methods: {
+      handleSelectedAddress(eventData, type) {
+        if (type === 'billing') {
+          this.selectedBillingAddress = eventData.address;
+        } else if (type === 'shipping') {
+          this.selectedShippingAddress = eventData.address;
+        }
+      },
+      updateAttachmentPrintOrder(updatedAttachment) {
+        fetch('/api/invoice-attachment/update-print-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id: updatedAttachment.id,
+            newPrintOrder: updatedAttachment.PrintOrder
+          })
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          })
+          .then(data => {
+            if (data.Status === 'Success') {
+              console.log('Print order updated successfully.');
+            }
+          })
+          .catch(error => {
+            console.log('There was a problem with the fetch operation: ', error);
+          });
+      },
+      removeAttachment(attachment) {
+        const index = this.attachments.indexOf(attachment);
+        if (index > -1) {
+          this.attachments.splice(index, 1);
+        }
+      },
+      uploadFile(event) {
+        const file = event.target.files[0];
+        const formData = new FormData();
+        formData.append('formFile', file);
+
+        fetch('/api/invoice-attachment/upload', {
+          method: 'POST',
+          body: formData,
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          })
+          .then(data => {
+            this.attachments.push(data);
+            this.$refs.fileInput.value = '';
+          })
+          .catch(error => {
+            console.log('There was a problem with the fetch operation: ', error);
+          });
+      },
+      updateSelectedCustomer(newCustomer) {
+        this.selectedCustomer = newCustomer;
+      },
+      removeInvoiceLine(invoiceLine) {
+        const index = this.invoiceLines.indexOf(invoiceLine);
+        if (index !== -1) {
+          this.invoiceLines.splice(index, 1);
+        }
+      },
+      handleConfirmRemoval(invoiceLine) {
+        this.removeInvoiceLine(invoiceLine);
+      },
+      handleProductOrServiceSelected(productOrService) {
+        this.invoiceLines.push({
+          id: -1 * Math.floor(Math.random() * 2147483648),
+          title: productOrService.name,
+          description: productOrService.description,
+          price: productOrService.price,
+          revenueChartOfAccountId: productOrService.revenueChartOfAccountId,
+          assetsChartOfAccountId: productOrService.assetsChartOfAccountId,
+        });
+      },
+      calculateDueDate() {
+        if (!this.invoiceDate || !this.selectedPaymentTerm) {
+          this.dueDate = null;
+          return;
+        }
+        let dueDate = new Date(this.invoiceDate);
+        dueDate.setDate(dueDate.getDate() + this.selectedPaymentTerm.daysUntilDue);
+        this.dueDate = dueDate.toISOString();
+      },
+    }
+  });
+
+  app.mount('#app');
+</script>

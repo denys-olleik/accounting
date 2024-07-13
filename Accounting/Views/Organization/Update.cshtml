@@ -1,0 +1,53 @@
+﻿@model Accounting.Models.OrganizationViewModels.UpdateOrganizationViewModel
+
+@{
+  ViewData["Title"] = "Update Organization - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Update Organization";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="Update" asp-controller="Organization" method="post" class="display-flex flex-direction-column">
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="Name">Organization Name</label>
+    <input asp-for="Name" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono" />
+  </div>
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="Address">Address</label>
+    <textarea asp-for="Address" rows="6" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono"></textarea>
+  </div>
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="AccountsReceivableEmail">Accounts Receivable Email</label>
+    <input asp-for="AccountsReceivableEmail" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono" />
+  </div>
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="AccountsPayableEmail">Accounts Payable Email</label>
+    <input asp-for="AccountsPayableEmail" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono" />
+  </div>
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="AccountsReceivablePhone">Accounts Receivable Phone</label>
+    <input asp-for="AccountsReceivablePhone" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono" />
+  </div>
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="AccountsPayablePhone">Accounts Payable Phone</label>
+    <input asp-for="AccountsPayablePhone" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono" />
+  </div>
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="Website">Website</label>
+    <input asp-for="Website" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono" />
+  </div>
+
+  <button type="submit" class="full-width-regular-button">Update</button>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+}

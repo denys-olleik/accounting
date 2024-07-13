@@ -1,0 +1,46 @@
+﻿@model Accounting.Models.LocationViewModels.CreateLocationViewModel
+
+@{
+  ViewData["Title"] = "Create Location - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Create Location";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form id="app" asp-action="Create" asp-controller="Location" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+
+  <input type="hidden" asp-for="ParentLocationId" />
+
+  @if (Model.ParentLocation != null)
+  {
+    <div class="display-flex margin-bottom-5px">
+      <div>Parent Location:</div>
+      <div class="display-flex flex-direction-column">
+        <div class="flex-1"></div>
+        <a asp-action="Update"
+           asp-controller="Location"
+           asp-route-locationId="@Model.ParentLocationId"
+           class="font-Roboto-Mono">@Model.ParentLocation.Name</a>
+        <div class="flex-1"></div>
+      </div>
+    </div>
+  }
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="Name"></label>
+    <input asp-for="Name"
+           class="border-bottom-2px-solid-1a3b56 font-size-20px"
+           maxlength="100" />
+  </div>
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="Description"></label>
+    <textarea asp-for="Description" class="border-bottom-2px-solid-1a3b56 font-size-20px" rows="6"></textarea>
+  </div>
+
+  <button type="submit" class="full-width-regular-button">Create Location</button>
+</form>

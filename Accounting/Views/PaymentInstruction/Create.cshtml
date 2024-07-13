@@ -1,0 +1,35 @@
+﻿@model Accounting.Models.PaymentInstructionViewModels.CreatePaymentInstructionViewModel
+
+@{
+    ViewData["Title"] = "Create Payment Instruction - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Create Payment Instruction";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="Create" asp-asp-controller="PaymentInstruction" method="post" class="display-flex flex-direction-column">
+    <div class="display-flex flex-direction-column">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+    </div>
+    <div class="display-flex flex-direction-column">
+        <label asp-for="Content"></label>
+        <textarea asp-for="Content" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" rows="6"></textarea>
+    </div>
+
+    <button type="submit" class="full-width-regular-button">Create Payment Instruction</button>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+    foreach (var error in Model.ValidationResult.Errors)
+    {
+        <div>
+            <small class="color-red">@error.ErrorMessage</small>
+        </div>
+    }
+    <div class="margin-bottom-5px">
+    </div>
+}

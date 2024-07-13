@@ -1,0 +1,106 @@
+﻿@model Accounting.Models.TagViewModels.TagsViewModel
+
+@{
+    ViewData["Title"] = "Tags - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@next"></script> @*Vue Version v3.3.4*@
+
+@{
+  string headerText = "Tags";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<template id="tag-template">
+    <div class="display-flex margin-bottom-5px"
+         :data-tag-id="tag.id">
+        <div class="display-flex flex-direction-column flex-1 padding-left-2px">
+            <a href="" @@click.prevent class="text-decoration-none background-color-dodgerblue padding-2px color-white border-radius-5px">
+                {{ tag.name }}
+            </a>
+        </div>
+    </div>
+</template>
+
+<div id="app">
+    <div id="add-tag-form" class="display-flex flex-direction-column margin-bottom-5px">
+        <label for="NewTag">Tag Name</label>
+        <div class="display-flex flex-direction-column">
+            <input id="NewTag" name="NewTag" type="text" v-model="newTag" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+            <button @@click="addTag" class="full-width-regular-button width-100">Add Tag</button>
+        </div>
+    </div>
+
+    <div v-if="errors.length > 0" class="margin-bottom-5px">
+        <div v-for="error in errors" :key="error">
+            <small class="color-red">{{ error }}</small>
+        </div>
+    </div>
+
+
+    <tag v-for="tag in tags"
+         :tag="tag"
+         :key="tag.id">
+    </tag>
+</div>
+
+<script>
+    const { createApp } = Vue;
+
+    const Tag = {
+        name: 'Tag',
+        template: '#tag-template',
+        props: ['tag']
+    };
+
+    const app = createApp({
+        components: {
+            'tag': Tag
+        },
+        data() {
+            return {
+                newTag: '',
+                tags: @Html.Raw(Json.Serialize(Model.Tags)),
+                errors: []
+            };
+        },
+        methods: {
+            addTag(event) {
+                event.preventDefault();
+                if (this.newTag) {
+                    this.createTag(this.newTag).then(() => {
+                        this.newTag = ''; // Clear the input field
+                    });
+                }
+            },
+            async createTag(tagName) {
+                try {
+                    const response = await fetch('/api/tag/create', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ Name: tagName })
+                    });
+
+                    if (!response.ok) {
+                        // If validation fails, show the error messages
+                        const errors = await response.json();
+                        this.errors = errors.errors;
+                        return;
+                    }
+
+                    // If response is okay, parse it to get the created tag
+                    const createdTag = await response.json();
+
+                    // Add the created tag to the tags array
+                    this.tags.push(createdTag);
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        }
+    });
+
+    app.mount('#app');
+</script>

@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"]</title>
+  <link rel="stylesheet" href="~/css/fonts.css" asp-append-version="true" />
+  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+  <script src="~/js/luxon.js" asp-append-version="true"></script>
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+          integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+          crossorigin="anonymous"></script>
+</head>
+
+@{
+  var organizationName = User.FindFirst(Accounting.Business.Claim.CustomClaimTypeConstants.OrganizationName)?.Value;
+}
+
+<body>
+  <header class="container margin-bottom-2px">
+    <nav class="display-flex max-width-768-flex-direction-column">
+      <a href="~/" class="background-color-A62626
+        font-Oswald
+        color-white
+        padding-sides-25px
+        font-weight-600
+        text-decoration-none
+        margin-bottom-2px
+        max-width-768-text-align-center">
+        @ConfigurationSingleton.Instance.ApplicationName @(string.IsNullOrEmpty(organizationName) ? "" : $"({organizationName})")
+      </a>
+
+      <div class="flex-1"></div>
+      <div class="display-flex margin-bottom-2px">
+        @*  <div class="flex-1 max-width-768-display-none"></div> *@
+        @if (User.Identity.IsAuthenticated)
+        {
+          <a asp-action="ChooseOrganization" asp-controller="Account"
+             class="max-width-768-flex-1
+              text-align-center
+              background-color-A62626
+              font-Oswald
+              color-white
+              padding-sides-25px
+              text-decoration-none
+              margin-right-2px">Change Organization</a>
+          <form id="logoutForm" asp-action="Logout" asp-controller="Account" method="post"
+                class="max-width-768-flex-1 background-color-A62626 text-align-center">
+            <a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();"
+               class="display-block font-Oswald color-white padding-sides-25px text-decoration-none">
+              Logout
+            </a>
+          </form>
+        }
+        else
+        {
+          @*<a asp-action="Login" asp-controller="Account" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Pay Invoice</a>*@
+          @*<a asp-action="Careers" asp-controller="Home" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Careers</a>*@          <a asp-action="Login" asp-controller="Account" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none">Log In</a>
+        }
+      </div>
+    </nav>
+  </header>
+
+  <div class="container">
+    @RenderBody()
+  </div>
+
+  <footer class="width-100 text-align-center">
+    1998
+  </footer>
+</body>
+</html>

@@ -1,0 +1,16 @@
+﻿@model Accounting.Models.PaymentInstructionViewModels.PaymentInstructionsViewModel
+
+@{
+    ViewData["Title"] = "Payment Instructions - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Payment Instructions";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<div class="display-flex margin-bottom-5px">
+    <div>
+        <a asp-action="Create" asp-controller="PaymentInstruction">Create</a>
+    </div>
+</div>

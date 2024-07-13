@@ -1,0 +1,152 @@
+﻿@model Accounting.Models.AccountsReceivableViewModels.ReceivePaymentForInvoiceIdsViewModel
+
+@{
+  ViewData["Title"] = "Receive Payment - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Receive Payment";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<div class="display-flex margin-bottom-5px">
+  <div>
+    <a asp-action="Index" asp-controller="Home" class="margin-right-5px">Home</a>
+  </div>
+  <div>
+    <a asp-action="UnpaidInvoices" asp-controller="AccountsReceivable">Unpaid Invoices</a>
+  </div>
+</div>
+
+<form asp-action="ReceivePaymentForInvoiceIds" asp-controller="AccountsReceivable" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+
+  <div class="display-flex">
+    <div class="flex-1 display-flex flex-direction-column border-bottom-2px-solid-1a3b56">
+      <label for="ReferenceNumber" class="font-size-16px">Reference Number</label>
+      <input type="text" name="ReferenceNumber" placeholder="Enter reference number" class="font-size-16px" value="@Model.ReferenceNumber" />
+    </div>
+    <div class="width-5px"></div>
+    <div class="flex-1 display-flex flex-direction-column border-bottom-2px-solid-1a3b56">
+      <label for="SelectedDebitAccountId" class="font-size-16px">Account</label>
+      <select name="SelectedDebitAccountId" class="font-size-16px">
+        <option value="">Select an account</option>
+        @foreach (var account in Model.DebitAccounts)
+        {
+          <option value="@account.ChartOfAccountID" selected="@(Model.SelectedDebitAccountId == account.ChartOfAccountID.ToString() ? "selected" : null)">
+            @account.Name @account.Type
+          </option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <table class="border-collapse width-100 margin-bottom-5px">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th></th>
+        <th class="text-align-left width-1px padding-right-20px fitwidth">Invoice</th>
+        <th class="text-align-left padding-right-20px">Customer</th>
+        <th class="text-align-right width-1px padding-right-20px">Total</th>
+        <th class="text-align-right width-1px padding-right-20px">Received</th>
+        <th class="text-align-right white-space-nowrap width-1px">Amount To Receive</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (int i = 0; i < Model.Invoices.Count; i++)
+      {
+        <tr class="background-color-lightcoral">
+          <td class="font-Roboto-Mono">@(i + 1)</td>
+          <td class="font-Roboto-Mono">@Model.Invoices[i].InvoiceNumber</td>
+          <td class="font-Roboto-Mono">
+            @(Model.Invoices[i].BusinessEntity?.CustomerType == "individual"
+                ? (Model.Invoices[i].BusinessEntity?.FirstName + " " + Model.Invoices[i].BusinessEntity?.LastName + (Model.Invoices[i].BusinessEntity?.CompanyName != null ? " (" + Model.Invoices[i].BusinessEntity?.CompanyName + ")" : ""))
+                : (Model.Invoices[i].BusinessEntity?.CompanyName + (Model.Invoices[i].BusinessEntity?.FirstName != null || Model.Invoices[i].BusinessEntity?.LastName != null ? " (" + Model.Invoices[i].BusinessEntity?.FirstName + " " + Model.Invoices[i].BusinessEntity?.LastName + ")" : ""))
+                )
+          </td>
+          <td class="text-align-right padding-right-20px font-Roboto-Mono">$@Model.Invoices[i].Total!.Value.ToString("F2")</td>
+          <td class="text-align-right padding-right-20px font-Roboto-Mono">@Model.Invoices[i].Received?.ToString("F2")</td>
+          <td class="text-align-right">
+            <input type="hidden" name="Invoices[@i].InvoiceId" value="@Model.Invoices[i].InvoiceId" />
+            <input type="number" name="Invoices[@i].AmountToReceive"
+                   value="@Model.Invoices[i].AmountToReceive"
+                   placeholder="$0.00"
+                   class="border-bottom-2px-solid-1a3b56 font-size-16px text-align-right width-100 font-Roboto-Mono"
+                   step="0.01" min="0" />
+          </td>
+        </tr>
+        @if (Model.Invoices[i].InvoiceLines != null)
+        {
+          <tr>
+            <td></td>
+            <td colspan="5" class="">
+              <table class="border-collapse width-100">
+                <thead>
+                  <tr class="background-color-lightgreen">
+                    <th class="text-align-left padding-right-20px">Title</th>
+                    <th class="text-align-right width-1px padding-right-20px">Quantity</th>
+                    <th class="text-align-right width-1px padding-right-20px">Price</th>
+                    <th class="text-align-right width-1px white-space-nowrap">Itemized Amount to Receive</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (int j = 0; j < Model.Invoices[i].InvoiceLines.Count; j++)
+                  {
+                    <tr class="border-bottom-1px-solid-lightgray background-color-lightgreen">
+                      <td class="padding-right-20px font-Roboto-Mono">@Model.Invoices[i].InvoiceLines[j].Title</td>
+                      <td class="text-align-right padding-right-20px font-Roboto-Mono">@Model.Invoices[i].InvoiceLines[j].Quantity?.ToString("F2")</td>
+                      <td class="text-align-right padding-right-20px font-Roboto-Mono">@Model.Invoices[i].InvoiceLines[j].Price?.ToString("F2")</td>
+                      <td class="text-align-right white-space-nowrap">
+                        <input type="hidden" name="Invoices[@i].InvoiceLines[@j].InvoiceLineId" value="@Model.Invoices[i].InvoiceLines[j].InvoiceLineID" />
+                        <input type="hidden" name="Invoices[@i].InvoiceLines[@j].AssetsChartOfAccountId" value="@Model.Invoices[i].InvoiceLines[j].AssetsChartOfAccountId" />
+                        <input type="number" name="Invoices[@i].InvoiceLines[@j].AmountToReceive"
+                               value="@Model.Invoices[i].InvoiceLines[j].AmountToReceive"
+                               placeholder="$0.00"
+                               class="border-bottom-2px-solid-1a3b56 font-size-16px text-align-right width-100 font-Roboto-Mono"
+                               step="0.01" min="0">
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+
+  <div class="display-flex margin-bottom-5px">
+    <div class="flex-1"></div>
+    <div class="width-5px"></div>
+    <div class="display-flex flex-1 flex-direction-column">
+      <label for="Payment Total" class="font-size-16px font-Roboto">Payment Total</label>
+      <input type="number" step="0.01" name="PaymentTotal"
+             placeholder="Payment Total" 
+             class="font-size-16px font-Roboto-Mono border-bottom-2px-solid-1a3b56" value="@Model.PaymentTotal" />
+    </div>
+  </div>
+
+  <button type="submit" class="full-width-regular-button width-100">Receive Payment</button>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+  <div class="margin-bottom-5px">
+  </div>
+}
+
+@if (Context.RequestServices.GetService<IWebHostEnvironment>()!.IsDevelopment())
+{
+  <fieldset>
+    <legend>Developer Notes:</legend>
+    <ul>
+      <li>This view shows all line-items, including those which have been removed. The removed line items may be associated with a still valid payment which should have probably been void first. This is a very unusual scenario.</li>
+    </ul>
+  </fieldset>
+}

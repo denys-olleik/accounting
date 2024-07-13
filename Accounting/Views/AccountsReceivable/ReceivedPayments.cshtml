@@ -1,0 +1,226 @@
+﻿@model Accounting.Models.PaginatedViewModel
+
+@{
+  ViewData["Title"] = "Received Payments - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Received Payments";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<div class="display-flex margin-bottom-5px">
+  <div>
+    <a asp-action="Index" asp-controller="Home" class="margin-right-5px">Home</a>
+  </div>
+</div>
+
+<template id="invoice-actions-template">
+  <div>
+    <a href="#" @@click.prevent="toggleActions" class="margin-right-5px">{{ invoice.invoiceNumber }}</a>
+    <span v-if="isExpanded">
+      <a :href="'/i/details/' + invoice.id" class="margin-right-5px">details</a>
+      <a :href="'/i/edit/' + invoice.id" class="margin-right-5px">edit</a>
+      <a :href="'/ar/void-invoice-payment?id=' + invoicePayment.id">void</a>
+    </span>
+  </div>
+</template>
+
+<div id="app">
+  <table class="border-collapse width-100 margin-bottom-5px">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th class="width-1px"></th>
+        <th class="text-align-left"></th>
+        <th class="text-align-left"></th>
+        <th class="text-align-right">
+          <input type="text" v-model="companyFilter" @@input="filterCompany" placeholder="Customer" class="width-100 border-bottom-2px-solid-1a3b56" />
+        </th>
+        <th class="text-align-right"></th>
+        <th class="text-align-right"></th>
+      </tr>
+      <tr>
+        <th class="text-align-left width-1px padding-right-20px">#</th>
+        <th class="text-align-left width-1px padding-right-20px">Invoice</th>
+        <th class="text-align-left width-1px padding-right-20px">Reference</th>
+        <th class="text-align-left padding-right-20px">Customer</th>
+        <th class="text-align-right width-1px padding-right-20px">Date</th>
+        <th class="text-align-right width-1px">Amount</th>
+      </tr>
+    </thead>
+    <tbody class="font-Roboto-Mono">
+      <template v-if="companyFilter.length === 0" v-for="(invoicePayment, index) in invoicePayments" :key="invoicePayment.id">
+        <tr>
+          <td>{{ invoicePayment.rowNumber }}</td>
+          <td class="padding-right-20px">
+            <invoice-actions :invoice="invoicePayment.invoice" :invoice-payment="invoicePayment" :is-expanded="expandedInvoiceId === invoicePayment.id" @@toggle="toggleInvoiceActions(invoicePayment.id)"></invoice-actions>
+          </td>
+          <td class="padding-right-20px">{{ invoicePayment.payment.referenceNumber }}</td>
+          <td class="padding-right-20px">
+            <business-entity-name-display :business-entity="invoicePayment.invoice.businessEntity"></business-entity-name-display>
+          </td>
+          <td class="text-align-right padding-right-20px">
+            <time :datetime="invoicePayment.created">{{ formatCreatedDate(invoicePayment.created) }}</time>
+          </td>
+          <td class="text-align-right white-space-nowrap">{{ invoicePayment.amount }}</td>
+        </tr>
+      </template>
+      <template v-else v-for="(invoicePayment, index) in filteredInvoicePayments" :key="'filtered-' + invoicePayment.id">
+        <tr>
+          <td>{{ invoicePayment.rowNumber }}</td>
+          <td class="padding-right-20px">
+            <invoice-actions :invoice="invoicePayment.invoice" :invoice-payment="invoicePayment" :is-expanded="expandedInvoiceId === invoicePayment.id" @@toggle="toggleInvoiceActions(invoicePayment.id)"></invoice-actions>
+          </td>
+          <td class="padding-right-20px">{{ invoicePayment.payment.referenceNumber }}</td>
+          <td class="padding-right-20px">
+            <business-entity-name-display :business-entity="invoicePayment.invoice.businessEntity"></business-entity-name-display>
+          </td>
+          <td class="text-align-right padding-right-20px">
+            <time :datetime="invoicePayment.created">{{ formatCreatedDate(invoicePayment.created) }}</time>
+          </td>
+          <td class="text-align-right white-space-nowrap">{{ invoicePayment.amount }}</td>
+        </tr>
+      </template>
+    </tbody>
+
+  </table>
+
+
+  <div class="margin-bottom-5px display-flex font-Roboto font-size-20px">
+    <div>
+      <a href="#" @@click.prevent="navigateToPrevPage()" v-if="showPrev">prev</a>
+    </div>
+    <div class="flex-1"></div>
+    <div>
+      <a href="#" @@click.prevent="navigateToNextPage()" v-if="showNext">next</a>
+    </div>
+  </div>
+</div>
+
+<script src="~/js/BusinessEntityNameDisplay.js" asp-append-version="true"></script>
+
+<script>
+  const { createApp } = Vue;
+
+  const InvoiceActions = {
+    name: 'InvoiceActions',
+    props: ['invoice', 'invoicePayment', 'isExpanded'],
+    template: '#invoice-actions-template',
+    methods: {
+      toggleActions() {
+        this.$emit('toggle');
+      }
+    }
+  };
+
+  const app = createApp({
+    components: {
+      'invoice-actions': InvoiceActions,
+      'business-entity-name-display': BusinessEntityNameDisplay
+    },
+    data() {
+      return {
+        invoicePayments: [],
+        filteredInvoicePayments: [],
+        pageSize: @Model.PageSize,
+        expandedInvoiceId: null,
+        nextRegularPage: 1,
+        nextFilteredPage: 1,
+        currentRegularPage: @Model.Page,
+        currentFilteredPage: 1,
+        companyFilter: '',
+      };
+    },
+    methods: {
+      updateRegularPage(value) {
+        this.currentRegularPage += value;
+        window.location.href = `/ar/received-payments?page=${this.currentRegularPage}`;
+      },
+      updateFilteredPage(value) {
+        this.currentFilteredPage += value;
+        this.fetchFilteredInvoicePayments(this.currentFilteredPage);
+      },
+      navigateToPrevPage() {
+        const isFiltered = this.companyFilter.length !== 0;
+        const canNavigate = isFiltered ? this.currentFilteredPage > 1 : this.currentRegularPage > 1;
+
+        if (canNavigate) {
+          this.updatePage(-1, isFiltered);
+        }
+      },
+      navigateToNextPage() {
+        const isFiltered = this.companyFilter.length !== 0;
+        const canNavigate = isFiltered ? (this.filteredInvoicePayments.length === this.pageSize && this.nextFilteredPage) : this.invoicePayments.length === this.pageSize;
+
+        if (canNavigate) {
+          this.updatePage(1, isFiltered);
+        }
+      },
+      updatePage(value, isFiltered) {
+        if (isFiltered) {
+          this.updateFilteredPage(value);
+        } else {
+          this.updateRegularPage(value);
+        }
+      },
+      filterCompany() {
+        if (this.companyFilter) {
+          this.fetchFilteredInvoicePayments();
+        }
+      },
+      fetchInvoicePayments() {
+        const apiUrl = `/api/ip/get-invoice-payments?page=${this.currentRegularPage}&pageSize=${this.pageSize}`;
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.invoicePayments = data.invoicePayments;
+            this.page = data.page;
+            this.nextRegularPage = data.nextPage;
+            this.currentRegularPage = data.page;
+          });
+      },
+      fetchFilteredInvoicePayments(page) {
+        let apiUrl = `/api/ip/search-invoice-payments`;
+        if (this.companyFilter) {
+          apiUrl += `?customerSearchQuery=${encodeURIComponent(this.companyFilter)}&page=${page || this.currentFilteredPage}&pageSize=${this.pageSize}`;
+        }
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.filteredInvoicePayments = data.invoicePayments;
+            this.page = data.page;
+            this.nextFilteredPage = data.nextPage;
+            this.currentFilteredPage = data.page;
+          });
+      },
+      toggleInvoiceActions(id) {
+        this.expandedInvoiceId = this.expandedInvoiceId === id ? null : id;
+      },
+      convertToLocalTime(utcTime) {
+        const date = new Date(utcTime);
+        const offset = date.getTimezoneOffset();
+        date.setMinutes(date.getMinutes() - offset);
+        return date.toLocaleString();
+      },
+      formatCreatedDate(utcTime) {
+        const luxonDate = luxon.DateTime.fromISO(utcTime);
+        return luxonDate.toLocaleString();
+      },
+    },
+    mounted() {
+      this.fetchInvoicePayments();
+    },
+    computed: {
+      showPrev() {
+        return this.companyFilter.length === 0 ? this.currentRegularPage > 1 : this.currentFilteredPage > 1;
+      },
+      showNext() {
+        return this.companyFilter.length === 0 ? this.invoicePayments.length === this.pageSize : (this.filteredInvoicePayments.length === this.pageSize && this.nextFilteredPage !== null);
+      }
+    },
+  });
+
+  app.mount('#app');
+</script>

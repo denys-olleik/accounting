@@ -1,0 +1,295 @@
+﻿@model Accounting.Models.ReconciliationViewModels.ReconciliationDetailsViewModel
+
+@{
+  ViewData["Title"] = "Reconciliation Details - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Reconciliation Details";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<div class="display-flex flex-direction-column">
+  <div class="flex-1 text-align-center color-white background-color-333333">
+    @Model.OriginalFileName
+  </div>
+
+  <div class="flex-1">
+    @Model.Status
+  </div>
+</div>
+
+<template id="instruction-selector-template">
+  <div class="display-flex text-align-center">
+    <div class="flex-1">
+      <a href="#"
+         @@click.prevent="toggleInstructionSelection('expense')"
+         :class="{ 'background-color-dodgerblue': selectedInstructionKey === 'expense', 'color-white': selectedInstructionKey === 'expense' }"
+         class="text-decoration-none border-1px-solid-dodgerblue padding-2px">
+        Expense
+      </a>
+    </div>
+    <div class="flex-1 text-align-center">
+      <a href="#"
+         @@click.prevent="toggleInstructionSelection('revenue')"
+         :class="{ 'background-color-dodgerblue': selectedInstructionKey === 'revenue', 'color-white': selectedInstructionKey === 'revenue' }"
+         class="text-decoration-none border-1px-solid-dodgerblue padding-2px">
+        Revenue
+      </a>
+    </div>
+  </div>
+</template>
+
+<div id="app">
+  <fieldset class="margin-bottom-5px">
+    <legend>Reconciliation Instruction</legend>
+    <instruction-selector @@instruction-changed="handleInstructionChange"></instruction-selector>
+
+    <div v-if="selectedInstruction !== null && selectedInstruction === 'expense'" class="display-flex">
+      <div class="flex-1 display-flex flex-direction-column text-align-center">
+        <div>expense accounts</div>
+        <div v-for="reconciliationExpenseAccount in reconciliationExpenseAccounts"
+             :key="reconciliationExpenseAccount.reconciliationExpenseAccountID" class="display-flex flex-direction-column">
+          <a href="#"
+             @@click.prevent="handleExpenseAccountClick(reconciliationExpenseAccount)"
+             :class="{
+              'background-color-dodgerblue': reconciliationExpenseAccount.chartOfAccountID === selectedReconciliationExpenseAccountId,
+              'color-white': reconciliationExpenseAccount.chartOfAccountID === selectedReconciliationExpenseAccountId,
+              'default-category-class': reconciliationExpenseAccount.chartOfAccountID !== selectedReconciliationExpenseAccountId
+            }">
+            {{ reconciliationExpenseAccount.name }}
+          </a>
+        </div>
+      </div>
+      <div class="width-5px"></div>
+      <div class="flex-1 text-align-center">
+        <div>liabilities and assets accounts</div>
+        <div v-for="reconciliationLiabilitiesAndAssetsAccount in reconciliationLiabilitiesAndAssetsAccounts"
+             :key="reconciliationLiabilitiesAndAssetsAccount.reconciliationLiabilitiesAndAssetsAccountID" class="display-flex flex-direction-column">
+          <a href="#"
+             @@click.prevent="handleLiabilitiesAndAssetsAccountClick(reconciliationLiabilitiesAndAssetsAccount)"
+             :class="{
+              'background-color-dodgerblue': reconciliationLiabilitiesAndAssetsAccount.chartOfAccountID === selectedReconciliationLiabilitiesAndAssetsAccountId,
+              'color-white': reconciliationLiabilitiesAndAssetsAccount.chartOfAccountID === selectedReconciliationLiabilitiesAndAssetsAccountId,
+              'default-category-class': reconciliationLiabilitiesAndAssetsAccount.chartOfAccountID !== selectedReconciliationLiabilitiesAndAssetsAccountId
+            }">
+            {{ reconciliationLiabilitiesAndAssetsAccount.name }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div v-else-if="selectedInstruction !== null && selectedInstruction === 'revenue'">
+      <div>revenue shit here</div>
+    </div>
+  </fieldset>
+
+  <table class="border-collapse width-100 margin-bottom-5px">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th class="text-align-left width-1px padding-right-20px"></th>
+        <th class="text-align-left width-1px padding-right-20px">Instruction</th>
+        <th class="text-align-left width-1px padding-right-20px">Transaction Date</th>
+        <th class="text-align-left width-1px padding-right-20px">Posted Date</th>
+        <th class="text-align-left padding-right-20px">Description</th>
+        <th class="text-align-right width-1px padding-right-20px">Category</th>
+        <th class="text-align-right width-1px padding-right-20px">Amount</th>
+      </tr>
+    </thead>
+    <tbody ref="tbodyElement" class="font-Roboto-Mono">
+      <template v-for="reconciliationTransaction in reconciliationEntries"
+                :key="reconciliationTransaction.reconciliationTransactionID">
+        <tr class="border-bottom-2px-solid-lightgray"
+            :class="{
+              'background-color-dodgerblue color-white': shouldHighlightRow(reconciliationTransaction),
+              'filter-blur-1px': shouldBlurRow(reconciliationTransaction),
+              'cursor-pointer': selectedInstruction !== null
+            }"
+            @@click="handleRowClick(reconciliationTransaction)">
+          <td class="padding-right-20px"></td>
+          <td class="padding-right-20px">{{ reconciliationTransaction.reconciliationInstruction }}</td>
+          <td class="padding-right-20px">{{ reconciliationTransaction.transactionDate }}</td>
+          <td class="padding-right-20px">{{ reconciliationTransaction.postedDate }}</td>
+          <td class="padding-right-20px">{{ reconciliationTransaction.description }}</td>
+          <td class="text-align-right padding-right-20px">{{ reconciliationTransaction.category }}</td>
+          <td class="text-align-right padding-right-20px">{{ reconciliationTransaction.amount }}</td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  <div class="margin-bottom-5px display-flex font-Roboto font-size-20px">
+    <div>
+      <a :href="`/rec/reconciliation-details?id=${reconciliationId}&page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1">prev</a>
+    </div>
+    <div class="flex-1"></div>
+    <div>
+      <a :href="`/rec/reconciliation-details?id=${reconciliationId}&page=${page + 1}&pageSize=${pageSize}`" v-if="nextPage">next</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const { createApp } = Vue;
+
+  const InstructionSelector = {
+    name: 'InstructionSelector',
+    template: '#instruction-selector-template',
+    data() {
+      return {
+        selectedInstructionKey: null,
+      };
+    },
+    methods: {
+      toggleInstructionSelection(instruction) {
+        if (this.selectedInstructionKey === instruction) {
+          this.selectedInstructionKey = null;
+        } else {
+          this.selectedInstructionKey = instruction;
+        }
+        this.$emit('instruction-changed', this.selectedInstructionKey);
+      },
+    },
+  };
+
+  const app = createApp({
+    components: {
+      'instruction-selector': InstructionSelector
+    },
+    data() {
+      return {
+        reconciliationId: @Model.ReconciliationId,
+        reconciliationEntries: [],
+        page: @Model.Page,
+        pageSize: @Model.PageSize,
+        nextPage: null,
+        selectedInstruction: null,
+        reconciliationExpenseAccounts: [],
+        selectedReconciliationExpenseAccountId: null,
+        reconciliationLiabilitiesAndAssetsAccounts: [],
+        selectedReconciliationLiabilitiesAndAssetsAccountId: null,
+      };
+    },
+    methods: {
+      handleLiabilitiesAndAssetsAccountClick(account) {
+        console.log('Account clicked:', account.name);
+        this.selectedReconciliationLiabilitiesAndAssetsAccountId = account.chartOfAccountID;
+      },
+      handleExpenseAccountClick(account) {
+        console.log('Account clicked:', account.name);
+        this.selectedReconciliationExpenseAccountId = account.chartOfAccountID;
+      },
+      shouldBlurRow(reconciliationTransaction) {
+        const isInstructionSelected = this.selectedInstruction !== null;
+        const hasReconciliationInstruction = !!reconciliationTransaction.reconciliationInstruction;
+        const isInstructionMismatch = reconciliationTransaction.reconciliationInstruction !== this.selectedInstruction;
+
+        return isInstructionSelected && hasReconciliationInstruction && isInstructionMismatch;
+      },
+      shouldHighlightRow(reconciliationTransaction) {
+        const selectedInstructionNotNull = this.selectedInstruction !== null;
+        const rowHasInstruction = !!reconciliationTransaction.reconciliationInstruction;
+
+        const isInstructionMatch = selectedInstructionNotNull && (reconciliationTransaction.reconciliationInstruction === this.selectedInstruction);
+        const hasInstructionWhenNoneSelected = !selectedInstructionNotNull && rowHasInstruction;
+
+        return isInstructionMatch || hasInstructionWhenNoneSelected;
+      },
+      handleRowClick(reconciliationTransaction) {
+        if (this.selectedInstruction === 'expense' && this.selectedReconciliationExpenseAccountId && this.selectedReconciliationLiabilitiesAndAssetsAccountId) {
+          console.log('expense');
+
+          let apiUrl = '/api/rcl/update-reconciliation-transaction-instruction';
+          let model = {
+            reconciliationTransactionID: reconciliationTransaction.reconciliationTransactionID,
+            reconciliationInstruction: this.selectedInstruction,
+            selectedReconciliationExpenseAccountId: this.selectedReconciliationExpenseAccountId,
+            selectedReconciliationLiabilitiesAndAssetsAccountId: this.selectedReconciliationLiabilitiesAndAssetsAccountId,
+          };
+
+          fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(model),
+          })
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error('Request failed');
+              }
+            })
+            .then(data => {
+              reconciliationTransaction.reconciliationInstruction = data.reconciliationInstruction;
+            });
+        } else if (this.selectedInstruction === 'expense') {
+          // unset the expense instruction
+          let apiUrl = '/api/rcl/update-reconciliation-transaction-instruction-unset-expense';
+          let model = {
+            reconciliationTransactionID: reconciliationTransaction.reconciliationTransactionID,
+          };
+
+          fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(model),
+          })
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error('Request failed');
+              }
+            })
+            .then(data => {
+              reconciliationTransaction.reconciliationInstruction = data.reconciliationInstruction;
+            });
+        }
+      },
+      handleInstructionChange(instructionKey) {
+        this.selectedInstruction = instructionKey;
+        this.selectedReconciliationExpenseAccountId = null;
+        this.selectedReconciliationLiabilitiesAndAssetsAccountId = null;
+      },
+      loadTransactions() {
+        let apiUrl = `/api/rcl/get-transactions?reconciliationId=${this.reconciliationId}&page=${this.page}&pageSize=${this.pageSize}`;
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.reconciliationEntries = data.reconciliationTransactions;
+            this.nextPage = data.nextPage;
+          });
+      },
+      loadReconciliationsExpenseAccounts() {
+        let apiUrl = '/api/coa/all-reconciliation-expense';
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.reconciliationExpenseAccounts = data;
+          });
+      },
+      loadReconciliationsLiabilitiesAndAssetsAccounts() {
+        let apiUrl = '/api/coa/all-reconciliation-liabilities-and-assets';
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.reconciliationLiabilitiesAndAssetsAccounts = data;
+          });
+      },
+    },
+    mounted() {
+      this.loadTransactions();
+
+      this.loadReconciliationsExpenseAccounts();
+      this.loadReconciliationsLiabilitiesAndAssetsAccounts();
+    },
+  });
+
+  app.mount('#app');
+</script>

@@ -1,0 +1,134 @@
+﻿@model Accounting.Models.InvoiceViewModels.ViewInvoiceViewModel
+
+@{
+  Layout = "~/Views/Shared/_InvoiceTemplate.cshtml";
+}
+
+<h1 class="
+  margin-0
+  margin-bottom-50px
+  color-0079C4
+  font-Oswald
+  font-size-30px
+  text-transform-uppercase">
+  Invoice
+</h1>
+
+<div class="display-flex margin-bottom-25px">
+  <div class="display-flex flex-direction-column">
+    <div class="font-size-16px font-weight-600">@Model.OrganizationName</div>
+    <div class="font-size-16px">@Html.Raw(Model.AddressHtml)</div>
+  </div>
+  <div class="display-flex flex-direction-column margin-left-50px">
+    <div class="font-size-16px">@Model.AccountsReceivableEmail</div>
+    <div class="font-size-16px">@Model.AccountsReceivablePhone</div>
+    <div class="font-size-16px">@Model.Website</div>
+  </div>
+</div>
+
+<div class="padding-top-25px padding-bottom-25px margin-bottom-25px background-color-lightcyan">
+  <div class="display-flex flex-direction-column margin-bottom-50px">
+    <div class="color-0079C4 font-size-25px margin-bottom-25px">
+      @Model.CustomerName
+    </div>
+
+    <div class="display-flex">
+      <div class="display-flex flex-direction-column">
+        <div class="font-weight-600 font-size-14px">Bill to</div>
+        <div class="font-size-16px">@Model.BillingAddress!.ExtraAboveAddress</div>
+        <div class="font-size-16px">@Model.BillingAddress!.AddressLine1</div>
+        <div class="font-size-16px">@Model.BillingAddress!.AddressLine2</div>
+        <div class="font-size-16px">@Model.BillingAddress!.ExtraBelowAddress</div>
+        <div class="font-size-16px">@Model.BillingAddress!.City, @Model.BillingAddress!.StateProvince @Model.BillingAddress!.PostalCode</div>
+        <div class="font-size-16px">@Model.BillingAddress!.Country</div>
+      </div>
+      @if (Model.ShippingAddress != null)
+      {
+        <div class="display-flex flex-direction-column margin-left-50px">
+          <div class="font-weight-600 font-size-14px">Ship to</div>
+          <div class="font-size-16px">@Model.ShippingAddress!.ExtraAboveAddress</div>
+          <div class="font-size-16px">@Model.ShippingAddress!.AddressLine1</div>
+          <div class="font-size-16px">@Model.ShippingAddress!.AddressLine2</div>
+          <div class="font-size-16px">@Model.ShippingAddress!.ExtraBelowAddress</div>
+          <div class="font-size-16px">@Model.ShippingAddress!.City, @Model.ShippingAddress!.StateProvince @Model.ShippingAddress!.PostalCode</div>
+          <div class="font-size-16px">@Model.ShippingAddress!.Country</div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="display-flex">
+
+    <div class="display-flex flex-direction-column">
+      <div><strong>Invoice Number:</strong></div>
+      <div><strong>Invoice DueDate:</strong></div>
+    </div>
+    <div class="display-flex flex-direction-column margin-left-25px">
+      <div>@Model.InvoiceNumber</div>
+      <div>@Model.DisplayDueDate</div>
+    </div>
+  </div>
+</div>
+
+<table class="border-collapse width-100 margin-bottom-5px margin-bottom-50px">
+  <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+    <tr>
+      <th class="text-align-left width-1px padding-right-20px">#</th>
+      <th class="text-align-left padding-right-20px">Title</th>
+      <th class="text-align-right width-1px padding-right-20px">Quantity</th>
+      <th class="text-align-right width-1px padding-right-20px">Price</th>
+      <th class="text-align-right width-1px">Line Total</th>
+    </tr>
+  </thead>
+  <tbody class="font-Roboto-Mono">
+    @foreach (var invoiceLine in Model.InvoiceLines!)
+    {
+      <tr class="page-break-inside-avoid">
+        <td class="padding-right-20px">@invoiceLine.RowNumber</td>
+        <td class="padding-right-20px">@invoiceLine.Title</td>
+        <td class="text-align-right padding-right-20px">@invoiceLine.Quantity</td>
+        <td class="text-align-right padding-right-20px">@invoiceLine.Price</td>
+        <td class="text-align-right white-space-nowrap">@invoiceLine.LineTotal.Value.ToString("F2")</td>
+      </tr>
+      <tr class="border-bottom-1px-solid-black">
+        <td></td>
+        <td colspan="4">@invoiceLine.Description</td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+<div class="display-flex page-break-inside-avoid">
+  <div class="
+    flex-1
+    border-3px-dashed-black
+    border-radius-15px
+    padding-15px">
+    <div class="text-align-center border-bottom-2px-solid-black">Payment Instructions</div>
+
+    <div>
+      @Html.Raw(Model.PaymentInstructions)
+    </div>
+  </div>
+  <div class="width-5px"></div>
+  <div class="
+    flex-1
+    border-3px-dashed-black
+    border-radius-15px
+    padding-15px">
+    <div class="
+      text-align-right
+      border-bottom-2px-solid-black">
+      Totals
+    </div>
+    <div class="display-flex border-bottom-2px-solid-black">
+      <div class="flex-1 display-flex flex-direction-column">
+        <div class="flex-1"></div>
+        <div class="font-Bitter font-style-italic font-size-25px">Total</div>
+      </div>
+      <div class="font-Oswald font-size-25px font-weight-600">@Model.DisplayInvoiceTotal</div>
+    </div>
+    <div>
+    </div>
+  </div>
+</div>

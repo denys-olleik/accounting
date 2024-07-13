@@ -1,0 +1,24 @@
+﻿<template id="attachments-template">
+    <table class="border-collapse width-100">
+        <thead class="border-bottom-1px-solid-1a3b56">
+            <tr>
+                <th class="text-align-left">File Name</th>
+                <th class="text-align-right fitwidth">Print Order</th>
+                <th class="fitwidth"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(attachment, index) in attachments" :key="index">
+                <td>{{ attachment.fileName }}</td>
+                <td class="fitwidth">
+                    <input type="number" v-model="attachment.PrintOrder"
+                           @@change="updatePrintOrder(attachment)"
+                           class="border-bottom-2px-solid-1a3b56 font-size-20px width-100 text-align-right" />
+                </td>
+                <td class="text-align-right fitwidth">
+                    <a href="#" @@click.prevent="removeAttachment(attachment)">Remove</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</template>

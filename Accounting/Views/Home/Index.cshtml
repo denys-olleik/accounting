@@ -1,0 +1,227 @@
+﻿@{
+  ViewData["Title"] = ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+@if (!User.Identity.IsAuthenticated)
+{
+
+  <div class="display-flex margin-bottom-5px background-color-lightcoral padding-15px">
+    <p class="font-size-20px text-align-center font-weight-500">The only system capable of managing everything from a laundromat to an aircraft carrier, uncontaminated by Silicon Valley 🐂💩.</p>
+  </div>
+
+  <div class="margin-bottom-5px text-align-center width-100">
+    <p class="font-size-20px font-weight-500">Notable ERP Failures</p>
+  </div>
+
+  <div class="border-5px-dashed-dodgerblue padding-10px border-radius-5px">
+    <div class="display-flex">
+      <div>
+        <p class="font-size-20px"><span class="color-red">█ </span><strong>1. Hershey's (1999):</strong> A failed SAP implementation led to a 19% drop in profits and an 8% decrease in stock price when the company was unable to fulfill orders for Halloween, one of its biggest sales periods.</p>
+      </div>
+    </div>
+    <div class="display-flex">
+      <div>
+        <p class="font-size-20px"><span class="color-red">█ </span><strong>2. Nike (2000):</strong> An i2 Technologies demand planning and supply chain implementation resulted in a $100 million loss in sales, a 20% stock price drop, and multiple class-action lawsuits.</p>
+      </div>
+    </div>
+    <div class="display-flex">
+      <div>
+        <p class="font-size-20px"><span class="color-red">█ </span><strong>3. HP (2004):</strong> An ERP migration project led to order-processing problems that resulted in a $160 million loss, which was five times the project's estimated cost.</p>
+      </div>
+    </div>
+    <div class="display-flex">
+      <div>
+        <p class="font-size-20px"><span class="color-red">█ </span><strong>4. Waste Management (2008):</strong> Sued SAP for $500 million, claiming the software did not meet their needs despite SAP's assurances.</p>
+      </div>
+    </div>
+    <div class="display-flex">
+      <div>
+        <p class="font-size-20px"><span class="color-red">█ </span><strong>5. Lidl (2018):</strong> After spending €500 million on an SAP implementation, Lidl scrapped the project due to the inability to adapt its business processes to the software.</p>
+      </div>
+    </div>
+    <div class="display-flex">
+      <div>
+        <p class="font-size-20px"><span class="color-red">█ </span><strong>6. National Grid (2012):</strong> The U.S. utility company's SAP implementation led to a $1 billion lawsuit against Wipro, alleging fraud and breach of contract.</p>
+      </div>
+    </div>
+    <div class="display-flex">
+      <div>
+        <p class="font-size-20px"><span class="color-red">█ </span><strong>7. Woolworths Australia (2016):</strong> The failure of its $200 million SAP project led to significant implementation delays and operational disruptions.</p>
+      </div>
+    </div>
+    <div class="display-flex">
+      <div>
+        <p class="font-size-20px"><span class="color-red">█ </span><strong>8. U.S. Air Force (2012):</strong> Scrapped its Expeditionary Combat Support System (ECSS) after spending more than $1 billion over seven years, with another estimated $1 billion needed to achieve one-quarter of the originally planned capabilities.</p>
+      </div>
+    </div>
+    <div class="display-flex">
+      <div>
+        <p class="font-size-20px"><span class="color-red">█ </span><strong>9. Revlon (2018):</strong> Following a failed SAP implementation, the company faced operational disruptions that led to significant losses in customer service levels and a subsequent class-action lawsuit.</p>
+      </div>
+    </div>
+    <div class="display-flex">
+      <div>
+        <p class="font-size-20px"><span class="color-red">█ </span><strong>10. Target Canada (2015):</strong> Part of its failure in the Canadian market was attributed to a disastrous SAP implementation that led to supply chain issues, empty shelves, and a $2 billion loss.</p>
+      </div>
+    </div>
+  </div>
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+  <ul>
+    <li>
+      <a asp-action="Users" asp-controller="User">Users</a>
+      <ul>
+        <li><a asp-action="Create" asp-controller="User">Create User</a></li>
+      </ul>
+    </li>
+    <li>
+      <a asp-action="ToDos" asp-controller="ToDo">Tasks</a>
+      <ul>
+        <li>
+          <a asp-action="Create" asp-controller="ToDo">Create Task</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a asp-action="Invoices" asp-controller="Invoice">Invoices</a>
+      <ul>
+        <li>
+          <a asp-action="Create" asp-controller="Invoice">Create Invoice</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a asp-action="Customers" asp-controller="Customer">Customers and Vendors</a>
+      <ul>
+        <li>
+          <a asp-action="Create" asp-controller="Customer">Create Customer and or Vendor</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a asp-action="PaymentTerms" asp-controller="PaymentTerm">Payment Terms</a>
+      <ul>
+        <li>
+          <a asp-action="Create" asp-controller="PaymentTerm">Create Payment Term</a>
+        </li>
+      </ul>
+    <li>
+      <a asp-action="PaymentInstructions" asp-controller="PaymentInstruction">Payment Instructions</a>
+      <ul>
+        <li>
+          <a asp-action="Create" asp-controller="PaymentInstruction">Create Payment Instruction</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a asp-action="ProductsAndServices" asp-controller="Item">Products and Services</a>
+      <ul>
+        <li>
+          <a asp-action="Create" asp-controller="Item">Create Product or Service</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a asp-action="Locations" asp-controller="Location">Locations</a>
+      <ul>
+        <li>
+          <a asp-action="Create" asp-controller="Location">Create Location</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      Organization
+      <ul>
+        <li>
+          <a asp-action="Update" asp-controller="Organization">Update Organization</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a asp-action="Reconciliations" asp-controller="Reconciliation">Reconciliations</a>
+      <ul>
+        <li>
+          <a asp-action="Import" asp-controller="Reconciliation">Import</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a asp-action="Accounts" asp-controller="ChartOfAccount">Chart of Accounts</a>
+      <ul>
+        <li>
+          <a asp-action="Create" asp-controller="ChartOfAccount">Create Account</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <a asp-action="Backup" asp-controller="Backup">Backup</a>
+      <ul>
+        <li>
+          <a asp-action="Export" asp-controller="Backup">Export</a>
+        </li>
+        <li>
+          <a asp-action="Import" asp-controller="Backup">Import</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+  <div class="display-flex">
+    <div class="flex-1">
+      <canvas id="accountBalanceChart" width="400" height="400"></canvas>
+    </div>
+    <div class="width-5px">
+    </div>
+    <div class="flex-1">
+    </div>
+  </div>
+}
+
+<script>
+  (async () => {
+    try {
+      // Fetch data from API
+      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${window.location.port ? window.location.port : ''}/api/r/get-account-balance-report`);
+      const apiData = await response.json();
+
+      // Prepare data for the chart
+      const accountNumbers = apiData.map(item => item.name);
+      const currentBalances = apiData.map(item => item.currentBalance);
+
+      // Initialize the chart
+      const ctx = document.getElementById('accountBalanceChart').getContext('2d');
+      const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: accountNumbers,
+          datasets: [{
+            label: 'Current Balance',
+            data: currentBalances,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1
+          }]
+        }
+      });
+    } catch (error) {
+      //console.error('Error fetching data:', error);
+    }
+  })();
+</script>
+
+@if (Context.RequestServices.GetService<IWebHostEnvironment>()!.IsDevelopment())
+{
+  <fieldset>
+    <legend>Developer Notes:</legend>
+    <ul>
+      <li>Some areas of the application will contain a fieldset with developer notes visible in development mode.</li>
+    </ul>
+  </fieldset>
+}

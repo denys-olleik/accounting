@@ -1,0 +1,305 @@
+﻿@model Accounting.Models.PaginatedViewModel
+
+@{
+  ViewData["Title"] = "Invoices - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Invoices";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<template id="payment-action-template">
+  <div class="display-flex padding-top-bottom-2px">
+    <div class="display-flex flex-1">
+      <a href="#" @@click.prevent="toggleAction"
+         class="margin-right-5px">{{ payment.referenceNumber }}</a>
+      <span v-if="payment.voidReason" class="display-flex">
+        <div class="display-flex flex-direction-column background-color-red padding-left-5px padding-right-5px">
+          <div class="flex-1"></div>
+          <a class="font-size-16px font-Roboto color-white text-decoration-none cursor-default">voided</a>
+          <div class="flex-1"></div>
+        </div>
+      </span>
+      <span v-if="isExpanded" class="display-flex margin-left-2px">
+        <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+          <div class="flex-1"></div>
+          <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+          <div class="flex-1"></div>
+        </div>
+        <div v-if="!payment.voidReason" class="display-flex
+            flex-direction-column
+            background-color-333333
+            padding-right-5px
+            padding-left-5px
+            margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/p/void/' + payment.paymentID" class="font-size-16px font-Roboto color-white text-decoration-none">
+            void
+          </a>
+          <div class="flex-1"></div>
+        </div>
+      </span>
+    </div>
+  </div>
+</template>
+
+<template id="invoice-action-template">
+  <div class="display-flex padding-top-bottom-2px">
+    <div class="display-flex flex-1">
+      <a href="#" @@click.prevent="toggleAction"
+         class="margin-right-5px">{{ invoice.invoiceNumber }}</a>
+      <span v-if="isExpanded" class="display-flex">
+        <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+          <div class="flex-1"></div>
+          <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex
+            flex-direction-column
+            background-color-333333
+            padding-right-5px
+            padding-left-5px
+            margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/i/update/' + invoice.id" class="font-size-16px font-Roboto color-white text-decoration-none">
+            update
+          </a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex
+            flex-direction-column
+            background-color-333333
+            padding-right-5px
+            padding-left-5px
+            margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/r/view-invoice/' + invoice.id" class="font-size-16px font-Roboto color-white text-decoration-none">
+            view
+          </a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex
+            flex-direction-column
+            background-color-333333
+            padding-right-5px
+            padding-left-5px
+            margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/i/void/' + invoice.id" class="font-size-16px font-Roboto color-white text-decoration-none">
+            void
+          </a>
+          <div class="flex-1"></div>
+        </div>
+      </span>
+    </div>
+  </div>
+</template>
+
+<div class="display-flex margin-bottom-5px">
+  <div>
+    <a asp-action="Create" asp-controller="Invoice" class="font-Roboto font-size-20px">Create Invoice</a>
+  </div>
+</div>
+
+<div id="app">
+  <table class="border-collapse width-100 margin-bottom-5px">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th></th>
+        <th></th>
+        <th class="text-align-left">
+          <input type="text" v-model="invoiceNumbersFilter" @@input="filterInvoice" placeholder="Invoice" class="font-size-16px width-100 border-bottom-2px-solid-1a3b56" />
+        </th>
+        <th class="text-align-left">
+          <input type="text" v-model="companyFilter" @@input="filterCompany" placeholder="Customer" class="font-size-16px width-100 border-bottom-2px-solid-1a3b56" />
+        </th>
+        <th class="text-align-right"></th>
+        <th class="text-align-right"></th>
+        <th class="text-align-right"></th>
+      </tr>
+      <tr>
+        <th class="text-align-left width-1px padding-right-20px fitwidth"></th>
+        <th class="text-align-left width-1px padding-right-20px">#</th>
+        <th class="text-align-left width-1px padding-right-20px">Invoice</th>
+        <th class="text-align-left padding-right-20px">Customer</th>
+        <th class="text-align-right width-1px padding-right-20px">Total</th>
+        <th class="text-align-right width-1px padding-right-20px">Received</th>
+        <th class="text-align-right width-1px">Status</th>
+      </tr>
+    </thead>
+    <tbody class="font-Roboto-Mono">
+      <template v-for="invoice in invoices" :key="invoice.id">
+        <tr>
+          <td class="padding-right-20px">
+            <input type="checkbox" v-model="selectedInvoices" :value="invoice.id">
+          </td>
+          <td class="padding-right-20px">{{invoice.rowNumber}}</td>
+          <td class="padding-right-20px">
+            <invoice-action :invoice="invoice" :is-expanded="invoice.id === expandedInvoiceId" @@expand="handleInvoiceExpand(invoice.id)"></invoice-action>
+          </td>
+          <td class="padding-right-20px">
+            <business-entity-name-display :business-entity="invoice.businessEntity"></business-entity-name-display>
+          </td>
+          <td class="text-align-right padding-right-20px">{{invoice.total}}</td>
+          <td class="text-align-right padding-right-20px">{{invoice.received}}</td>
+          <td class="text-align-right white-space-nowrap">{{invoice.status}}</td>
+        </tr>
+        <tr v-if="invoice.id === expandedInvoiceId && invoice.payments && invoice.payments.length > 0">
+          <td colspan="2"></td>
+          <td colspan="5">
+            <table class="width-100">
+              <thead>
+                <tr class="background-color-lightgray">
+                  <th class="text-align-left padding-right-20px" colspan="2">Payments</th>
+                </tr>
+                <tr class="background-color-lightgray">
+                  <th class="text-align-left padding-right-20px">Reference Number</th>
+                  <th class="text-align-right width-1px">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="payment in invoice.payments" :key="payment.paymentID">
+                  <td>
+                    <payment-action :payment="payment" :is-expanded="payment.paymentID === expandedPaymentId" @@expand="handlePaymentExpand(payment.paymentID)"></payment-action>
+                  </td>
+                  <td class="text-align-right">${{ payment.amount }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  <div class="margin-bottom-5px display-flex font-Roboto font-size-20px">
+    <div>
+      <a :href="`/i/invoices?page=${page - 1}`" v-if="page > 1 && !isFiltered">prev</a>
+    </div>
+    <div class="flex-1"></div>
+    <div>
+      <a :href="`/i/invoices?page=${nextPage}`" v-if="nextPage && !isFiltered">next</a>
+    </div>
+  </div>
+
+  <form asp-action="ReceivePaymentForInvoiceIds" asp-controller="AccountsReceivable" method="get" ref="form">
+    <input type="hidden" name="invoiceIdsCsv" :value="selectedInvoices.join(',')">
+    <button type="button" class="full-width-regular-button width-100" @@click="submitForm" :disabled="selectedInvoices.length === 0">Receive Payment</button>
+  </form>
+</div>
+
+<script src="~/js/BusinessEntityNameDisplay.js" asp-append-version="true"></script>
+
+<script>
+  const { createApp } = Vue;
+
+  const InvoiceAction = {
+    name: 'InvoiceAction',
+    props: ['invoice', 'isExpanded'],
+    template: '#invoice-action-template',
+    methods: {
+      toggleAction() {
+        this.$emit('expand');
+      }
+    }
+  };
+
+  const PaymentAction = {
+    name: 'PaymentAction',
+    props: ['payment', 'isExpanded'],
+    template: '#payment-action-template',
+    methods: {
+      toggleAction() {
+        this.$emit('expand');
+      }
+    }
+  };
+
+  const app = createApp({
+    components: {
+      'invoice-action': InvoiceAction,
+      'business-entity-name-display': BusinessEntityNameDisplay,
+      'payment-action': PaymentAction,
+    },
+    data() {
+      return {
+        invoices: [],
+        page: @Model.Page,
+        pageSize: @Model.PageSize,
+        status: '@string.Join(",", Accounting.Business.Invoice.InvoiceStatusConstants.All)',
+        availablePaymentStuses: '@string.Join(",", Accounting.Business.Invoice.InvoiceStatusConstants.All)',
+        expandedInvoiceId: null,
+        expandedPaymentId: null,
+        nextPage: null,
+        selectedInvoices: [],
+        invoiceNumbersFilter: '',
+        companyFilter: '',
+      };
+    },
+    computed: {
+      isFiltered() {
+        return !!this.invoiceNumbersFilter || !!this.companyFilter;
+      }
+    },
+    methods: {
+      syncSelectedInvoices() {
+        const checkedCheckboxes = document.querySelectorAll('input[type="checkbox"][v-model="selectedInvoices"]:checked');
+        this.selectedInvoices = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
+      },
+      filterInvoice() {
+        this.fetchInvoices(!!this.invoiceNumbersFilter);
+      },
+      filterCompany() {
+        this.fetchInvoices(!!this.companyFilter);
+      },
+      submitForm() {
+        if (this.selectedInvoices.length === 0) {
+          alert('Please select at least one invoice.');
+          return;
+        }
+        this.$refs.form.submit();
+      },
+      fetchInvoices() {
+        let apiUrl = this.isFiltered ?
+          `/api/i/get-invoices-filtered?Status=${this.inStatus}` 
+          : `/api/i/get-invoices?page=${this.page}&pageSize=${this.pageSize}&status=${this.inStatus}`;
+
+        if (this.isFiltered) {
+          if (this.invoiceNumbersFilter) {
+            apiUrl += `&invoiceNumbers=${this.invoiceNumbersFilter}`;
+          }
+          if (this.companyFilter) {
+            apiUrl += `&company=${this.companyFilter}`;
+          }
+        }
+
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.invoices = data.invoices;
+            if (data.currentPage > 0) {
+              this.page = data.currentPage;
+            }
+            if (data.nextPage > 0) {
+              this.nextPage = data.nextPage;
+            }
+          });
+      },
+      handleInvoiceExpand(id) {
+        this.expandedInvoiceId = this.expandedInvoiceId === id ? null : id;
+      },
+      handlePaymentExpand(id) {
+        this.expandedPaymentId = this.expandedPaymentId === id ? null : id;
+      }
+    },
+    mounted() {
+      this.fetchInvoices();
+      this.syncSelectedInvoices();
+    },
+  });
+
+  app.mount('#app');
+</script>

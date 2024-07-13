@@ -1,0 +1,62 @@
+﻿@model Accounting.Models.PaymentTermViewModels.PaymentTermsViewModel
+
+@{
+    ViewData["Title"] = "Payment Terms - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Payment Terms";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<template id="payment-term-template">
+    <div class="display-flex margin-bottom-5px"
+         :data-payment-term-id="paymentTerm.id">
+        <div class="display-flex flex-direction-column flex-1 padding-left-2px">
+            <a href="" @@click.prevent class="text-decoration-none background-color-dodgerblue padding-2px color-white border-radius-5px">
+                {{ paymentTerm.description }} {{ paymentTerm.daysUntilDue }}
+            </a>
+        </div>
+    </div>
+</template>
+
+<div id="app">
+    <payment-term v-for="paymentTerm in paymentTerms"
+                  :payment-term="paymentTerm"
+                  :key="paymentTerm.id">
+    </payment-term>
+
+</div>
+
+<script>
+    const { createApp } = Vue;
+
+    const PaymentTerm = {
+        name: 'PaymentTerm',
+        template: '#payment-term-template',
+        props: ['paymentTerm']
+    };
+
+    const app = createApp({
+        components: {
+            'payment-term': PaymentTerm
+        },
+        data() {
+            const paymentTerms = @Html.Raw(Json.Serialize(Model.PaymentTerms));
+            // Check that all payment terms have an id
+            paymentTerms.forEach(term => {
+                if (term.id === undefined) {
+                    console.error(`Missing id for term: ${JSON.stringify(term)}`);
+                }
+            });
+            return {
+                paymentTerms,
+                errors: []
+            }
+        }
+    });
+
+    app.mount('#app');
+</script>

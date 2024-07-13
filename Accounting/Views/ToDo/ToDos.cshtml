@@ -1,0 +1,289 @@
+﻿@model Accounting.Models.ToDoViewModels.ToDosPaginatedViewModel
+
+@{
+  ViewData["Title"] = "Tasks - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Tasks";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<template id="todo-status-template">
+  <div>
+    <a v-if="!isChangingStatus"
+       :key="status"
+       href="#"
+       class="text-decoration-none color-white"
+       @@click.prevent="startChangeStatus"
+       :class="getStatusClass(status)">
+      {{ status }}
+    </a>
+    <div v-else>
+      <a v-for="status in availableStatuses"
+         :key="status"
+         href="#"
+         class="text-decoration-none color-white"
+         @@click.prevent="changeStatus(status)"
+         :class="getStatusClass(status)">
+        {{ status }}
+      </a>
+    </div>
+  </div>
+</template>
+
+<template id="todo-template">
+  <div class="display-flex margin-bottom-2px border-bottom-2px-solid-gray"
+       :data-to-do-id="toDo.toDoID"
+       :class="{ 'border-1px-solid-red': $root.potentialParent === toDo }"
+       @@dragstart="beginDraggingToDo($event, toDo)"
+       @@dragover="setPotentialParent($event, toDo)"
+       @@drop="performToDoDrop($event, toDo)"
+       @@dragend="endDraggingToDo($event, toDo)">
+    <a href="javascript:void(0)"
+       class="width-15px background-color-gray text-decoration-none text-align-center color-white"
+       @@click="toggleChildrenVisibility">
+      {{ isChildrenVisible ? '-' : '+' }}
+    </a>
+    <div class="display-flex flex-direction-column flex-1 padding-left-2px">
+      <div class="display-flex flex-direction-column border-2px-solid-gray margin-bottom-2px">
+        <div class="display-flex">
+          <div class="width-25px background-color-gray" draggable="true"></div>
+          <div class="flex-1">
+            <a :href="`/t/details/${toDo.toDoID}`" class="font-size-20px text-decoration-none">{{ toDo.title }}</a>
+          </div>
+          <div>
+            <to-do-status-component v-if="availableStatuses"
+                                   :to-do="toDo"
+                                   :status="toDo.status"
+                                   :available-statuses="availableStatuses"
+                                    :key="toDo.toDoID">
+            </to-do-status-component>
+          </div>
+        </div>
+        <div v-html="toDo.content"></div>
+        <div class="display-flex">
+          <div class="flex-1 padding-bottom-2px">
+            <a v-for="user in toDo.users"
+               :key="user.userID"
+               :href="`/u/details/${user.userID}`"
+               class="text-decoration-none border-1px-solid-darkgray border-radius-2px margin-sides-1px">
+              {{ user.firstName + ' ' + user.lastName }}
+            </a>
+          </div>
+          <a :href="`/t/create?parentToDoId=${toDo.toDoID}`" class="text-decoration-none background-color-24ACF2 color-white padding-sides-2px">Add Subtask</a>
+        </div>
+      </div>
+      <to-do v-show="isChildrenVisible"
+            v-for="subtodo in toDo.children"
+            :to-do="subtodo"
+            :available-statuses="availableStatuses"
+            :key="subtodo.toDoID">
+      </to-do>
+    </div>
+  </div>
+</template>
+
+<div class="display-flex margin-bottom-5px">
+  <div>
+    <a asp-action="Create" asp-controller="ToDo">Create Task</a>
+  </div>
+</div>
+
+<div id="app">
+  <to-do v-for="toDo in toDos"
+        :to-do="toDo"
+        :available-statuses="availableStatuses"
+        :key="toDo.toDoID">
+  </to-do>
+</div>
+
+<script>
+  const { createApp } = Vue;
+
+  const ToDoStatusComponent = {
+    template: '#todo-status-template',
+    props: ['toDo', 'availableStatuses'],
+    data() {
+      return {
+        isChangingStatus: false,
+        status: this.toDo.status,
+      };
+    },
+    methods: {
+      getStatusClass(status) {
+        if (status === 'open') {
+          return 'background-color-red';
+        } else if (status === 'closed') {
+          return 'background-color-black';
+        } else if (status === 'completed') {
+          return 'background-color-green';
+        } else {
+          return '';
+        }
+      },
+      changeStatus(status) {
+        const toDoId = this.toDo.toDoID;
+
+        console.log(`Changing status of task ${toDoId} to: ${status}`);
+
+        fetch(`/api/t/update-todo-status`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ToDoId: toDoId,
+            Status: status,
+          }),
+        })
+          .then(() => {
+            this.status = status;
+            this.isChangingStatus = false;
+            console.log('Task status change initiated');
+          })
+          .catch((error) => {
+            console.error('An error occurred:', error);
+          });
+      },
+      startChangeStatus() {
+        this.isChangingStatus = true;
+      },
+    },
+  };
+
+  const ToDo = {
+    name: 'ToDo',
+    template: '#todo-template',
+    props: ['toDo', 'availableStatuses'],
+    components: {
+      'to-do-status-component': ToDoStatusComponent
+    },
+    data() {
+      return {
+        isChildrenVisible: true,
+      };
+    },
+    methods: {
+      toggleChildrenVisibility() {
+        this.isChildrenVisible = !this.isChildrenVisible;
+      },
+      preventEventPropagation(event) {
+        event.stopPropagation();
+      },
+      beginDraggingToDo(event, toDo) {
+        this.preventEventPropagation(event);
+        this.$root.draggedToDo = toDo;
+        this.$root.originalParent = toDo.parent || null;
+        console.log('Started dragging task with id: ', toDo.toDoID);
+      },
+      setPotentialParent(event, toDo) {
+        event.preventDefault();
+        this.$root.potentialParent = toDo;
+      },
+      async performToDoDrop(event, toDo) {
+        this.preventEventPropagation(event);
+        const draggedToDoId = this.$root.draggedToDo.toDoID;
+        console.log('Dropped task with id: ', draggedToDoId, ' onto task with id: ', toDo.idToID);
+
+        if (await this.updateToDoParentOnServer(draggedToDoId, toDo.toDoID)) {
+          this.removeDraggedToDoFromUI(draggedToDoId);
+
+          await this.updateToDoChildrenFromServer(toDo);
+        }
+
+        this.endDraggingToDo();
+      },
+      endDraggingToDo(event, toDo) {
+        this.preventEventPropagation(event);
+        this.$root.draggedToDo = null;
+        this.$root.potentialParent = null;
+      },
+      async updateToDoParentOnServer(draggedToDoId, newParentId) {
+        const response = await fetch('/api/t/update-todo-parent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ToDoId: draggedToDoId,
+            NewParentToDoId: newParentId
+          }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          console.error('An error occurred:', data.error);
+          return false;
+        }
+
+        console.log('Parent task updated successfully');
+        return true;
+      },
+      removeDraggedToDoFromUI(draggedToDoId) {
+        const removeDraggedToDo = (todos) => {
+          for (let i = 0; i < todos.length; i++) {
+            if (todos[i].toDoID === draggedToDoId) {
+              todos.splice(i, 1);
+              return true;
+            }
+
+            if (todos[i].children) {
+              if (removeDraggedToDo(todos[i].children)) {
+                return true;
+              }
+            }
+          }
+          return false;
+        };
+
+        removeDraggedToDo(this.$root.toDos);
+      },
+      async updateToDoChildrenFromServer(toDo) {
+        toDo.children = [];
+
+        const childrenResponse = await fetch(`/api/t/get-todo-children/${toDo.toDoID}`);
+        const data = await childrenResponse.json();
+        toDo.children = data;
+      },
+      endDraggingToDo() {
+        this.$root.draggedToDo = null;
+        this.$root.potentialParent = null;
+      }
+    }
+  };
+
+  const app = createApp({
+    components: {
+      'to-do': ToDo,
+      'to-do-status-component': ToDoStatusComponent
+    },
+    data() {
+      return {
+        toDos: [],
+        availableStatuses: @Html.Raw(Json.Serialize(Model.AvailableStatuses ?? new List<string>())),
+        draggedToDo: null,
+        potentialParent: null
+      };
+    },
+    methods: {
+      async getToDos() {
+        try {
+          const response = await fetch('/api/t/get-todos');
+          const data = await response.json();
+          this.toDos = data.toDos;
+          //this.availableStatuses = data.toDoStatuses;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    },
+    mounted() {
+      this.getToDos();
+    }
+  });
+
+  app.mount('#app');
+</script>

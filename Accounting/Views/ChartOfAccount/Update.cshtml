@@ -1,0 +1,133 @@
+﻿@model Accounting.Models.ChartOfAccount.UpdateChartOfAccountViewModel
+
+@{
+  ViewData["Title"] = "Update Account - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Update Account";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<template id="account-type-selector-template">
+  <select v-model="selectedAccountType" name="SelectedAccountType" class="font-size-20px width-100">
+    <option value="">Select Account Type</option>
+    <option v-for="accountType in accountTypes" :value="accountType">{{ accountType }}</option>
+  </select>
+</template>
+
+<form id="app" asp-action="Update" asp-controller="ChartOfAccount" method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
+
+  @if (Model.ParentChartOfAccount != null)
+  {
+    <div class="display-flex margin-bottom-5px">
+      <div>Parent Account:</div>
+      <div>
+        <a asp-action="Update"
+           asp-controller="ChartOfAccount"
+           asp-route-chartOfAccountId="@Model.ParentChartOfAccountId"
+           class="font-Roboto-Mono color-blue">
+          @Model.ParentChartOfAccount.Name
+        </a>
+      </div>
+    </div>
+  }
+
+  <div class="display-flex margin-bottom-5px">
+    <div class="display-flex flex-1 flex-direction-column">
+      <label asp-for="AccountName">Account Name</label>
+      <input asp-for="AccountName" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100" />
+    </div>
+  </div>
+
+  <fieldset class="margin-bottom-5px">
+    <legend>Account Type</legend>
+    <account-type-selector :account-types="accountTypes"></account-type-selector>
+  </fieldset>
+
+  <fieldset class="margin-bottom-5px">
+    <legend>Show in drop-down options for...</legend>
+    <div class="display-flex flex-direction-column">
+      <div class="display-flex flex-direction-column">
+        <div class="display-flex flex-1">
+          <input asp-for="ShowInInvoiceCreationDropDownForCredit" type="checkbox" />
+          <label asp-for="ShowInInvoiceCreationDropDownForCredit">Invoice creation for credit</label>
+        </div>
+        <div class="width-5px"></div>
+        <div class="display-flex flex-1">
+          <input asp-for="ShowInInvoiceCreationDropDownForDebit" type="checkbox" />
+          <label asp-for="ShowInInvoiceCreationDropDownForDebit">Invoice creation for debit</label>
+        </div>
+      </div>
+      <div class="display-flex flex-direction-column">
+        <div class="display-flex flex-1">
+          <input asp-for="ShowInReceiptOfPaymentDropDownForCredit" type="checkbox" />
+          <label asp-for="ShowInReceiptOfPaymentDropDownForCredit">Payment receipt for credit</label>
+        </div>
+        <div class="width-5px"></div>
+        <div class="display-flex flex-1">
+          <input asp-for="ShowInReceiptOfPaymentDropDownForDebit" type="checkbox" />
+          <label asp-for="ShowInReceiptOfPaymentDropDownForDebit">Payment receipt for debit</label>
+        </div>
+      </div>
+      <div class="display-flex flex-direction-column">
+        <div class="display-flex flex-1">
+          <input asp-for="ReconciliationExpense" type="checkbox" />
+          <label asp-for="ReconciliationExpense">Reconciliation Expense</label>
+        </div>
+      </div>
+      <div class="display-flex flex-direction-column">
+        <div class="display-flex flex-1">
+          <input asp-for="ReconciliationLiabilitiesAndAssets" type="checkbox" />
+          <label asp-for="ReconciliationLiabilitiesAndAssets">Reconciliation Liabilities and Assets</label>
+        </div>
+    </div>
+  </fieldset>
+
+  <div class="display-flex flex-direction-column">
+    <button type="submit" class="full-width-regular-button width-100">Update Account</button>
+  </div>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+  <div class="margin-bottom-5px">
+  </div>
+}
+
+<script>
+  const { createApp } = Vue;
+
+  const AccountTypeSelector = {
+    name: 'AccountTypeSelector',
+    template: '#account-type-selector-template',
+    props: ['accountTypes'],
+    data() {
+      return {
+        selectedAccountType: '@Model.SelectedAccountType' || '',
+      };
+    },
+  };
+
+  const app = createApp({
+    components: {
+      'account-type-selector': AccountTypeSelector
+    },
+    data() {
+      return {
+        accountTypes: @Html.Raw(Json.Serialize(Model.AvailableAccountTypes)),
+      };
+    },
+  });
+
+  app.mount('#app');
+</script>

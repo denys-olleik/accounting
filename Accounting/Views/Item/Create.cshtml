@@ -1,0 +1,195 @@
+﻿@using Accounting.Business
+@model Accounting.Models.ItemViewModels.CreateItemViewModel
+
+@{
+  ViewData["Title"] = "Create Product or Service - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Create Product or Service";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<template id="chart-of-account-template">
+  <a href="#" @@click.prevent="selectAccount(account.chartOfAccountID)">
+    <div>{{ account.name }}</div>
+  </a>
+</template>
+
+<form id="app" asp-action="Create" asp-controller="Item" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+  <input type="hidden" asp-for="ParentItemId" />
+  <input type="hidden" name="SelectedRevenueChartOfAccountId" v-model="selectedRevenueAccountId" />
+  <input type="hidden" name="SelectedAssetsChartOfAccountId" v-model="selectedAssetsAccountId" />
+
+  @if (Model.ParentItemId != null)
+  {
+    <div class="display-flex margin-bottom-5px">
+      <div>Parent Item:</div>
+      <div class="display-flex flex-direction-column">
+        <div class="flex-1"></div>
+        <a asp-action="Update"
+           asp-controller="Item"
+           asp-route-chartOfAccountId="@Model.ParentItemId"
+           class="font-Roboto-Mono">@Model.ParentItem.Name</a>
+        <div class="flex-1"></div>
+      </div>
+    </div>
+  }
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+
+    <label asp-for="Name"></label>
+    <input asp-for="Name"
+           class="border-bottom-2px-solid-1a3b56 font-size-20px"
+           maxlength="100" />
+  </div>
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+
+    <label asp-for="Description"></label>
+    <textarea asp-for="Description" class="border-bottom-2px-solid-1a3b56 font-size-20px" rows="6"></textarea>
+  </div>
+
+  <fieldset>
+    <legend>Item Type</legend>
+    <select asp-for="SelectedItemType" class="font-size-20px width-100">
+      <option value="">Select Item Type</option>
+      @foreach (var itemType in Model.AvailableItemTypes)
+      {
+        <option value="@itemType">@itemType</option>
+      }
+    </select>
+  </fieldset>
+
+  <fieldset>
+    <legend>Inventory Method</legend>
+    <select asp-for="SelectedInventoryMethod" class="font-size-20px width-100">
+      @foreach (var method in Model.AvailableInventoryMethods)
+      {
+        if ((Model.SelectedInventoryMethod == method) || (Model.SelectedInventoryMethod == null && method == Item.InventoryMethods.Any))
+        {
+          <option value="@method" selected>@method</option>
+        }
+        else
+        {
+          <option value="@method">@method</option>
+        }
+      }
+    </select>
+  </fieldset>
+
+  <fieldset>
+    <legend>Inventory</legend>
+    <div class="display-flex flex-direction-column margin-bottom-5px">
+      <label for="LocationId">Location</label>
+      <select asp-for="SelectedLocationId" class="font-size-20px width-100">
+        <option value="">Select Location</option>
+        @foreach (var location in Model.Locations)
+        {
+          <option value="@location.LocationID">@location.Name</option>
+        }
+      </select>
+    </div>
+    <div class="display-flex">
+      <div class="display-flex flex-1 flex-direction-column margin-bottom-5px">
+        <label for="Quantity">Quantity</label>
+        <input asp-for="Quantity" type="number" class="width-100 border-bottom-2px-solid-1a3b56 font-size-20px" />
+      </div>
+      <div class="width-5px"></div>
+      <div class="display-flex flex-1 flex-direction-column margin-bottom-5px">
+        <label for="SalePrice">Revenue/Sale Price</label>
+        <input asp-for="SalePrice" type="number" step="0.01" class="width-100 border-bottom-2px-solid-1a3b56 font-size-20px" />
+      </div>
+      <div class="width-5px"></div>
+    </div>
+  </fieldset>
+
+  <fieldset class="margin-bottom-5px">
+    <legend>Revenue Accounts</legend>
+    <div class="display-flex flex-direction-column">
+      <chart-of-account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Revenue')"
+                        :key="account.chartOfAccountID"
+                        :account="account"
+                        @@select-account="updateSelectedAccountId">
+      </chart-of-account>
+    </div>
+  </fieldset>
+
+  <fieldset class="margin-bottom-5px">
+    <legend>Assets Accounts</legend>
+    <div class="display-flex flex-direction-column">
+      <chart-of-account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Assets')"
+                        :key="account.chartOfAccountID"
+                        :account="account"
+                        @@select-account="updateSelectedAccountId">
+      </chart-of-account>
+    </div>
+  </fieldset>
+
+  <button type="submit" class="full-width-regular-button">Create Product or Service</button>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+  <div class="margin-bottom-5px">
+  </div>
+}
+
+<script>
+  const { createApp } = Vue;
+
+  const ChartOfAccount = {
+    name: 'ChartOfAccount',
+    template: '#chart-of-account-template',
+    props: ['account'],
+    methods: {
+      selectAccount(chartOfAccountID) {
+        this.$emit('select-account', chartOfAccountID);
+      }
+    }
+  };
+
+  const app = createApp({
+    components: {
+      'chart-of-account': ChartOfAccount
+    },
+    data() {
+      return {
+        accounts: @Html.Raw(Json.Serialize(Model!.Accounts)),
+        selectedRevenueAccountId: @Html.Raw(Model.SelectedRevenueChartOfAccountId.HasValue ? Model.SelectedRevenueChartOfAccountId.Value.ToString() : "null"),
+        selectedAssetsAccountId: @Html.Raw(Model.SelectedAssetsChartOfAccountId.HasValue ? Model.SelectedAssetsChartOfAccountId.Value.ToString() : "null"),
+      }
+    },
+    methods: {
+      updateSelectedAccountId(accountId) {
+        const account = this.accounts.find(acc => acc.chartOfAccountID === accountId);
+
+        if (account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Revenue') {
+          this.selectedRevenueAccountId = accountId;
+        } else if (account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Assets') {
+          this.selectedAssetsAccountId = accountId;
+        }
+      }
+    },
+  });
+
+  app.mount('#app');
+</script>
+
+@if (Context.RequestServices.GetService<IWebHostEnvironment>()!.IsDevelopment())
+{
+  <fieldset>
+    <legend>Developer Notes:</legend>
+    <ul>
+      <li>
+      </li>
+    </ul>
+  </fieldset>
+}

@@ -1,0 +1,222 @@
+﻿@model Accounting.Models.PaginatedViewModel
+
+@{
+  ViewData["Title"] = "Products and Services - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Products and Services";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<template id="item-action-template">
+  <div class="display-flex padding-top-bottom-2px">
+    <div class="display-flex flex-1">
+      <a href="#" @@click.prevent="toggleAction"
+         class="margin-right-5px">{{ item.name }}</a>
+      <span v-if="isExpanded" class="display-flex margin-left-2px">
+        <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+          <div class="flex-1"></div>
+          <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex
+              flex-direction-column
+              background-color-333333
+              padding-right-5px
+              padding-left-5px
+              margin-left-2px">
+          <div class="flex-1"></div>
+          <a class="font-size-16px font-Roboto color-white text-decoration-none"
+             :href="`/item/create/${item.itemID}`">Add</a>
+          <div class="flex-1"></div>
+        </div>
+      </span>
+    </div>
+  </div>
+</template>
+
+<div class="display-flex margin-bottom-5px">
+  <div>
+    <a asp-action="Create" asp-controller="Item">Create Product or Service</a>
+  </div>
+</div>
+
+<div id="app">
+  <table class="border-collapse width-100 margin-bottom-5px">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th class="text-align-left width-1px padding-right-20px">Product or Service</th>
+      </tr>
+    </thead>
+    <tbody class="font-Roboto-Mono">
+      <template v-for="item in productsAndServices" :key="item.itemID">
+        <tr>
+          <td>
+            <item-action :item="item" :is-expanded="expandedParentId === item.itemID" @@expand="handleItemClick(item.itemID)"></item-action>
+          </td>
+        </tr>
+        <tr v-if="item.children && item.children.length && expandedParentId === item.itemID">
+          <td>
+            <table class="padding-left-25px width-100">
+              <thead class="font-Roboto">
+                <tr class="background-color-lightgray">
+                  <th class="text-align-left">Children</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template v-for="child in item.children" :key="child.itemID">
+                  <tr>
+                    <td>
+                      <item-action :item="child" :is-expanded="expandedChildId === child.itemID" @@expand="handleItemClick(child.itemID, true)"></item-action>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr v-if="expandedParentId === item.itemID && (!item.children || item.children.length === 0)">
+          <td>
+            <table class="padding-left-25px width-100">
+              <tbody>
+                <tr>
+                  <td>This item has no children.</td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr v-if="expandedParentId === item.itemID && item.inventories && item.inventories.length">
+          <td>
+            <table class="padding-left-25px width-100">
+              <thead>
+                <tr class="background-color-lightgray">
+                  <th colspan="3" class="text-align-left">Inventory</th>
+                </tr>
+                <tr class="background-color-lightgray">
+                  <th class="text-align-left">Location</th>
+                  <th class="text-align-right">Quantity</th>
+                  <th class="text-align-right">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template v-for="inventory in item.inventories" :key="inventory.inventoryID">
+                  <tr>
+                    <!-- Assuming inventory.location.name is available and uncommenting it -->
+                    <td>{{ inventory.location.name }}</td>
+                    <td class="text-align-right">{{ inventory.quantity }}</td>
+                    <td class="text-align-right">{{ inventory.salePrice }}</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr v-if="expandedParentId === item.itemID && (!item.inventories || item.inventories.length === 0)">
+          <td>
+            <table class="padding-left-25px width-100">
+              <tbody>
+                <tr>
+                  <td colspan="3">No inventories found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  <div class="margin-bottom-5px display-flex font-Roboto font-size-20px">
+    <div>
+      <a :href="`/item/products-and-services?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1 && !isFiltered">prev</a>
+    </div>
+    <div class="flex-1"></div>
+    <div>
+      <a :href="`/item/products-and-services?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage && !isFiltered">next</a>
+    </div>
+  </div>
+</div>
+
+<script src="~/js/BusinessEntityNameDisplay.js" asp-append-version="true"></script>
+
+<script>
+  const { createApp } = Vue;
+
+  const ItemAction = {
+    name: 'ItemAction',
+    props: ['item', 'isExpanded'],
+    template: '#item-action-template',
+    methods: {
+      toggleAction() {
+        this.$emit('expand');
+      }
+    }
+  };
+
+  const app = createApp({
+    components: {
+      'item-action': ItemAction,
+    },
+    data() {
+      return {
+        productsAndServices: [],
+        page: @Model.Page,
+        pageSize: @Model.PageSize,
+        nextPage: null,
+        expandedParentId: null,
+        expandedChildId: null,
+        filter: ''
+      }
+    },
+    computed: {
+      isFiltered() {
+        return !!this.filter;
+      }
+    },
+    methods: {
+      fetchProductsAndServices() {
+        let apiUrl = this.isFiltered ?
+          `/api/inv/inventories-filtered?filter=${this.productServiceFilter}`
+          : `/api/inv/inventories?page=${this.page}&pageSize=${this.pageSize}`;
+
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.productsAndServices = data.items;
+            if (data.currentPage > 0) {
+              this.page = data.currentPage;
+            }
+            if (data.nextPage > 0) {
+              this.nextPage = data.nextPage;
+            }
+          });
+      },
+      handleItemClick(itemId, isChild = false) {
+        if (isChild) {
+          if (this.expandedChildId === itemId) {
+            this.expandedChildId = null;
+          } else {
+            this.expandedChildId = itemId;
+          }
+        } else {
+          if (this.expandedParentId === itemId) {
+            this.expandedParentId = null;
+            this.expandedChildId = null;
+          } else {
+            this.expandedParentId = itemId;
+            this.expandedChildId = null;
+          }
+        }
+      },
+    },
+    mounted() {
+      this.fetchProductsAndServices();
+    },
+  });
+
+  app.mount('#app');
+</script>

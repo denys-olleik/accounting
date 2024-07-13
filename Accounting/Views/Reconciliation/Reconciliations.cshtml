@@ -1,0 +1,34 @@
+﻿@model Accounting.Models.ReconciliationViewModels.ReconciliationsViewModel
+
+@{
+  ViewData["Title"] = "Reconciliations - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Reconciliations";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<table class="border-collapse width-100">
+  <thead class="border-bottom-1px-solid-1a3b56">
+    <tr>
+      <th class="text-align-left fitwidth">ID</th>
+      <th class="text-align-left">File Name</th>
+      <th class="text-align-left">Status</th>
+      <th class="text-align-right">Created Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var reconciliation in Model.Reconciliations)
+    {
+      <tr>
+        <td class="text-align-left fitwidth">@reconciliation.ID</td>
+        <td class="text-align-left">
+          <a href="@Url.Action("ReconciliationDetails", "Reconciliation", new { id = reconciliation.ID })">@reconciliation.OriginalFileName</a>
+        </td>
+        <td class="text-align-left">@reconciliation.Status</td>
+        <td class="text-align-right">@reconciliation.Created.ToString("MM/dd/yyyy")</td>
+      </tr>
+    }
+  </tbody>
+</table>

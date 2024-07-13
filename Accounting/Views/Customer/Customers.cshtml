@@ -1,0 +1,130 @@
+﻿@model Accounting.Models.BusinessEntityViewModels.BusinessEntitiesViewModel
+
+@{
+  ViewData["Title"] = "Customers - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Customers";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<template id="customer-actions-template">
+  <div>
+    <a href="#" @@click.prevent="toggleActions" class="margin-right-5px">
+      <business-entity-name-display :business-entity="customer"></business-entity-name-display>
+    </a>
+    <span v-if="isExpanded">
+      <a :href="'/c/details/' + customer.id" class="margin-right-5px">details</a>
+      <a :href="'/c/edit/' + customer.id">edit</a>
+    </span>
+  </div>
+</template>
+
+<div class="display-flex margin-bottom-5px">
+  <div>
+    <a asp-action="Create" class="btn btn-primary">Create Customer and or Vendor</a>
+  </div>
+</div>
+
+<div id="app">
+  <table class="border-collapse width-100">
+    <thead class="border-bottom-1px-solid-1a3b56">
+      <tr>
+        <th class="text-align-left">#</th>
+        <th class="text-align-left">Name</th>
+        <th class="text-align-right">Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <template v-for="customer in businessEntities" :key="customer.id">
+        <tr>
+          <td class="fitwidth">{{customer.rowNumber}}</td>
+          <td>
+            <customer-actions :customer="customer" :is-expanded="customer.id === expandedCustomerId" @@toggle="toggleCustomerActions(customer.id)"></customer-actions>
+          </td>
+          <td class="text-align-right fitwidth">{{customer.customerType}}</td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  <div class="display-flex">
+    <div>
+      <a :href="`/c/customers?page=${page - 1}`" v-if="page > 1" class="margin-right-5px">prev</a>
+    </div>
+    <div class="flex-1"></div>
+    <div>
+      <a :href="`/c/customers?page=${nextPage}`" v-if="nextPage" class="margin-right-5px">next</a>
+    </div>
+  </div>
+</div>
+
+@if (Context.RequestServices.GetService<IWebHostEnvironment>()!.IsDevelopment())
+{
+  <fieldset>
+    <legend>Developer Notes:</legend>
+    <ul>
+      <li>
+        Maybe there's no need to differentiate between customers and vendors. The only reason an entity is considered a vendor is if there's an item or service available from that entity, and anyone can be a customer. Maybe a customer needs to have default payment terms defined, but that's used mostly for the invoice due date which could be set at the time of invoice creation.
+      </li>
+    </ul>
+  </fieldset>
+}
+
+<script src="~/js/BusinessEntityNameDisplay.js" asp-append-version="true"></script>
+
+<script>
+  const { createApp } = Vue;
+
+  const CustomerActions = {
+    components: {
+      'business-entity-name-display': BusinessEntityNameDisplay,
+    },
+    name: 'CustomerActions',
+    props: ['customer', 'isExpanded'],
+    template: '#customer-actions-template',
+    methods: {
+      toggleActions() {
+        this.$emit('toggle');
+      }
+    }
+  };
+
+  const app = createApp({
+    components: {
+      'customer-actions': CustomerActions,
+    },
+    data() {
+      return {
+        businessEntities: [],
+        page: @Model.Page,
+        pageSize: @Model.PageSize,
+        expandedCustomerId: null,
+        nextPage: null,
+      };
+    },
+    methods: {
+      fetchBusinessEntities() {
+        const apiUrl = `/api/c/get-customers?page=${this.page}&pageSize=${this.pageSize}`;
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.businessEntities = data.businessEntities;
+            this.page = data.currentPage;
+            this.nextPage = data.nextPage;
+          });
+      },
+      toggleCustomerActions(id) {
+        this.expandedCustomerId = this.expandedCustomerId === id ? null : id;
+      },
+    },
+    mounted() {
+      this.fetchBusinessEntities();
+    }
+  });
+
+  app.mount('#app');
+</script>

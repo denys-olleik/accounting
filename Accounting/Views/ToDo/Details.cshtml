@@ -1,0 +1,76 @@
+﻿@model Accounting.Models.ToDoViewModels.ToDoViewModel
+
+@{
+  ViewData["Title"] = $"{Model.Title} - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<div class="display-flex margin-bottom-5px">
+  <div class="flex-1"></div>
+  <div>
+    <a asp-action="ToDos" asp-controller="ToDo">Tasks</a>
+  </div>
+</div>
+
+<div id="app" class="display-flex flex-direction-column">
+  <h1>{{ toDo.title }}</h1>
+
+  <div v-if="!editMode" v-html="toDo.htmlContent" class="margin-bottom-5px border-bottom-2px-solid-1a3b56"></div>
+  <textarea v-if="editMode" v-model="toDo.markdownContent" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px" rows="6"></textarea>
+  <div class="display-flex">
+    <a href="#" v-if="!editMode" @@click.prevent="toggleEditMode('edit')">edit</a>
+    <div v-if="editMode">
+      <a href="#" @@click.prevent="saveContent">save</a>
+      /
+      <a href="#" @@click.prevent="cancelEdit">cancel</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const { createApp } = Vue;
+
+  createApp({
+    data() {
+      return {
+        toDo: @Html.Raw(Json.Serialize(Model)),
+        editMode: false
+      };
+    },
+    methods: {
+      toggleEditMode(mode) {
+        this.editMode = true;
+      },
+      async saveContent() {
+        try {
+          const response = await fetch('/api/t/update-content', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              toDoId: this.toDo.toDoID,
+              content: this.toDo.markdownContent
+            })
+          });
+
+          if (response.ok) {
+            const updatedToDo = await response.json();
+            this.toDo.htmlContent = updatedToDo.htmlContent;
+            this.editMode = false;
+            console.log('Content saved');
+          } else {
+            console.error('Error saving content');
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      cancelEdit() {
+        console.log('Edit canceled');
+        this.editMode = false;
+      }
+    }
+  }).mount('#app');
+</script>

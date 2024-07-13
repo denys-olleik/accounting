@@ -1,0 +1,69 @@
+﻿@model Accounting.Models.AccountsReceivableViewModels.VoidInvoicePaymentViewModel
+
+@{
+    ViewData["Title"] = "Void Payment - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Void Payment";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="VoidInvoicePayment" asp-controller="AccountsReceivable" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+
+    <div class="display-flex flex-direction-column">
+        <div class="display-flex flex-direction-column">
+            <label asp-for="BusinessEntity!.DisplayName">Customer</label>
+            <input asp-for="BusinessEntity!.DisplayName" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" readonly />
+        </div>
+        <div class="display-flex">
+            <div class="display-flex flex-direction-column">
+                <label asp-for="Invoice!.InvoiceNumber">Invoice Number</label>
+                <input asp-for="Invoice!.InvoiceNumber" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" readonly />
+            </div>
+            <div class="width-5px"></div>
+            <div class="display-flex flex-direction-column">
+                <label asp-for="Payment!.ReferenceNumber">Reference Number</label>
+                <input asp-for="Payment!.ReferenceNumber" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" readonly />
+            </div>
+            <div class="width-5px"></div>
+            <div class="display-flex flex-direction-column">
+                <label asp-for="Amount">Amount</label>
+                <input asp-for="Amount" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" readonly />
+            </div>
+        </div>
+    </div>
+
+    @* hidden fields for paymentId *@
+    <div>
+        <input type="hidden" asp-for="Payment!.ID" />
+        <input type="hidden" asp-for="Invoice!.ID" />
+    </div>
+
+    <div class="display-flex flex-direction-column">
+        <label asp-for="VoidReason">Reason</label>
+        <textarea asp-for="VoidReason" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" rows="6"></textarea>
+    </div>
+
+    <input type="hidden" asp-for="ID" />
+
+    <div class="display-flex">
+        <div class="flex-1">
+        </div>
+        <div class="flex-1">
+            <button type="submit" class="full-width-regular-button width-100">Void Payment</button>
+        </div>
+    </div>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+    foreach (var error in Model.ValidationResult.Errors)
+    {
+        <div>
+            <small class="color-red">@error.ErrorMessage</small>
+        </div>
+    }
+    <div class="margin-bottom-5px">
+    </div>
+}

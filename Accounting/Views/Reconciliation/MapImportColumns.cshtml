@@ -1,0 +1,42 @@
+﻿@model Accounting.Models.ReconciliationViewModels.MapImportColumnsViewModel
+
+@{
+    ViewData["Title"] = "Map Import Columns";
+}
+
+@{
+  string headerText = ViewData["Title"]!.ToString()!;
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="MapImportColumns" asp-controller="Reconciliation" method="post">
+    <input type="hidden" name="ReconciliationAttachmentId" value="@Model.ReconciliationAttachmentId" />
+
+    <table class="border-collapse width-100">
+        <thead class="border-bottom-1px-solid-1a3b56">
+            <tr>
+                <th class="text-align-left">CSV Column</th>
+                <th class="text-align-left">Database Field</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.ColumnNames.Count; i++)
+            {
+                <tr>
+                    <td class="text-align-left">@Model.ColumnNames[i]</td>
+                    <td class="text-align-left">
+                        <select name="SelectedColumns[@Model.ColumnNames[i]]" class="font-size-16px border-bottom-2px-solid-1a3b56 width-100">
+                            <option value="TransactionDate">TransactionDate</option>
+                            <option value="PostedDate">PostedDate</option>
+                            <option value="Description">Description</option>
+                            <option value="Amount">Amount</option>
+                            <option value="Category">Category</option>
+                        </select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <input type="submit" value="Import" class="full-width-regular-button width-100" />
+</form>
