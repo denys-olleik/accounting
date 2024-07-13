@@ -52,14 +52,14 @@
   </div>
 
   <fieldset>
-    <legend>Item Type</legend>
-    <select asp-for="SelectedItemType" class="font-size-20px width-100">
-      <option value="">Select Item Type</option>
-      @foreach (var itemType in Model.AvailableItemTypes)
-      {
-        <option value="@itemType">@itemType</option>
-      }
-    </select>
+  <legend>Item Type</legend>
+  <select v-model="selectedItemType" class="font-size-20px width-100">
+    <option value="">Select Item Type</option>
+    @foreach (var itemType in Model.AvailableItemTypes)
+    {
+      <option value="@itemType">@itemType</option>
+    }
+  </select>
   </fieldset>
 
   <fieldset>
@@ -165,6 +165,7 @@
         accounts: @Html.Raw(Json.Serialize(Model!.Accounts)),
         selectedRevenueAccountId: @Html.Raw(Model.SelectedRevenueChartOfAccountId.HasValue ? Model.SelectedRevenueChartOfAccountId.Value.ToString() : "null"),
         selectedAssetsAccountId: @Html.Raw(Model.SelectedAssetsChartOfAccountId.HasValue ? Model.SelectedAssetsChartOfAccountId.Value.ToString() : "null"),
+        selectedItemType: null,
       }
     },
     methods: {
