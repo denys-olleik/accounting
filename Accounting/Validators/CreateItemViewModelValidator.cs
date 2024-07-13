@@ -31,6 +31,9 @@ namespace Accounting.Validators
             .MustAsync(async (chartOfAccountId, cancellation) => await AccountExists(chartOfAccountId, _organizationId, cancellation))
             .WithMessage("Selected asset account does not exist.");
         });
+
+      RuleFor(x => x.SelectedItemType)
+        .NotEmpty().WithMessage("Item type is required.");
     }
 
     private async Task<bool> AccountExists(int? chartOfAccountId, int organizationId, CancellationToken cancellationToken)
