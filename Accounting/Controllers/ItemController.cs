@@ -182,7 +182,7 @@ namespace Accounting.Controllers
           await _inventoryService.CreateAsync(new Inventory
           {
             ItemId = item.ItemID,
-            LocationId = model.SelectedLocationId,
+            LocationId = model.SelectedLocationId.Value,
             Quantity = model.Quantity,
             SalePrice = model.SalePrice,
             CreatedById = GetUserId(),

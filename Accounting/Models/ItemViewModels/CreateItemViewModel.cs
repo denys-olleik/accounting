@@ -19,7 +19,7 @@ namespace Accounting.Models.ItemViewModels
     public string? SelectedItemType { get; set; }
 
     public List<LocationViewModel>? Locations { get; set; }
-    public int SelectedLocationId { get; set; }
+    public int? SelectedLocationId { get; set; }
     #endregion
 
     public List<ChartOfAccountViewModel>? Accounts { get; set; }

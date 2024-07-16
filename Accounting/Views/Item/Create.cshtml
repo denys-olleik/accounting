@@ -85,7 +85,7 @@
     <legend>Inventory</legend>
     <div class="display-flex flex-direction-column margin-bottom-5px">
       <label for="LocationId">Location</label>
-      <select asp-for="SelectedLocationId" class="font-size-20px width-100">
+      <select asp-for="SelectedLocationId" v-model="selectedLocationId" class="font-size-20px width-100">
         <option value="">Select Location</option>
         @foreach (var location in Model.Locations)
         {
@@ -96,12 +96,12 @@
     <div class="display-flex">
       <div class="display-flex flex-1 flex-direction-column margin-bottom-5px">
         <label for="Quantity">Quantity</label>
-        <input asp-for="Quantity" type="number" class="width-100 border-bottom-2px-solid-1a3b56 font-size-20px" />
+        <input asp-for="Quantity" type="number" class="width-100 border-bottom-2px-solid-1a3b56 font-size-20px" v-model="quantity" :disabled="!selectedLocationId" />
       </div>
       <div class="width-5px"></div>
       <div class="display-flex flex-1 flex-direction-column margin-bottom-5px">
         <label for="SalePrice">Revenue/Sale Price</label>
-        <input asp-for="SalePrice" type="number" step="0.01" class="width-100 border-bottom-2px-solid-1a3b56 font-size-20px" />
+        <input asp-for="SalePrice" type="number" step="0.01" class="width-100 border-bottom-2px-solid-1a3b56 font-size-20px" v-model="salePrice" :disabled="!selectedLocationId" />
       </div>
       <div class="width-5px"></div>
     </div>
@@ -181,12 +181,23 @@
         selectedAssetsAccountId: @Html.Raw(Model.SelectedAssetsChartOfAccountId.HasValue ? Model.SelectedAssetsChartOfAccountId.Value.ToString() : "null"),
         itemTypes: @Html.Raw(Json.Serialize(Model.AvailableItemTypes)),
         selectedItemType: '@Model.SelectedItemType' || '',
+        selectedLocationId: '@Model.SelectedLocationId?.ToString()' || '',
+        quantity: 0,
+        salePrice: 0.0,
+      }
+    },
+    watch: {
+      selectedLocationId(newVal) {
+        if (newVal === '') {
+          this.quantity = 0;
+          this.salePrice = 0.0;
+        }
       }
     },
     methods: {
       updateSelectedAccountId(accountId) {
         const account = this.accounts.find(acc => acc.chartOfAccountID === accountId);
-  
+
         if (account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Revenue') {
           this.selectedRevenueAccountId = accountId;
         } else if (account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Assets') {
