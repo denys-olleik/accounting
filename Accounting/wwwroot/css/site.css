@@ -680,3 +680,13 @@ td.fitwidth, th.fitwidth {
     flex: 1;
   }
 }
+
+.blinking-cursor {
+  animation: blink-animation 1s steps(1, start) infinite;
+}
+
+@keyframes blink-animation {
+  50% {
+    opacity: 0;
+  }
+}
