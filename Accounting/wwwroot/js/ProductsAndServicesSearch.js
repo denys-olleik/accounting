@@ -4,7 +4,7 @@
   data() {
     return {
       searchQuery: '',
-      selectedIndex: 0, // Track the currently selected index
+      selectedIndex: 0,
     };
   },
   computed: {
@@ -23,7 +23,6 @@
       this.$emit('product-or-service-selected', productOrService);
       this.searchQuery = '';
     },
-    // Handle keyboard navigation and prevent form submission
     handleKeyDown(event) {
       if (event.key === 'ArrowDown') {
         this.selectedIndex = (this.selectedIndex + 1) % this.filteredProductsOrServices.length;
@@ -32,12 +31,10 @@
         this.selectedIndex = (this.selectedIndex - 1 + this.filteredProductsOrServices.length) % this.filteredProductsOrServices.length;
         event.preventDefault();
       } else if (event.key === 'Enter') {
-        // Prevent default form submission
         event.preventDefault();
         this.selectProductOrService(this.filteredProductsOrServices[this.selectedIndex]);
       }
     },
-    // Reset selected index when the search query changes
     resetSelectedIndex() {
       this.selectedIndex = 0;
     }
