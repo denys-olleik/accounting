@@ -160,14 +160,14 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      Item item = new Item
+      Item item = new Item()
       {
         Name = model.Name,
         Description = model.Description,
-        RevenueChartOfAccountId = model.SelectedRevenueChartOfAccountId!.Value,
-        AssetsChartOfAccountId = model.SelectedAssetsChartOfAccountId!.Value,
+        RevenueChartOfAccountId = model.SelectedRevenueChartOfAccountId,
+        AssetsChartOfAccountId = model.SelectedAssetsChartOfAccountId,
         ItemType = model.SelectedItemType,
-        InventoryMethod = model.SelectedInventoryMethod,
+        InventoryMethod = model.SelectedInventoryMethod!,
         ParentItemId = model.ParentItemId,
         CreatedById = GetUserId(),
         OrganizationId = GetOrganizationId()
