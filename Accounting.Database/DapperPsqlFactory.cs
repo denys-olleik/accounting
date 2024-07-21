@@ -4919,44 +4919,6 @@ namespace Accounting.Database
       }
     }
 
-    public IInventoryLedgerManager GetInventoryLedgerManager()
-    {
-      return new InventoryLedgerManager();
-    }
-
-    public class InventoryLedgerManager : IInventoryLedgerManager
-    {
-      public InventoryLedger Create(InventoryLedger entity)
-      {
-        throw new NotImplementedException();
-      }
-
-      public Task<InventoryLedger> CreateAsync(InventoryLedger entity)
-      {
-        throw new NotImplementedException();
-      }
-
-      public int Delete(int id)
-      {
-        throw new NotImplementedException();
-      }
-
-      public InventoryLedger Get(int id)
-      {
-        throw new NotImplementedException();
-      }
-
-      public IEnumerable<InventoryLedger> GetAll()
-      {
-        throw new NotImplementedException();
-      }
-
-      public int Update(InventoryLedger entity)
-      {
-        throw new NotImplementedException();
-      }
-    }
-
     public ILocationManager GetLocationManager()
     {
       return new LocationManager();

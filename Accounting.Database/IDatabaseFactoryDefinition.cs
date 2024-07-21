@@ -36,6 +36,5 @@ namespace Accounting.Database
     ILocationManager GetLocationManager();
     IInventoryManager GetInventoryManager();
     IRequestLogManager GetRequestLogManager();
-    IInventoryLedgerManager GetInventoryLedgerManager();
   }
 }

@@ -402,23 +402,6 @@ CREATE TABLE "GeneralLedger"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
-CREATE TABLE "InventoryLedger" 
-(
-	"InventoryLedgerID" SERIAL PRIMARY KEY NOT NULL,
-	"ItemId" INT NOT NULL,
-	"LocationToId" INT NULL,
-	"LocationFromId" INT NULL,
-	"Quantity" DECIMAL(18, 2) NOT NULL,
-	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-	"CreatedById" INT NOT NULL,
-	"OrganizationId" INT NOT NULL,
-	FOREIGN KEY ("ItemId") REFERENCES "Item"("ItemID"),
-	FOREIGN KEY ("LocationFromId") REFERENCES "Location"("LocationID"),
-	FOREIGN KEY ("LocationToId") REFERENCES "Location"("LocationID"),
-	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
-);
-
 CREATE TABLE "GeneralLedgerInvoiceInvoiceLine"
 (
 	"GeneralLedgerInvoiceInvoiceLineID" SERIAL PRIMARY KEY NOT NULL,

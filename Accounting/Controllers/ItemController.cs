@@ -18,7 +18,6 @@ namespace Accounting.Controllers
     private readonly LocationService _locationService;
     private readonly InventoryService _inventoryService;
     private readonly ItemService _itemService;
-    private readonly InventoryLedgerService _inventoryLedgerService;
 
     public ItemController(
       ChartOfAccountService chartOfAccountService, 
@@ -185,16 +184,6 @@ namespace Accounting.Controllers
             LocationId = model.SelectedLocationId.Value,
             Quantity = model.Quantity,
             SalePrice = model.SalePrice,
-            CreatedById = GetUserId(),
-            OrganizationId = GetOrganizationId()
-          });
-
-          await _inventoryLedgerService.CreateAsync(new InventoryLedger
-          {
-            ItemId = item.ItemID,
-            LocationToId = model.SelectedLocationId,
-            LocationFromId = null,
-            Quantity = model.Quantity,
             CreatedById = GetUserId(),
             OrganizationId = GetOrganizationId()
           });

@@ -58,13 +58,13 @@
     <textarea asp-for="Description" class="border-bottom-2px-solid-1a3b56 font-size-20px" rows="6"></textarea>
   </div>
 
-<fieldset>
-  <legend>Item Type</legend>
-  <item-type-selector :item-types="itemTypes"></item-type-selector>
-</fieldset>
-
-
   <fieldset>
+    <legend>Item Type</legend>
+    <item-type-selector :item-types="itemTypes"></item-type-selector>
+  </fieldset>
+
+
+  <fieldset class="margin-bottom-5px">
     <legend>Inventory Method</legend>
     <select asp-for="SelectedInventoryMethod" class="font-size-20px width-100">
       @foreach (var method in Model.AvailableInventoryMethods)
@@ -159,12 +159,12 @@
   };
 
   const ItemTypeSelector = {
-  name: 'ItemTypeSelector',
-  template: '#item-type-selector-template',
-  props: ['itemTypes'],
-  data() {
-    return {
-      selectedItemType: '@Model.SelectedItemType' || '',
+    name: 'ItemTypeSelector',
+    template: '#item-type-selector-template',
+    props: ['itemTypes'],
+    data() {
+      return {
+        selectedItemType: '@Model.SelectedItemType' || '',
       };
     },
   };
@@ -184,6 +184,7 @@
         selectedLocationId: '@Model.SelectedLocationId?.ToString()' || '',
         quantity: 0,
         salePrice: 0.0,
+        parentItemId: @Html.Raw(Model.ParentItemId.HasValue ? Model.ParentItemId.Value.ToString() : "null"),
       }
     },
     watch: {
