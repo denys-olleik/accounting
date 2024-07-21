@@ -107,7 +107,7 @@
     </div>
   </fieldset>
 
-  <fieldset class="margin-bottom-5px">
+  <fieldset class="margin-bottom-5px" v-if="salePrice > 0">
     <legend>Revenue Accounts</legend>
     <div class="display-flex flex-direction-column">
       <chart-of-account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Revenue')"
@@ -118,7 +118,7 @@
     </div>
   </fieldset>
 
-  <fieldset class="margin-bottom-5px">
+  <fieldset class="margin-bottom-5px" v-if="salePrice > 0">
     <legend>Assets Accounts</legend>
     <div class="display-flex flex-direction-column">
       <chart-of-account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Assets')"
