@@ -248,6 +248,23 @@ CREATE TABLE "Inventory"
 	UNIQUE ("ItemId", "LocationId")
 );
 
+CREATE TABLE "InventoryAdjustment"
+(
+	"InventoryAdjustmentID" SERIAL PRIMARY KEY NOT NULL,
+	"ItemId" INT NOT NULL,
+	"ToLocationId" INT NULL,
+	"FromLocationId" INT NULL,
+	"Quantity" DECIMAL(18,2) NOT NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+	"CreatedById" INT NOT NULL,
+	"OrganizationId" INT NOT NULL,
+	FOREIGN KEY ("ItemId") REFERENCES "Item"("ItemID"),
+	FOREIGN KEY ("ToLocationId") REFERENCES "Location"("LocationID"),
+	FOREIGN KEY ("FromLocationId") REFERENCES "Location"("LocationID"),
+	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+);
+
 CREATE TABLE "ToDo"
 (
 	"ToDoID" SERIAL PRIMARY KEY NOT NULL,
@@ -402,6 +419,23 @@ CREATE TABLE "GeneralLedger"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+CREATE TABLE "GeneralLedgerInventoryAdjustment"
+(
+	"GeneralLedgerInventoryAdjustmentID" SERIAL PRIMARY KEY NOT NULL,
+	"GeneralLedgerId" INT NOT NULL,
+	"InventoryAdjustmentId" INT NOT NULL,
+	"ReversedGeneralLedgerInventoryAdjustmentId" INT NULL,
+	"TransactionGuid" UUID NOT NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+	"CreatedById" INT NOT NULL,
+	"OrganizationId" INT NOT NULL,
+	FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"("GeneralLedgerID"),
+	FOREIGN KEY ("InventoryAdjustmentId") REFERENCES "InventoryAdjustment"("InventoryAdjustmentID"),
+	FOREIGN KEY ("ReversedGeneralLedgerInventoryAdjustmentId") REFERENCES "GeneralLedgerInventoryAdjustment"("GeneralLedgerInventoryAdjustmentID"),
+	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+);
+
 CREATE TABLE "GeneralLedgerInvoiceInvoiceLine"
 (
 	"GeneralLedgerInvoiceInvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
@@ -416,6 +450,7 @@ CREATE TABLE "GeneralLedgerInvoiceInvoiceLine"
 	FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"("GeneralLedgerID"),
 	FOREIGN KEY ("InvoiceId") REFERENCES "Invoice"("InvoiceID"),
 	FOREIGN KEY ("InvoiceLineId") REFERENCES "InvoiceLine"("InvoiceLineID"),
+	FOREIGN KEY ("ReversedGeneralLedgerInvoiceInvoiceLineId") REFERENCES "GeneralLedgerInvoiceInvoiceLine"("GeneralLedgerInvoiceInvoiceLineID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
@@ -561,6 +596,8 @@ INSERT INTO "ChartOfAccount" ("Name", "Type", "ReconciliationExpense", "ParentCh
 INSERT INTO "ChartOfAccount" ("Name", "Type", "ReconciliationExpense", "ParentChartOfAccountId", "CreatedById", "OrganizationId") VALUES ('expense-meals', 'expense', TRUE,  8, 1, 1);
 INSERT INTO "ChartOfAccount" ("Name", "Type", "ReconciliationExpense", "ParentChartOfAccountId", "CreatedById", "OrganizationId") VALUES ('expense-maintenance', 'expense', TRUE,  8, 1, 1);
 INSERT INTO "ChartOfAccount" ("Name", "Type", "ReconciliationLiabilitiesAndAssets", "CreatedById", "OrganizationId") VALUES ('discover-5555', 'liabilities', TRUE, 1, 1);
+INSERT INTO "ChartOfAccount" ("Name", "Type", "CreatedById", "OrganizationId") VALUES ('inventory', 'assets', 1, 1);
+INSERT INTO "ChartOfAccount" ("Name", "Type", "CreatedById", "OrganizationId") VALUES ('inventory-opening-balance', 'equity', 1, 1);
 
 INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "OrganizationId", "CreatedById") VALUES ('Net 30', 30, 1, 1);
 INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "OrganizationId", "CreatedById") VALUES ('Net 60', 60, 1, 1);

@@ -175,5 +175,10 @@ namespace Accounting.Database
     {
       return databaseFactoryDefinition.GetRequestLogManager();
     }
+
+    public IInventoryAdjustmentManager GetInventoryAdjustmentManager()
+    {
+      return databaseFactoryDefinition.GetInventoryAdjustmentManager();
+    }
   }
 }

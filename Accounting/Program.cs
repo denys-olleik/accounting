@@ -1,6 +1,5 @@
 using Accounting.Common;
 using Accounting.Events;
-using Accounting.Middleware;
 using Accounting.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
@@ -58,6 +57,8 @@ builder.Services.AddTransient<GeneralLedgerReconciliationTransactionService>();
 builder.Services.AddTransient<LocationService>();
 builder.Services.AddTransient<InventoryService>();
 builder.Services.AddTransient<RequestLogService>();
+builder.Services.AddTransient<InventoryAdjustmentService>();
+builder.Services.AddTransient<GeneralLedgerInventoryAdjustmentService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 ConfigurationSingleton.Instance.ConnectionStringPsql = builder.Configuration["ConnectionStrings:Psql"];

@@ -13,6 +13,7 @@ namespace Accounting.Models.ItemViewModels
 
     #region Inventory
     public decimal SalePrice { get; set; }
+    public decimal InitialCost { get; set; }
     public decimal Quantity { get; set; }
 
     public List<string> AvailableItemTypes { get; set; } = new List<string>();

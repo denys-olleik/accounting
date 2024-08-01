@@ -5,8 +5,6 @@ using Accounting.Database.Interfaces;
 using Npgsql;
 using System.Data;
 using static Accounting.Business.Invoice;
-//using static System.Net.WebRequestMethods;
-//using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Accounting.Database
 {
@@ -4914,6 +4912,65 @@ namespace Accounting.Database
       }
 
       public int Update(RequestLog entity)
+      {
+        throw new NotImplementedException();
+      }
+    }
+
+    public IInventoryAdjustmentManager GetInventoryAdjustmentManager()
+    {
+      return new InventoryAdjustmentManager();
+    }
+
+    public class InventoryAdjustmentManager : IInventoryAdjustmentManager
+    {
+      public InventoryAdjustment Create(InventoryAdjustment entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public async Task<InventoryAdjustment> CreateAsync(InventoryAdjustment entity)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@ItemId", entity.ItemId);
+        p.Add("@ToLocationId", entity.ToLocationId);
+        p.Add("@FromLocationId", entity.FromLocationId);
+        p.Add("@Quantity", entity.Quantity);
+        p.Add("@CreatedById", entity.CreatedById);
+        p.Add("@OrganizationId", entity.OrganizationId);
+
+        IEnumerable<InventoryAdjustment> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<InventoryAdjustment>("""
+            INSERT INTO "InventoryAdjustment" 
+            ("ItemId", "ToLocationId", "FromLocationId", "Quantity", "CreatedById", "OrganizationId") 
+            VALUES 
+            (@ItemId, @ToLocationId, @FromLocationId, @Quantity, @CreatedById, @OrganizationId)
+            RETURNING *;
+            """, p);
+        }
+
+        return result.Single();
+      }
+
+      public int Delete(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public InventoryAdjustment Get(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public IEnumerable<InventoryAdjustment> GetAll()
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Update(InventoryAdjustment entity)
       {
         throw new NotImplementedException();
       }

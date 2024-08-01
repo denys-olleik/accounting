@@ -1,4 +1,5 @@
 ﻿using Accounting.Business;
+using Accounting.Common;
 using Accounting.CustomAttributes;
 using Accounting.Models.ItemViewModels;
 using Accounting.Service;
@@ -18,17 +19,26 @@ namespace Accounting.Controllers
     private readonly LocationService _locationService;
     private readonly InventoryService _inventoryService;
     private readonly ItemService _itemService;
+    private readonly InventoryAdjustmentService _inventoryAdjustmentService;
+    private readonly GeneralLedgerInventoryAdjustmentService _generalLedgerInventoryAdjustmentService;
+    private readonly GeneralLedgerService _generalLedgerService;
 
     public ItemController(
       ChartOfAccountService chartOfAccountService, 
       LocationService locationService, 
       InventoryService inventoryService, 
-      ItemService itemService)
+      ItemService itemService,
+      InventoryAdjustmentService inventoryAdjustmentService,
+      GeneralLedgerInventoryAdjustmentService generalLedgerInventoryAdjustmentService,
+      GeneralLedgerService generalLedgerService)
     {
       _chartOfAccountService = chartOfAccountService;
       _locationService = locationService;
       _inventoryService = inventoryService;
       _itemService = itemService;
+      _inventoryAdjustmentService = inventoryAdjustmentService;
+      _generalLedgerInventoryAdjustmentService = generalLedgerInventoryAdjustmentService;
+      _generalLedgerService = generalLedgerService;
     }
 
     [HttpGet]
@@ -187,6 +197,50 @@ namespace Accounting.Controllers
             CreatedById = GetUserId(),
             OrganizationId = GetOrganizationId()
           });
+
+          await _inventoryAdjustmentService.CreateAsync(new InventoryAdjustment
+          {
+            ItemId = item.ItemID,
+            ToLocationId = model.SelectedLocationId.Value,
+            Quantity = model.Quantity,
+            CreatedById = GetUserId(),
+            OrganizationId = GetOrganizationId()
+          });
+
+          if (model.InitialCost > 0)
+          {
+            Guid transactonGuid = GuidExtensions.CreateSecureGuid();
+
+            ChartOfAccount debitInventoryAccount = await _chartOfAccountService.GetByAccountNameAsync("inventory", GetOrganizationId());
+            ChartOfAccount creditInventoryOpeningBalanceAccount = await _chartOfAccountService.GetByAccountNameAsync("inventory-opening-balance", GetOrganizationId());
+
+            GeneralLedger debitEntry = await _generalLedgerService.CreateAsync(new GeneralLedger
+            {
+              ChartOfAccountId = debitInventoryAccount.ChartOfAccountID,
+              Debit = model.InitialCost,
+              Credit = null,
+              CreatedById = GetUserId(),
+              OrganizationId = GetOrganizationId(),
+            });
+
+            GeneralLedger creditEntry = await _generalLedgerService.CreateAsync(new GeneralLedger
+            {
+              ChartOfAccountId = creditInventoryOpeningBalanceAccount.ChartOfAccountID,
+              Debit = null,
+              Credit = model.InitialCost,
+              CreatedById = GetUserId(),
+              OrganizationId = GetOrganizationId(),
+            });
+
+            //await _generalLedgerInventoryAdjustmentService.CreateAsync(new GeneralLedgerInventoryAdjustment
+            //{
+            //  InventoryAdjustmentId = debitEntry.GeneralLedgerID,
+            //  GeneralLedgerId = creditEntry.GeneralLedgerID,
+            //  TransactionGuid = transactonGuid,
+            //  CreatedById = GetUserId(),
+            //  OrganizationId = GetOrganizationId()
+            //});
+          }
         }
 
         scope.Complete();
