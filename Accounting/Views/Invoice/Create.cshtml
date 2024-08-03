@@ -14,7 +14,7 @@
 <template id="customer-selection-template">
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label for="customerSearch" hidden>Search Customer</label>
-    <input id="customerSearch" v-model="searchQuery" @@input="filterCustomers" class="border-bottom-2px-solid-1a3b56 font-size-20px" placeholder="Customer Search" />
+    <input id="customerSearch" v-model="searchQuery" @@input="filterCustomers" @@keydown.left="onLeftArrowPress" class="border-bottom-2px-solid-1a3b56 font-size-20px" placeholder="Customer Search" autofocus />
     <div v-if="filteredCustomers.length > 0"
          class="background-color-black color-white border-radius-5px box-shaddow border-5px-dashed-dodgerblue padding-5px max-height-250px overflow-auto">
       <div v-for="customer in filteredCustomers" :key="customer.id" @@click="selectCustomer(customer)">
@@ -427,7 +427,12 @@
         this.searchQuery = [customer.firstName, customer.lastName, customer.companyName]
           .filter(value => value !== null && value !== undefined)
           .join(' ');
-      }
+      },
+      onLeftArrowPress() {
+        if (this.searchQuery.trim() === '') {
+          window.history.back();
+        }
+      },
     },
   };
 
