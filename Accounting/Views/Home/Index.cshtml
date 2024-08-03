@@ -2,6 +2,7 @@
   ViewData["Title"] = ConfigurationSingleton.Instance.ApplicationName;
 }
 
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 @if (!User.Identity.IsAuthenticated)
@@ -69,7 +70,7 @@
   </div>
 }
 
-@if (User.Identity.IsAuthenticated)
+@* @if (User.Identity.IsAuthenticated)
 {
   <ul>
     <li>
@@ -169,7 +170,85 @@
       </ul>
     </li>
   </ul>
-}
+} *@
+
+<div id="app" class="display-flex flex-direction-column background-color-black border-radius-5px border-5px-dashed-dodgerblue padding-5px">
+  <input type="text" v-model="search" @@focus="onFocus" @@blur="onBlur" @@keydown="onKeydown" placeholder="Search" class="padding-5px margin-5px" autofocus />
+  <div v-for="(link, index) in filteredLinks" :key="link.url">
+    <a :href="link.url" class="color-white font-size-30px">
+      <span v-if="index === preselectedIndex" class="blinking-cursor text-decoration-none margin-right-5px">█</span>{{ link.text }}
+    </a>
+  </div>
+</div>
+
+<script>
+  const { createApp } = Vue;
+
+  const app = createApp({
+    data() {
+      return {
+        search: '',
+        links: [
+          { text: 'Users', url: '@Url.Action("Users", "User")' },
+          { text: 'Create User', url: '@Url.Action("Create", "User")' },
+          { text: 'Tasks', url: '@Url.Action("ToDos", "ToDo")' },
+          { text: 'Create Task', url: '@Url.Action("Create", "ToDo")' },
+          { text: 'Invoices', url: '@Url.Action("Invoices", "Invoice")' },
+          { text: 'Create Invoice', url: '@Url.Action("Create", "Invoice")' },
+          { text: 'Customers and Vendors', url: '@Url.Action("Customers", "Customer")' },
+          { text: 'Create Customer and or Vendor', url: '@Url.Action("Create", "Customer")' },
+          { text: 'Payment Terms', url: '@Url.Action("PaymentTerms", "PaymentTerm")' },
+          { text: 'Create Payment Term', url: '@Url.Action("Create", "PaymentTerm")' },
+          { text: 'Payment Instructions', url: '@Url.Action("PaymentInstructions", "PaymentInstruction")' },
+          { text: 'Create Payment Instruction', url: '@Url.Action("Create", "PaymentInstruction")' },
+          { text: 'Products and Services', url: '@Url.Action("ProductsAndServices", "Item")' },
+          { text: 'Create Product or Service', url: '@Url.Action("Create", "Item")' },
+          { text: 'Locations', url: '@Url.Action("Locations", "Location")' },
+          { text: 'Create Location', url: '@Url.Action("Create", "Location")' },
+          { text: 'Organization', url: '@Url.Action("Update", "Organization")' },
+          { text: 'Reconciliations', url: '@Url.Action("Reconciliations", "Reconciliation")' },
+          { text: 'Import', url: '@Url.Action("Import", "Reconciliation")' },
+          { text: 'Chart of Accounts', url: '@Url.Action("Accounts", "ChartOfAccount")' },
+          { text: 'Create Account', url: '@Url.Action("Create", "ChartOfAccount")' },
+          { text: 'Backup', url: '@Url.Action("Backup", "Backup")' },
+          { text: 'Export', url: '@Url.Action("Export", "Backup")' },
+          { text: 'Import', url: '@Url.Action("Import", "Backup")' },
+        ],
+        preselectedIndex: 0,
+        hasFocus: false
+      };
+    },
+    computed: {
+      filteredLinks() {
+        const filtered = this.links.filter(link => link.text.toLowerCase().includes(this.search.toLowerCase()));
+        if (this.hasFocus) {
+          // Adjust preselected index if it's out of the bounds of the filtered list
+          if (this.preselectedIndex >= filtered.length) {
+            this.preselectedIndex = 0;
+          }
+        }
+        return filtered;
+      }
+    },
+    methods: {
+      onFocus() {
+        this.hasFocus = true;
+      },
+      onBlur() {
+        this.hasFocus = false;
+      },
+      onKeydown(event) {
+        if (event.key === 'ArrowDown') {
+          this.preselectedIndex = (this.preselectedIndex + 1) % this.filteredLinks.length;
+        } else if (event.key === 'ArrowUp') {
+          this.preselectedIndex = (this.preselectedIndex - 1 + this.filteredLinks.length) % this.filteredLinks.length;
+        }
+      }
+    }
+  });
+
+  app.mount('#app');
+</script>
 
 @if (User.Identity.IsAuthenticated)
 {
