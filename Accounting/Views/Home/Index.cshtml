@@ -174,12 +174,12 @@
 <div id="app" class="display-flex flex-direction-column background-color-black border-radius-5px border-5px-dashed-dodgerblue padding-5px">
   <input type="text" v-model="search" @@focus="onFocus" @@blur="onBlur" @@keydown="onKeydown" placeholder="Search" class="padding-5px margin-5px" autofocus />
   <div v-for="(link, index) in filteredLinks" :key="link.url">
-    <a :href="link.url" class="color-white font-size-30px">
+    <a :href="link.url" class="color-white font-size-30px text-decoration-none">
       <span v-if="isPreselected([index])" class="blinking-cursor text-decoration-none margin-right-5px">█</span>{{ link.text }}
     </a>
     <div v-if="link.children" class="padding-left-25px">
       <div v-for="(child, childIndex) in link.children" :key="child.url">
-        <a :href="child.url" class="color-white font-size-30px">
+        <a :href="child.url" class="color-white font-size-30px text-decoration-none">
           <span v-if="isPreselected([index, childIndex])" class="blinking-cursor text-decoration-none margin-right-5px">█</span>{{ child.text }}
         </a>
       </div>
