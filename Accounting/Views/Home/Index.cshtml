@@ -66,110 +66,9 @@
         <p class="font-size-20px"><span class="color-red">█ </span><strong>10. Target Canada (2015):</strong> Part of its failure in the Canadian market was attributed to a disastrous SAP implementation that led to supply chain issues, empty shelves, and a $2 billion loss.</p>
       </div>
     </div>
+
   </div>
 }
-
-@* @if (User.Identity.IsAuthenticated)
-{
-  <ul>
-    <li>
-      <a asp-action="Users" asp-controller="User">Users</a>
-      <ul>
-        <li><a asp-action="Create" asp-controller="User">Create User</a></li>
-      </ul>
-    </li>
-    <li>
-      <a asp-action="ToDos" asp-controller="ToDo">Tasks</a>
-      <ul>
-        <li>
-          <a asp-action="Create" asp-controller="ToDo">Create Task</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a asp-action="Invoices" asp-controller="Invoice">Invoices</a>
-      <ul>
-        <li>
-          <a asp-action="Create" asp-controller="Invoice">Create Invoice</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a asp-action="Customers" asp-controller="Customer">Customers and Vendors</a>
-      <ul>
-        <li>
-          <a asp-action="Create" asp-controller="Customer">Create Customer and or Vendor</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a asp-action="PaymentTerms" asp-controller="PaymentTerm">Payment Terms</a>
-      <ul>
-        <li>
-          <a asp-action="Create" asp-controller="PaymentTerm">Create Payment Term</a>
-        </li>
-      </ul>
-    <li>
-      <a asp-action="PaymentInstructions" asp-controller="PaymentInstruction">Payment Instructions</a>
-      <ul>
-        <li>
-          <a asp-action="Create" asp-controller="PaymentInstruction">Create Payment Instruction</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a asp-action="ProductsAndServices" asp-controller="Item">Products and Services</a>
-      <ul>
-        <li>
-          <a asp-action="Create" asp-controller="Item">Create Product or Service</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a asp-action="Locations" asp-controller="Location">Locations</a>
-      <ul>
-        <li>
-          <a asp-action="Create" asp-controller="Location">Create Location</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      Organization
-      <ul>
-        <li>
-          <a asp-action="Update" asp-controller="Organization">Update Organization</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a asp-action="Reconciliations" asp-controller="Reconciliation">Reconciliations</a>
-      <ul>
-        <li>
-          <a asp-action="Import" asp-controller="Reconciliation">Import</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a asp-action="Accounts" asp-controller="ChartOfAccount">Chart of Accounts</a>
-      <ul>
-        <li>
-          <a asp-action="Create" asp-controller="ChartOfAccount">Create Account</a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a asp-action="Backup" asp-controller="Backup">Backup</a>
-      <ul>
-        <li>
-          <a asp-action="Export" asp-controller="Backup">Export</a>
-        </li>
-        <li>
-          <a asp-action="Import" asp-controller="Backup">Import</a>
-        </li>
-      </ul>
-    </li>
-  </ul>
-} *@
 
 <div id="app" class="display-flex flex-direction-column font-Roboto-Mono background-color-black border-radius-5px border-5px-dashed-dodgerblue padding-5px">
   <input type="text" v-model="search" @@focus="onFocus" @@blur="onBlur" @@keydown="onKeydown" placeholder="Search" class="padding-5px margin-5px" autofocus />
@@ -251,6 +150,11 @@
               { text: 'Export', url: '@Url.Action("Export", "Backup")' },
               { text: 'Import', url: '@Url.Action("Import", "Backup")' }
             ]
+          },
+          {
+            text: 'Shipping and Receiving', url: '@Url.Action("ShippingAndReceiving", "ShippingAndReceiving")', children: [
+              { text: 'Driver Load Subscriptions', url: '@Url.Action("Subscriptions", "ShippingAndReceiving")' }
+            ]
           }
         ],
         preselectedIndex: [0],
@@ -315,7 +219,6 @@
 
   app.mount('#app');
 </script>
-
 
 @if (User.Identity.IsAuthenticated)
 {
