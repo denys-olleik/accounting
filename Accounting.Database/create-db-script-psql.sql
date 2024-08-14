@@ -523,12 +523,25 @@ CREATE TABLE "RequestLog"
 	"RequestLogID" SERIAL PRIMARY KEY NOT NULL,
 	"RemoteIp" VARCHAR(50) NULL,
 	"CountryCode" VARCHAR(5) NULL,
-	"Referer" VARCHAR(2000) NULL, -- Change to smaller value later
-	"UserAgent" VARCHAR(1000) NULL, -- Change to smaller value later
+	"Referer" VARCHAR(2000) NULL,
+	"UserAgent" VARCHAR(1000) NULL,
 	"Path" VARCHAR(1000) NULL,
 	"ResponseLengthBytes" BIGINT NULL,
-	"StatusCode" VARCHAR(3) NULL, --HTTP status code of response for this request.
+	"StatusCode" VARCHAR(3) NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+);
+
+CREATE EXTENSION postgis;
+
+CREATE TABLE "ZipCode"
+(
+    "ID" SERIAL PRIMARY KEY NOT NULL,
+    "Zip5" VARCHAR(5) NOT NULL,
+    "Latitude" FLOAT NOT NULL,
+    "Longitude" FLOAT NOT NULL,
+    "City" VARCHAR(50) NOT NULL,
+    "State2" VARCHAR(2) NOT NULL,
+    "Location" GEOGRAPHY(Point, 4326) NULL
 );
 
 INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
