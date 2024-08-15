@@ -180,5 +180,10 @@ namespace Accounting.Database
     {
       return databaseFactoryDefinition.GetInventoryAdjustmentManager();
     }
+
+    public IZIPCodeManager GetZIPCodeManager()
+    {
+      return databaseFactoryDefinition.GetZIPCodeManager();
+    }
   }
 }

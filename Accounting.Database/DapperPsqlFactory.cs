@@ -4976,6 +4976,54 @@ namespace Accounting.Database
       }
     }
 
+    public IZIPCodeManager GetZIPCodeManager()
+    {
+      throw new NotImplementedException();
+    }
+
+    public class ZIPCodeManager : IZIPCodeManager
+    {
+      public ZIPCode Create(ZIPCode entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Task<ZIPCode> CreateAsync(ZIPCode entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Delete(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public ZIPCode Get(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public IEnumerable<ZIPCode> GetAll()
+      {
+        throw new NotImplementedException();
+      }
+
+      public async Task<List<ZIPCode>> GetAllAsync(bool locationIsNull)
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Update(ZIPCode entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public async Task<int> UpdateLocationAsync(string zip5, float latitude, float longitude)
+      {
+        throw new NotImplementedException();
+      }
+    }
+
     public ILocationManager GetLocationManager()
     {
       return new LocationManager();
