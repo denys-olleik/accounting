@@ -71,6 +71,9 @@ ConfigurationSingleton.Instance.TempPath = builder.Configuration["TempPath"];
 ConfigurationSingleton.Instance.PermPath = builder.Configuration["PermPath"];
 
 var app = builder.Build();
+
+await new ZIPCodeService().UpdateNewZIPCodeLocations();
+
 //app.UseMiddleware<RequestLoggingMiddleware>();
 
 #region reset-database

@@ -5,6 +5,6 @@ namespace Accounting.Database.Interfaces
   public interface IZIPCodeManager : IGenericRepository<ZIPCode, int>
   {
     Task<List<ZIPCode>> GetAllAsync(bool locationIsNull);
-    Task<int> UpdateLocationAsync(string zip5, float latitude, float longitude);
+    Task<int> UpdateLocationAsync(List<ZIPCode> zipCodes);
   }
 }

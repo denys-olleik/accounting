@@ -4978,7 +4978,7 @@ namespace Accounting.Database
 
     public IZIPCodeManager GetZIPCodeManager()
     {
-      throw new NotImplementedException();
+      return new ZIPCodeManager();
     }
 
     public class ZIPCodeManager : IZIPCodeManager
@@ -5010,7 +5010,21 @@ namespace Accounting.Database
 
       public async Task<List<ZIPCode>> GetAllAsync(bool locationIsNull)
       {
-        throw new NotImplementedException();
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@LocationIsNull", locationIsNull);
+
+        IEnumerable<ZIPCode> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<ZIPCode>("""
+            SELECT "ID", "Zip5", "Latitude", "Longitude", "City", "State2"
+            FROM "ZipCode"
+            WHERE "Location" IS NULL AND "Latitude" IS NOT NULL AND "Longitude" IS NOT NULL
+            """, p);
+        }
+
+        return result.ToList();
       }
 
       public int Update(ZIPCode entity)
@@ -5018,9 +5032,30 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateLocationAsync(string zip5, float latitude, float longitude)
+      public async Task<int> UpdateLocationAsync(List<ZIPCode> zipCodes)
       {
-        throw new NotImplementedException();
+        int rowsAffected = 0;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          foreach (var zipCode in zipCodes)
+          {
+            DynamicParameters p = new DynamicParameters();
+            p.Add("@ID", zipCode.ID);
+            p.Add("@Latitude", zipCode.Latitude);
+            p.Add("@Longitude", zipCode.Longitude);
+
+            string query = """
+              UPDATE "ZipCode"
+              SET "Location" = ST_SetSRID(ST_MakePoint(@Longitude, @Latitude), 4326)
+              WHERE "ID" = @ID;
+              """;
+
+            rowsAffected += await con.ExecuteAsync(query, p);
+          }
+        }
+
+        return rowsAffected;
       }
     }
 

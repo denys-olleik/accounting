@@ -1,15 +1,4 @@
-﻿//CREATE TABLE "ZipCode"
-//(
-//    "ID" SERIAL PRIMARY KEY NOT NULL,
-//    "Zip5" VARCHAR(5) NOT NULL,
-//    "Latitude" FLOAT NOT NULL,
-//    "Longitude" FLOAT NOT NULL,
-//    "City" VARCHAR(50) NOT NULL,
-//    "State2" VARCHAR(2) NOT NULL,
-//    "Location" GEOGRAPHY(Point, 4326) NULL
-//);
-
-using Accounting.Common;
+﻿using Accounting.Common;
 
 namespace Accounting.Business
 {

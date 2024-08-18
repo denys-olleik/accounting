@@ -537,12 +537,16 @@ CREATE TABLE "ZipCode"
 (
     "ID" SERIAL PRIMARY KEY NOT NULL,
     "Zip5" VARCHAR(5) NOT NULL,
-    "Latitude" FLOAT NOT NULL,
-    "Longitude" FLOAT NOT NULL,
+    "Latitude" FLOAT NULL,
+    "Longitude" FLOAT NULL,
     "City" VARCHAR(50) NOT NULL,
     "State2" VARCHAR(2) NOT NULL,
-    "Location" GEOGRAPHY(Point, 4326) NULL
+    "Location" GEOGRAPHY NULL
 );
+
+--SELECT * 
+--FROM "ZipCode"
+--WHERE "Location" IS NULL AND "Latitude" IS NOT NULL AND "Longitude" IS NOT NULL;
 
 INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
 VALUES ('test@example.com', 'Some', 'Dude', 'sha1:64000:18:IofuE0pk3LtysdvPabvlsENb9NJ4x7XZ:Ui8pLvVoSzlwUXVARJj8MFEL', 1);
