@@ -2,9 +2,9 @@
 
 namespace Accounting.Database.Interfaces
 {
-  public interface IZIPCodeManager : IGenericRepository<ZIPCode, int>
+  public interface IZIPCodeManager : IGenericRepository<ZipCode, int>
   {
-    Task<List<ZIPCode>> GetAllAsync(bool locationIsNull);
-    Task<int> UpdateLocationAsync(List<ZIPCode> zipCodes);
+    Task<List<ZipCode>> GetAllAsync(bool locationIsNull);
+    Task<int> UpdateLocationAsync(List<ZipCode> zipCodes);
   }
 }

@@ -2,7 +2,7 @@
 
 namespace Accounting.Business
 {
-  public class ZIPCode : IIdentifiable<int>
+  public class ZipCode : IIdentifiable<int>
   {
     public int ID { get; set; }
     public string? Zip5 { get; set; }

@@ -4983,12 +4983,12 @@ namespace Accounting.Database
 
     public class ZIPCodeManager : IZIPCodeManager
     {
-      public ZIPCode Create(ZIPCode entity)
+      public ZipCode Create(ZipCode entity)
       {
         throw new NotImplementedException();
       }
 
-      public Task<ZIPCode> CreateAsync(ZIPCode entity)
+      public Task<ZipCode> CreateAsync(ZipCode entity)
       {
         throw new NotImplementedException();
       }
@@ -4998,26 +4998,26 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public ZIPCode Get(int id)
+      public ZipCode Get(int id)
       {
         throw new NotImplementedException();
       }
 
-      public IEnumerable<ZIPCode> GetAll()
+      public IEnumerable<ZipCode> GetAll()
       {
         throw new NotImplementedException();
       }
 
-      public async Task<List<ZIPCode>> GetAllAsync(bool locationIsNull)
+      public async Task<List<ZipCode>> GetAllAsync(bool locationIsNull)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@LocationIsNull", locationIsNull);
 
-        IEnumerable<ZIPCode> result;
+        IEnumerable<ZipCode> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ZIPCode>("""
+          result = await con.QueryAsync<ZipCode>("""
             SELECT "ID", "Zip5", "Latitude", "Longitude", "City", "State2"
             FROM "ZipCode"
             WHERE "Location" IS NULL AND "Latitude" IS NOT NULL AND "Longitude" IS NOT NULL
@@ -5027,12 +5027,12 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public int Update(ZIPCode entity)
+      public int Update(ZipCode entity)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateLocationAsync(List<ZIPCode> zipCodes)
+      public async Task<int> UpdateLocationAsync(List<ZipCode> zipCodes)
       {
         int rowsAffected = 0;
 
