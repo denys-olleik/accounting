@@ -8,9 +8,9 @@ namespace Accounting.Controllers
   [Route("zip")]
   public class ZIPCodeController : BaseController
   {
-    private readonly ZIPCodeService _zipCodeService;
+    private readonly ZipCodeService _zipCodeService;
 
-    public ZIPCodeController(ZIPCodeService zipCodeService)
+    public ZIPCodeController(ZipCodeService zipCodeService)
     {
       _zipCodeService = zipCodeService;
     }

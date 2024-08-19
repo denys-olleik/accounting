@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace Accounting.Service
 {
-  public class ZIPCodeService
+  public class ZipCodeService
   {
     public async Task<List<ZipCode>> GetAllAsync(bool locationIsNull)
     {
