@@ -6,11 +6,11 @@ namespace Accounting.Controllers
 {
   [AuthorizeWithOrganizationId]
   [Route("zip")]
-  public class ZIPCodeController : BaseController
+  public class ZipCodeController : BaseController
   {
     private readonly ZipCodeService _zipCodeService;
 
-    public ZIPCodeController(ZipCodeService zipCodeService)
+    public ZipCodeController(ZipCodeService zipCodeService)
     {
       _zipCodeService = zipCodeService;
     }
