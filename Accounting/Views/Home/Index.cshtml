@@ -12,11 +12,97 @@
   </div>
 }
 
-<div>
-  <a href="@Url.Action("ZipCodes", "ZipCode")" class="font-size-30px text-decoration-none">ZIP Codes</a>
-</div>
+@if (User.Identity.IsAuthenticated)
+{
+  <div>
+    <ul>
+      <li>
+        <a href="@Url.Action("Users", "User")">Users</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "User")">Create User</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("ToDos", "ToDo")">Tasks</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "ToDo")">Create Task</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Invoices", "Invoice")">Invoices</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "Invoice")">Create Invoice</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Customers", "Customer")">Customers and Vendors</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "Customer")">Create Customer and or Vendor</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("PaymentTerms", "PaymentTerm")">Payment Terms</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "PaymentTerm")">Create Payment Term</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("PaymentInstructions", "PaymentInstruction")">Payment Instructions</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "PaymentInstruction")">Create Payment Instruction</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("ProductsAndServices", "Item")">Products and Services</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "Item")">Create Product or Service</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Locations", "Location")">Locations</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "Location")">Create Location</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Update", "Organization")">Organization</a>
+      </li>
+      <li>
+        <a href="@Url.Action("Reconciliations", "Reconciliation")">Reconciliations</a>
+        <ul>
+          <li><a href="@Url.Action("Import", "Reconciliation")">Import</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Accounts", "ChartOfAccount")">Chart of Accounts</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "ChartOfAccount")">Create Account</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Backup", "Backup")">Backup</a>
+        <ul>
+          <li><a href="@Url.Action("Export", "Backup")">Export</a></li>
+          <li><a href="@Url.Action("Import", "Backup")">Import</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("ShippingAndReceiving", "ShippingAndReceiving")">Shipping and Receiving</a>
+      </li>
+      @* <li>
+        <a href="@Url.Action("ZIPCodes", "ZIPCode")">ZIP Codes</a>
+        <ul>
+          <li><a href="@Url.Action("Manage", "ZIPCode")">Manage ZIP Codes</a></li>
+        </ul>
+      </li> *@
+      <li>
+        <a href="@Url.Action("DeploymentAndProvisioning", "DeploymentAndProvisioning")">Deployment and Provisioning</a>
+      </li>
+    </ul>
+  </div>
+}
 
-<div id="app" class="display-flex flex-direction-column font-Roboto-Mono background-color-black border-radius-5px border-5px-dashed-dodgerblue padding-5px">
+@* <div id="app" class="display-flex flex-direction-column font-Roboto-Mono background-color-black border-radius-5px border-5px-dashed-dodgerblue padding-5px">
   <input type="text" v-model="search" @@focus="onFocus" @@blur="onBlur" @@keydown="onKeydown" placeholder="Search" class="padding-5px margin-5px" autofocus />
   <div v-for="(link, index) in filteredLinks" :key="link.url">
     <a :href="link.url" class="color-white font-size-30px text-decoration-none">
@@ -30,9 +116,9 @@
       </div>
     </div>
   </div>
-</div>
+</div> *@
 
-<script>
+@* <script>
   const { createApp } = Vue;
 
   const app = createApp({
@@ -170,7 +256,7 @@
 
   app.mount('#app');
 </script>
-
+ *@
 @if (User.Identity.IsAuthenticated)
 {
   <div class="display-flex">
@@ -184,44 +270,37 @@
   </div>
 }
 
-<script>
-  (async () => {
-    try {
-      // Fetch data from API
-      const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${window.location.port ? window.location.port : ''}/api/r/get-account-balance-report`);
-      const apiData = await response.json();
-
-      // Prepare data for the chart
-      const accountNumbers = apiData.map(item => item.name);
-      const currentBalances = apiData.map(item => item.currentBalance);
-
-      // Initialize the chart
-      const ctx = document.getElementById('accountBalanceChart').getContext('2d');
-      const myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: accountNumbers,
-          datasets: [{
-            label: 'Current Balance',
-            data: currentBalances,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1
-          }]
-        }
-      });
-    } catch (error) {
-      //console.error('Error fetching data:', error);
-    }
-  })();
-</script>
-
-@if (Context.RequestServices.GetService<IWebHostEnvironment>()!.IsDevelopment())
+@if (User.Identity.IsAuthenticated)
 {
-  <fieldset>
-    <legend>Developer Notes:</legend>
-    <ul>
-      <li>Some areas of the application will contain a fieldset with developer notes visible in development mode.</li>
-    </ul>
-  </fieldset>
+  <script>
+    (async () => {
+      try {
+        // Fetch data from API
+        const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${window.location.port ? window.location.port : ''}/api/r/get-account-balance-report`);
+        const apiData = await response.json();
+
+        // Prepare data for the chart
+        const accountNumbers = apiData.map(item => item.name);
+        const currentBalances = apiData.map(item => item.currentBalance);
+
+        // Initialize the chart
+        const ctx = document.getElementById('accountBalanceChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: accountNumbers,
+            datasets: [{
+              label: 'Current Balance',
+              data: currentBalances,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          }
+        });
+      } catch (error) {
+        //console.error('Error fetching data:', error);
+      }
+    })();
+  </script>
 }
