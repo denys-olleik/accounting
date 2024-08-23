@@ -5,6 +5,7 @@ using Accounting.Database.Interfaces;
 using Npgsql;
 using System.Data;
 using static Accounting.Business.Invoice;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Accounting.Database
 {
@@ -5056,6 +5057,75 @@ namespace Accounting.Database
         }
 
         return rowsAffected;
+      }
+    }
+
+    public ITenantManager GetTenantManager()
+    {
+      throw new NotImplementedException();
+    }
+
+    public class TenantManager : ITenantManager
+    {
+//      CREATE TABLE "Tenant"
+//(
+//	"TenantID" SERIAL PRIMARY KEY NOT NULL,
+//	"Name" VARCHAR(100) NOT NULL,
+//	"Email" VARCHAR(100) NOT NULL,
+//	"Ipv4" VARCHAR(15) NOT NULL,
+//	"VmHostname" VARCHAR(255) NOT NULL,
+//	"SSHPublic" TEXT NOT NULL, 
+//	"CreatedById" INT NOT NULL,
+//	"Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+//);
+
+      public Tenant Create(Tenant entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Task<Tenant> CreateAsync(Tenant entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Delete(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public async Task<bool> ExistsAsync(string email)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+
+        IEnumerable<Tenant> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Tenant>("""
+            SELECT * 
+            FROM "Tenant" 
+            WHERE "Email" = @Email
+            """, p);
+        }
+
+        return result.Any();
+      }
+
+      public Tenant Get(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public IEnumerable<Tenant> GetAll()
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Update(Tenant entity)
+      {
+        throw new NotImplementedException();
       }
     }
 

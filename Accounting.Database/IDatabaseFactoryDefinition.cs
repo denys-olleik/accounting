@@ -38,5 +38,6 @@ namespace Accounting.Database
     IRequestLogManager GetRequestLogManager();
     IInventoryAdjustmentManager GetInventoryAdjustmentManager();
     IZIPCodeManager GetZIPCodeManager();
+    ITenantManager GetTenantManager();
   }
 }
