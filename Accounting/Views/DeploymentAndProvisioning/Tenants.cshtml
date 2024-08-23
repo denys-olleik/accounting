@@ -1,0 +1,18 @@
+﻿@model Accounting.Models.PaginatedViewModel
+
+@{
+  ViewData["Title"] = "Tenants - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Tenants";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<div class="display-flex margin-bottom-5px">
+  <div>
+    <a asp-action="CreateTenant" asp-controller="DeploymentAndProvisioning" class="font-Roboto font-size-20px">Create Tenant</a>
+  </div>
+</div>

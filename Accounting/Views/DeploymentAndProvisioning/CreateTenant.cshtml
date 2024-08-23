@@ -1,0 +1,33 @@
+﻿@* public class CreateTenantViewModel
+  {
+    public string? Email { get; set; }
+
+    public ValidationResult? ValidationResult { get; set; }
+  } *@
+
+@model Accounting.Models.TenantViewModels.CreateTenantViewModel
+
+@{
+  ViewData["Title"] = "Create Tenant - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Create Tenant";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="CreateTenant" asp-controller="DeploymentAndProvisioning" method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label for="Email" class="font-Roboto font-size-20px">Email</label>
+    <input type="email" id="Email" name="Email" class="border-bottom-2px-solid-1a3b56 font-size-20px" required />
+  </div>
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <button type="submit" class="full-width-regular-button">Create Tenant</button>
+  </div>
+
+</form>
