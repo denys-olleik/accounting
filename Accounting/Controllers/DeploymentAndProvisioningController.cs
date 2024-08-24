@@ -55,7 +55,7 @@ namespace Accounting.Controllers
           CreatedById = GetUserId(),
         });
 
-        await _cloudServices.GetDigitalOceanService().CreateDroplet(tenant);
+        await _cloudServices.GetDigitalOceanService().CreateDropletAsync(tenant);
 
         throw new NotImplementedException();
 
