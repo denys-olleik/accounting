@@ -11,8 +11,6 @@ namespace Accounting.Service
 
     public class DigitalOceanService
     {
-      
-
       public async Task CreateDropletAsync(Tenant tenant)
       {
         // s-1vcpu-512mb-10gb
