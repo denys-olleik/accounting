@@ -9,7 +9,7 @@ namespace Accounting.Business
     public string? Email { get; set; }
     public string? Ipv4 { get; set; }
     public string? VmHostname { get; set; }
-    public string? SHHPublic { get; set; }
+    public string? SshPublic { get; set; }
     public int? CreatedById { get; set; }
     public DateTime Created { get; set; }
 

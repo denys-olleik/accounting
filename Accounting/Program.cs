@@ -59,6 +59,7 @@ builder.Services.AddTransient<InventoryService>();
 builder.Services.AddTransient<RequestLogService>();
 builder.Services.AddTransient<InventoryAdjustmentService>();
 builder.Services.AddTransient<GeneralLedgerInventoryAdjustmentService>();
+builder.Services.AddTransient<TenantService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 ConfigurationSingleton.Instance.ConnectionStringPsql = builder.Configuration["ConnectionStrings:Psql"];

@@ -3,6 +3,8 @@ using Accounting.Models.TenantViewModels;
 using Accounting.Validators;
 using Accounting.Service;
 using FluentValidation.Results;
+using System.Transactions;
+using Accounting.Business;
 
 namespace Accounting.Controllers
 {
@@ -10,6 +12,7 @@ namespace Accounting.Controllers
   public class DeploymentAndProvisioningController : BaseController
   {
     private readonly TenantService _tenantService;
+    private readonly CloudServices _cloudServices;
 
     public DeploymentAndProvisioningController(TenantService tenantService)
     {
@@ -31,10 +34,33 @@ namespace Accounting.Controllers
 
     [Route("create-tenant")]
     [HttpPost]
-    public async Task<IActionResult> CreateTenant(CreateTenantViewModel model)
+    public async Task<IActionResult> ProvisionTenant(ProvisionTenantViewModel model)
     {
-      CreateTenantViewModelValidator validator = new CreateTenantViewModelValidator(_tenantService);
-      ValidationResult result = validator.Validate(model);
+      ProvisionTenantViewModelValidator validator = new ProvisionTenantViewModelValidator(_tenantService);
+      ValidationResult validationResult = validator.Validate(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      {
+        Tenant tenant;
+
+        tenant = await _tenantService.CreateAsync(new Tenant()
+        {
+          Email = model.Email,
+          CreatedById = GetUserId(),
+        });
+
+        await _cloudServices.GetDigitalOceanService().CreateDroplet(tenant);
+
+        throw new NotImplementedException();
+
+        scope.Complete();
+      }
 
       throw new NotImplementedException();
     }

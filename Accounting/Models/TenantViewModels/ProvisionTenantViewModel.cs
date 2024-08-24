@@ -2,7 +2,7 @@
 
 namespace Accounting.Models.TenantViewModels
 {
-  public class CreateTenantViewModel
+  public class ProvisionTenantViewModel
   {
     public string? Email { get; set; }
 

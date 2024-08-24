@@ -5067,26 +5067,33 @@ namespace Accounting.Database
 
     public class TenantManager : ITenantManager
     {
-//      CREATE TABLE "Tenant"
-//(
-//	"TenantID" SERIAL PRIMARY KEY NOT NULL,
-//	"Name" VARCHAR(100) NOT NULL,
-//	"Email" VARCHAR(100) NOT NULL,
-//	"Ipv4" VARCHAR(15) NOT NULL,
-//	"VmHostname" VARCHAR(255) NOT NULL,
-//	"SSHPublic" TEXT NOT NULL, 
-//	"CreatedById" INT NOT NULL,
-//	"Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
-//);
-
       public Tenant Create(Tenant entity)
       {
         throw new NotImplementedException();
       }
 
-      public Task<Tenant> CreateAsync(Tenant entity)
+      public async Task<Tenant> CreateAsync(Tenant entity)
       {
-        throw new NotImplementedException();
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Name", entity.Name);
+        p.Add("@Email", entity.Email);
+        p.Add("@Ipv4", entity.Ipv4);
+        p.Add("@VmHostname", entity.VmHostname);
+        p.Add("@SshPublic", entity.SshPublic);
+        p.Add("@CreatedById", entity.CreatedById);
+
+        IEnumerable<Tenant> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Tenant>("""
+            INSERT INTO "Tenant" ("Name", "Email", "Ipv4", "VmHostname", "SshPublic", "CreatedById") 
+            VALUES (@Name, @Email, @Ipv4, @VmHostname, @SshPublic, @CreatedById)
+            RETURNING *;
+            """, p);
+        }
+
+        return result.Single();
       }
 
       public int Delete(int id)
