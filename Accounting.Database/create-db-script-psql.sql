@@ -568,6 +568,19 @@ CREATE TABLE "ZipCode"
     "Location" GEOGRAPHY NULL
 );
 
+CREATE TABLE "Secret"
+(
+	"ID" SERIAL PRIMARY KEY NOT NULL,
+	"Key" VARCHAR(100) NOT NULL,
+	"Value" TEXT NOT NULL,
+	"Purpose" VARCHAR(100) NOT NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+	"CreatedById" INT NOT NULL,
+	"OrganizationId" INT NOT NULL,
+	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+);
+
 INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
 VALUES ('test@example.com', 'Some', 'Dude', 'sha1:64000:18:IofuE0pk3LtysdvPabvlsENb9NJ4x7XZ:Ui8pLvVoSzlwUXVARJj8MFEL', 1);
 

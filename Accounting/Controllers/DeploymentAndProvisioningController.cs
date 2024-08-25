@@ -66,23 +66,5 @@ namespace Accounting.Controllers
 
       throw new NotImplementedException();
     }
-
-    [Route("keys")]
-    [HttpGet]
-    public async Task<IActionResult> Keys()
-    {
-      CloudServiecsKeysViewModel model = new CloudServiecsKeysViewModel();
-      model.DigitalOceanKey = !string.IsNullOrEmpty(ConfigurationSingleton.Instance.DigitalOceanKey);
-      model.SendGridKey = !string.IsNullOrEmpty(ConfigurationSingleton.Instance.SendgridKey);
-
-      return View(model);
-    }
-
-    [Route("set-key")]
-    [HttpGet]
-    public IActionResult SetKey()
-    {
-      return View();
-    }
   }
 }
