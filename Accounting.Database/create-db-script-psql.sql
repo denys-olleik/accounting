@@ -37,6 +37,18 @@ CREATE TABLE "UserOrganization"
 	UNIQUE ("UserId", "OrganizationId")
 );
 
+CREATE TABLE "Cloud"
+(
+	"CloudID" SERIAL PRIMARY KEY NOT NULL,
+	"Name" VARCHAR(100) NOT NULL,
+	"Description" TEXT NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+	"CreatedById" INT NOT NULL,
+	"OrganizationId" INT NOT NULL,
+	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+);
+
 CREATE TABLE "Tenant"
 (
 	"TenantID" SERIAL PRIMARY KEY NOT NULL,
@@ -555,10 +567,6 @@ CREATE TABLE "ZipCode"
     "State2" VARCHAR(2) NOT NULL,
     "Location" GEOGRAPHY NULL
 );
-
---SELECT * 
---FROM "ZipCode"
---WHERE "Location" IS NULL AND "Latitude" IS NOT NULL AND "Longitude" IS NOT NULL;
 
 INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
 VALUES ('test@example.com', 'Some', 'Dude', 'sha1:64000:18:IofuE0pk3LtysdvPabvlsENb9NJ4x7XZ:Ui8pLvVoSzlwUXVARJj8MFEL', 1);

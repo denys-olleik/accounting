@@ -5,6 +5,8 @@ using Accounting.Service;
 using FluentValidation.Results;
 using System.Transactions;
 using Accounting.Business;
+using Accounting.Models.DeploymentAndProvisioning;
+using Accounting.Common;
 
 namespace Accounting.Controllers
 {
@@ -63,6 +65,24 @@ namespace Accounting.Controllers
       }
 
       throw new NotImplementedException();
+    }
+
+    [Route("keys")]
+    [HttpGet]
+    public async Task<IActionResult> Keys()
+    {
+      CloudServiecsKeysViewModel model = new CloudServiecsKeysViewModel();
+      model.DigitalOceanKey = !string.IsNullOrEmpty(ConfigurationSingleton.Instance.DigitalOceanKey);
+      model.SendGridKey = !string.IsNullOrEmpty(ConfigurationSingleton.Instance.SendgridKey);
+
+      return View(model);
+    }
+
+    [Route("set-key")]
+    [HttpGet]
+    public IActionResult SetKey()
+    {
+      return View();
     }
   }
 }

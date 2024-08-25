@@ -264,7 +264,7 @@
       },
       fetchInvoices() {
         let apiUrl = this.isFiltered ?
-          `/api/i/get-invoices-filtered?Status=${this.inStatus}` 
+          `/api/i/get-invoices-filtered?Status=${this.inStatus}`
           : `/api/i/get-invoices?page=${this.page}&pageSize=${this.pageSize}&status=${this.inStatus}`;
 
         if (this.isFiltered) {

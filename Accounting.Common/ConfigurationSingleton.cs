@@ -12,12 +12,13 @@
     public int InvitationExpirationMinutes { get; set; }
     public string? AdminPsql { get; set; }
     public string? SendgridKey { get; set; }
+    public string DigitalOceanKey { get; set; }
     public string? NoReplyEmailAddress { get; set; }
     public string? AttachmentsPath { get; set; }
     public string? TempPath { get; set; }
     public string? PermPath { get; set; }
     public string? ConnectionStringPsql { get; set; }
-
+    
     private ConfigurationSingleton()
     {
 
