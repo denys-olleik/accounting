@@ -12,23 +12,37 @@ namespace Accounting.Controllers
 
     public SecretController(SecretService secretService)
     {
-       _secretService = secretService;
+      _secretService = secretService;
     }
 
     public async Task<IActionResult> Secrets()
     {
       List<Secret> secrets = await _secretService.GetAllAsync(GetOrganizationId());
 
-      SecretsViewModel model = new SecretsViewModel();
-      model.Secrets = secrets.Select(s => new SecretViewModel
+      SecretsViewModel model = new SecretsViewModel()
       {
-        SecretID = s.SecretID,
-        Key = s.Key,
-        Vendor = s.Vendor,
-        Purpose = s.Purpose
-      }).ToList();
 
-      return View(model);
+      };
+
+      return View();
+    }
+
+    [Route("create")]
+    [HttpGet]
+    public IActionResult Create()
+    {
+      return View();
+    }
+
+    [Route("create")]
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateSecretViewModel model)
+    {
+      
+
+      // TODO: Implement secret creation logic
+
+      return RedirectToAction("Secrets");
     }
   }
 }
