@@ -5,7 +5,6 @@ using Accounting.Database.Interfaces;
 using Npgsql;
 using System.Data;
 using static Accounting.Business.Invoice;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Accounting.Database
 {
@@ -5131,6 +5130,44 @@ namespace Accounting.Database
       }
 
       public int Update(Tenant entity)
+      {
+        throw new NotImplementedException();
+      }
+    }
+
+    public ISecretManager GetSecretManager()
+    {
+      return new SecretManager();
+    }
+
+    public class SecretManager : ISecretManager
+    {
+      public Secret Create(Secret entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Task<Secret> CreateAsync(Secret entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Delete(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Secret Get(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public IEnumerable<Secret> GetAll()
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Update(Secret entity)
       {
         throw new NotImplementedException();
       }
