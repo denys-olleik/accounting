@@ -19,18 +19,17 @@ namespace Accounting.Controllers
     {
       List<Secret> secrets = await _secretService.GetAllAsync(GetOrganizationId());
 
-      SecretsViewModel model = new SecretsViewModel()
-      {
+      SecretsViewModel model = new SecretsViewModel();
+      model.Secrets = new List<SecretViewModel>();
 
-      };
-
-      return View();
+      return View(model);
     }
 
     [Route("create")]
     [HttpGet]
     public IActionResult Create()
     {
+      throw new NotImplementedException();
       return View();
     }
 
@@ -38,9 +37,7 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Create(CreateSecretViewModel model)
     {
-      
-
-      // TODO: Implement secret creation logic
+      throw new NotImplementedException();
 
       return RedirectToAction("Secrets");
     }
