@@ -1,4 +1,5 @@
 ﻿using Accounting.Business;
+using Accounting.Models.SecretViewModels;
 using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,16 @@ namespace Accounting.Controllers
     {
       List<Secret> secrets = await _secretService.GetAllAsync(GetOrganizationId());
 
-      return View();
+      SecretsViewModel model = new SecretsViewModel();
+      model.Secrets = secrets.Select(s => new SecretViewModel
+      {
+        SecretID = s.SecretID,
+        Key = s.Key,
+        Vendor = s.Vendor,
+        Purpose = s.Purpose
+      }).ToList();
+
+      return View(model);
     }
   }
 }
