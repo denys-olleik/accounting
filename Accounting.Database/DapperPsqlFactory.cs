@@ -5167,6 +5167,26 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<List<Secret>> GetAllAsync(int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@OrganizationId", organizationId);
+
+        IEnumerable<Secret> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Secret>("""
+                SELECT * 
+                FROM "Secret" 
+                WHERE "OrganizationId" = @OrganizationId
+                ORDER BY "SecretID" DESC
+                """, p);
+        }
+
+        return result.ToList();
+      }
+
       public int Update(Secret entity)
       {
         throw new NotImplementedException();
