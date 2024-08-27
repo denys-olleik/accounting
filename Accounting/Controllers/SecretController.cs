@@ -1,7 +1,10 @@
 ﻿using Accounting.Business;
 using Accounting.Models.SecretViewModels;
 using Accounting.Service;
+using Accounting.Validators;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
+using System.Transactions;
 
 namespace Accounting.Controllers
 {
@@ -29,7 +32,6 @@ namespace Accounting.Controllers
     [HttpGet]
     public IActionResult Create()
     {
-      throw new NotImplementedException();
       return View();
     }
 
@@ -37,7 +39,19 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Create(CreateSecretViewModel model)
     {
-      throw new NotImplementedException();
+      CreateSecretViewModelValidator validator = new CreateSecretViewModelValidator();
+      ValidationResult result = await validator.ValidateAsync(model);
+
+      if (!result.IsValid)
+      {
+        model.ValidationResult = result;
+        return View(model);
+      }
+
+      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      {
+        _secretService.CreateAsync(model.Key, model.Value, GetOrganizationId());
+      };
 
       return RedirectToAction("Secrets");
     }
