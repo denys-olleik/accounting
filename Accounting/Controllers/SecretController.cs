@@ -48,11 +48,13 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      using (TransactionScope scope 
-        = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      using (TransactionScope scope = new TransactionScope(
+        TransactionScopeAsyncFlowOption.Enabled))
       {
-        await _secretService
-          .CreateAsync(model.Key, model.Value, GetOrganizationId(), GetUserId());
+        await _secretService.CreateAsync(
+          model.Key, model.Value, GetOrganizationId(), GetUserId());
+
+        scope.Complete();
       };
 
       return RedirectToAction("Secrets");
