@@ -12,7 +12,8 @@ An implementation of a forward-only double-entry accounting method in a relation
 0. Have `dotnet` installed.
 1. Clone the repository.
 2. Check connection strings in `appsettings.json` to make sure you have database (`postgres`) with proper credentials.
-3. Set `database-reset.json` to `true` and run. This will create/reset the database with some sample data.
+3. Have PSQL and PostGIS installed.
+4. Set `database-reset.json` to `true` and run. This will create/reset the database with some sample data.
 
 ## Introduction to general ledger and chart of accounts
 
