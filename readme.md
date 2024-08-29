@@ -212,6 +212,6 @@ Note: An incoming check is usually entered into the system before it's deposited
 
 The system will have three levels of backups.
 
-1. **Ledger** - System will attempt to perform a backup upon every action/transaction that affects the ledger.
+1. **Ledger** - System will attempt to perform a backup upon every action/transaction that affects the ledger. Backups will be in human and machine readable format such as csv, json, or xml (you'll get to pick whichever you hate the least). 
 2. **Database** - Performed as often as resources allow, ideally every hour.
 3. **Instance** - Entire virtual machine instance is backed up daily.
