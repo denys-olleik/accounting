@@ -2,8 +2,8 @@
 
 An implementation of a forward-only double-entry accounting method in a relational database.
 
-* **Using**: C# • ASP.NET MVC • Vue.js • PostgreSQL
-* **Avoiding**: Reach • Angular
+* **Using**: C# â€¢ ASP.NET MVC â€¢ Vue.js â€¢ PostgreSQL
+* **Avoiding**: Reach â€¢ Angular
 
 **You're not an accountant. You are just a QuickBooks user.**
 
@@ -12,14 +12,8 @@ An implementation of a forward-only double-entry accounting method in a relation
 0. Have `dotnet` installed.
 1. Clone the repository.
 2. Check connection strings in `appsettings.json` to make sure you have database (`postgres`) with proper credentials.
-3. Set `database-reset.json` to `true` and run. This will create/reset the database with some sample data.
-
-## To Deploy (roughly)
-
-1. publish to folder through visual studio.
-2. zip the published contents and upload to the server to `/var/www/Accounting` using winscp.
-3. unzip the contents using `unzip app.zip`.
-4. Run `sudo reboot`.
+3. Have PSQL and PostGIS installed.
+4. Set `database-reset.json` to `true` and run. This will create/reset the database with some sample data.
 
 ## Introduction to general ledger and chart of accounts
 
@@ -183,7 +177,7 @@ CREATE TABLE "GeneralLedgerInvoiceInvoiceLinePayment"
 
 The pattern repeats in the `GeneralLedgerReconciliationTransaction` table. A bank or credit card statement contains rows of transactions. Credit card statements will mostly have expense transactions while bank statements will have both expense and revenue transactions.
 
-Each transaction in the statement should be uniquely identifiable, but they rarely are—especially when the statement is imported from a CSV file.
+Each transaction in the statement should be uniquely identifiable, but they rarely areâ€”especially when the statement is imported from a CSV file.
 
 ```sql
 CREATE TABLE "GeneralLedgerReconciliationTransaction"
@@ -207,3 +201,11 @@ CREATE TABLE "GeneralLedgerReconciliationTransaction"
 There are integration options with banks and credit cards, but the option to import a CSV file is still a requirement.
 
 Note: An incoming check is usually entered into the system before it's deposited. Ideally, the check should be entered into a check-in-transit or similar account and further reconciled when the deposit appears on the statement.
+
+## Backups
+
+The system will have three levels of backups.
+
+1. **Ledger** - System will attempt to perform a backup upon every action/transaction that affects the ledger. Backups will be in human and machine readable format such as csv, json, or xml (you'll get to pick whichever you hate the least). 
+2. **Database** - Performed as often as resources allow, ideally every hour.
+3. **Instance** - Entire virtual machine instance is backed up daily.
