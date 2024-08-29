@@ -14,13 +14,6 @@ An implementation of a forward-only double-entry accounting method in a relation
 2. Check connection strings in `appsettings.json` to make sure you have database (`postgres`) with proper credentials.
 3. Set `database-reset.json` to `true` and run. This will create/reset the database with some sample data.
 
-## To Deploy (roughly)
-
-1. publish to folder through visual studio.
-2. zip the published contents and upload to the server to `/var/www/Accounting` using winscp.
-3. unzip the contents using `unzip app.zip`.
-4. Run `sudo reboot`.
-
 ## Introduction to general ledger and chart of accounts
 
 In accounting, there are five types of accounts: Assets, Liabilities, Equity, Revenues, and Expenses. Every transaction affects at least two accounts. Examples of transactions include creating invoices, receiving payments, performing reconciliations, and adjusting inventory, among others.
