@@ -23,7 +23,13 @@ namespace Accounting.Controllers
       List<Secret> secrets = await _secretService.GetAllAsync(GetOrganizationId());
 
       SecretsViewModel model = new SecretsViewModel();
-      model.Secrets = new List<SecretViewModel>();
+      model.Secrets = secrets.Select(secret => new SecretViewModel
+      {
+        SecretID = secret.SecretID,
+        Key = secret.Key,
+        Vendor = secret.Vendor,
+        Purpose = secret.Purpose
+      }).ToList();
 
       return View(model);
     }
