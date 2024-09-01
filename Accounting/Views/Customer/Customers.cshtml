@@ -12,36 +12,51 @@
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <template id="customer-actions-template">
-  <div>
-    <a href="#" @@click.prevent="toggleActions" class="margin-right-5px">
-      <business-entity-name-display :business-entity="customer"></business-entity-name-display>
-    </a>
-    <span v-if="isExpanded">
-      <a :href="'/c/details/' + customer.id" class="margin-right-5px">details</a>
-      <a :href="'/c/edit/' + customer.id">edit</a>
-    </span>
+  <div class="display-flex padding-top-bottom-2px">
+    <div class="display-flex flex-1">
+      <a href="#" @@click.prevent="toggleActions" class="margin-right-5px">
+        <business-entity-name-display :business-entity="customer"></business-entity-name-display>
+      </a>
+      <span v-if="isExpanded" class="display-flex margin-left-2px">
+        <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+          <div class="flex-1"></div>
+          <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/c/details/' + customer.id" class="font-size-16px font-Roboto color-white text-decoration-none">details</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/c/edit/' + customer.id" class="font-size-16px font-Roboto color-white text-decoration-none">edit</a>
+          <div class="flex-1"></div>
+        </div>
+      </span>
+    </div>
   </div>
 </template>
 
 <div class="display-flex margin-bottom-5px">
   <div>
-    <a asp-action="Create" class="btn btn-primary">Create Customer and or Vendor</a>
+    <a asp-action="Create" class="btn btn-primary font-Roboto font-size-20px">Create Customer and or Vendor</a>
   </div>
 </div>
 
 <div id="app">
   <table class="border-collapse width-100">
-    <thead class="border-bottom-1px-solid-1a3b56">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
       <tr>
         <th class="text-align-left">#</th>
         <th class="text-align-left">Name</th>
         <th class="text-align-right">Type</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody class="font-Roboto-Mono">
       <template v-for="customer in businessEntities" :key="customer.id">
         <tr>
-          <td class="fitwidth">{{customer.rowNumber}}</td>
+          <td class="padding-right-20px fitwidth">{{customer.rowNumber}}</td>
           <td>
             <customer-actions :customer="customer" :is-expanded="customer.id === expandedCustomerId" @@toggle="toggleCustomerActions(customer.id)"></customer-actions>
           </td>
