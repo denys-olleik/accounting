@@ -1,6 +1,6 @@
 # GAAP & IFRS Compliant ERP System Design
 
-An implementation of a forward-only double-entry accounting method in a relational database.
+Implementation of a forward-only double-entry accounting method with a relational database.
 
 * **Using**: C# • ASP.NET MVC • Vue.js • PostgreSQL
 * **Avoiding**: Reach • Angular
