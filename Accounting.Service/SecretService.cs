@@ -8,13 +8,15 @@ namespace Accounting.Service
     public async Task<Secret> CreateAsync(
       string? key, 
       string? value, 
+      string? vendor,
+      string? purpose,
       int organizationId, 
       int createdById)
     {
       FactoryManager manager = new FactoryManager();
       return await manager
         .GetSecretManager()
-        .CreateAsync(key, value, organizationId, createdById);
+        .CreateAsync(key, value, vendor, purpose, organizationId, createdById);
     }
 
     public async Task<List<Secret>> GetAllAsync(int organizationId)

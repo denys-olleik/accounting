@@ -58,7 +58,7 @@ namespace Accounting.Controllers
         TransactionScopeAsyncFlowOption.Enabled))
       {
         await _secretService.CreateAsync(
-          model.Key, model.Value, GetOrganizationId(), GetUserId());
+          model.Key, model.Value, model.Vendor, model.Purpose, GetOrganizationId(), GetUserId());
 
         scope.Complete();
       };

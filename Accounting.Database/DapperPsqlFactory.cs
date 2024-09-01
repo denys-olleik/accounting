@@ -5152,21 +5152,23 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<Secret> CreateAsync(string? key, string? value, int organizationId, int createdById)
+      public async Task<Secret> CreateAsync(string? key, string? value, string? vendor, string? purpose, int organizationId, int createdById)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Key", key);
         p.Add("@Value", value);
+        p.Add("@Vendor", vendor);
+        p.Add("@Purpose", purpose);
         p.Add("@OrganizationId", organizationId);
-         p.Add("@CreatedById", createdById);
+        p.Add("@CreatedById", createdById);
 
         IEnumerable<Secret> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Secret>("""
-            INSERT INTO "Secret" ("Key", "Value", "OrganizationId", "CreatedById")
-            VALUES (@Key, @Value, @OrganizationId, @CreatedById)
+            INSERT INTO "Secret" ("Key", "Value", "Vendor", "Purpose", "OrganizationId", "CreatedById")
+            VALUES (@Key, @Value, @Vendor, @Purpose, @OrganizationId, @CreatedById)
             RETURNING *;
             """, p);
         }
