@@ -65,5 +65,14 @@ namespace Accounting.Controllers
 
       return RedirectToAction("Secrets");
     }
+
+    [Route("delete/{id}")]
+    [HttpPost]
+    public async Task<IActionResult> Delete(int id)
+    {
+      await _secretService.DeleteAsync(id, GetOrganizationId());
+
+      return RedirectToAction("Secrets");
+    }
   }
 }

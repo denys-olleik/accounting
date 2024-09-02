@@ -19,6 +19,14 @@ namespace Accounting.Service
         .CreateAsync(key, value, vendor, purpose, organizationId, createdById);
     }
 
+    public async Task<int> DeleteAsync(int id, int organizationId)
+    {
+      FactoryManager manager = new FactoryManager();
+      return await manager.GetSecretManager().DeleteAsync(id, organizationId);
+
+      throw new NotImplementedException();
+    }
+
     public async Task<List<Secret>> GetAllAsync(int organizationId)
     {
       FactoryManager manager = new FactoryManager();

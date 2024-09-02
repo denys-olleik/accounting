@@ -377,7 +377,7 @@ namespace Accounting.Database
           result = await con.QueryAsync<ChartOfAccount>(query, new { OrganizationId = organizationId });
           await con.CloseAsync();
         }
-        
+
         return result.ToList();
       }
 
@@ -2469,13 +2469,13 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@Name", entity.Name);
         p.Add("@Description", entity.Description);
-        p.Add("@InventoryMethod", entity.InventoryMethod);  
+        p.Add("@InventoryMethod", entity.InventoryMethod);
         p.Add("@ItemType", entity.ItemType);
         p.Add("@CreatedById", entity.CreatedById);
         p.Add("@OrganizationId", entity.OrganizationId);
         p.Add("@RevenueChartOfAccountId", entity.RevenueChartOfAccountId);
         p.Add("@AssetsChartOfAccountId", entity.AssetsChartOfAccountId);
-        p.Add("@ParentItemId", entity.ParentItemId);  
+        p.Add("@ParentItemId", entity.ParentItemId);
 
         IEnumerable<Item> result;
 
@@ -4161,7 +4161,7 @@ namespace Accounting.Database
         IEnumerable<UserOrganization> result;
 
         using (IDbConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-        { 
+        {
           result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>(
             """
             SELECT uo.*, u.*, o.* 
@@ -4823,8 +4823,8 @@ namespace Accounting.Database
       }
 
       public async Task<List<Inventory>?> GetAllAsync(
-        int page, 
-        int pageSize, 
+        int page,
+        int pageSize,
         int organizationId)
       {
         throw new NotImplementedException();
@@ -5179,6 +5179,22 @@ namespace Accounting.Database
       public int Delete(int id)
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<int> DeleteAsync(int id, int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@ID", id);
+        p.Add("@OrganizationId", organizationId);
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          return await con.ExecuteAsync("""
+          DELETE FROM "Secret"
+          WHERE "ID" = @ID
+          AND "OrganizationId" = @OrganizationId
+          """, p);
+        }
       }
 
       public Secret Get(int id)
