@@ -621,6 +621,18 @@ td.fitwidth, th.fitwidth {
   margin-right: 0;
 }
 
+.full-width-orange-red-button {
+  border: 2px solid orangered;
+  background-color: orangered;
+  border-radius: 2px;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: 'font-Roboto', sans-serif;
+  color: white;
+  margin-left: 0;
+  margin-right: 0;
+}
+
 .background-image-right {
   position: relative;
 }

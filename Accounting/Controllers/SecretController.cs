@@ -8,7 +8,7 @@ using System.Transactions;
 
 namespace Accounting.Controllers
 {
-  [Route("secrets")]
+  [Route("secret")]
   public class SecretController : BaseController
   {
     private readonly SecretService _secretService;
@@ -18,6 +18,7 @@ namespace Accounting.Controllers
       _secretService = secretService;
     }
 
+    [Route("secrets")]
     public async Task<IActionResult> Secrets()
     {
       List<Secret> secrets = await _secretService.GetAllAsync(GetOrganizationId());
