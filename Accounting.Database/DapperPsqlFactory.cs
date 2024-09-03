@@ -5227,6 +5227,28 @@ namespace Accounting.Database
         return result.ToList();
       }
 
+      public async Task<Secret> GetAsync(int secretId, int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@ID", secretId);
+        p.Add("@OrganizationId", organizationId);
+
+        IEnumerable<Secret> result;
+
+        using (NpgsqlConnection con
+          = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Secret>("""
+            SELECT * 
+            FROM "Secret" 
+            WHERE "SecretID" = @ID
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return result.Single();
+      }
+
       public int Update(Secret entity)
       {
         throw new NotImplementedException();

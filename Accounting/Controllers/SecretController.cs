@@ -66,13 +66,21 @@ namespace Accounting.Controllers
       return RedirectToAction("Secrets");
     }
 
-    [Route("delete/{id}")]
-    [HttpPost]
-    public async Task<IActionResult> Delete(int id)
+    [Route("delete/{secretID}")]
+    [HttpGet]
+    public async Task<IActionResult> Delete(int secretID)
     {
-      await _secretService.DeleteAsync(id, GetOrganizationId());
+      Secret secret = await _secretService.GetAsync(secretID, GetOrganizationId());
 
-      return RedirectToAction("Secrets");
+      DeleteSecretViewModel model = new DeleteSecretViewModel
+      {
+        SecretID = secret.SecretID,
+        Key = secret.Key,
+        Vendor = secret.Vendor,
+        Purpose = secret.Purpose
+      };
+
+      return View(model);
     }
   }
 }

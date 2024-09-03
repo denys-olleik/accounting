@@ -32,5 +32,13 @@ namespace Accounting.Service
       FactoryManager manager = new FactoryManager();
       return await manager.GetSecretManager().GetAllAsync(organizationId);
     }
+
+    public async Task<Secret> GetAsync(int id, int organizationId)
+    {
+      FactoryManager manager = new FactoryManager();
+      return await manager
+        .GetSecretManager()
+        .GetAsync(id, organizationId);
+    }
   }
 }
