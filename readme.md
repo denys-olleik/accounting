@@ -22,9 +22,7 @@ Ask anyone to give you a one-sentence definition of accounting, and you'll reali
 
 Journal entries are recorded against specific accounts, where each account has a type that falls into one of five categories: Assets, Liabilities, Equity, Revenues, and Expenses.
 
-In accounting, there are five types of accounts: Assets, Liabilities, Equity, Revenues, and Expenses. Every transaction affects at least two accounts. Examples of transactions include creating invoices, receiving payments, performing reconciliations, and adjusting inventory, among others.
-
-To become familiar with the system, one effective approach is to examine the database schema. The `ChartOfAccount` and `GeneralLedger` is a good start. If you had to choose only two tables to back up, these would be the ones.
+Journal entries are made in transactions of at least two entries where the sum of the debits equals the sum of the credits.
 
 ```sql
 CREATE TABLE "ChartOfAccount"
