@@ -114,6 +114,10 @@ td.fitwidth, th.fitwidth {
   background-color: lightcoral;
 }
 
+.background-color-lightyellow {
+  background-color: lightyellow;
+}
+
 .color-blue {
   color: blue;
 }
