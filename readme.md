@@ -4,7 +4,7 @@ Implementation of a forward-only double-entry accounting method with a relationa
 
 * **Using**: C# • ASP.NET MVC • Vue.js • PostgreSQL
 
-Personally, I think accounting is snakeoil. It's made up. Do you think some distant alien civilization also came up with debits, credits, and all the other bullshit that comes with it? I didn't think so.
+Personally, I think accounting is snake oil—it's all made up. Do you think some distant alien civilization also came up with debits, credits, and all the other 🐂💩 that comes with it? I didn't think so.
 
 ## Set Up
 
