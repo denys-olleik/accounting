@@ -5191,7 +5191,7 @@ namespace Accounting.Database
         {
           return await con.ExecuteAsync("""
           DELETE FROM "Secret"
-          WHERE "ID" = @ID
+          WHERE "SecretID" = @ID
           AND "OrganizationId" = @OrganizationId
           """, p);
         }

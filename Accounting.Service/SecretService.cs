@@ -23,8 +23,6 @@ namespace Accounting.Service
     {
       FactoryManager manager = new FactoryManager();
       return await manager.GetSecretManager().DeleteAsync(id, organizationId);
-
-      throw new NotImplementedException();
     }
 
     public async Task<List<Secret>> GetAllAsync(int organizationId)
