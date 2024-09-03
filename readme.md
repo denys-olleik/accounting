@@ -18,7 +18,9 @@ Ask anyone to give you a one-sentence definition of accounting, and you'll reali
    2. Runs create-db script to create tables, columns, relationships, indexes.
    3. I will later add optional sample data.
 
-## Introduction to general ledger and chart of accounts
+## Journal and accounts
+
+Journal entries are recorded against specific accounts, where each account has a type that falls into one of five categories: Assets, Liabilities, Equity, Revenues, and Expenses.
 
 In accounting, there are five types of accounts: Assets, Liabilities, Equity, Revenues, and Expenses. Every transaction affects at least two accounts. Examples of transactions include creating invoices, receiving payments, performing reconciliations, and adjusting inventory, among others.
 
