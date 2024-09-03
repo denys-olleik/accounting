@@ -3,9 +3,8 @@
 Implementation of a forward-only double-entry accounting method with a relational database.
 
 * **Using**: C# • ASP.NET MVC • Vue.js • PostgreSQL
-* **Avoiding**: Reach • Angular
 
-**You're not an accountant. You are just a QuickBooks user.**
+Personally, I think accounting is snakeoil. It's made up. Do you think some distant alien civilization also came up with debits, credits, and all the other bullshit that comes with it? I didn't think so.
 
 ## Set Up
 
