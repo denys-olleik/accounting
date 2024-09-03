@@ -12,7 +12,8 @@ Ask anyone to give you a one-sentence definition of accounting, and you'll reali
 
 0. Have `dotnet` installed.
 1. Have `psql` installed.
-   1. test
+   1. Have `CREATE EXTENSION IF NOT EXISTS postgis;` installed.
+   2. Have `CREATE EXTENSION IF NOT EXISTS pgcrypto;` installed.
 3. Clone the repository.
 4. Check connection strings in `appsettings.json` to make sure you have database (`postgres`) with proper credentials.
 5. Have PSQL and PostGIS installed.
