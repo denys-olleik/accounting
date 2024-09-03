@@ -8,8 +8,6 @@ Personally, I think accounting is snake oil—it's all made up. Do you think som
 
 Ask anyone to give you a one-sentence definition of accounting, and you'll realize just how stupid everyone is. I won't even try.
 
-## Set Up
-
 0. Have `dotnet` installed.
 1. Have `psql` installed.
    1. Have `CREATE EXTENSION IF NOT EXISTS postgis;` installed.
