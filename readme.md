@@ -20,9 +20,11 @@ Ask anyone to give you a one-sentence definition of accounting, and you'll reali
 
 ## Journal and accounts
 
-Journal entries are recorded against specific accounts, where each account has a type that falls into one of five categories: Assets, Liabilities, Equity, Revenues, and Expenses.
+Journal entries are recorded against specific accounts, each of which falls into one of five categories: Assets, Liabilities, Equity, Revenues, and Expenses.
 
-Journal entries are made in transactions of at least two entries where the sum of the debits equals the sum of the credits.
+Journal entries are made in transactions of at least two entries, where the sum of the debits equals the sum of the credits.
+
+"Double entry" doesn't mean you can't have odd number of entries in a transaction.
 
 ```sql
 CREATE TABLE "ChartOfAccount"
