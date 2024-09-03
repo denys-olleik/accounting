@@ -14,9 +14,9 @@ Ask anyone to give you a one-sentence definition of accounting, and you'll reali
    2. Have `CREATE EXTENSION IF NOT EXISTS pgcrypto;` installed.
 3. Update connection strings in `appsettings.json`.
 5. Set `database-reset.json` to `true` and run. This does two things...
-  1. Uses main database context to create application database.
-  2. Runs create-db script to create tables, columns, relationships, indexes.
-  3. I will later add optional sample data.
+   1. Uses main database context to create application database.
+   2. Runs create-db script to create tables, columns, relationships, indexes.
+   3. I will later add optional sample data.
 
 ## Introduction to general ledger and chart of accounts
 
