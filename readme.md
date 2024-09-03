@@ -6,7 +6,7 @@ Implementation of a forward-only double-entry accounting method with a relationa
 
 Personally, I think accounting is snake oil—it's all made up. Do you think some distant alien civilization also came up with debits, credits, and all the other 🐂💩 that comes with it? I didn't think so.
 
-Ask anyone to give you a one-sentence definition of accounting, and you'll realize just how stupid everyone is.
+Ask anyone to give you a one-sentence definition of accounting, and you'll realize just how stupid everyone is. I won't even try.
 
 ## Set Up
 
