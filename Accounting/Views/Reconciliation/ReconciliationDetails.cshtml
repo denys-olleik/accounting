@@ -63,6 +63,22 @@
           </a>
         </div>
       </div>
+      <div class="width-5px"></div>
+      <div class="flex-1 text-align-center">
+        <div>liabilities and assets accounts</div>
+        <div v-for="reconciliationLiabilitiesAndAssetsAccount in reconciliationLiabilitiesAndAssetsAccounts"
+             :key="reconciliationLiabilitiesAndAssetsAccount.reconciliationLiabilitiesAndAssetsAccountID" class="display-flex flex-direction-column">
+          <a href="#"
+             @@click.prevent="handleLiabilitiesAndAssetsAccountClick(reconciliationLiabilitiesAndAssetsAccount)"
+             :class="{
+              'background-color-dodgerblue': reconciliationLiabilitiesAndAssetsAccount.accountID === selectedReconciliationLiabilitiesAndAssetsAccountId,
+              'color-white': reconciliationLiabilitiesAndAssetsAccount.accountID === selectedReconciliationLiabilitiesAndAssetsAccountId,
+              'default-category-class': reconciliationLiabilitiesAndAssetsAccount.accountID !== selectedReconciliationLiabilitiesAndAssetsAccountId
+            }">
+            {{ reconciliationLiabilitiesAndAssetsAccount.name }}
+          </a>
+        </div>
+      </div>
     </div>
 
     <div v-else-if="selectedInstruction !== null && selectedInstruction === 'revenue'">
@@ -152,9 +168,15 @@
         selectedInstruction: null,
         reconciliationExpenseAccounts: [],
         selectedReconciliationExpenseAccountId: null,
+        reconciliationLiabilitiesAndAssetsAccounts: [],
+        selectedReconciliationLiabilitiesAndAssetsAccountId: null,
       };
     },
     methods: {
+      handleLiabilitiesAndAssetsAccountClick(account) {
+        console.log('Account clicked:', account.name);
+        this.selectedReconciliationLiabilitiesAndAssetsAccountId = account.accountID;
+      },
       handleExpenseAccountClick(account) {
         console.log('Account clicked:', account.name);
         this.selectedReconciliationExpenseAccountId = account.accountID;
@@ -176,7 +198,7 @@
         return isInstructionMatch || hasInstructionWhenNoneSelected;
       },
       handleRowClick(reconciliationTransaction) {
-        if (this.selectedInstruction === 'expense' && this.selectedReconciliationExpenseAccountId) {
+        if (this.selectedInstruction === 'expense' && this.selectedReconciliationExpenseAccountId && this.selectedReconciliationLiabilitiesAndAssetsAccountId) {
           console.log('expense');
 
           let apiUrl = '/api/rcl/update-reconciliation-transaction-instruction';
@@ -184,6 +206,7 @@
             reconciliationTransactionID: reconciliationTransaction.reconciliationTransactionID,
             reconciliationInstruction: this.selectedInstruction,
             selectedReconciliationExpenseAccountId: this.selectedReconciliationExpenseAccountId,
+            selectedReconciliationLiabilitiesAndAssetsAccountId: this.selectedReconciliationLiabilitiesAndAssetsAccountId,
           };
 
           fetch(apiUrl, {
@@ -232,6 +255,7 @@
       handleInstructionChange(instructionKey) {
         this.selectedInstruction = instructionKey;
         this.selectedReconciliationExpenseAccountId = null;
+        this.selectedReconciliationLiabilitiesAndAssetsAccountId = null;
       },
       loadTransactions() {
         let apiUrl = `/api/rcl/get-transactions?reconciliationId=${this.reconciliationId}&page=${this.page}&pageSize=${this.pageSize}`;
@@ -250,11 +274,20 @@
             this.reconciliationExpenseAccounts = data;
           });
       },
+      loadReconciliationsLiabilitiesAndAssetsAccounts() {
+        let apiUrl = '/api/a/all-reconciliation-liabilities-and-assets';
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.reconciliationLiabilitiesAndAssetsAccounts = data;
+          });
+      },
     },
     mounted() {
       this.loadTransactions();
 
       this.loadReconciliationsExpenseAccounts();
+      this.loadReconciliationsLiabilitiesAndAssetsAccounts();
     },
   });
 
