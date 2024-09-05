@@ -3,23 +3,28 @@
 Implementation of a forward-only double-entry accounting method with a relational database.
 
 * **Using**: C# • ASP.NET MVC • Vue.js • PostgreSQL
-* **Avoiding**: Reach • Angular
 
-**You're not an accountant. You are just a QuickBooks user.**
+Personally, I think accounting is snake oil—it's all made up. Do you think some distant alien civilization also came up with debits, credits, and all the other 🐂💩 that comes with it? I didn't think so.
 
-## Set Up
+Ask anyone to give you a one-sentence definition of accounting, and you'll realize just how stupid everyone is. I won't even try.
 
 0. Have `dotnet` installed.
-1. Clone the repository.
-2. Check connection strings in `appsettings.json` to make sure you have database (`postgres`) with proper credentials.
-3. Have PSQL and PostGIS installed.
-4. Set `database-reset.json` to `true` and run. This will create/reset the database with some sample data.
+1. Have `psql` installed.
+   1. Have `CREATE EXTENSION IF NOT EXISTS postgis;` installed.
+   2. Have `CREATE EXTENSION IF NOT EXISTS pgcrypto;` installed.
+3. Update connection strings in `appsettings.json`.
+5. Set `database-reset.json` to `true` and run. This does two things...
+   1. Uses main database context to create application database.
+   2. Runs create-db script to create tables, columns, relationships, indexes.
+   3. I will later add optional sample data.
 
-## Introduction to general ledger and chart of accounts
+## Journal and accounts
 
-In accounting, there are five types of accounts: Assets, Liabilities, Equity, Revenues, and Expenses. Every transaction affects at least two accounts. Examples of transactions include creating invoices, receiving payments, performing reconciliations, and adjusting inventory, among others.
+Journal entries are recorded against specific accounts, each of which falls into one of five categories: Assets, Liabilities, Equity, Revenues, and Expenses.
 
-To become familiar with the system, one effective approach is to examine the database schema. The `ChartOfAccount` and `GeneralLedger` is a good start. If you had to choose only two tables to back up, these would be the ones.
+Journal entries are made in transactions of at least two entries, where the sum of the debits equals the sum of the credits.
+
+"Double entry" doesn't mean you can't have odd number of entries in a transaction.
 
 ```sql
 CREATE TABLE "ChartOfAccount"
