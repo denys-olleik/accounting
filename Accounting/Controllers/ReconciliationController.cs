@@ -60,11 +60,10 @@ namespace Accounting.Controllers
 
     [Route("reconciliation-details")]
     [HttpGet]
-    public async Task<IActionResult> ReconciliationDetails(int id, int page = 1, int pageSize = 2)
+    public async Task<IActionResult> ReconciliationDetails(int id, int page = 1, int pageSize = 10)
     {
       var reconciliation = await _reconciliationService.GetByIdAsync(id, GetOrganizationId());
-      // var transactions
-      var rba = await _reconciliationAttachmentService.GetByReconciliationIdAsync(id, GetOrganizationId());
+      var reconciliationAttachment = await _reconciliationAttachmentService.GetByReconciliationIdAsync(id, GetOrganizationId());
 
       var model = new ReconciliationDetailsViewModel
       {
@@ -73,7 +72,7 @@ namespace Accounting.Controllers
 
         ReconciliationId = reconciliation.ReconciliationID,
         Status = reconciliation.Status,
-        OriginalFileName = rba.OriginalFileName,
+        OriginalFileName = reconciliationAttachment.OriginalFileName,
         Created = reconciliation.Created,
         CreatedById = reconciliation.CreatedById,
         OrganizationId = reconciliation.OrganizationId
