@@ -1,4 +1,4 @@
-﻿@model Accounting.Models.ChartOfAccount.UpdateChartOfAccountViewModel
+﻿@model Accounting.Models.Account.UpdateAccountViewModel
 
 @{
   ViewData["Title"] = "Update Account - " + ConfigurationSingleton.Instance.ApplicationName;
@@ -18,19 +18,19 @@
   </select>
 </template>
 
-<form id="app" asp-action="Update" asp-controller="ChartOfAccount" method="post"
+<form id="app" asp-action="Update" asp-controller="Account" method="post"
       class="display-flex flex-direction-column margin-bottom-5px">
 
-  @if (Model.ParentChartOfAccount != null)
+  @if (Model.ParentAccount != null)
   {
     <div class="display-flex margin-bottom-5px">
       <div>Parent Account:</div>
       <div>
         <a asp-action="Update"
-           asp-controller="ChartOfAccount"
-           asp-route-chartOfAccountId="@Model.ParentChartOfAccountId"
+           asp-controller="Account"
+           asp-route-accountId="@Model.ParentAccountId"
            class="font-Roboto-Mono color-blue">
-          @Model.ParentChartOfAccount.Name
+          @Model.ParentAccount.Name
         </a>
       </div>
     </div>

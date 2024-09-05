@@ -1,6 +1,6 @@
 ﻿using Accounting.Business;
 using Accounting.CustomAttributes;
-using Accounting.Models.ChartOfAccount;
+using Accounting.Models.Account;
 using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,30 +8,30 @@ namespace Accounting.Controllers
 {
   [AuthorizeWithOrganizationId]
   [ApiController]
-  [Route("api/coa")]
-  public class ChartOfAccountApiController : BaseController
+  [Route("api/a")]
+  public class AccountApiController : BaseController
   {
-    private readonly ChartOfAccountService _chartOfAccountService;
+    private readonly AccountService _accountService;
 
-    public ChartOfAccountApiController(ChartOfAccountService chartOfAccountService)
+    public AccountApiController(AccountService accountService)
     {
-      _chartOfAccountService = chartOfAccountService;
+      _accountService = accountService;
     }
 
     [HttpGet("account-types")]
-    public IActionResult GetChartOfAccountConstants()
+    public IActionResult AccountConstants()
     {
-      return Ok(ChartOfAccount.AccountTypeConstants.All);
+      return Ok(Account.AccountTypeConstants.All);
     }
 
     [HttpGet("all")]
-    public async Task<IActionResult> GetAllChartOfAccounts()
+    public async Task<IActionResult> GetAllAccounts()
     {
       var organizationId = GetOrganizationId();
-      List<ChartOfAccount> accounts = await _chartOfAccountService.GetAllHierachicalAsync(organizationId);
+      List<Account> accounts = await _accountService.GetAllHierachicalAsync(organizationId);
 
-      List<ChartOfAccountViewModel> accountsViewmodel = accounts
-          .Where(account => account.ParentChartOfAccountId == null)
+      List<AccountViewModel> accountsViewmodel = accounts
+          .Where(account => account.ParentAccountId == null)
           .Select(ConvertToViewModel)
           .ToList();
 
@@ -39,14 +39,14 @@ namespace Accounting.Controllers
     }
 
     [HttpGet("all-reconciliation-expense")]
-    public async Task<IActionResult> GetAllReconciliationExpenseChartOfAccounts()
+    public async Task<IActionResult> GetAllReconciliationExpenseAccounts()
     {
       var organizationId = GetOrganizationId();
-      List<ChartOfAccount> accounts = await _chartOfAccountService.GetAllReconciliationExpenseAsync(organizationId);
+      List<Account> accounts = await _accountService.GetAllReconciliationExpenseAccountsAsync(organizationId);
 
-      List<ChartOfAccountViewModel> accountsViewmodel = accounts.Select(x => new ChartOfAccountViewModel
+      List<AccountViewModel> accountsViewmodel = accounts.Select(x => new AccountViewModel
       {
-        ChartOfAccountID = x.ChartOfAccountID,
+        AccountID = x.AccountID,
         Name = x.Name,
         Type = x.Type,
         InvoiceCreationForCredit = x.InvoiceCreationForCredit,
@@ -54,23 +54,23 @@ namespace Accounting.Controllers
         ReceiptOfPaymentForCredit = x.ReceiptOfPaymentForCredit,
         ReceiptOfPaymentForDebit = x.ReceiptOfPaymentForDebit,
         Created = x.Created,
-        ParentChartOfAccountId = x.ParentChartOfAccountId,
+        ParentAccountId = x.ParentAccountId,
         CreatedById = x.CreatedById,
-        Children = new List<ChartOfAccountViewModel>()
+        Children = new List<AccountViewModel>()
       }).ToList();
 
       return Ok(accountsViewmodel);
     }
 
     [HttpGet("all-reconciliation-liabilities-and-assets")]
-    public async Task<IActionResult> GetAllReconciliationLiabilitiesAndAssetsChartOfAccounts()
+    public async Task<IActionResult> GetAllReconciliationLiabilitiesAndAssetsAccounts()
     {
       var organizationId = GetOrganizationId();
-      List<ChartOfAccount> accounts = await _chartOfAccountService.GetAllReconciliationLiabilitiesAndAssetsAsync(organizationId);
+      List<Account> accounts = await _accountService.GetAllReconciliationLiabilitiesAndAssetsAsync(organizationId);
 
-      List<ChartOfAccountViewModel> accountsViewmodel = accounts.Select(x => new ChartOfAccountViewModel
+      List<AccountViewModel> accountsViewmodel = accounts.Select(x => new AccountViewModel
       {
-        ChartOfAccountID = x.ChartOfAccountID,
+        AccountID = x.AccountID,
         Name = x.Name,
         Type = x.Type,
         InvoiceCreationForCredit = x.InvoiceCreationForCredit,
@@ -78,19 +78,19 @@ namespace Accounting.Controllers
         ReceiptOfPaymentForCredit = x.ReceiptOfPaymentForCredit,
         ReceiptOfPaymentForDebit = x.ReceiptOfPaymentForDebit,
         Created = x.Created,
-        ParentChartOfAccountId = x.ParentChartOfAccountId,
+        ParentAccountId = x.ParentAccountId,
         CreatedById = x.CreatedById,
-        Children = new List<ChartOfAccountViewModel>()
+        Children = new List<AccountViewModel>()
       }).ToList();
 
       return Ok(accountsViewmodel);
     }
 
-    private ChartOfAccountViewModel ConvertToViewModel(ChartOfAccount account)
+    private AccountViewModel ConvertToViewModel(Account account)
     {
-      var viewModel = new ChartOfAccountViewModel
+      var viewModel = new AccountViewModel
       {
-        ChartOfAccountID = account.ChartOfAccountID,
+        AccountID = account.AccountID,
         Name = account.Name,
         Type = account.Type,
         InvoiceCreationForCredit = account.InvoiceCreationForCredit,
@@ -98,9 +98,9 @@ namespace Accounting.Controllers
         ReceiptOfPaymentForCredit = account.ReceiptOfPaymentForCredit,
         ReceiptOfPaymentForDebit = account.ReceiptOfPaymentForDebit,
         Created = account.Created,
-        ParentChartOfAccountId = account.ParentChartOfAccountId,
+        ParentAccountId = account.ParentAccountId,
         CreatedById = account.CreatedById,
-        Children = new List<ChartOfAccountViewModel>()
+        Children = new List<AccountViewModel>()
       };
 
       if (account.Children != null)

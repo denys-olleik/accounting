@@ -35,7 +35,7 @@
         @*  <div class="flex-1 max-width-768-display-none"></div> *@
         @if (User.Identity.IsAuthenticated)
         {
-          <a asp-action="ChooseOrganization" asp-controller="Account"
+          <a asp-action="ChooseOrganization" asp-controller="UserAccount"
              class="max-width-768-flex-1
               text-align-center
               background-color-A62626
@@ -44,7 +44,7 @@
               padding-sides-25px
               text-decoration-none
               margin-right-2px">Change Organization</a>
-          <form id="logoutForm" asp-action="Logout" asp-controller="Account" method="post"
+          <form id="logoutForm" asp-action="Logout" asp-controller="UserAccount" method="post"
                 class="max-width-768-flex-1 background-color-A62626 text-align-center">
             <a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();"
                class="display-block font-Oswald color-white padding-sides-25px text-decoration-none">
@@ -55,7 +55,7 @@
         else
         {
           @*<a asp-action="Login" asp-controller="Account" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Pay Invoice</a>*@
-          @*<a asp-action="Careers" asp-controller="Home" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Careers</a>*@          <a asp-action="Login" asp-controller="Account" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none">Log In</a>
+          @*<a asp-action="Careers" asp-controller="Home" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Careers</a>*@          <a asp-action="Login" asp-controller="UserAccount" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none">Log In</a>
         }
       </div>
     </nav>

@@ -1,9 +1,9 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
 using Accounting.CustomAttributes;
+using Accounting.Models.Account;
 using Accounting.Models.AccountsReceivableViewModels;
 using Accounting.Models.BusinessEntityViewModels;
-using Accounting.Models.ChartOfAccount;
 using Accounting.Models.InvoiceViewModels;
 using Accounting.Models.PaymentViewModels;
 using Accounting.Service;
@@ -19,7 +19,7 @@ namespace Accounting.Controllers
   public class AccountsReceivableController : BaseController
   {
     private readonly InvoiceService _invoiceService;
-    private readonly ChartOfAccountService _chartOfAccountService;
+    private readonly AccountService _accountService;
     private readonly InvoiceLineService _invoiceLineService;
     private readonly GeneralLedgerService _generalLedgerService;
     private readonly BusinessEntityService _businessEntityService;
@@ -30,7 +30,7 @@ namespace Accounting.Controllers
 
     public AccountsReceivableController(
         InvoiceService invoiceService,
-        ChartOfAccountService chartOfAccountService,
+        AccountService accountService,
         InvoiceLineService invoiceLineService,
         GeneralLedgerService generalLedgerService,
         BusinessEntityService businessEntityService,
@@ -40,7 +40,7 @@ namespace Accounting.Controllers
         GeneralLedgerInvoiceInvoiceLineService generalLedgerInvoiceInvoiceLineService)
     {
       _invoiceService = invoiceService;
-      _chartOfAccountService = chartOfAccountService;
+      _accountService = accountService;
       _invoiceLineService = invoiceLineService;
       _generalLedgerService = generalLedgerService;
       _businessEntityService = businessEntityService;
@@ -55,7 +55,7 @@ namespace Accounting.Controllers
     public async Task<IActionResult> ReceivePaymentForInvoiceIds(string invoiceIdsCsv)
     {
       List<Invoice> invoices = await FetchInvoices(invoiceIdsCsv);  
-      List<ChartOfAccount> debitAccounts = await _chartOfAccountService.GetAccountOptionsForPaymentReceptionDebit(GetOrganizationId());
+      List<Account> debitAccounts = await _accountService.GetAccountOptionsForPaymentReceptionDebit(GetOrganizationId());
 
       var model = CreateReceivePaymentForInvoiceIdsViewModel(invoices, debitAccounts);
       return View(model);
@@ -71,7 +71,7 @@ namespace Accounting.Controllers
       {
         string invoiceIdsCsv = string.Join(",", model.Invoices.Select(i => i.InvoiceId.ToString()));
         List<Invoice> latestInvoices = await FetchInvoices(invoiceIdsCsv);
-        List<ChartOfAccount> debitAccounts = await _chartOfAccountService.GetAccountOptionsForPaymentReceptionDebit(GetOrganizationId());
+        List<Account> debitAccounts = await _accountService.GetAccountOptionsForPaymentReceptionDebit(GetOrganizationId());
 
         model = RebuildInvalidModel(model, latestInvoices, debitAccounts, validationResult);
         return View(model);
@@ -103,12 +103,12 @@ namespace Accounting.Controllers
               OrganizationId = GetOrganizationId(),
             });
 
-            var debitAccount = await _chartOfAccountService.GetAsync(int.Parse(model.SelectedDebitAccountId!), GetOrganizationId());
+            var debitAccount = await _accountService.GetAsync(int.Parse(model.SelectedDebitAccountId!), GetOrganizationId());
 
             // Debit Entry
             var debitGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
             {
-              ChartOfAccountId = debitAccount.ChartOfAccountID,
+              AccountId = debitAccount.AccountID,
               Debit = invoiceLine.AmountToReceive,
               Credit = null,
               CreatedById = GetUserId(),
@@ -118,7 +118,7 @@ namespace Accounting.Controllers
             // Credit Entry
             var creditGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
             {
-              ChartOfAccountId = invoiceLine.AssetsChartOfAccountId,
+              AccountId = invoiceLine.AssetsAccountId,
               Debit = null,
               Credit = invoiceLine.AmountToReceive,
               CreatedById = GetUserId(),
@@ -167,99 +167,6 @@ namespace Accounting.Controllers
       return View(viewModel);
     }
 
-    //[Route("void-invoice-payment")]
-    //[HttpGet]
-    //public async Task<IActionResult> VoidInvoicePayment(int id)
-    //{
-    //  InvoiceInvoiceLinePayment invoicePayment = await _invoicePaymentService.GetInvoicePaymentAsync(id, GetOrganizationId());
-    //  invoicePayment.Invoice = await _invoiceService.GetAsync(invoicePayment.InvoiceId, GetOrganizationId());
-    //  invoicePayment.Payment = await _paymentService.GetAsync(invoicePayment.PaymentId, GetOrganizationId());
-
-    //  BusinessEntity businessEntity = await _businessEntityService.GetAsync(invoicePayment.Invoice!.BusinessEntityId, GetOrganizationId());
-
-    //  VoidInvoicePaymentViewModel model = new VoidInvoicePaymentViewModel
-    //  {
-    //    ID = invoicePayment.InvoiceInvoiceLinePaymentID,
-    //    Invoice = new Models.AccountsReceivableViewModels.VoidInvoicePaymentViewModels.InvoiceViewModel
-    //    {
-    //      ID = invoicePayment.InvoiceId,
-    //      InvoiceNumber = invoicePayment.Invoice!.InvoiceNumber!.ToString()
-    //    },
-    //    Payment = new Models.AccountsReceivableViewModels.VoidInvoicePaymentViewModels.PaymentViewModel
-    //    {
-    //      ID = invoicePayment.PaymentId,
-    //      ReferenceNumber = invoicePayment.Payment!.ReferenceNumber
-    //    },
-    //    BusinessEntity = new Models.AccountsReceivableViewModels.VoidInvoicePaymentViewModels.BusinessEntityViewModel
-    //    {
-    //      ID = invoicePayment.Invoice!.BusinessEntityId,
-    //      DisplayName = Helpers.FormatBusinessEntityName(
-    //              businessEntity.FirstName,
-    //              businessEntity.LastName,
-    //              businessEntity.CompanyName,
-    //              businessEntity.CustomerType!)
-    //    },
-    //    Amount = invoicePayment.Amount
-    //  };
-
-    //  return View(model);
-    //}
-
-    //[Route("void-invoice-payment")]
-    //[HttpPost]
-    //public async Task<IActionResult> VoidInvoicePayment(VoidInvoicePaymentViewModel model)
-    //{
-    //  VoidInvoicePaymentViewModelValidator validator
-    //      = new VoidInvoicePaymentViewModelValidator(_invoicePaymentService, GetOrganizationId());
-    //  ValidationResult validationResult = await validator.ValidateAsync(model);
-
-    //  if (!validationResult.IsValid)
-    //  {
-    //    model.ValidationResult = validationResult;
-    //    return View(model);
-    //  }
-
-    //  using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-    //  {
-    //    await _invoicePaymentService.VoidAsync(model.ID, model.VoidReason!, GetOrganizationId());
-    //    List<GeneralLedgerInvoiceInvoiceLinePayment> invoicePayments = await _generalLedgerInvoicePaymentService.GetAllAsync(model.ID, GetOrganizationId());
-
-    //    Guid transactionGuid = GuidExtensions.CreateSecureGuid();
-
-    //    foreach (var invoicePayment in invoicePayments)
-    //    {
-    //      GeneralLedger gl = await _generalLedgerService.GetAsync(invoicePayment.GeneralLedgerId, GetOrganizationId());
-
-    //      gl = await _generalLedgerService.CreateAsync(new GeneralLedger()
-    //      {
-    //        ChartOfAccountId = gl.ChartOfAccountId,
-    //        Debit = gl.Credit,
-    //        Credit = gl.Debit,
-    //        CreatedById = GetUserId(),
-    //        OrganizationId = GetOrganizationId()
-    //      });
-
-    //      await _generalLedgerInvoicePaymentService.CreateAsync(new GeneralLedgerInvoiceInvoiceLinePayment()
-    //      {
-    //        GeneralLedgerId = gl.GeneralLedgerID,
-    //        InvoiceInvoiceLinePaymentId = model.ID,
-    //        TransactionGuid = transactionGuid,
-    //        ReversedGeneralLedgerInvoiceInvoiceLinePaymentId = invoicePayment.GeneralLedgerInvoiceInvoiceLinePaymentID,
-    //        CreatedById = GetUserId(),
-    //        OrganizationId = GetOrganizationId()
-    //      });
-    //    }
-
-    //    await _invoiceService.ComputeAndUpdateTotalAmountAndReceivedAmount(model.Invoice.ID, GetOrganizationId());
-    //    await _invoiceService.ComputeAndUpdateInvoiceStatus(model.Invoice.ID, GetOrganizationId());
-    //    await _invoiceService.UpdateLastUpdated(model.Invoice.ID, GetOrganizationId());
-
-    //    scope.Complete();
-    //  }
-
-    //  return View();
-    //}
-
     private async Task<ValidationResult> ValidateReceivePaymentForInvoiceIdsViewModel(ReceivePaymentForInvoiceIdsViewModel model, InvoiceService invoiceService)
     {
       ReceivePaymentForInvoiceIdsViewModelValidator validator = new ReceivePaymentForInvoiceIdsViewModelValidator(GetOrganizationId(), invoiceService);
@@ -269,7 +176,7 @@ namespace Accounting.Controllers
     private ReceivePaymentForInvoiceIdsViewModel RebuildInvalidModel(
         ReceivePaymentForInvoiceIdsViewModel model,
         List<Invoice> latestInvoices,
-        List<ChartOfAccount> debitAccounts,
+        List<Account> debitAccounts,
         ValidationResult validationResult)
     {
       var updatedModel = CreateReceivePaymentForInvoiceIdsViewModel(latestInvoices, debitAccounts);
@@ -301,11 +208,11 @@ namespace Accounting.Controllers
       return invoices;
     }
 
-    private ChartOfAccountViewModel BuildChartOfAccountViewModel(ChartOfAccount account)
+    private AccountViewModel BuildAccountViewModel(Account account)
     {
-      return new ChartOfAccountViewModel
+      return new AccountViewModel
       {
-        ChartOfAccountID = account.ChartOfAccountID,
+        AccountID = account.AccountID,
         Name = account.Name
       };
     }
@@ -325,8 +232,8 @@ namespace Accounting.Controllers
           Quantity = il.Quantity,
           Price = il.Price,
           //AmountToReceive = il.Quantity * il.Price,
-          RevenueChartOfAccountId = il.RevenueChartOfAccountId,
-          AssetsChartOfAccountId = il.AssetsChartOfAccountId
+          RevenueAccountId = il.RevenueAccountId,
+          AssetsAccountId = il.AssetsAccountId
         }).ToList(),
         BusinessEntity = new BusinessEntityViewModel
         {
@@ -342,10 +249,10 @@ namespace Accounting.Controllers
 
     private ReceivePaymentForInvoiceIdsViewModel CreateReceivePaymentForInvoiceIdsViewModel(
       List<Invoice> invoices, 
-      List<ChartOfAccount> debitAccounts)
+      List<Account> debitAccounts)
     {
       var invoicesViewModel = invoices.Select(invoice => BuildReceivePaymentForInvoiceViewModel(invoice)).ToList();
-      var accountsViewModel = debitAccounts.Select(BuildChartOfAccountViewModel).ToList();
+      var accountsViewModel = debitAccounts.Select(BuildAccountViewModel).ToList();
       return new ReceivePaymentForInvoiceIdsViewModel
       {
         Invoices = invoicesViewModel,

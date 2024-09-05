@@ -1,4 +1,4 @@
-﻿using Accounting.Models.ChartOfAccount;
+﻿using Accounting.Models.Account;
 using FluentValidation.Results;
 
 namespace Accounting.Models.AccountsReceivableViewModels
@@ -8,7 +8,7 @@ namespace Accounting.Models.AccountsReceivableViewModels
     public string? ReferenceNumber { get; set; }
     public List<ReceivePaymentForInvoiceViewModel> Invoices { get; set; }
       = new List<ReceivePaymentForInvoiceViewModel>();
-    public List<ChartOfAccountViewModel>? DebitAccounts { get; set; }
+    public List<AccountViewModel>? DebitAccounts { get; set; }
     public decimal PaymentTotal { get; set; }
     public string? SelectedDebitAccountId { get; set; }
 

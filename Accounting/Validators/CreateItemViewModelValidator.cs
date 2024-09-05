@@ -52,7 +52,7 @@ namespace Accounting.Validators
       if (!chartOfAccountId.HasValue)
         return false;
 
-      ChartOfAccountService chartOfAccountService = new ChartOfAccountService();
+      AccountService chartOfAccountService = new AccountService();
       return await chartOfAccountService.ExistsAsync(chartOfAccountId.Value, organizationId);
     }
   }

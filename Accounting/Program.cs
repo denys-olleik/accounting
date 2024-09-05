@@ -35,7 +35,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 
 builder.Services.AddTransient<AddressService>();
 builder.Services.AddTransient<BusinessEntityService>();
-builder.Services.AddTransient<ChartOfAccountService>();
+builder.Services.AddTransient<AccountService>();
 builder.Services.AddTransient<GeneralLedgerInvoiceInvoiceLinePaymentService>();
 builder.Services.AddTransient<GeneralLedgerInvoiceInvoiceLineService>();
 builder.Services.AddTransient<GeneralLedgerService>();

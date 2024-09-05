@@ -1,9 +1,9 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
 using Accounting.CustomAttributes;
+using Accounting.Models.Account;
 using Accounting.Models.AddressViewModels;
 using Accounting.Models.BusinessEntityViewModels;
-using Accounting.Models.ChartOfAccount;
 using Accounting.Models.InvoiceViewModels;
 using Accounting.Models.ItemViewModels;
 using Accounting.Models.PaymentTermViewModels;
@@ -32,7 +32,7 @@ namespace Accounting.Controllers
     private readonly InvoiceInvoiceLinePaymentService _invoicePaymentService;
     private readonly InvoiceAttachmentService _invoiceAttachmentService;
     private readonly OrganizationService _organizationService;
-    private readonly ChartOfAccountService _chartOfAccountService;
+    private readonly AccountService _accountService;
 
     public InvoiceController(
       AddressService addressService,
@@ -45,7 +45,7 @@ namespace Accounting.Controllers
       ItemService itemService,
       OrganizationService organizationService,
       PaymentTermsService paymentTermsService,
-      ChartOfAccountService chartOfAccountService,
+      AccountService chartOfAccountService,
       GeneralLedgerInvoiceInvoiceLineService generalLedgerInvoiceInvoiceLineService)
     {
       _addressService = addressService;
@@ -58,7 +58,7 @@ namespace Accounting.Controllers
       _itemService = itemService;
       _organizationService = organizationService;
       _paymentTermsService = paymentTermsService;
-      _chartOfAccountService = chartOfAccountService;
+      _accountService = chartOfAccountService;
       _generalLedgerInvoiceInvoiceLineService = generalLedgerInvoiceInvoiceLineService;
     }
 
@@ -147,15 +147,15 @@ namespace Accounting.Controllers
       return model;
     }
 
-    private async Task<List<ChartOfAccountViewModel>> GetFilteredChartOfAccountsAsync(string[] accountNames)
+    private async Task<List<AccountViewModel>> GetFilteredAccountsAsync(string[] accountNames)
     {
-      var chartOfAccountService = await ChartOfAccountServiceSingleton.InstanceAsync(GetOrganizationId());
+      var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
 
-      return chartOfAccountService.Accounts
+      return accountService.Accounts
           .Where(x => accountNames.Contains(x.Name))
-          .Select(x => new ChartOfAccountViewModel()
+          .Select(x => new AccountViewModel()
           {
-            ChartOfAccountID = x.ChartOfAccountID,
+            AccountID = x.AccountID,
             Name = x.Name,
             Type = x.Type,
           })
@@ -173,7 +173,7 @@ namespace Accounting.Controllers
 
     private async Task<CreateInvoiceViewModel> InitializeErrorCreateInvoiceViewModel(CreateInvoiceViewModel model, ValidationResult validationResult)
     {
-      var chartOfAccountService = await ChartOfAccountServiceSingleton.InstanceAsync(GetOrganizationId());
+      var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
 
       model.Customers = await GetAllCustomersWithAddresses();
       model.PaymentTerms = await GetAllPaymentTerms();
@@ -231,8 +231,8 @@ namespace Accounting.Controllers
           Price = invoiceLine.Price,
           InvoiceId = invoice.InvoiceID,
           CreatedById = GetUserId(),
-          RevenueChartOfAccountId = invoiceLine.RevenueChartOfAccountId,
-          AssetsChartOfAccountId = invoiceLine.AssetsChartOfAccountId,
+          RevenueAccountId = invoiceLine.RevenueAccountId,
+          AssetsAccountId = invoiceLine.AssetsAccountId,
           OrganizationId = GetOrganizationId(),
         });
 
@@ -241,13 +241,13 @@ namespace Accounting.Controllers
 
       Guid transactionGuid = GuidExtensions.CreateSecureGuid();
 
-      var chartOfAccountService = await ChartOfAccountServiceSingleton.InstanceAsync(GetOrganizationId());
+      var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
 
       foreach (var invoiceLine in model.InvoiceLines!)
       {
         GeneralLedger debitGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
         {
-          ChartOfAccountId = invoiceLine.AssetsChartOfAccountId,
+          AccountId = invoiceLine.AssetsAccountId,
           Debit = invoiceLine.Price * invoiceLine.Quantity,
           Credit = null,
           CreatedById = GetUserId(),
@@ -256,7 +256,7 @@ namespace Accounting.Controllers
 
         GeneralLedger creditGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
         {
-          ChartOfAccountId = invoiceLine.RevenueChartOfAccountId,
+          AccountId = invoiceLine.RevenueAccountId,
           Debit = null,
           Credit = invoiceLine.Price * invoiceLine.Quantity,
           CreatedById = GetUserId(),
@@ -293,7 +293,7 @@ namespace Accounting.Controllers
       {
         GeneralLedger debitGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
         {
-          ChartOfAccountId = line.AssetsChartOfAccountId,
+          AccountId = line.AssetsAccountId,
           Debit = line.Price * line.Quantity,
           Credit = null,
           CreatedById = GetUserId(),
@@ -311,7 +311,7 @@ namespace Accounting.Controllers
 
         GeneralLedger creditGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
         {
-          ChartOfAccountId = line.RevenueChartOfAccountId,
+          AccountId = line.RevenueAccountId,
           Debit = null,
           Credit = line.Price * line.Quantity,
           CreatedById = GetUserId(),
@@ -397,8 +397,8 @@ namespace Accounting.Controllers
           Description = x.Description,
           Quantity = x.Quantity,
           Price = x.Price,
-          RevenueChartOfAccountId = x.RevenueChartOfAccountId,
-          AssetsChartOfAccountId = x.AssetsChartOfAccountId,
+          RevenueAccountId = x.RevenueAccountId,
+          AssetsAccountId = x.AssetsAccountId,
         }).ToList(),
         SelectedAddress = JsonConvert.DeserializeObject<AddressViewModel>(invoice.BillingAddressJSON),
       };
@@ -487,8 +487,8 @@ namespace Accounting.Controllers
               Price = invoiceLine.Price,
               InvoiceId = invoice.InvoiceID,
               CreatedById = GetUserId(),
-              RevenueChartOfAccountId = invoiceLine.RevenueChartOfAccountId,
-              AssetsChartOfAccountId = invoiceLine.AssetsChartOfAccountId,
+              RevenueAccountId = invoiceLine.RevenueAccountId,
+              AssetsAccountId = invoiceLine.AssetsAccountId,
               OrganizationId = GetOrganizationId(),
             });
 
@@ -503,8 +503,8 @@ namespace Accounting.Controllers
           Description = x.Description,
           Quantity = x.Quantity,
           Price = x.Price,
-          RevenueChartOfAccountId = x.RevenueChartOfAccountId,
-          AssetsChartOfAccountId = x.AssetsChartOfAccountId,
+          RevenueAccountId = x.RevenueAccountId,
+          AssetsAccountId = x.AssetsAccountId,
         }).ToList();
 
         List<InvoiceLine> deletedLines = model.DeletedInvoiceLines!.Select(x => new InvoiceLine()
@@ -514,8 +514,8 @@ namespace Accounting.Controllers
           Description = x.Description,
           Quantity = x.Quantity,
           Price = x.Price,
-          RevenueChartOfAccountId = x.RevenueChartOfAccountId,
-          AssetsChartOfAccountId = x.AssetsChartOfAccountId,
+          RevenueAccountId = x.RevenueAccountId,
+          AssetsAccountId = x.AssetsAccountId,
         }).ToList();
 
         await _generalLedgerInvoiceInvoiceLineService
@@ -681,26 +681,26 @@ namespace Accounting.Controllers
         ID = x.ItemID,
         Name = x.Name,
         Description = x.Description,
-        RevenueChartOfAccountId = x.RevenueChartOfAccountId,
-        AssetsChartOfAccountId = x.AssetsChartOfAccountId,
+        RevenueAccountId = x.RevenueAccountId,
+        AssetsAccountId = x.AssetsAccountId,
       }).ToList();
     }
 
     private async Task SetupAccrualAccounting(CreateInvoiceViewModel model, int organizationId)
     {
-      var creditAccounts = await _chartOfAccountService.GetAccountOptionsForInvoiceCreationCredit(organizationId);
-      var debitAccounts = await _chartOfAccountService.GetAccountOptionsForInvoiceCreationDebit(organizationId);
+      var creditAccounts = await _accountService.GetAccountOptionsForInvoiceCreationCredit(organizationId);
+      var debitAccounts = await _accountService.GetAccountOptionsForInvoiceCreationDebit(organizationId);
 
-      model.CreditAccounts = creditAccounts.Select(x => new ChartOfAccountViewModel
+      model.CreditAccounts = creditAccounts.Select(x => new AccountViewModel
       {
-        ChartOfAccountID = x.ChartOfAccountID,
+        AccountID = x.AccountID,
         Name = x.Name,
         Type = x.Type,
       }).ToList();
 
-      model.DebitAccounts = debitAccounts.Select(x => new ChartOfAccountViewModel
+      model.DebitAccounts = debitAccounts.Select(x => new AccountViewModel
       {
-        ChartOfAccountID = x.ChartOfAccountID,
+        AccountID = x.AccountID,
         Name = x.Name,
         Type = x.Type,
       }).ToList();

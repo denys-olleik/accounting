@@ -1,12 +1,12 @@
 ﻿using Accounting.Business;
-using Accounting.Models.ChartOfAccount;
+using Accounting.Models.Account;
 using FluentValidation;
 
 namespace Accounting.Validators
 {
-  public class CreateChartOfAccountViewModelValidator : AbstractValidator<CreateChartOfAccountViewModel>
+  public class CreateAccountViewModelValidator : AbstractValidator<CreateAccountViewModel>
   {
-    public CreateChartOfAccountViewModelValidator()
+    public CreateAccountViewModelValidator()
     {
       RuleFor(x => x.AccountName)
         .NotEmpty().WithMessage("'Account Name' is required.")
@@ -19,7 +19,7 @@ namespace Accounting.Validators
 
     private bool BeAValidAccountType(string? accountType)
     {
-      return !string.IsNullOrEmpty(accountType) && ChartOfAccount.AccountTypeConstants.All.Contains(accountType);
+      return !string.IsNullOrEmpty(accountType) && Account.AccountTypeConstants.All.Contains(accountType);
     }
   }
 }

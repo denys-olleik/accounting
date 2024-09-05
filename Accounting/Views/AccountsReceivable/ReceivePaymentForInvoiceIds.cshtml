@@ -32,7 +32,7 @@
         <option value="">Select an account</option>
         @foreach (var account in Model.DebitAccounts)
         {
-          <option value="@account.ChartOfAccountID" selected="@(Model.SelectedDebitAccountId == account.ChartOfAccountID.ToString() ? "selected" : null)">
+          <option value="@account.AccountID" selected="@(Model.SelectedDebitAccountId == account.AccountID.ToString() ? "selected" : null)">
             @account.Name @account.Type
           </option>
         }
@@ -97,7 +97,7 @@
                       <td class="text-align-right padding-right-20px font-Roboto-Mono">@Model.Invoices[i].InvoiceLines[j].Price?.ToString("F2")</td>
                       <td class="text-align-right white-space-nowrap">
                         <input type="hidden" name="Invoices[@i].InvoiceLines[@j].InvoiceLineId" value="@Model.Invoices[i].InvoiceLines[j].InvoiceLineID" />
-                        <input type="hidden" name="Invoices[@i].InvoiceLines[@j].AssetsChartOfAccountId" value="@Model.Invoices[i].InvoiceLines[j].AssetsChartOfAccountId" />
+                        <input type="hidden" name="Invoices[@i].InvoiceLines[@j].AssetsAccountId" value="@Model.Invoices[i].InvoiceLines[j].AssetsAccountId" />
                         <input type="number" name="Invoices[@i].InvoiceLines[@j].AmountToReceive"
                                value="@Model.Invoices[i].InvoiceLines[j].AmountToReceive"
                                placeholder="$0.00"

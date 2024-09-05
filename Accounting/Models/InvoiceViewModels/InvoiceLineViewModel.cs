@@ -12,7 +12,7 @@
     public decimal? Price { get; set; }
     public bool QuantityOrPriceModified { get; set; }
 
-    public int RevenueChartOfAccountId { get; set; }
-    public int AssetsChartOfAccountId { get; set; }
+    public int RevenueAccountId { get; set; }
+    public int AssetsAccountId { get; set; }
   }
 }

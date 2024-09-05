@@ -280,19 +280,19 @@ namespace Accounting.Database
       }
     }
 
-    public IChartOfAccountManager GetChartOfAccountManager()
+    public IAccountManager GetChartOfAccountManager()
     {
       return new ChartOfAccountManager();
     }
 
-    public class ChartOfAccountManager : IChartOfAccountManager
+    public class ChartOfAccountManager : IAccountManager
     {
-      public ChartOfAccount Create(ChartOfAccount entity)
+      public Account Create(Account entity)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<ChartOfAccount> CreateAsync(ChartOfAccount entity)
+      public async Task<Account> CreateAsync(Account entity)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Name", entity.Name);
@@ -301,17 +301,17 @@ namespace Accounting.Database
         p.Add("@InvoiceCreationForDebit", entity.InvoiceCreationForDebit);
         p.Add("@ReceiptOfPaymentForCredit", entity.ReceiptOfPaymentForCredit);
         p.Add("@ReceiptOfPaymentForDebit", entity.ReceiptOfPaymentForDebit);
-        p.Add("@ParentChartOfAccountId", entity.ParentChartOfAccountId);
+        p.Add("@ParentChartOfAccountId", entity.ParentAccountId);
         p.Add("@ReconciliationExpense", entity.ReconciliationExpense);
         p.Add("@ReconciliationLiabilitiesAndAssets", entity.ReconciliationLiabilitiesAndAssets);
         p.Add("@CreatedById", entity.CreatedById);
         p.Add("@OrganizationId", entity.OrganizationId);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             INSERT INTO "ChartOfAccount" 
             ("Name", "Type", "InvoiceCreationForCredit", "InvoiceCreationForDebit", "ReceiptOfPaymentForCredit", "ReceiptOfPaymentForDebit", "ReconciliationExpense", "ReconciliationLiabilitiesAndAssets", "ParentChartOfAccountId", "CreatedById", "OrganizationId") 
             VALUES 
@@ -348,14 +348,14 @@ namespace Accounting.Database
         return result;
       }
 
-      public ChartOfAccount Get(int id)
+      public Account Get(int id)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<List<ChartOfAccount>> GetAccountBalanceReport(int organizationId)
+      public async Task<List<Account>> GetAccountBalanceReport(int organizationId)
       {
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
@@ -374,23 +374,23 @@ namespace Accounting.Database
             GROUP BY coa."ChartOfAccountID", coa."Name", coa."Type"
         """;
 
-          result = await con.QueryAsync<ChartOfAccount>(query, new { OrganizationId = organizationId });
+          result = await con.QueryAsync<Account>(query, new { OrganizationId = organizationId });
           await con.CloseAsync();
         }
 
         return result.ToList();
       }
 
-      public async Task<List<ChartOfAccount>> GetAccountOptionsForInvoiceCreationCredit(int organizationId)
+      public async Task<List<Account>> GetAccountOptionsForInvoiceCreationCredit(int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "InvoiceCreationForCredit" = true
@@ -401,16 +401,16 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<List<ChartOfAccount>> GetAccountOptionsForInvoiceCreationDebit(int organizationId)
+      public async Task<List<Account>> GetAccountOptionsForInvoiceCreationDebit(int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "InvoiceCreationForDebit" = true
@@ -421,16 +421,16 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<List<ChartOfAccount>> GetAccountOptionsForPaymentReceptionCredit(int organizationId)
+      public async Task<List<Account>> GetAccountOptionsForPaymentReceptionCredit(int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "ReceiptOfPaymentForCredit" = true
@@ -441,16 +441,16 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<List<ChartOfAccount>> GetAccountOptionsForPaymentReceptionDebit(int organizationId)
+      public async Task<List<Account>> GetAccountOptionsForPaymentReceptionDebit(int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "ReceiptOfPaymentForDebit" = true
@@ -461,18 +461,18 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public IEnumerable<ChartOfAccount> GetAll()
+      public IEnumerable<Account> GetAll()
       {
         throw new NotImplementedException();
       }
 
-      public async Task<List<ChartOfAccount>> GetAllAsync(int organizationId)
+      public async Task<List<Account>> GetAllAsync(int organizationId)
       {
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "OrganizationId" = @OrganizationId
@@ -482,17 +482,17 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<List<ChartOfAccount>> GetAllAsync(string accountType, int organizationId)
+      public async Task<List<Account>> GetAllAsync(string accountType, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Type", accountType);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "Type" = @Type
@@ -503,16 +503,16 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<List<ChartOfAccount>> GetAllReconciliationExpenseAsync(int organizationId)
+      public async Task<List<Account>> GetAllReconciliationExpenseAsync(int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "ReconciliationExpense" = true
@@ -523,16 +523,16 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<List<ChartOfAccount>> GetAllReconciliationLiabilitiesAndAssetsAsync(int organizationId)
+      public async Task<List<Account>> GetAllReconciliationLiabilitiesAndAssetsAsync(int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "ReconciliationLiabilitiesAndAssets" = true
@@ -543,17 +543,17 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<List<ChartOfAccount>> GetAsync(string[] accountNames, int organizationId)
+      public async Task<List<Account>> GetAsync(string[] accountNames, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@AccountNames", accountNames);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "Name" = ANY(@AccountNames)
@@ -564,16 +564,16 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<ChartOfAccount> GetAsync(int id, int organizationId)
+      public async Task<Account> GetAsync(int id, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@ChartOfAccountID", id);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "ChartOfAccountID" = @ChartOfAccountID
@@ -583,17 +583,17 @@ namespace Accounting.Database
         return result.Single();
       }
 
-      public async Task<ChartOfAccount> GetAsync(string accountName, int organizationId)
+      public async Task<Account> GetAsync(string accountName, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Name", accountName);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "Name" = @Name
@@ -604,22 +604,22 @@ namespace Accounting.Database
         return result.Single();
       }
 
-      public async Task<ChartOfAccount> GetAsync(int id)
+      public async Task<Account> GetAsync(int id)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<ChartOfAccount> GetByAccountNameAsync(string accountName, int organizationId)
+      public async Task<Account> GetByAccountNameAsync(string accountName, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Name", accountName);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<ChartOfAccount> result;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<ChartOfAccount>("""
+          result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "ChartOfAccount" 
             WHERE "Name" = @Name
@@ -630,15 +630,15 @@ namespace Accounting.Database
         return result.SingleOrDefault()!;
       }
 
-      public int Update(ChartOfAccount entity)
+      public int Update(Account entity)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateAsync(ChartOfAccount chartOfAccount)
+      public async Task<int> UpdateAsync(Account chartOfAccount)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@ChartOfAccountID", chartOfAccount.ChartOfAccountID);
+        p.Add("@ChartOfAccountID", chartOfAccount.AccountID);
         p.Add("@Name", chartOfAccount.Name);
         p.Add("@Type", chartOfAccount.Type);
         p.Add("@InvoiceCreationForCredit", chartOfAccount.InvoiceCreationForCredit);
@@ -1059,7 +1059,7 @@ namespace Accounting.Database
       public async Task<GeneralLedger> CreateAsync(GeneralLedger generalLedger)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@ChartOfAccountId", generalLedger.ChartOfAccountId);
+        p.Add("@ChartOfAccountId", generalLedger.AccountId);
         p.Add("@Debit", generalLedger.Debit);
         p.Add("@Credit", generalLedger.Credit);
         p.Add("@Memo", generalLedger.Memo);
@@ -1433,8 +1433,8 @@ namespace Accounting.Database
         p.Add("@Quantity", entity.Quantity);
         p.Add("@Price", entity.Price);
         p.Add("@InvoiceId", entity.InvoiceId);
-        p.Add("@RevenueChartOfAccountId", entity.RevenueChartOfAccountId);
-        p.Add("@AssetsChartOfAccountId", entity.AssetsChartOfAccountId);
+        p.Add("@RevenueChartOfAccountId", entity.RevenueAccountId);
+        p.Add("@AssetsChartOfAccountId", entity.AssetsAccountId);
         p.Add("@CreatedById", entity.CreatedById);
         p.Add("@OrganizationId", entity.OrganizationId);
 
@@ -2473,8 +2473,8 @@ namespace Accounting.Database
         p.Add("@ItemType", entity.ItemType);
         p.Add("@CreatedById", entity.CreatedById);
         p.Add("@OrganizationId", entity.OrganizationId);
-        p.Add("@RevenueChartOfAccountId", entity.RevenueChartOfAccountId);
-        p.Add("@AssetsChartOfAccountId", entity.AssetsChartOfAccountId);
+        p.Add("@RevenueChartOfAccountId", entity.RevenueAccountId);
+        p.Add("@AssetsChartOfAccountId", entity.AssetsAccountId);
         p.Add("@ParentItemId", entity.ParentItemId);
 
         IEnumerable<Item> result;

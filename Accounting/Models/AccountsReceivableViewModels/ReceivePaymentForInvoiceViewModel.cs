@@ -24,8 +24,8 @@ namespace Accounting.Models.AccountsReceivableViewModels
       public decimal? Price { get; set; }
       public decimal? Received { get; set; }
       public decimal? AmountToReceive { get; set; }
-      public int RevenueChartOfAccountId { get; set; }
-      public int AssetsChartOfAccountId { get; set; }
+      public int RevenueAccountId { get; set; }
+      public int AssetsAccountId { get; set; }
     }
   }
 }

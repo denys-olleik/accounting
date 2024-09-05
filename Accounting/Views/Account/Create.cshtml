@@ -1,4 +1,4 @@
-﻿@model Accounting.Models.ChartOfAccount.CreateChartOfAccountViewModel
+﻿@model Accounting.Models.Account.CreateAccountViewModel
 
 @{
   ViewData["Title"] = "Create Account - " + ConfigurationSingleton.Instance.ApplicationName;
@@ -18,20 +18,20 @@
   </select>
 </template>
 
-<form id="app" asp-action="Create" asp-controller="ChartOfAccount" asp-route-parentChartOfAccountId="@Model.ParentChartOfAccountId"
+<form id="app" asp-action="Create" asp-controller="Account" asp-route-parentAccountId="@Model.ParentAccountId"
       method="post" class="display-flex flex-direction-column margin-bottom-5px">
-  <input type="hidden" asp-for="ParentChartOfAccountId" />
+  <input type="hidden" asp-for="ParentAccountId" />
 
-  @if (Model.ParentChartOfAccount != null)
+  @if (Model.ParentAccount != null)
   {
     <div class="display-flex margin-bottom-5px">
       <div>Parent Account:</div>
       <div class="display-flex flex-direction-column">
         <div class="flex-1"></div>
         <a asp-action="Update"
-           asp-controller="ChartOfAccount"
-           asp-route-chartOfAccountId="@Model.ParentChartOfAccountId"
-           class="font-Roboto-Mono">@Model.ParentChartOfAccount.Name</a>
+           asp-controller="Account"
+           asp-route-accountId="@Model.ParentAccountId"
+           class="font-Roboto-Mono">@Model.ParentAccount.Name</a>
         <div class="flex-1"></div>
       </div>
     </div>
@@ -39,7 +39,7 @@
 
   <div class="display-flex margin-bottom-5px">
     <div class="display-flex flex-1 flex-direction-column">
-      @if (Model.ParentChartOfAccountId != null)
+      @if (Model.ParentAccountId != null)
       {
         <label asp-for="AccountName">Sub Account Name</label>
       }

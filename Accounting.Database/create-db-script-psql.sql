@@ -88,9 +88,9 @@ CREATE TABLE "ReconciliationAttachment"
 	UNIQUE ("ReconciliationId", "OrganizationId")
 );
 
-CREATE TABLE "ChartOfAccount"
+CREATE TABLE "Account"
 (
-	"ChartOfAccountID" SERIAL PRIMARY KEY NOT NULL,
+	"AccountID" SERIAL PRIMARY KEY NOT NULL,
 	"Name" VARCHAR(200) NOT NULL,
 	"Type" VARCHAR(50) NOT NULL CHECK ("Type" IN ('assets', 'liabilities', 'equity', 'revenue', 'expense')),
 	"InvoiceCreationForCredit" BOOLEAN NOT NULL DEFAULT FALSE,
@@ -100,10 +100,10 @@ CREATE TABLE "ChartOfAccount"
 	"ReconciliationExpense" BOOLEAN NOT NULL DEFAULT FALSE,
 	"ReconciliationLiabilitiesAndAssets" BOOLEAN NOT NULL DEFAULT FALSE,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-	"ParentChartOfAccountId" INT NULL,
+	"ParentAccountId" INT NULL,
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
-	FOREIGN KEY ("ParentChartOfAccountId") REFERENCES "ChartOfAccount"("ChartOfAccountID"),
+	FOREIGN KEY ("ParentAccountId") REFERENCES "Account"("AccountID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
 	UNIQUE ("Name", "OrganizationId")
@@ -120,15 +120,15 @@ CREATE TABLE "ReconciliationTransaction"
 	"Description" VARCHAR(1000) NOT NULL,
 	"Amount" DECIMAL(18, 2) NOT NULL,
 	"Category" VARCHAR(100) NULL,
-	"ExpenseChartOfAccountId" INT NULL,
-	"AssetOrLiabilityChartOfAccountId" INT NULL,
+	"ExpenseAccountId" INT NULL,
+	"AssetOrLiabilityAccountId" INT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"ReconciliationId" INT NOT NULL,
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
 	FOREIGN KEY ("ReconciliationId") REFERENCES "Reconciliation"("ReconciliationID"),
-	FOREIGN KEY ("ExpenseChartOfAccountId") REFERENCES "ChartOfAccount"("ChartOfAccountID"),
-	FOREIGN KEY ("AssetOrLiabilityChartOfAccountId") REFERENCES "ChartOfAccount"("ChartOfAccountID"),
+	FOREIGN KEY ("ExpenseAccountId") REFERENCES "Account"("AccountID"),
+	FOREIGN KEY ("AssetOrLiabilityAccountId") REFERENCES "Account"("AccountID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
@@ -227,15 +227,15 @@ CREATE TABLE "Item"
 	"UnitTypeId" INT NULL,
 	"ItemType" VARCHAR(100) NOT NULL CHECK ("ItemType" IN ('product', 'service')),
 	"InventoryMethod" VARCHAR(100) NOT NULL CHECK ("InventoryMethod" IN ('fifo', 'lifo', 'any', 'specific')) DEFAULT 'fifo',
-	"RevenueChartOfAccountId" INT NULL,
-	"AssetsChartOfAccountId" INT NULL,
+	"RevenueAccountId" INT NULL,
+	"AssetsAccountId" INT NULL,
 	"ParentItemId" INT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
 	FOREIGN KEY ("UnitTypeId") REFERENCES "UnitType"("UnitTypeID"),
-	FOREIGN KEY ("RevenueChartOfAccountId") REFERENCES "ChartOfAccount"("ChartOfAccountID"),
-	FOREIGN KEY ("AssetsChartOfAccountId") REFERENCES "ChartOfAccount"("ChartOfAccountID"),
+	FOREIGN KEY ("RevenueAccountId") REFERENCES "Account"("AccountID"),
+	FOREIGN KEY ("AssetsAccountId") REFERENCES "Account"("AccountID"),
 	FOREIGN KEY ("ParentItemId") REFERENCES "Item"("ItemID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
@@ -400,14 +400,14 @@ CREATE TABLE "InvoiceLine"
 	"Price" DECIMAL(18, 2) NOT NULL,
 	"InvoiceId" INT NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-	"RevenueChartOfAccountId" INT NOT NULL,
-	"AssetsChartOfAccountId" INT NOT NULL,
+	"RevenueAccountId" INT NOT NULL,
+	"AssetsAccountId" INT NOT NULL,
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
 	FOREIGN KEY ("InvoiceId") REFERENCES "Invoice"("InvoiceID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-	FOREIGN KEY ("RevenueChartOfAccountId") REFERENCES "ChartOfAccount"("ChartOfAccountID"),
-	FOREIGN KEY ("AssetsChartOfAccountId") REFERENCES "ChartOfAccount"("ChartOfAccountID"),
+	FOREIGN KEY ("RevenueAccountId") REFERENCES "Account"("AccountID"),
+	FOREIGN KEY ("AssetsAccountId") REFERENCES "Account"("AccountID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
@@ -431,14 +431,14 @@ CREATE TABLE "InvoiceAttachment"
 CREATE TABLE "GeneralLedger"
 (
 	"GeneralLedgerID" SERIAL PRIMARY KEY NOT NULL,
-	"ChartOfAccountId" INT NOT NULL,
+	"AccountId" INT NOT NULL,
 	"Credit" DECIMAL(18, 2) NULL,
 	"Debit" DECIMAL(18, 2) NULL,
 	"Memo" TEXT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
-	FOREIGN KEY ("ChartOfAccountId") REFERENCES "ChartOfAccount"("ChartOfAccountID"),
+	FOREIGN KEY ("AccountId") REFERENCES "Account"("AccountID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
@@ -635,20 +635,20 @@ INSERT INTO "UserOrganization" ("UserId", "OrganizationId") VALUES (1, 2);
 INSERT INTO "UnitType" ("Name", "Deletable", "OrganizationId") VALUES ('each', false, 1);
 INSERT INTO "UnitType" ("Name", "Deletable", "OrganizationId") VALUES ('hour', false, 1);
 
-INSERT INTO "ChartOfAccount" ("Name", "Type", "InvoiceCreationForDebit", "CreatedById", "OrganizationId") VALUES ('accounts-receivable', 'assets', TRUE, 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "InvoiceCreationForCredit", "CreatedById", "OrganizationId") VALUES ('revenue', 'revenue', TRUE, 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "InvoiceCreationForCredit", "ParentChartOfAccountId", "CreatedById", "OrganizationId") VALUES ('revenue-service', 'revenue', TRUE, 2, 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "InvoiceCreationForCredit", "ParentChartOfAccountId", "CreatedById", "OrganizationId") VALUES ('revenue-product', 'revenue', TRUE, 2, 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "InvoiceCreationForDebit", "ReceiptOfPaymentForDebit", "CreatedById", "OrganizationId") VALUES ('cash', 'assets', TRUE, TRUE, 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "CreatedById", "OrganizationId") VALUES ('chase-9988', 'assets', 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "ParentChartOfAccountId", "ReconciliationLiabilitiesAndAssets", "CreatedById", "OrganizationId") VALUES ('chase-9988-debit-card-2323', 'assets', 6, TRUE, 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "ReconciliationExpense", "CreatedById", "OrganizationId") VALUES ('expense', 'expense', TRUE, 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "ReconciliationExpense", "ParentChartOfAccountId", "CreatedById", "OrganizationId") VALUES ('expense-diesel', 'expense', TRUE,  8, 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "ReconciliationExpense", "ParentChartOfAccountId", "CreatedById", "OrganizationId") VALUES ('expense-meals', 'expense', TRUE,  8, 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "ReconciliationExpense", "ParentChartOfAccountId", "CreatedById", "OrganizationId") VALUES ('expense-maintenance', 'expense', TRUE,  8, 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "ReconciliationLiabilitiesAndAssets", "CreatedById", "OrganizationId") VALUES ('discover-5555', 'liabilities', TRUE, 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "CreatedById", "OrganizationId") VALUES ('inventory', 'assets', 1, 1);
-INSERT INTO "ChartOfAccount" ("Name", "Type", "CreatedById", "OrganizationId") VALUES ('inventory-opening-balance', 'equity', 1, 1);
+INSERT INTO "Account" ("Name", "Type", "InvoiceCreationForDebit", "CreatedById", "OrganizationId") VALUES ('accounts-receivable', 'assets', TRUE, 1, 1);
+INSERT INTO "Account" ("Name", "Type", "InvoiceCreationForCredit", "CreatedById", "OrganizationId") VALUES ('revenue', 'revenue', TRUE, 1, 1);
+INSERT INTO "Account" ("Name", "Type", "InvoiceCreationForCredit", "ParentAccountId", "CreatedById", "OrganizationId") VALUES ('revenue-service', 'revenue', TRUE, 2, 1, 1);
+INSERT INTO "Account" ("Name", "Type", "InvoiceCreationForCredit", "ParentAccountId", "CreatedById", "OrganizationId") VALUES ('revenue-product', 'revenue', TRUE, 2, 1, 1);
+INSERT INTO "Account" ("Name", "Type", "InvoiceCreationForDebit", "ReceiptOfPaymentForDebit", "CreatedById", "OrganizationId") VALUES ('cash', 'assets', TRUE, TRUE, 1, 1);
+INSERT INTO "Account" ("Name", "Type", "CreatedById", "OrganizationId") VALUES ('chase-9988', 'assets', 1, 1);
+INSERT INTO "Account" ("Name", "Type", "ParentAccountId", "ReconciliationLiabilitiesAndAssets", "CreatedById", "OrganizationId") VALUES ('chase-9988-debit-card-2323', 'assets', 6, TRUE, 1, 1);
+INSERT INTO "Account" ("Name", "Type", "ReconciliationExpense", "CreatedById", "OrganizationId") VALUES ('expense', 'expense', TRUE, 1, 1);
+INSERT INTO "Account" ("Name", "Type", "ReconciliationExpense", "ParentAccountId", "CreatedById", "OrganizationId") VALUES ('expense-diesel', 'expense', TRUE,  8, 1, 1);
+INSERT INTO "Account" ("Name", "Type", "ReconciliationExpense", "ParentAccountId", "CreatedById", "OrganizationId") VALUES ('expense-meals', 'expense', TRUE,  8, 1, 1);
+INSERT INTO "Account" ("Name", "Type", "ReconciliationExpense", "ParentAccountId", "CreatedById", "OrganizationId") VALUES ('expense-maintenance', 'expense', TRUE,  8, 1, 1);
+INSERT INTO "Account" ("Name", "Type", "ReconciliationLiabilitiesAndAssets", "CreatedById", "OrganizationId") VALUES ('discover-5555', 'liabilities', TRUE, 1, 1);
+INSERT INTO "Account" ("Name", "Type", "CreatedById", "OrganizationId") VALUES ('inventory', 'assets', 1, 1);
+INSERT INTO "Account" ("Name", "Type", "CreatedById", "OrganizationId") VALUES ('inventory-opening-balance', 'equity', 1, 1);
 
 INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "OrganizationId", "CreatedById") VALUES ('Net 30', 30, 1, 1);
 INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "OrganizationId", "CreatedById") VALUES ('Net 60', 60, 1, 1);
@@ -672,7 +672,7 @@ values
 ('Attention Shipping', '456 Main St.', 'Anytown', 'CA', '12345', 'USA', 4, 1, 1);
 
 -- Inserting realistic Products for a manufacturing company
-INSERT INTO "Item" ("Name", "Description", "ItemType", "RevenueChartOfAccountId", "AssetsChartOfAccountId", "CreatedById", "OrganizationId") VALUES
+INSERT INTO "Item" ("Name", "Description", "ItemType", "RevenueAccountId", "AssetsAccountId", "CreatedById", "OrganizationId") VALUES
 ('Industrial Pump', 'High-capacity industrial water pump for manufacturing and agricultural applications.', 'product', 4, 1, 1, 1),
 ('CNC Milling Machine', 'Precision CNC milling machine for metalworking and fabrication.', 'product', 4, 1, 1, 1),
 ('Hydraulic Press', '20-ton hydraulic press for shaping and forging metal components.', 'product', 4, 1, 1, 1),
@@ -680,7 +680,7 @@ INSERT INTO "Item" ("Name", "Description", "ItemType", "RevenueChartOfAccountId"
 ('Electric Motor', 'High-efficiency electric motor for industrial machinery.', 'product', 4, 1, 1, 1);
 
 -- Inserting realistic Services for a manufacturing company
-INSERT INTO "Item" ("Name", "Description", "ItemType", "RevenueChartOfAccountId", "AssetsChartOfAccountId", "CreatedById", "OrganizationId") VALUES
+INSERT INTO "Item" ("Name", "Description", "ItemType", "RevenueAccountId", "AssetsAccountId", "CreatedById", "OrganizationId") VALUES
 ('Machine Maintenance', 'Comprehensive maintenance service for industrial machinery, including diagnostics, repair, and parts replacement.', 'service', 3, 1, 1, 1),
 ('Custom Fabrication', 'Custom fabrication services for metal components based on client specifications.', 'service', 3, 1, 1, 1),
 ('Consulting Services', 'Expert consulting on manufacturing process optimization and equipment selection.', 'service', 3, 1, 1, 1),

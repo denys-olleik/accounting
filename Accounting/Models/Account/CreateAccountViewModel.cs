@@ -1,13 +1,11 @@
 ﻿using FluentValidation.Results;
 
-namespace Accounting.Models.ChartOfAccount
+namespace Accounting.Models.Account
 {
-  public class UpdateChartOfAccountViewModel
+  public class CreateAccountViewModel
   {
-    public int ChartOfAccountID { get; set; }
-    public int? ParentChartOfAccountId { get; set; }
-    public ChartOfAccountViewModel? ParentChartOfAccount { get; set; }
-    public string? AccountNumber { get; set; }
+    public int? ParentAccountId { get; set; }
+    public AccountViewModel? ParentAccount { get; set; }
     public string? AccountName { get; set; }
     public string? SelectedAccountType { get; set; }
 
@@ -23,10 +21,10 @@ namespace Accounting.Models.ChartOfAccount
 
     public ValidationResult? ValidationResult { get; set; }
 
-    public class ChartOfAccountViewModel
+    public class AccountViewModel
     {
-      public int ChartOfAccountID { get; set; }
-      public string Name { get; set; } = string.Empty;
+      public int AccountID { get; set; }
+      public string? Name { get; set; }
     }
   }
 }

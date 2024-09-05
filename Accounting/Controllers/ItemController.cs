@@ -7,7 +7,7 @@ using Accounting.Validators;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
-using static Accounting.Business.ChartOfAccount;
+using static Accounting.Business.Account;
 
 namespace Accounting.Controllers
 {
@@ -15,7 +15,7 @@ namespace Accounting.Controllers
   [Route("item")]
   public class ItemController : BaseController
   {
-    private readonly ChartOfAccountService _chartOfAccountService;
+    private readonly AccountService _chartOfAccountService;
     private readonly LocationService _locationService;
     private readonly InventoryService _inventoryService;
     private readonly ItemService _itemService;
@@ -24,7 +24,7 @@ namespace Accounting.Controllers
     private readonly GeneralLedgerService _generalLedgerService;
 
     public ItemController(
-      ChartOfAccountService chartOfAccountService, 
+      AccountService chartOfAccountService, 
       LocationService locationService, 
       InventoryService inventoryService, 
       ItemService itemService,
@@ -74,7 +74,7 @@ namespace Accounting.Controllers
         };
       }
 
-      List<ChartOfAccount> accounts
+      List<Account> accounts
         = await _chartOfAccountService.GetAllAsync(AccountTypeConstants.Revenue, GetOrganizationId());
       accounts.AddRange(
         await _chartOfAccountService.GetAllAsync(AccountTypeConstants.Assets, GetOrganizationId()));
@@ -95,11 +95,11 @@ namespace Accounting.Controllers
         });
       }
 
-      foreach (ChartOfAccount account in accounts)
+      foreach (Account account in accounts)
       {
         model.Accounts.Add(new CreateItemViewModel.ChartOfAccountViewModel
         {
-          ChartOfAccountID = account.ChartOfAccountID,
+          ChartOfAccountID = account.AccountID,
           Name = account.Name,
           Type = account.Type
         });
@@ -133,7 +133,7 @@ namespace Accounting.Controllers
           };
         }
 
-        List<ChartOfAccount> accounts
+        List<Account> accounts
         = await _chartOfAccountService.GetAllAsync(AccountTypeConstants.Revenue, GetOrganizationId());
         accounts.AddRange(
           await _chartOfAccountService.GetAllAsync(AccountTypeConstants.Assets, GetOrganizationId()));
@@ -154,11 +154,11 @@ namespace Accounting.Controllers
           });
         }
 
-        foreach (ChartOfAccount account in accounts)
+        foreach (Account account in accounts)
         {
           model.Accounts.Add(new CreateItemViewModel.ChartOfAccountViewModel
           {
-            ChartOfAccountID = account.ChartOfAccountID,
+            ChartOfAccountID = account.AccountID,
             Name = account.Name,
             Type = account.Type
           });
@@ -173,8 +173,8 @@ namespace Accounting.Controllers
       {
         Name = model.Name,
         Description = model.Description,
-        RevenueChartOfAccountId = model.SelectedRevenueChartOfAccountId,
-        AssetsChartOfAccountId = model.SelectedAssetsChartOfAccountId,
+        RevenueAccountId = model.SelectedRevenueChartOfAccountId,
+        AssetsAccountId = model.SelectedAssetsChartOfAccountId,
         ItemType = model.SelectedItemType,
         InventoryMethod = model.SelectedInventoryMethod!,
         ParentItemId = model.ParentItemId,
@@ -211,12 +211,12 @@ namespace Accounting.Controllers
           {
             Guid transactonGuid = GuidExtensions.CreateSecureGuid();
 
-            ChartOfAccount debitInventoryAccount = await _chartOfAccountService.GetByAccountNameAsync("inventory", GetOrganizationId());
-            ChartOfAccount creditInventoryOpeningBalanceAccount = await _chartOfAccountService.GetByAccountNameAsync("inventory-opening-balance", GetOrganizationId());
+            Account debitInventoryAccount = await _chartOfAccountService.GetByAccountNameAsync("inventory", GetOrganizationId());
+            Account creditInventoryOpeningBalanceAccount = await _chartOfAccountService.GetByAccountNameAsync("inventory-opening-balance", GetOrganizationId());
 
             GeneralLedger debitEntry = await _generalLedgerService.CreateAsync(new GeneralLedger
             {
-              ChartOfAccountId = debitInventoryAccount.ChartOfAccountID,
+              AccountId = debitInventoryAccount.AccountID,
               Debit = model.InitialCost,
               Credit = null,
               CreatedById = GetUserId(),
@@ -225,7 +225,7 @@ namespace Accounting.Controllers
 
             GeneralLedger creditEntry = await _generalLedgerService.CreateAsync(new GeneralLedger
             {
-              ChartOfAccountId = creditInventoryOpeningBalanceAccount.ChartOfAccountID,
+              AccountId = creditInventoryOpeningBalanceAccount.AccountID,
               Debit = null,
               Credit = model.InitialCost,
               CreatedById = GetUserId(),

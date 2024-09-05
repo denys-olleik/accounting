@@ -18,13 +18,13 @@ namespace Accounting.Controllers
     private readonly ReconciliationService _reconciliationService;
     private readonly GeneralLedgerService _generalLedgerService;
     private readonly GeneralLedgerReconciliationTransactionService _generalLedgerReconciliationTransactionService;
-    private readonly ChartOfAccountService _chartOfAccountService;
+    private readonly AccountService _chartOfAccountService;
 
     public ReconciliationApiController(
       ReconciliationTransactionService reconciliationTransactionService,
       ReconciliationService reconciliationService,
       GeneralLedgerReconciliationTransactionService generalLedgerExpenseService,
-      ChartOfAccountService chartOfAccountService,
+      AccountService chartOfAccountService,
       GeneralLedgerService generalLedgerService)
     {
       _reconciliationTransactionService = reconciliationTransactionService;
@@ -42,7 +42,7 @@ namespace Accounting.Controllers
 
       Guid transactionGuid = GuidExtensions.CreateSecureGuid();
 
-      var chartOfAccountService = await ChartOfAccountServiceSingleton.InstanceAsync(GetOrganizationId());
+      var chartOfAccountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
 
       if (model.ReconciliationInstruction == ReconciliationTransaction.ReconciliationInstructions.Expense)
       {
@@ -50,8 +50,8 @@ namespace Accounting.Controllers
         {
           List<GeneralLedgerReconciliationTransaction> lastTransaction = await _generalLedgerReconciliationTransactionService.GetLastRelevantTransactionsAsync(reconciliationTransaction.ReconciliationTransactionID, GetOrganizationId(), true);
 
-          var expenseAccount = chartOfAccountService.Accounts.Single(x => x.ChartOfAccountID == model.SelectedReconciliationExpenseAccountId);
-          var liabilitiesOrAssetAccount = chartOfAccountService.Accounts.Single(x => x.ChartOfAccountID == model.SelectedReconciliationLiabilitiesAndAssetsAccountId);
+          var expenseAccount = chartOfAccountService.Accounts.Single(x => x.AccountID == model.SelectedReconciliationExpenseAccountId);
+          var liabilitiesOrAssetAccount = chartOfAccountService.Accounts.Single(x => x.AccountID == model.SelectedReconciliationLiabilitiesAndAssetsAccountId);
 
           if (lastTransaction.Any() && !lastTransaction.Any(x => x.ReversedGeneralLedgerReconciliationTransactionId.HasValue))
           {
@@ -59,7 +59,7 @@ namespace Accounting.Controllers
             {
               GeneralLedger reversingGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
               {
-                ChartOfAccountId = entry.GeneralLedger!.ChartOfAccountId,
+                AccountId = entry.GeneralLedger!.AccountId,
                 Debit = entry.GeneralLedger!.Credit,
                 Credit = entry.GeneralLedger!.Debit,
                 CreatedById = GetUserId(),
@@ -79,7 +79,7 @@ namespace Accounting.Controllers
           }
           GeneralLedger debit = await _generalLedgerService.CreateAsync(new GeneralLedger()
           {
-            ChartOfAccountId = expenseAccount.ChartOfAccountID,
+            AccountId = expenseAccount.AccountID,
             Debit = reconciliationTransaction.Amount,
             Credit = 0,
             CreatedById = GetUserId(),
@@ -88,7 +88,7 @@ namespace Accounting.Controllers
 
           GeneralLedger credit = await _generalLedgerService.CreateAsync(new GeneralLedger()
           {
-            ChartOfAccountId = liabilitiesOrAssetAccount.ChartOfAccountID,
+            AccountId = liabilitiesOrAssetAccount.AccountID,
             Debit = 0,
             Credit = reconciliationTransaction.Amount,
             CreatedById = GetUserId(),
@@ -194,7 +194,7 @@ namespace Accounting.Controllers
           {
             GeneralLedger reversingGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
             {
-              ChartOfAccountId = entry.GeneralLedger!.ChartOfAccountId,
+              AccountId = entry.GeneralLedger!.AccountId,
               Debit = entry.GeneralLedger!.Credit,
               Credit = entry.GeneralLedger!.Debit,
               CreatedById = GetUserId(),

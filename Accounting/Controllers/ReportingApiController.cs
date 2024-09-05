@@ -10,9 +10,9 @@ namespace Accounting.Controllers
   public class ReportingApiController : BaseController
   {
     private readonly InvoiceService _invoiceService;
-    private readonly ChartOfAccountService _chartOfAccountService;
+    private readonly AccountService _chartOfAccountService;
 
-    public ReportingApiController(InvoiceService invoiceService, ChartOfAccountService chartOfAccountService)
+    public ReportingApiController(InvoiceService invoiceService, AccountService chartOfAccountService)
     {
       _invoiceService = invoiceService;
       _chartOfAccountService = chartOfAccountService;

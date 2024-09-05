@@ -43,7 +43,7 @@ namespace Accounting.Service
       {
         GeneralLedger undoEntry = await factoryManager.GetGeneralLedgerManager().CreateAsync(new GeneralLedger()
         {
-          ChartOfAccountId = entry.GeneralLedger!.ChartOfAccountId,
+          AccountId = entry.GeneralLedger!.AccountId,
           Credit = entry.GeneralLedger.Debit,
           Debit = entry.GeneralLedger.Credit,
           CreatedById = userId,

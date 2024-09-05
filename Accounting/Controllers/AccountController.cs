@@ -1,174 +1,168 @@
 ﻿using Accounting.Business;
-using Accounting.Common;
-using Accounting.Models.AccountViewModels;
+using Accounting.CustomAttributes;
+using Accounting.Models.Account;
 using Accounting.Service;
 using Accounting.Validators;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Security.Claims;
-using static Accounting.Business.Claim;
 
 namespace Accounting.Controllers
 {
-  [Authorize]
+  [AuthorizeWithOrganizationId]
   [Route("a")]
-  public class AccountController : BaseController
+  public class AccountController
+    : BaseController
   {
-    private readonly OrganizationService _organizationService;
-    private readonly UserOrganizationService _userOrganizationService;
-    private readonly UserService _userService;
+    private readonly AccountService _accountService;
 
-    public AccountController(OrganizationService organizationService, UserOrganizationService userOrganizationService, UserService userService)
+    public AccountController(
+      AccountService accountService)
     {
-      _organizationService = organizationService;
-      _userOrganizationService = userOrganizationService;
-      _userService = userService;
+      _accountService = accountService;
     }
 
-    [AllowAnonymous]
-    [Route("login")]
+    [Route("accounts")]
     [HttpGet]
-    public async Task<IActionResult> Login()
+    public IActionResult Accounts()
     {
       return View();
     }
 
-    [AllowAnonymous]
-    [Route("login")]
-    [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model)
-    {
-      LoginViewModelValidator loginViewModelValidator = new LoginViewModelValidator();
-      ValidationResult validationResult = await loginViewModelValidator.ValidateAsync(model);
-
-      if (!validationResult.IsValid)
-      {
-        model.ValidationResult = validationResult;
-        return View(model);
-      }
-
-      UserService userService = new UserService();
-      User user = await userService.GetByEmailAsync(model.Email);
-
-      if (user != null && !string.IsNullOrEmpty(user.Password) && PasswordStorage.VerifyPassword(model.Password, user.Password))
-      {
-        ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user);
-
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-            claimsPrincipal,
-            new AuthenticationProperties()
-            {
-              IsPersistent = true
-            });
-
-        return RedirectToAction("ChooseOrganization", "Account");
-      }
-      else
-      {
-        model.ValidationResult = new ValidationResult(new List<ValidationFailure>()
-                {
-                    new ValidationFailure("Email", "'Email' or 'password' is incorrect.")
-                });
-        return View(model);
-      }
-    }
-
+    [Route("create/{parentAccountId?}")]
     [HttpGet]
-    [Route("choose-organization")]
-    public async Task<IActionResult> ChooseOrganization()
+    public async Task<IActionResult> Create(int? parentAccountId)
     {
-      List<Organization> organizations = await _userOrganizationService.GetByUserIdAsync(GetUserId());
+      Account parentAccount = null;
 
-      ChooseOrganizationViewModel model = new ChooseOrganizationViewModel()
+      if (parentAccountId.HasValue)
       {
-        Organizations = organizations.Select(x => new SelectListItem()
+        parentAccount = await _accountService.GetAsync(parentAccountId.Value, GetOrganizationId());
+        if (parentAccount == null)
+          return NotFound();
+      }
+
+      var model = new CreateAccountViewModel();
+      model.AvailableAccountTypes = Account.AccountTypeConstants.All.ToList();
+
+      if (parentAccount != null)
+      {
+        model.ParentAccountId = parentAccountId;
+        model.ParentAccount = new CreateAccountViewModel.AccountViewModel()
         {
-          Text = x.Name,
-          Value = x.OrganizationID.ToString()
-        }).ToList()
-      };
+          AccountID = parentAccount!.AccountID,
+          Name = parentAccount!.Name
+        };
+      }
 
       return View(model);
     }
 
+    [Route("create/{parentAccountId?}")]
     [HttpPost]
-    [Route("choose-organization")]
-    public async Task<IActionResult> ChooseOrganization(ChooseOrganizationViewModel model)
+    public async Task<IActionResult> Create(CreateAccountViewModel model)
     {
-      List<Organization> organizations = await _userOrganizationService.GetByUserIdAsync(GetUserId());
+      CreateAccountViewModelValidator validator = new CreateAccountViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
 
-      model.Organizations = organizations.Select(x => new SelectListItem()
+      if (!validationResult.IsValid)
       {
-        Text = x.Name,
-        Value = x.OrganizationID.ToString()
-      }).ToList();
-      model.ValidationResult = new ValidationResult();
+        model.ValidationResult = validationResult;
+        model.AvailableAccountTypes = Account.AccountTypeConstants.All.ToList();
 
-      if (model.OrganizationId == 0)
-      {
-        model.ValidationResult.Errors.Add(new ValidationFailure("OrganizationId", "You must select an organization."));
         return View(model);
       }
 
-      UserOrganization userOrganization = await _userOrganizationService.GetAsync(GetUserId(), model.OrganizationId);
-
-      User user = (await _userOrganizationService.GetAsync(GetUserId(), userOrganization.OrganizationId)).User!;
-
-      if (userOrganization != null)
+      Account account = new Account
       {
-        ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user, userOrganization.OrganizationId, organizations.SingleOrDefault(x => x.OrganizationID == model.OrganizationId)!.Name);
+        Name = model.AccountName,
+        Type = model.SelectedAccountType,
+        ParentAccountId = model.ParentAccountId,
+        InvoiceCreationForCredit = model.ShowInInvoiceCreationDropDownForCredit,
+        InvoiceCreationForDebit = model.ShowInInvoiceCreationDropDownForDebit,
+        ReceiptOfPaymentForCredit = model.ShowInReceiptOfPaymentDropDownForCredit,
+        ReceiptOfPaymentForDebit = model.ShowInReceiptOfPaymentDropDownForDebit,
+        ReconciliationExpense = model.ReconciliationExpense,
+        ReconciliationLiabilitiesAndAssets = model.ReconciliationLiabilitiesAndAssets,
+        OrganizationId = GetOrganizationId(),
+        CreatedById = GetUserId()
+      };
 
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                               claimsPrincipal,
-                                                  new AuthenticationProperties()
-                                                  {
-                                                    IsPersistent = true
-                                                  });
+      await _accountService.CreateAsync(account);
 
-        return RedirectToAction("Index", "Home");
+      return RedirectToAction("Accounts");
+    }
+
+    [Route("update/{accountId}")]
+    [HttpGet]
+    public async Task<IActionResult> Update(int accountId)
+    {
+      Account account = await _accountService.GetAsync(accountId, GetOrganizationId());
+      if (account == null)
+        return NotFound();
+
+      Account? parentAccount = null;
+
+      if (account.ParentAccountId.HasValue)
+        parentAccount = await _accountService.GetAsync(account.ParentAccountId!.Value, GetOrganizationId());
+
+      UpdateAccountViewModel model = new UpdateAccountViewModel()
+      {
+        AccountID = account.AccountID,
+        AccountName = account.Name,
+        SelectedAccountType = account.Type,
+        ShowInInvoiceCreationDropDownForCredit = account.InvoiceCreationForCredit,
+        ShowInInvoiceCreationDropDownForDebit = account.InvoiceCreationForDebit,
+        ShowInReceiptOfPaymentDropDownForCredit = account.ReceiptOfPaymentForCredit,
+        ShowInReceiptOfPaymentDropDownForDebit = account.ReceiptOfPaymentForDebit,
+        ReconciliationExpense = account.ReconciliationExpense,
+        ReconciliationLiabilitiesAndAssets = account.ReconciliationLiabilitiesAndAssets,
+        AvailableAccountTypes = Account.AccountTypeConstants.All.ToList()
+      };
+
+      if (parentAccount != null)
+      {
+        model.ParentAccountId = parentAccount.AccountID;
+        model.ParentAccount = new UpdateAccountViewModel.AccountViewModel()
+        {
+          AccountID = parentAccount.AccountID,
+          Name = parentAccount.Name
+        };
       }
-      else
+
+      return View(model);
+    }
+
+    [Route("update/{accountId}")]
+    [HttpPost]
+    public async Task<IActionResult> Update(int accountId, UpdateAccountViewModel model)
+    {
+      UpdateAccountViewModelValidator validator = new UpdateAccountViewModelValidator(_accountService, GetOrganizationId());
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
       {
-        model.ValidationResult.Errors.Add(new ValidationFailure("OrganizationId", "You are not a member of this organization."));
+        model.ValidationResult = validationResult;
+        model.AvailableAccountTypes = Account.AccountTypeConstants.All.ToList();
+
         return View(model);
       }
-    }
 
-    [HttpPost]
-    [Route("logout")]
-    public async Task<IActionResult> Logout()
-    {
-      await HttpContext.SignOutAsync();
+      Account account = await _accountService.GetAsync(model.AccountID, GetOrganizationId());
+      if (account == null)
+        return NotFound();
 
-      return RedirectToAction("Index", "Home");
-    }
+      account.Name = model.AccountName;
+      account.Type = model.SelectedAccountType;
+      account.InvoiceCreationForCredit = model.ShowInInvoiceCreationDropDownForCredit;
+      account.InvoiceCreationForDebit = model.ShowInInvoiceCreationDropDownForDebit;
+      account.ReceiptOfPaymentForCredit = model.ShowInReceiptOfPaymentDropDownForCredit;
+      account.ReceiptOfPaymentForDebit = model.ShowInReceiptOfPaymentDropDownForDebit;
+      account.ReconciliationExpense = model.ReconciliationExpense;
+      account.ReconciliationLiabilitiesAndAssets = model.ReconciliationLiabilitiesAndAssets;
 
-    private ClaimsPrincipal CreateClaimsPricipal(User user, int? organizatonId = null, string? organizationName = null)
-    {
-      List<System.Security.Claims.Claim> claims = new List<System.Security.Claims.Claim>()
-            {
-                new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
-                new System.Security.Claims.Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()),
-                new System.Security.Claims.Claim(ClaimTypes.Email, user.Email),
-                new System.Security.Claims.Claim(CustomClaimTypeConstants.Password, user.Password)
-            };
+      await _accountService.UpdateAsync(account);
 
-      if (organizatonId.HasValue)
-      {
-        claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationId, organizatonId.Value.ToString()));
-      }
-
-      if (!string.IsNullOrEmpty(organizationName))
-      {
-        claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationName, organizationName));
-      }
-
-      ClaimsIdentity identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-      return new ClaimsPrincipal(identity);
+      return RedirectToAction("Accounts");
     }
   }
 }

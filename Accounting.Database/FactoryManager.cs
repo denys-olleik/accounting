@@ -16,7 +16,7 @@ namespace Accounting.Database
       return databaseFactoryDefinition.GetAddressManager();
     }
 
-    public IChartOfAccountManager GetChartOfAccountManager()
+    public IAccountManager GetAccountManager()
     {
       return databaseFactoryDefinition.GetChartOfAccountManager();
     }

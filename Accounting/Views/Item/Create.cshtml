@@ -110,7 +110,7 @@
   <fieldset class="margin-bottom-5px" v-if="salePrice > 0">
     <legend>Revenue Accounts</legend>
     <div class="display-flex flex-direction-column">
-      <chart-of-account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Revenue')"
+      <chart-of-account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Revenue')"
                         :key="account.chartOfAccountID"
                         :account="account"
                         @@select-account="updateSelectedAccountId">
@@ -121,7 +121,7 @@
   <fieldset class="margin-bottom-5px" v-if="salePrice > 0">
     <legend>Assets Accounts</legend>
     <div class="display-flex flex-direction-column">
-      <chart-of-account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Assets')"
+      <chart-of-account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Assets')"
                         :key="account.chartOfAccountID"
                         :account="account"
                         @@select-account="updateSelectedAccountId">
@@ -199,9 +199,9 @@
       updateSelectedAccountId(accountId) {
         const account = this.accounts.find(acc => acc.chartOfAccountID === accountId);
 
-        if (account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Revenue') {
+        if (account.type === '@Accounting.Business.Account.AccountTypeConstants.Revenue') {
           this.selectedRevenueAccountId = accountId;
-        } else if (account.type === '@Accounting.Business.ChartOfAccount.AccountTypeConstants.Assets') {
+        } else if (account.type === '@Accounting.Business.Account.AccountTypeConstants.Assets') {
           this.selectedAssetsAccountId = accountId;
         }
       }

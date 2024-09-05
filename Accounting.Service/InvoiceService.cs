@@ -107,7 +107,7 @@ namespace Accounting.Service
         {
           GeneralLedger undoEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
           {
-            ChartOfAccountId = gliil.GeneralLedger!.ChartOfAccountId,
+            AccountId = gliil.GeneralLedger!.AccountId,
             Credit = gliil.GeneralLedger.Debit,
             Debit = gliil.GeneralLedger.Credit,
             CreatedById = userId,

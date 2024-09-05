@@ -18,7 +18,7 @@ namespace Accounting.Database
     IItemManager GetItemManager();
     IInvoiceLineManager GetInvoiceLineManager();
     IGeneralLedgerManager GetGeneralLedgerManager();
-    IChartOfAccountManager GetChartOfAccountManager();
+    IAccountManager GetChartOfAccountManager();
     IPaymentManager GetPaymentManager();
     IInvoiceInvoiceLinePaymentManager GetInvoiceInvoiceLinePaymentManager();
     IGeneralLedgerInvoiceInvoiceLinePaymentManager GetGeneralLedgerInvoiceInvoiceLinePaymentManager();

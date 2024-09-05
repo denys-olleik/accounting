@@ -1,6 +1,6 @@
-﻿namespace Accounting.Models.ChartOfAccount
+﻿namespace Accounting.Models.Account
 {
-  public class ChartOfAccountsViewModel
+  public class AccountsViewModel
   {
     public List<ChartOfAccountViewModel> Accounts { get; set; }
       = new List<ChartOfAccountViewModel>();

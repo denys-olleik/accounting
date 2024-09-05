@@ -48,7 +48,7 @@ namespace Accounting.Service
         {
           GeneralLedger undoEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
           {
-            ChartOfAccountId = gliil.GeneralLedger!.ChartOfAccountId,
+            AccountId = gliil.GeneralLedger!.AccountId,
             Credit = gliil.GeneralLedger.Debit,
             Debit = gliil.GeneralLedger.Credit,
             CreatedById = userId,
@@ -83,7 +83,7 @@ namespace Accounting.Service
           GeneralLedger undoEntry
             = await _generalLedgerService.CreateAsync(new GeneralLedger()
           {
-            ChartOfAccountId = gliil.GeneralLedger!.ChartOfAccountId,
+            AccountId = gliil.GeneralLedger!.AccountId,
             Credit = gliil.GeneralLedger.Debit,
             Debit = gliil.GeneralLedger.Credit,
             CreatedById = userId,
@@ -103,7 +103,7 @@ namespace Accounting.Service
 
           GeneralLedger newEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
           {
-            ChartOfAccountId = gliil.GeneralLedger.ChartOfAccountId,
+            AccountId = gliil.GeneralLedger.AccountId,
             Debit = gliil.GeneralLedger.Debit.HasValue ? totalAmount : (decimal?)null,
             Credit = gliil.GeneralLedger.Credit.HasValue ? totalAmount : (decimal?)null,
             CreatedById = userId,
@@ -130,7 +130,7 @@ namespace Accounting.Service
         {
           GeneralLedger debitGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
           {
-            ChartOfAccountId = invoiceLine.AssetsChartOfAccountId,
+            AccountId = invoiceLine.AssetsAccountId,
             Debit = invoiceLine.Price * invoiceLine.Quantity,
             Credit = null,
             CreatedById = userId,
@@ -139,7 +139,7 @@ namespace Accounting.Service
 
           GeneralLedger creditGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
           {
-            ChartOfAccountId = invoiceLine.RevenueChartOfAccountId,
+            AccountId = invoiceLine.RevenueAccountId,
             Debit = null,
             Credit = invoiceLine.Price * invoiceLine.Quantity,
             CreatedById = userId,

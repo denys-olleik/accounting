@@ -1,7 +1,7 @@
 ﻿using Accounting.Business;
+using Accounting.Models.Account;
 using Accounting.Models.AddressViewModels;
 using Accounting.Models.BusinessEntityViewModels;
-using Accounting.Models.ChartOfAccount;
 using Accounting.Models.ItemViewModels;
 using Accounting.Models.PaymentTermViewModels;
 using FluentValidation.Results;
@@ -27,9 +27,9 @@ namespace Accounting.Models.InvoiceViewModels
     public string? SelectedPaymentTermJSON { get; set; }
     public DateTime? InvoiceDate { get; set; }
     public DateTime? DueDate { get; set; }
-    public List<ChartOfAccountViewModel>? DebitAccounts { get; set; }
+    public List<AccountViewModel>? DebitAccounts { get; set; }
     public int? SelectedDebitAccountId { get; set; }
-    public List<ChartOfAccountViewModel>? CreditAccounts { get; set; }
+    public List<AccountViewModel>? CreditAccounts { get; set; }
     public int? SelectedCreditAccountId { get; set; }
     public List<InvoiceAttachment>? InvoiceAttachments { get; set; }
     public string? InvoiceAttachmentsJSON { get; set; }
