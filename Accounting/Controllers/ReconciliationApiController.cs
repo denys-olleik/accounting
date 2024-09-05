@@ -18,19 +18,19 @@ namespace Accounting.Controllers
     private readonly ReconciliationService _reconciliationService;
     private readonly GeneralLedgerService _generalLedgerService;
     private readonly GeneralLedgerReconciliationTransactionService _generalLedgerReconciliationTransactionService;
-    private readonly AccountService _chartOfAccountService;
+    private readonly AccountService _accountService;
 
     public ReconciliationApiController(
       ReconciliationTransactionService reconciliationTransactionService,
       ReconciliationService reconciliationService,
       GeneralLedgerReconciliationTransactionService generalLedgerExpenseService,
-      AccountService chartOfAccountService,
+      AccountService accountService,
       GeneralLedgerService generalLedgerService)
     {
       _reconciliationTransactionService = reconciliationTransactionService;
       _reconciliationService = reconciliationService;
       _generalLedgerReconciliationTransactionService = generalLedgerExpenseService;
-      _chartOfAccountService = chartOfAccountService;
+      _accountService = accountService;
       _generalLedgerService = generalLedgerService;
     }
 
@@ -42,7 +42,7 @@ namespace Accounting.Controllers
 
       Guid transactionGuid = GuidExtensions.CreateSecureGuid();
 
-      var chartOfAccountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
+      var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
 
       if (model.ReconciliationInstruction == ReconciliationTransaction.ReconciliationInstructions.Expense)
       {
@@ -50,8 +50,8 @@ namespace Accounting.Controllers
         {
           List<GeneralLedgerReconciliationTransaction> lastTransaction = await _generalLedgerReconciliationTransactionService.GetLastRelevantTransactionsAsync(reconciliationTransaction.ReconciliationTransactionID, GetOrganizationId(), true);
 
-          var expenseAccount = chartOfAccountService.Accounts.Single(x => x.AccountID == model.SelectedReconciliationExpenseAccountId);
-          var liabilitiesOrAssetAccount = chartOfAccountService.Accounts.Single(x => x.AccountID == model.SelectedReconciliationLiabilitiesAndAssetsAccountId);
+          var expenseAccount = accountService.Accounts.Single(x => x.AccountID == model.SelectedReconciliationExpenseAccountId);
+          var liabilitiesOrAssetAccount = accountService.Accounts.Single(x => x.AccountID == model.SelectedReconciliationLiabilitiesAndAssetsAccountId);
 
           if (lastTransaction.Any() && !lastTransaction.Any(x => x.ReversedGeneralLedgerReconciliationTransactionId.HasValue))
           {
@@ -117,8 +117,8 @@ namespace Accounting.Controllers
             .UpdateReconciliationTransactionInstructionAsync(
               model.ReconciliationTransactionID,
               ReconciliationTransaction.ReconciliationInstructions.Expense);
-          await _reconciliationTransactionService.UpdateExpenseChartOfAccountIdAsync(model.ReconciliationTransactionID, model.SelectedReconciliationExpenseAccountId);
-          await _reconciliationTransactionService.UpdateAssetOrLiabilityChartOfAccountIdAsync(model.ReconciliationTransactionID, model.SelectedReconciliationLiabilitiesAndAssetsAccountId);
+          await _reconciliationTransactionService.UpdateExpenseAccountIdAsync(model.ReconciliationTransactionID, model.SelectedReconciliationExpenseAccountId);
+          await _reconciliationTransactionService.UpdateAssetOrLiabilityAccountIdAsync(model.ReconciliationTransactionID, model.SelectedReconciliationLiabilitiesAndAssetsAccountId);
 
           scope.Complete();
         }

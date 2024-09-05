@@ -17,7 +17,7 @@ SELECT * FROM "GeneralLedgerInvoiceInvoiceLinePayment" order by "GeneralLedgerIn
 
 ```sql
 -- Expense reconciliation
-select * from "ChartOfAccount";
+select * from "Account";
 select * from "ReconciliationTransaction";
 select * from "GeneralLedger";
 select * from "GeneralLedgerReconciliationTransaction";

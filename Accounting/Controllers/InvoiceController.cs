@@ -45,7 +45,7 @@ namespace Accounting.Controllers
       ItemService itemService,
       OrganizationService organizationService,
       PaymentTermsService paymentTermsService,
-      AccountService chartOfAccountService,
+      AccountService accountService,
       GeneralLedgerInvoiceInvoiceLineService generalLedgerInvoiceInvoiceLineService)
     {
       _addressService = addressService;
@@ -58,7 +58,7 @@ namespace Accounting.Controllers
       _itemService = itemService;
       _organizationService = organizationService;
       _paymentTermsService = paymentTermsService;
-      _accountService = chartOfAccountService;
+      _accountService = accountService;
       _generalLedgerInvoiceInvoiceLineService = generalLedgerInvoiceInvoiceLineService;
     }
 

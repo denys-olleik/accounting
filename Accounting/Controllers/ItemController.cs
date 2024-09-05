@@ -15,7 +15,7 @@ namespace Accounting.Controllers
   [Route("item")]
   public class ItemController : BaseController
   {
-    private readonly AccountService _chartOfAccountService;
+    private readonly AccountService _accountService;
     private readonly LocationService _locationService;
     private readonly InventoryService _inventoryService;
     private readonly ItemService _itemService;
@@ -24,7 +24,7 @@ namespace Accounting.Controllers
     private readonly GeneralLedgerService _generalLedgerService;
 
     public ItemController(
-      AccountService chartOfAccountService, 
+      AccountService accountService, 
       LocationService locationService, 
       InventoryService inventoryService, 
       ItemService itemService,
@@ -32,7 +32,7 @@ namespace Accounting.Controllers
       GeneralLedgerInventoryAdjustmentService generalLedgerInventoryAdjustmentService,
       GeneralLedgerService generalLedgerService)
     {
-      _chartOfAccountService = chartOfAccountService;
+      _accountService = accountService;
       _locationService = locationService;
       _inventoryService = inventoryService;
       _itemService = itemService;
@@ -75,11 +75,11 @@ namespace Accounting.Controllers
       }
 
       List<Account> accounts
-        = await _chartOfAccountService.GetAllAsync(AccountTypeConstants.Revenue, GetOrganizationId());
+        = await _accountService.GetAllAsync(AccountTypeConstants.Revenue, GetOrganizationId());
       accounts.AddRange(
-        await _chartOfAccountService.GetAllAsync(AccountTypeConstants.Assets, GetOrganizationId()));
+        await _accountService.GetAllAsync(AccountTypeConstants.Assets, GetOrganizationId()));
 
-      model.Accounts = new List<CreateItemViewModel.ChartOfAccountViewModel>();
+      model.Accounts = new List<CreateItemViewModel.AccountViewModel>();
       model.AvailableInventoryMethods = Item.InventoryMethods.All.ToList();
       model.AvailableItemTypes = Item.ItemTypes.All.ToList();
       model.Locations = new List<CreateItemViewModel.LocationViewModel>();
@@ -97,9 +97,9 @@ namespace Accounting.Controllers
 
       foreach (Account account in accounts)
       {
-        model.Accounts.Add(new CreateItemViewModel.ChartOfAccountViewModel
+        model.Accounts.Add(new CreateItemViewModel.AccountViewModel
         {
-          ChartOfAccountID = account.AccountID,
+          AccountID = account.AccountID,
           Name = account.Name,
           Type = account.Type
         });
@@ -134,11 +134,11 @@ namespace Accounting.Controllers
         }
 
         List<Account> accounts
-        = await _chartOfAccountService.GetAllAsync(AccountTypeConstants.Revenue, GetOrganizationId());
+        = await _accountService.GetAllAsync(AccountTypeConstants.Revenue, GetOrganizationId());
         accounts.AddRange(
-          await _chartOfAccountService.GetAllAsync(AccountTypeConstants.Assets, GetOrganizationId()));
+          await _accountService.GetAllAsync(AccountTypeConstants.Assets, GetOrganizationId()));
 
-        model.Accounts = new List<CreateItemViewModel.ChartOfAccountViewModel>();
+        model.Accounts = new List<CreateItemViewModel.AccountViewModel>();
         model.AvailableInventoryMethods = Item.InventoryMethods.All.ToList();
         model.AvailableItemTypes = Item.ItemTypes.All.ToList();
         model.Locations = new List<CreateItemViewModel.LocationViewModel>();
@@ -156,9 +156,9 @@ namespace Accounting.Controllers
 
         foreach (Account account in accounts)
         {
-          model.Accounts.Add(new CreateItemViewModel.ChartOfAccountViewModel
+          model.Accounts.Add(new CreateItemViewModel.AccountViewModel
           {
-            ChartOfAccountID = account.AccountID,
+            AccountID = account.AccountID,
             Name = account.Name,
             Type = account.Type
           });
@@ -173,8 +173,8 @@ namespace Accounting.Controllers
       {
         Name = model.Name,
         Description = model.Description,
-        RevenueAccountId = model.SelectedRevenueChartOfAccountId,
-        AssetsAccountId = model.SelectedAssetsChartOfAccountId,
+        RevenueAccountId = model.SelectedRevenueAccountId,
+        AssetsAccountId = model.SelectedAssetsAccountId,
         ItemType = model.SelectedItemType,
         InventoryMethod = model.SelectedInventoryMethod!,
         ParentItemId = model.ParentItemId,
@@ -211,8 +211,8 @@ namespace Accounting.Controllers
           {
             Guid transactonGuid = GuidExtensions.CreateSecureGuid();
 
-            Account debitInventoryAccount = await _chartOfAccountService.GetByAccountNameAsync("inventory", GetOrganizationId());
-            Account creditInventoryOpeningBalanceAccount = await _chartOfAccountService.GetByAccountNameAsync("inventory-opening-balance", GetOrganizationId());
+            Account debitInventoryAccount = await _accountService.GetByAccountNameAsync("inventory", GetOrganizationId());
+            Account creditInventoryOpeningBalanceAccount = await _accountService.GetByAccountNameAsync("inventory-opening-balance", GetOrganizationId());
 
             GeneralLedger debitEntry = await _generalLedgerService.CreateAsync(new GeneralLedger
             {

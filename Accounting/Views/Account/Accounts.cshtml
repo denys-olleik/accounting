@@ -1,17 +1,17 @@
 ﻿@{
-  ViewData["Title"] = "Chart of Accounts - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Accounts - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-  string headerText = "Chart of Accounts";
+  string headerText = "Accounts";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <div class="display-flex margin-bottom-5px">
   <div>
-    <a asp-action="Create" asp-controller="ChartOfAccount" class="font-Roboto font-size-20px">Create Account</a>
+    <a asp-action="Create" asp-controller="Account" class="font-Roboto font-size-20px">Create Account</a>
   </div>
 </div>
 
@@ -19,11 +19,11 @@
   <div>
     <div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
       <div class="display-flex flex-1">
-        <a href="#" @@click.prevent="handleAccountClick(account.chartOfAccountID)">
+        <a href="#" @@click.prevent="handleAccountClick(account.accountID)">
           {{ account.name }}
         </a>
         <span>&nbsp;</span>
-        <div v-if="account.selectedChartOfAccountID === account.chartOfAccountID" class="display-flex">
+        <div v-if="account.selectedAccountID === account.accountID" class="display-flex">
           <div class="display-flex flex-direction-column background-color-333333 padding-left-5px border-top-bottom-left-radius-5px padding-right-5px">
             <div class="flex-1"></div>
             <a class="font-size-12px font-Roboto  color-white text-decoration-none cursor-default"
@@ -38,7 +38,7 @@
               margin-left-2px">
             <div class="flex-1"></div>
             <a class="font-size-16px font-Roboto color-white text-decoration-none"
-               :href="`/coa/update/${account.chartOfAccountID}`">Update</a>
+               :href="`/a/update/${account.accountID}`">Update</a>
             <div class="flex-1"></div>
           </div>
           <div class="display-flex
@@ -50,7 +50,7 @@
               margin-left-2px">
             <div class="flex-1"></div>
             <a class="font-size-16px font-Roboto color-white text-decoration-none"
-               :href="`/coa/create/${account.chartOfAccountID}`">Add</a>
+               :href="`/a/create/${account.accountID}`">Add</a>
             <div class="flex-1"></div>
           </div>
         </div>
@@ -58,7 +58,7 @@
       <div>{{ account.type }}</div>
     </div>
     <div v-if="account.children && account.children.length" class="margin-left-25px">
-      <template v-for="childAccount in account.children" :key="childAccount.chartOfAccountID">
+      <template v-for="childAccount in account.children" :key="childAccount.accountID">
         <account :account="childAccount" @@account-clicked="handleAccountClick"></account>
       </template>
     </div>
@@ -66,7 +66,7 @@
 </template>
 
 <div id="app" class="display-flex flex-direction-column font-Roboto-Mono">
-  <template v-for="account in accounts" :key="account.chartOfAccountID">
+  <template v-for="account in accounts" :key="account.accountID">
     <account :account="account" @@account-clicked="onAccountClicked"></account>
   </template>
 </div>
@@ -79,9 +79,9 @@
     template: '#account-template',
     props: ['account'],
     methods: {
-      handleAccountClick(chartOfAccountID) {
-        console.log(chartOfAccountID);
-        this.$emit('account-clicked', chartOfAccountID);
+      handleAccountClick(accountID) {
+        console.log(accountID);
+        this.$emit('account-clicked', accountID);
       },
     }
   };
@@ -93,34 +93,34 @@
     data() {
       return {
         accounts: [],
-        selectedChartOfAccountID: null
+        selectedAccountID: null
       }
     },
     methods: {
-      onAccountClicked(chartOfAccountID) {
-        console.log('Account clicked:', chartOfAccountID);
+      onAccountClicked(accountID) {
+        console.log('Account clicked:', accountID);
 
-        if (this.selectedChartOfAccountID === chartOfAccountID) {
-          this.selectedChartOfAccountID = null;
+        if (this.selectedAccountID === accountID) {
+          this.selectedAccountID = null;
         } else {
-          this.selectedChartOfAccountID = chartOfAccountID;
+          this.selectedAccountID = accountID;
         }
 
-        this.accounts = this.accounts.map(account => this.resetSelectedChartOfAccountID(account, this.selectedChartOfAccountID));
+        this.accounts = this.accounts.map(account => this.resetSelectedAccountID(account, this.selectedAccountID));
       },
-      addSelectedChartOfAccountID(accounts) {
-        return accounts.map(account => this.resetSelectedChartOfAccountID(account));
+      addSelectedAccountID(accounts) {
+        return accounts.map(account => this.resetSelectedAccountID(account));
       },
-      resetSelectedChartOfAccountID(account, selectedID = null) {
-        const children = account.children ? account.children.map(child => this.resetSelectedChartOfAccountID(child, selectedID)) : [];
-        return { ...account, children, selectedChartOfAccountID: selectedID };
+      resetSelectedAccountID(account, selectedID = null) {
+        const children = account.children ? account.children.map(child => this.resetSelectedAccountID(child, selectedID)) : [];
+        return { ...account, children, selectedAccountID: selectedID };
       },
     },
     mounted() {
-      fetch('/api/coa/all')
+      fetch('/api/a/all')
         .then(response => response.json())
         .then(data => {
-          this.accounts = this.addSelectedChartOfAccountID(data);
+          this.accounts = this.addSelectedAccountID(data);
         });
     },
   });

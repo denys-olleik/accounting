@@ -280,12 +280,12 @@ namespace Accounting.Database
       }
     }
 
-    public IAccountManager GetChartOfAccountManager()
+    public IAccountManager GetAccountManager()
     {
-      return new ChartOfAccountManager();
+      return new AccountManager();
     }
 
-    public class ChartOfAccountManager : IAccountManager
+    public class AccountManager : IAccountManager
     {
       public Account Create(Account entity)
       {
@@ -301,7 +301,7 @@ namespace Accounting.Database
         p.Add("@InvoiceCreationForDebit", entity.InvoiceCreationForDebit);
         p.Add("@ReceiptOfPaymentForCredit", entity.ReceiptOfPaymentForCredit);
         p.Add("@ReceiptOfPaymentForDebit", entity.ReceiptOfPaymentForDebit);
-        p.Add("@ParentChartOfAccountId", entity.ParentAccountId);
+        p.Add("@ParentAccountId", entity.ParentAccountId);
         p.Add("@ReconciliationExpense", entity.ReconciliationExpense);
         p.Add("@ReconciliationLiabilitiesAndAssets", entity.ReconciliationLiabilitiesAndAssets);
         p.Add("@CreatedById", entity.CreatedById);
@@ -312,10 +312,10 @@ namespace Accounting.Database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Account>("""
-            INSERT INTO "ChartOfAccount" 
-            ("Name", "Type", "InvoiceCreationForCredit", "InvoiceCreationForDebit", "ReceiptOfPaymentForCredit", "ReceiptOfPaymentForDebit", "ReconciliationExpense", "ReconciliationLiabilitiesAndAssets", "ParentChartOfAccountId", "CreatedById", "OrganizationId") 
+            INSERT INTO "Account" 
+            ("Name", "Type", "InvoiceCreationForCredit", "InvoiceCreationForDebit", "ReceiptOfPaymentForCredit", "ReceiptOfPaymentForDebit", "ReconciliationExpense", "ReconciliationLiabilitiesAndAssets", "ParentAccountId", "CreatedById", "OrganizationId") 
             VALUES 
-            (@Name, @Type, @InvoiceCreationForCredit, @InvoiceCreationForDebit, @ReceiptOfPaymentForCredit, @ReceiptOfPaymentForDebit, @ReconciliationExpense, @ReconciliationLiabilitiesAndAssets, @ParentChartOfAccountId, @CreatedById, @OrganizationId)
+            (@Name, @Type, @InvoiceCreationForCredit, @InvoiceCreationForDebit, @ReceiptOfPaymentForCredit, @ReceiptOfPaymentForDebit, @ReconciliationExpense, @ReconciliationLiabilitiesAndAssets, @ParentAccountId, @CreatedById, @OrganizationId)
             RETURNING *;
             """, p);
         }
@@ -331,7 +331,7 @@ namespace Accounting.Database
       public async Task<bool> ExistsAsync(int id, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@ChartOfAccountID", id);
+        p.Add("@AccountID", id);
         p.Add("@OrganizationId", organizationId);
 
         bool result;
@@ -340,8 +340,8 @@ namespace Accounting.Database
         {
           result = await con.ExecuteScalarAsync<bool>("""
             SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END
-            FROM "ChartOfAccount" 
-            WHERE "ChartOfAccountID" = @ChartOfAccountID AND "OrganizationId" = @OrganizationId
+            FROM "Account" 
+            WHERE "AccountID" = @AccountID AND "OrganizationId" = @OrganizationId
             """, p);
         }
 
@@ -361,17 +361,17 @@ namespace Accounting.Database
         {
           string query = $""" 
             SELECT 
-                coa."ChartOfAccountID", 
-                coa."Name", 
-                coa."Type", 
+                a."AccountID", 
+                a."Name", 
+                a."Type", 
                 CASE 
-                    WHEN coa."Type" IN ('assets', 'expense') THEN SUM(COALESCE(gl."Debit", 0)) - SUM(COALESCE(gl."Credit", 0))
+                    WHEN a."Type" IN ('assets', 'expense') THEN SUM(COALESCE(gl."Debit", 0)) - SUM(COALESCE(gl."Credit", 0))
                     ELSE SUM(COALESCE(gl."Credit", 0)) - SUM(COALESCE(gl."Debit", 0))
                 END AS "CurrentBalance"
-            FROM "ChartOfAccount" coa
-            LEFT JOIN "GeneralLedger" gl ON coa."ChartOfAccountID" = gl."ChartOfAccountId" AND coa."OrganizationId" = gl."OrganizationId"
-            WHERE coa."OrganizationId" = @OrganizationId
-            GROUP BY coa."ChartOfAccountID", coa."Name", coa."Type"
+            FROM "Account" a
+            LEFT JOIN "GeneralLedger" gl ON a."AccountID" = gl."AccountId" AND a."OrganizationId" = gl."OrganizationId"
+            WHERE a."OrganizationId" = @OrganizationId
+            GROUP BY a."AccountID", a."Name", a."Type"
         """;
 
           result = await con.QueryAsync<Account>(query, new { OrganizationId = organizationId });
@@ -392,7 +392,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
+            FROM "Account" 
             WHERE "InvoiceCreationForCredit" = true
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -412,7 +412,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
+            FROM "Account" 
             WHERE "InvoiceCreationForDebit" = true
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -432,7 +432,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
+            FROM "Account" 
             WHERE "ReceiptOfPaymentForCredit" = true
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -452,7 +452,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
+            FROM "Account" 
             WHERE "ReceiptOfPaymentForDebit" = true
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -474,7 +474,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
+            FROM "Account" 
             WHERE "OrganizationId" = @OrganizationId
             """, new { OrganizationId = organizationId });
         }
@@ -494,7 +494,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
+            FROM "Account" 
             WHERE "Type" = @Type
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -514,7 +514,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
+            FROM "Account" 
             WHERE "ReconciliationExpense" = true
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -534,7 +534,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
+            FROM "Account" 
             WHERE "ReconciliationLiabilitiesAndAssets" = true
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -555,7 +555,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
+            FROM "Account" 
             WHERE "Name" = ANY(@AccountNames)
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -567,7 +567,7 @@ namespace Accounting.Database
       public async Task<Account> GetAsync(int id, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@ChartOfAccountID", id);
+        p.Add("@AccountID", id);
 
         IEnumerable<Account> result;
 
@@ -575,8 +575,8 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
-            WHERE "ChartOfAccountID" = @ChartOfAccountID
+            FROM "Account" 
+            WHERE "AccountID" = @AccountID
             """, p);
         }
 
@@ -595,7 +595,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
+            FROM "Account" 
             WHERE "Name" = @Name
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -621,7 +621,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
-            FROM "ChartOfAccount" 
+            FROM "Account" 
             WHERE "Name" = @Name
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -635,25 +635,25 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateAsync(Account chartOfAccount)
+      public async Task<int> UpdateAsync(Account account)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@ChartOfAccountID", chartOfAccount.AccountID);
-        p.Add("@Name", chartOfAccount.Name);
-        p.Add("@Type", chartOfAccount.Type);
-        p.Add("@InvoiceCreationForCredit", chartOfAccount.InvoiceCreationForCredit);
-        p.Add("@InvoiceCreationForDebit", chartOfAccount.InvoiceCreationForDebit);
-        p.Add("@ReceiptOfPaymentForCredit", chartOfAccount.ReceiptOfPaymentForCredit);
-        p.Add("@ReceiptOfPaymentForDebit", chartOfAccount.ReceiptOfPaymentForDebit);
-        p.Add("@ReconciliationExpense", chartOfAccount.ReconciliationExpense);
-        p.Add("@ReconciliationLiabilitiesAndAssets", chartOfAccount.ReconciliationLiabilitiesAndAssets);
+        p.Add("@AccountID", account.AccountID);
+        p.Add("@Name", account.Name);
+        p.Add("@Type", account.Type);
+        p.Add("@InvoiceCreationForCredit", account.InvoiceCreationForCredit);
+        p.Add("@InvoiceCreationForDebit", account.InvoiceCreationForDebit);
+        p.Add("@ReceiptOfPaymentForCredit", account.ReceiptOfPaymentForCredit);
+        p.Add("@ReceiptOfPaymentForDebit", account.ReceiptOfPaymentForDebit);
+        p.Add("@ReconciliationExpense", account.ReconciliationExpense);
+        p.Add("@ReconciliationLiabilitiesAndAssets", account.ReconciliationLiabilitiesAndAssets);
 
         int rowsModified;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           rowsModified = await con.ExecuteAsync("""
-            UPDATE "ChartOfAccount" SET 
+            UPDATE "Account" SET 
             "Name" = @Name,
             "Type" = @Type,
             "InvoiceCreationForCredit" = @InvoiceCreationForCredit,
@@ -662,7 +662,7 @@ namespace Accounting.Database
             "ReceiptOfPaymentForDebit" = @ReceiptOfPaymentForDebit,
             "ReconciliationExpense" = @ReconciliationExpense,
             "ReconciliationLiabilitiesAndAssets" = @ReconciliationLiabilitiesAndAssets
-            WHERE "ChartOfAccountID" = @ChartOfAccountID
+            WHERE "AccountID" = @AccountID
             """, p);
         }
 
@@ -1059,7 +1059,7 @@ namespace Accounting.Database
       public async Task<GeneralLedger> CreateAsync(GeneralLedger generalLedger)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@ChartOfAccountId", generalLedger.AccountId);
+        p.Add("@AccountId", generalLedger.AccountId);
         p.Add("@Debit", generalLedger.Debit);
         p.Add("@Credit", generalLedger.Credit);
         p.Add("@Memo", generalLedger.Memo);
@@ -1072,9 +1072,9 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<GeneralLedger>("""
             INSERT INTO "GeneralLedger" 
-            ("ChartOfAccountId", "Debit", "Credit", "Memo", "CreatedById", "OrganizationId") 
+            ("AccountId", "Debit", "Credit", "Memo", "CreatedById", "OrganizationId") 
             VALUES 
-            (@ChartOfAccountId, @Debit, @Credit, @Memo, @CreatedById, @OrganizationId)
+            (@AccountId, @Debit, @Credit, @Memo, @CreatedById, @OrganizationId)
             RETURNING *;
             """, p);
         }
@@ -1433,8 +1433,8 @@ namespace Accounting.Database
         p.Add("@Quantity", entity.Quantity);
         p.Add("@Price", entity.Price);
         p.Add("@InvoiceId", entity.InvoiceId);
-        p.Add("@RevenueChartOfAccountId", entity.RevenueAccountId);
-        p.Add("@AssetsChartOfAccountId", entity.AssetsAccountId);
+        p.Add("@RevenueAccountId", entity.RevenueAccountId);
+        p.Add("@AssetsAccountId", entity.AssetsAccountId);
         p.Add("@CreatedById", entity.CreatedById);
         p.Add("@OrganizationId", entity.OrganizationId);
 
@@ -1444,9 +1444,9 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<InvoiceLine>("""
             INSERT INTO "InvoiceLine" 
-            ("Title", "Description", "Quantity", "Price", "RevenueChartOfAccountId", "AssetsChartOfAccountId", "CreatedById", "OrganizationId", "InvoiceId")
+            ("Title", "Description", "Quantity", "Price", "RevenueAccountId", "AssetsAccountId", "CreatedById", "OrganizationId", "InvoiceId")
             VALUES 
-            (@Title, @Description, @Quantity, @Price, @RevenueChartOfAccountId, @AssetsChartOfAccountId, @CreatedById, @OrganizationId, @InvoiceId)
+            (@Title, @Description, @Quantity, @Price, @RevenueAccountId, @AssetsAccountId, @CreatedById, @OrganizationId, @InvoiceId)
             RETURNING *;
             """, p);
         }
@@ -2473,8 +2473,8 @@ namespace Accounting.Database
         p.Add("@ItemType", entity.ItemType);
         p.Add("@CreatedById", entity.CreatedById);
         p.Add("@OrganizationId", entity.OrganizationId);
-        p.Add("@RevenueChartOfAccountId", entity.RevenueAccountId);
-        p.Add("@AssetsChartOfAccountId", entity.AssetsAccountId);
+        p.Add("@RevenueAccountId", entity.RevenueAccountId);
+        p.Add("@AssetsAccountId", entity.AssetsAccountId);
         p.Add("@ParentItemId", entity.ParentItemId);
 
         IEnumerable<Item> result;
@@ -2482,8 +2482,8 @@ namespace Accounting.Database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Item>("""
-            INSERT INTO "Item" ("Name", "Description", "InventoryMethod", "ItemType", "RevenueChartOfAccountId", "AssetsChartOfAccountId", "CreatedById", "OrganizationId", "ParentItemId")
-            VALUES (@Name, @Description, @InventoryMethod, @ItemType, @RevenueChartOfAccountId, @AssetsChartOfAccountId, @CreatedById, @OrganizationId, @ParentItemId)
+            INSERT INTO "Item" ("Name", "Description", "InventoryMethod", "ItemType", "RevenueAccountId", "AssetsAccountId", "CreatedById", "OrganizationId", "ParentItemId")
+            VALUES (@Name, @Description, @InventoryMethod, @ItemType, @RevenueAccountId, @AssetsAccountId, @CreatedById, @OrganizationId, @ParentItemId)
             RETURNING *;
             """, p);
         }
@@ -3410,11 +3410,11 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateAssetOrLiabilityChartOfAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationLiabilitiesAndAssetsAccountId)
+      public async Task<int> UpdateAssetOrLiabilityAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationLiabilitiesAndAssetsAccountId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@ReconciliationTransactionID", reconciliationTransactionID);
-        p.Add("@AssetOrLiabilityChartOfAccountId", selectedReconciliationLiabilitiesAndAssetsAccountId);
+        p.Add("@AssetOrLiabilityAccountId", selectedReconciliationLiabilitiesAndAssetsAccountId);
 
         int rowsAffected;
 
@@ -3422,7 +3422,7 @@ namespace Accounting.Database
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "ReconciliationTransaction" 
-            SET "AssetOrLiabilityChartOfAccountId" = @AssetOrLiabilityChartOfAccountId
+            SET "AssetOrLiabilityAccountId" = @AssetOrLiabilityAccountId
             WHERE "ReconciliationTransactionID" = @ReconciliationTransactionID;
             """, p);
 
@@ -3430,11 +3430,11 @@ namespace Accounting.Database
         }
       }
 
-      public async Task<int> UpdateExpenseChartOfAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationExpenseAccountId)
+      public async Task<int> UpdateExpenseAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationExpenseAccountId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@ReconciliationTransactionID", reconciliationTransactionID);
-        p.Add("@ExpenseChartOfAccountId", selectedReconciliationExpenseAccountId);
+        p.Add("@ExpenseAccountId", selectedReconciliationExpenseAccountId);
 
         int rowsAffected;
 
@@ -3442,7 +3442,7 @@ namespace Accounting.Database
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "ReconciliationTransaction" 
-            SET "ExpenseChartOfAccountId" = @ExpenseChartOfAccountId
+            SET "ExpenseAccountId" = @ExpenseAccountId
             WHERE "ReconciliationTransactionID" = @ReconciliationTransactionID;
             """, p);
 

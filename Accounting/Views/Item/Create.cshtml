@@ -19,16 +19,16 @@
   </select>
 </template>
 
-<template id="chart-of-account-template">
-  <a href="#" @@click.prevent="selectAccount(account.chartOfAccountID)">
+<template id="account-template">
+  <a href="#" @@click.prevent="selectAccount(account.accountID)">
     <div>{{ account.name }}</div>
   </a>
 </template>
 
 <form id="app" asp-action="Create" asp-controller="Item" method="post" class="display-flex flex-direction-column margin-bottom-5px">
   <input type="hidden" asp-for="ParentItemId" />
-  <input type="hidden" name="SelectedRevenueChartOfAccountId" v-model="selectedRevenueAccountId" />
-  <input type="hidden" name="SelectedAssetsChartOfAccountId" v-model="selectedAssetsAccountId" />
+  <input type="hidden" name="SelectedRevenueAccountId" v-model="selectedRevenueAccountId" />
+  <input type="hidden" name="SelectedAssetsAccountId" v-model="selectedAssetsAccountId" />
 
   @if (Model.ParentItemId != null)
   {
@@ -38,7 +38,7 @@
         <div class="flex-1"></div>
         <a asp-action="Update"
            asp-controller="Item"
-           asp-route-chartOfAccountId="@Model.ParentItemId"
+           asp-route-accountId="@Model.ParentItemId"
            class="font-Roboto-Mono">@Model.ParentItem.Name</a>
         <div class="flex-1"></div>
       </div>
@@ -110,22 +110,22 @@
   <fieldset class="margin-bottom-5px" v-if="salePrice > 0">
     <legend>Revenue Accounts</legend>
     <div class="display-flex flex-direction-column">
-      <chart-of-account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Revenue')"
-                        :key="account.chartOfAccountID"
+      <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Revenue')"
+                        :key="account.accountID"
                         :account="account"
                         @@select-account="updateSelectedAccountId">
-      </chart-of-account>
+      </account>
     </div>
   </fieldset>
 
   <fieldset class="margin-bottom-5px" v-if="salePrice > 0">
     <legend>Assets Accounts</legend>
     <div class="display-flex flex-direction-column">
-      <chart-of-account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Assets')"
-                        :key="account.chartOfAccountID"
+      <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Assets')"
+                        :key="account.accountID"
                         :account="account"
                         @@select-account="updateSelectedAccountId">
-      </chart-of-account>
+      </account>
     </div>
   </fieldset>
 
@@ -147,13 +147,13 @@
 <script>
   const { createApp } = Vue;
 
-  const ChartOfAccount = {
-    name: 'ChartOfAccount',
-    template: '#chart-of-account-template',
+  const Account = {
+    name: 'Account',
+    template: '#account-template',
     props: ['account'],
     methods: {
-      selectAccount(chartOfAccountID) {
-        this.$emit('select-account', chartOfAccountID);
+      selectAccount(accountID) {
+        this.$emit('select-account', accountID);
       }
     }
   };
@@ -171,14 +171,14 @@
 
   const app = createApp({
     components: {
-      'chart-of-account': ChartOfAccount,
+      'account': Account,
       'item-type-selector': ItemTypeSelector,
     },
     data() {
       return {
         accounts: @Html.Raw(Json.Serialize(Model!.Accounts)),
-        selectedRevenueAccountId: @Html.Raw(Model.SelectedRevenueChartOfAccountId.HasValue ? Model.SelectedRevenueChartOfAccountId.Value.ToString() : "null"),
-        selectedAssetsAccountId: @Html.Raw(Model.SelectedAssetsChartOfAccountId.HasValue ? Model.SelectedAssetsChartOfAccountId.Value.ToString() : "null"),
+        selectedRevenueAccountId: @Html.Raw(Model.SelectedRevenueAccountId.HasValue ? Model.SelectedRevenueAccountId.Value.ToString() : "null"),
+        selectedAssetsAccountId: @Html.Raw(Model.SelectedAssetsAccountId.HasValue ? Model.SelectedAssetsAccountId.Value.ToString() : "null"),
         itemTypes: @Html.Raw(Json.Serialize(Model.AvailableItemTypes)),
         selectedItemType: '@Model.SelectedItemType' || '',
         selectedLocationId: '@Model.SelectedLocationId?.ToString()' || '',
@@ -197,7 +197,7 @@
     },
     methods: {
       updateSelectedAccountId(accountId) {
-        const account = this.accounts.find(acc => acc.chartOfAccountID === accountId);
+        const account = this.accounts.find(a => a.accountID === accountId);
 
         if (account.type === '@Accounting.Business.Account.AccountTypeConstants.Revenue') {
           this.selectedRevenueAccountId = accountId;

@@ -10,12 +10,12 @@ namespace Accounting.Controllers
   public class ReportingApiController : BaseController
   {
     private readonly InvoiceService _invoiceService;
-    private readonly AccountService _chartOfAccountService;
+    private readonly AccountService _accountService;
 
-    public ReportingApiController(InvoiceService invoiceService, AccountService chartOfAccountService)
+    public ReportingApiController(InvoiceService invoiceService, AccountService accountService)
     {
       _invoiceService = invoiceService;
-      _chartOfAccountService = chartOfAccountService;
+      _accountService = accountService;
     }
 
     [HttpGet("get-unpaid-and-paid-balance")]
@@ -29,7 +29,7 @@ namespace Accounting.Controllers
     [HttpGet("get-account-balance-report")]
     public async Task<IActionResult> GetAccountBalanceReport()
     {
-      var accountBalances = await _chartOfAccountService.GetAccountBalanceReport(GetOrganizationId());
+      var accountBalances = await _accountService.GetAccountBalanceReport(GetOrganizationId());
 
       return Ok(accountBalances);
     }

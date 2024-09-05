@@ -27,17 +27,17 @@ Journal entries are made in transactions of at least two entries, where the sum 
 "Double entry" doesn't mean you can't have odd number of entries in a transaction.
 
 ```sql
-CREATE TABLE "ChartOfAccount"
+CREATE TABLE "Account"
 (
-  "ChartOfAccountID" SERIAL PRIMARY KEY NOT NULL,
+  "AccountID" SERIAL PRIMARY KEY NOT NULL,
   "Name" VARCHAR(200) NOT NULL,
   "Type" VARCHAR(50) NOT NULL CHECK ("Type" IN  ('assets', 'liabilities', 'equity',  'revenue',  'expense')),
   ...
   "Created" TIMESTAMPTZ NOT NULL DEFAULT  (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-  "ParentChartOfAccountId" INT NULL,
+  "ParentAccountId" INT NULL,
   "CreatedById" INT NOT NULL,
   "OrganizationId" INT NOT NULL,
-  FOREIGN KEY ("ParentChartOfAccountId") REFERENCES   "ChartOfAccount"("ChartOfAccountID"),
+  FOREIGN KEY ("ParentAccountId") REFERENCES "Account"("AccountID"),
   FOREIGN KEY ("CreatedById") REFERENCES "User" ("UserID"),
   FOREIGN KEY ("OrganizationId") REFERENCES   "Organization"("OrganizationID"),
   UNIQUE ("Name", "OrganizationId")
@@ -46,14 +46,14 @@ CREATE TABLE "ChartOfAccount"
 CREATE TABLE "GeneralLedger"
 (
   "GeneralLedgerID" SERIAL PRIMARY KEY NOT NULL,
-  "ChartOfAccountId" INT NOT NULL,
+  "AccountId" INT NOT NULL,
   "Credit" DECIMAL(18, 2) NULL,
   "Debit" DECIMAL(18, 2) NULL,
   "Memo" TEXT NULL,
   "Created" TIMESTAMPTZ NOT NULL DEFAULT  (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
   "CreatedById" INT NOT NULL,
   "OrganizationId" INT NOT NULL,
-  FOREIGN KEY ("ChartOfAccountId") REFERENCES   "ChartOfAccount"("ChartOfAccountID"),
+  FOREIGN KEY ("AccountId") REFERENCES "Account"("AccountID"),
   FOREIGN KEY ("CreatedById") REFERENCES "User" ("UserID"),
   FOREIGN KEY ("OrganizationId") REFERENCES   "Organization"("OrganizationID")
 );
@@ -61,9 +61,9 @@ CREATE TABLE "GeneralLedger"
 
 The `GeneralLedger` is the journal table and contains the `credit` and `debit` columns.
 
-A typical `ChartOfAccount` might look like...
+A typical `Account` might look like...
 
-| ChartOfAccountID | Name                          | Type       | ParentChartOfAccountId |
+| AccountID        | Name                          | Type       | ParentAccountId        |
 |------------------|-------------------------------|------------|------------------------|
 | 1                | accounts-receivable           | assets     | NULL                   |
 | 2                | revenue                       | revenue    | NULL                   |
@@ -82,7 +82,7 @@ A typical `ChartOfAccount` might look like...
 
 Keep an eye on number 14.
 
-The `ParentChartOfAccountId` allows for hierarchical relationships which allow for better reporting and analysis. However, ensuring that the `ParentChartOfAccountId` is of the same `Type` as the `ChartOfAccountID` would have to be enforced at the application level.
+The `ParentAccountId` allows for hierarchical relationships which allow for better reporting and analysis. However, ensuring that the `ParentAccountId` is of the same `Type` as the `AccountID` would have to be enforced at the application level.
 
 ### Double entry is misleading
 
@@ -90,7 +90,7 @@ Double entry accounting is misleading because a transaction doesn't always have 
 
 For example, consider an invoice with one line item where the sales tax has to be collected. Here is what the journal entries might look like...
 
-| GeneralLedgerID | ChartOfAccountId | Credit  | Debit   |
+| GeneralLedgerID | AccountId        | Credit  | Debit   |
 |-----------------|------------------|---------|---------|
 | 1               | 1  (ar)          | 0.00    | 1100.00 |
 | 2               | 2  (revenue)     | 1000.00 | 0.00    |

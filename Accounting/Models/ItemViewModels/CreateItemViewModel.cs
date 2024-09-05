@@ -8,8 +8,8 @@ namespace Accounting.Models.ItemViewModels
     public string? Description { get; set; }
     public int? ParentItemId { get; set; }
     public ItemViewModel? ParentItem { get; set; }
-    public int? SelectedAssetsChartOfAccountId { get; set; }
-    public int? SelectedRevenueChartOfAccountId { get; set; }
+    public int? SelectedAssetsAccountId { get; set; }
+    public int? SelectedRevenueAccountId { get; set; }
 
     #region Inventory
     public decimal SalePrice { get; set; }
@@ -23,7 +23,7 @@ namespace Accounting.Models.ItemViewModels
     public int? SelectedLocationId { get; set; }
     #endregion
 
-    public List<ChartOfAccountViewModel>? Accounts { get; set; }
+    public List<AccountViewModel>? Accounts { get; set; }
     public List<string> AvailableInventoryMethods { get; set; } = new List<string>();
     public string? SelectedInventoryMethod { get; set; }
 
@@ -36,9 +36,9 @@ namespace Accounting.Models.ItemViewModels
       public string? Description { get; set; }
     }
 
-    public class ChartOfAccountViewModel
+    public class AccountViewModel
     {
-      public int ChartOfAccountID { get; set; }
+      public int AccountID { get; set; }
       public string? Name { get; set; }
       public string? Type { get; set; }
     }

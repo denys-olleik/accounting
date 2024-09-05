@@ -17,8 +17,8 @@ namespace Accounting.Business
     public string? Description { get; set; }
     public decimal? Amount { get; set; }
     public string? Category { get; set; }
-    public int? ExpenseChartOfAccountId { get; set; }
-    public int? AssetOrLiabilityChartOfAccountId { get; set; }
+    public int? ExpenseAccountId { get; set; }
+    public int? AssetOrLiabilityAccountId { get; set; }
     public DateTime Created { get; set; }
     public int ReconciliationId { get; set; }
     public int CreatedById { get; set; }

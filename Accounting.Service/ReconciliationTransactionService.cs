@@ -32,16 +32,16 @@ namespace Accounting.Service
       return await factoryManager.GetReconciliationTransactionManager().ImportAsync(reconciliationTransactions);
     }
 
-    public async Task UpdateAssetOrLiabilityChartOfAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationLiabilitiesAndAssetsAccountId)
+    public async Task UpdateAssetOrLiabilityAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationLiabilitiesAndAssetsAccountId)
     {
       FactoryManager factoryManager = new FactoryManager();
-      await factoryManager.GetReconciliationTransactionManager().UpdateAssetOrLiabilityChartOfAccountIdAsync(reconciliationTransactionID, selectedReconciliationLiabilitiesAndAssetsAccountId);
+      await factoryManager.GetReconciliationTransactionManager().UpdateAssetOrLiabilityAccountIdAsync(reconciliationTransactionID, selectedReconciliationLiabilitiesAndAssetsAccountId);
     }
 
-    public async Task UpdateExpenseChartOfAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationExpenseAccountId)
+    public async Task UpdateExpenseAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationExpenseAccountId)
     {
       FactoryManager factoryManager = new FactoryManager();
-      await factoryManager.GetReconciliationTransactionManager().UpdateExpenseChartOfAccountIdAsync(reconciliationTransactionID, selectedReconciliationExpenseAccountId);
+      await factoryManager.GetReconciliationTransactionManager().UpdateExpenseAccountIdAsync(reconciliationTransactionID, selectedReconciliationExpenseAccountId);
     }
 
     public async Task<int> UpdateReconciliationTransactionInstructionAsync(int reconciliationTransactionID, string reconciliationInstruction)

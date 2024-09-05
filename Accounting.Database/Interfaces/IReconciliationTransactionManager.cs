@@ -8,8 +8,8 @@ namespace Accounting.Database.Interfaces
     Task<ReconciliationTransaction> GetAsync(int reconciliationTransactionID);
     Task<(List<ReconciliationTransaction> ReconciliationTransactions, int? NextPageNumber)> GetReconciliationTransactionAsync(int reconciliationId, int page, int pageSize);
     Task<int> ImportAsync(List<ReconciliationTransaction> reconciliationTransactions);
-    Task<int> UpdateAssetOrLiabilityChartOfAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationLiabilitiesAndAssetsAccountId);
-    Task<int> UpdateExpenseChartOfAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationExpenseAccountId);
+    Task<int> UpdateAssetOrLiabilityAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationLiabilitiesAndAssetsAccountId);
+    Task<int> UpdateExpenseAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationExpenseAccountId);
     Task<int> UpdateReconciliationTransactionInstructionAsync(int reconciliationTransactionID, string reconciliationInstructionJSON);
   }
 }

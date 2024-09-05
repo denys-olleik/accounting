@@ -18,7 +18,7 @@ namespace Accounting.Database
 
     public IAccountManager GetAccountManager()
     {
-      return databaseFactoryDefinition.GetChartOfAccountManager();
+      return databaseFactoryDefinition.GetAccountManager();
     }
 
     public IBusinessEntityManager GetBusinessEntityManager()

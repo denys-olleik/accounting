@@ -18,21 +18,21 @@ namespace Accounting.Validators
 
       When(x => x.SalePrice > 0, () =>
       {
-        RuleFor(x => x.SelectedRevenueChartOfAccountId)
+        RuleFor(x => x.SelectedRevenueAccountId)
             .NotEmpty().WithMessage("Revenue account is required.")
             .DependentRules(() =>
             {
-              RuleFor(x => x.SelectedRevenueChartOfAccountId)
-                    .MustAsync(async (chartOfAccountId, cancellation) => await AccountExists(chartOfAccountId, _organizationId, cancellation))
+              RuleFor(x => x.SelectedRevenueAccountId)
+                    .MustAsync(async (accountId, cancellation) => await AccountExists(accountId, _organizationId, cancellation))
                     .WithMessage("Selected revenue account does not exist.");
             });
 
-        RuleFor(x => x.SelectedAssetsChartOfAccountId)
+        RuleFor(x => x.SelectedAssetsAccountId)
             .NotEmpty().WithMessage("Asset account is required.")
             .DependentRules(() =>
             {
-              RuleFor(x => x.SelectedAssetsChartOfAccountId)
-                    .MustAsync(async (chartOfAccountId, cancellation) => await AccountExists(chartOfAccountId, _organizationId, cancellation))
+              RuleFor(x => x.SelectedAssetsAccountId)
+                    .MustAsync(async (accountId, cancellation) => await AccountExists(accountId, _organizationId, cancellation))
                     .WithMessage("Selected asset account does not exist.");
             });
       });
@@ -47,13 +47,13 @@ namespace Accounting.Validators
       });
     }
 
-    private async Task<bool> AccountExists(int? chartOfAccountId, int organizationId, CancellationToken cancellationToken)
+    private async Task<bool> AccountExists(int? accountId, int organizationId, CancellationToken cancellationToken)
     {
-      if (!chartOfAccountId.HasValue)
+      if (!accountId.HasValue)
         return false;
 
-      AccountService chartOfAccountService = new AccountService();
-      return await chartOfAccountService.ExistsAsync(chartOfAccountId.Value, organizationId);
+      AccountService accountService = new AccountService();
+      return await accountService.ExistsAsync(accountId.Value, organizationId);
     }
   }
 }

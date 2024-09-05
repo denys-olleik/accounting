@@ -74,9 +74,9 @@
         </ul>
       </li>
       <li>
-        <a href="@Url.Action("Accounts", "ChartOfAccount")">Chart of Accounts</a>
+        <a href="@Url.Action("Accounts", "Account")">Accounts</a>
         <ul>
-          <li><a href="@Url.Action("Create", "ChartOfAccount")">Create Account</a></li>
+          <li><a href="@Url.Action("Create", "Account")">Create Account</a></li>
         </ul>
       </li>
       <li>
@@ -89,12 +89,6 @@
       <li>
         <a href="@Url.Action("ShippingAndReceiving", "ShippingAndReceiving")">Shipping and Receiving</a>
       </li>
-      @* <li>
-        <a href="@Url.Action("ZIPCodes", "ZIPCode")">ZIP Codes</a>
-        <ul>
-          <li><a href="@Url.Action("Manage", "ZIPCode")">Manage ZIP Codes</a></li>
-        </ul>
-      </li> *@
       <li>
         <a href="@Url.Action("Tenants", "DeploymentAndProvisioning")">Deployment and Provisioning</a>
       </li>
@@ -105,161 +99,6 @@
   </div>
 }
 
-@* <div id="app" class="display-flex flex-direction-column font-Roboto-Mono background-color-black border-radius-5px border-5px-dashed-dodgerblue padding-5px">
-  <input type="text" v-model="search" @@focus="onFocus" @@blur="onBlur" @@keydown="onKeydown" placeholder="Search" class="padding-5px margin-5px" autofocus />
-  <div v-for="(link, index) in filteredLinks" :key="link.url">
-    <a :href="link.url" class="color-white font-size-30px text-decoration-none">
-      <span v-if="isPreselected([index])" class="blinking-cursor text-decoration-none margin-right-5px">█</span>{{ link.text }}
-    </a>
-    <div v-if="link.children" class="padding-left-25px">
-      <div v-for="(child, childIndex) in link.children" :key="child.url">
-        <a :href="child.url" class="color-white font-size-30px text-decoration-none">
-          <span v-if="isPreselected([index, childIndex])" class="blinking-cursor text-decoration-none margin-right-5px">█</span>{{ child.text }}
-        </a>
-      </div>
-    </div>
-  </div>
-</div> *@
-
-@* <script>
-  const { createApp } = Vue;
-
-  const app = createApp({
-    data() {
-      return {
-        search: '',
-        links: [
-          {
-            text: 'Users', url: '@Url.Action("Users", "User")', children: [
-              { text: 'Create User', url: '@Url.Action("Create", "User")' }
-            ]
-          },
-          {
-            text: 'Tasks', url: '@Url.Action("ToDos", "ToDo")', children: [
-              { text: 'Create Task', url: '@Url.Action("Create", "ToDo")' }
-            ]
-          },
-          {
-            text: 'Invoices', url: '@Url.Action("Invoices", "Invoice")', children: [
-              { text: 'Create Invoice', url: '@Url.Action("Create", "Invoice")' }
-            ]
-          },
-          {
-            text: 'Customers and Vendors', url: '@Url.Action("Customers", "Customer")', children: [
-              { text: 'Create Customer and or Vendor', url: '@Url.Action("Create", "Customer")' }
-            ]
-          },
-          {
-            text: 'Payment Terms', url: '@Url.Action("PaymentTerms", "PaymentTerm")', children: [
-              { text: 'Create Payment Term', url: '@Url.Action("Create", "PaymentTerm")' }
-            ]
-          },
-          {
-            text: 'Payment Instructions', url: '@Url.Action("PaymentInstructions", "PaymentInstruction")', children: [
-              { text: 'Create Payment Instruction', url: '@Url.Action("Create", "PaymentInstruction")' }
-            ]
-          },
-          {
-            text: 'Products and Services', url: '@Url.Action("ProductsAndServices", "Item")', children: [
-              { text: 'Create Product or Service', url: '@Url.Action("Create", "Item")' }
-            ]
-          },
-          {
-            text: 'Locations', url: '@Url.Action("Locations", "Location")', children: [
-              { text: 'Create Location', url: '@Url.Action("Create", "Location")' }
-            ]
-          },
-          { text: 'Organization', url: '@Url.Action("Update", "Organization")', children: [] },
-          {
-            text: 'Reconciliations', url: '@Url.Action("Reconciliations", "Reconciliation")', children: [
-              { text: 'Import', url: '@Url.Action("Import", "Reconciliation")' }
-            ]
-          },
-          {
-            text: 'Chart of Accounts', url: '@Url.Action("Accounts", "ChartOfAccount")', children: [
-              { text: 'Create Account', url: '@Url.Action("Create", "ChartOfAccount")' }
-            ]
-          },
-          {
-            text: 'Backup', url: '@Url.Action("Backup", "Backup")', children: [
-              { text: 'Export', url: '@Url.Action("Export", "Backup")' },
-              { text: 'Import', url: '@Url.Action("Import", "Backup")' }
-            ]
-          },
-          {
-            text: 'Shipping and Receiving', url: '@Url.Action("ShippingAndReceiving", "ShippingAndReceiving")', children: [
-              { text: 'Driver Load Subscriptions', url: '@Url.Action("Subscriptions", "ShippingAndReceiving")' }
-            ]
-          },
-          {
-            text: 'ZIP Codes', url: '@Url.Action("ZIPCodes", "ZIPCode")', children: [
-              { text: 'Manage ZIP Codes', url: '@Url.Action("Manage", "ZIPCode")' }
-            ]
-          }
-        ],
-        preselectedIndex: [0],
-        hasFocus: false
-      };
-    },
-    computed: {
-      filteredLinks() {
-        const searchTerm = this.search.toLowerCase();
-
-        const filterLink = (link) => {
-          const matchesLinkText = link.text.toLowerCase().includes(searchTerm);
-          const matchesChildren = link.children && link.children.some(child => child.text.toLowerCase().includes(searchTerm));
-          return matchesLinkText || matchesChildren;
-        };
-
-        const filtered = this.links.filter(filterLink);
-
-        if (this.hasFocus) {
-          if (filtered.length === 0 || this.preselectedIndex[0] >= filtered.length) {
-            this.preselectedIndex = [0];
-          }
-        }
-        return filtered;
-      }
-    },
-    methods: {
-      isPreselected(indices) {
-        return JSON.stringify(this.preselectedIndex) === JSON.stringify(indices);
-      },
-      onFocus() {
-        this.hasFocus = true;
-      },
-      onBlur() {
-        this.hasFocus = false;
-      },
-      onKeydown(event) {
-        const flatLinks = this.flattenLinks(this.filteredLinks);
-        const currentIndex = flatLinks.findIndex(link => this.isPreselected(link.indices));
-
-        if (event.key === 'ArrowDown') {
-          const newIndex = (currentIndex + 1) % flatLinks.length;
-          this.preselectedIndex = flatLinks[newIndex].indices;
-        } else if (event.key === 'ArrowUp') {
-          const newIndex = (currentIndex - 1 + flatLinks.length) % flatLinks.length;
-          this.preselectedIndex = flatLinks[newIndex].indices;
-        } else if (event.key === 'Enter') {
-          const selectedLink = flatLinks[currentIndex];
-          if (selectedLink) {
-            window.location.href = selectedLink.url;
-          }
-        }
-      },
-      flattenLinks(links, parentIndices = []) {
-        return links.flatMap((link, index) => {
-          const currentIndices = parentIndices.concat(index);
-          return [{ ...link, indices: currentIndices }].concat(link.children ? this.flattenLinks(link.children, currentIndices) : []);
-        });
-      }
-    }
-  });
-
-  app.mount('#app');
-</script>
- *@
 @if (User.Identity.IsAuthenticated)
 {
   <div class="display-flex">
@@ -278,15 +117,12 @@
   <script>
     (async () => {
       try {
-        // Fetch data from API
         const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${window.location.port ? window.location.port : ''}/api/r/get-account-balance-report`);
         const apiData = await response.json();
 
-        // Prepare data for the chart
         const accountNumbers = apiData.map(item => item.name);
         const currentBalances = apiData.map(item => item.currentBalance);
 
-        // Initialize the chart
         const ctx = document.getElementById('accountBalanceChart').getContext('2d');
         const myChart = new Chart(ctx, {
           type: 'bar',
@@ -302,7 +138,7 @@
           }
         });
       } catch (error) {
-        //console.error('Error fetching data:', error);
+        
       }
     })();
   </script>

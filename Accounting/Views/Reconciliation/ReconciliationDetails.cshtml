@@ -55,9 +55,9 @@
           <a href="#"
              @@click.prevent="handleExpenseAccountClick(reconciliationExpenseAccount)"
              :class="{
-              'background-color-dodgerblue': reconciliationExpenseAccount.chartOfAccountID === selectedReconciliationExpenseAccountId,
-              'color-white': reconciliationExpenseAccount.chartOfAccountID === selectedReconciliationExpenseAccountId,
-              'default-category-class': reconciliationExpenseAccount.chartOfAccountID !== selectedReconciliationExpenseAccountId
+              'background-color-dodgerblue': reconciliationExpenseAccount.accountID === selectedReconciliationExpenseAccountId,
+              'color-white': reconciliationExpenseAccount.accountID === selectedReconciliationExpenseAccountId,
+              'default-category-class': reconciliationExpenseAccount.accountID !== selectedReconciliationExpenseAccountId
             }">
             {{ reconciliationExpenseAccount.name }}
           </a>
@@ -71,9 +71,9 @@
           <a href="#"
              @@click.prevent="handleLiabilitiesAndAssetsAccountClick(reconciliationLiabilitiesAndAssetsAccount)"
              :class="{
-              'background-color-dodgerblue': reconciliationLiabilitiesAndAssetsAccount.chartOfAccountID === selectedReconciliationLiabilitiesAndAssetsAccountId,
-              'color-white': reconciliationLiabilitiesAndAssetsAccount.chartOfAccountID === selectedReconciliationLiabilitiesAndAssetsAccountId,
-              'default-category-class': reconciliationLiabilitiesAndAssetsAccount.chartOfAccountID !== selectedReconciliationLiabilitiesAndAssetsAccountId
+              'background-color-dodgerblue': reconciliationLiabilitiesAndAssetsAccount.accountID === selectedReconciliationLiabilitiesAndAssetsAccountId,
+              'color-white': reconciliationLiabilitiesAndAssetsAccount.accountID === selectedReconciliationLiabilitiesAndAssetsAccountId,
+              'default-category-class': reconciliationLiabilitiesAndAssetsAccount.accountID !== selectedReconciliationLiabilitiesAndAssetsAccountId
             }">
             {{ reconciliationLiabilitiesAndAssetsAccount.name }}
           </a>
@@ -175,11 +175,11 @@
     methods: {
       handleLiabilitiesAndAssetsAccountClick(account) {
         console.log('Account clicked:', account.name);
-        this.selectedReconciliationLiabilitiesAndAssetsAccountId = account.chartOfAccountID;
+        this.selectedReconciliationLiabilitiesAndAssetsAccountId = account.accountID;
       },
       handleExpenseAccountClick(account) {
         console.log('Account clicked:', account.name);
-        this.selectedReconciliationExpenseAccountId = account.chartOfAccountID;
+        this.selectedReconciliationExpenseAccountId = account.accountID;
       },
       shouldBlurRow(reconciliationTransaction) {
         const isInstructionSelected = this.selectedInstruction !== null;
@@ -267,7 +267,7 @@
           });
       },
       loadReconciliationsExpenseAccounts() {
-        let apiUrl = '/api/coa/all-reconciliation-expense';
+        let apiUrl = '/api/a/all-reconciliation-expense';
         fetch(apiUrl)
           .then(response => response.json())
           .then(data => {
@@ -275,7 +275,7 @@
           });
       },
       loadReconciliationsLiabilitiesAndAssetsAccounts() {
-        let apiUrl = '/api/coa/all-reconciliation-liabilities-and-assets';
+        let apiUrl = '/api/a/all-reconciliation-liabilities-and-assets';
         fetch(apiUrl)
           .then(response => response.json())
           .then(data => {
