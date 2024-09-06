@@ -16,7 +16,7 @@
   var organizationName = User.FindFirst(Accounting.Business.Claim.CustomClaimTypeConstants.OrganizationName)?.Value;
 }
 
-<body>
+<body class="background-color-darkslategray">
   <header class="container margin-bottom-2px">
     <nav class="display-flex max-width-768-flex-direction-column">
       <a href="~/" class="background-color-A62626
@@ -59,13 +59,25 @@
         }
       </div>
     </nav>
+    <div class="border-2px-solid-white">
+      <div class="display-flex flex-direction-column background-color-black">
+        <div class="background-color-black padding-2px">
+          <div class="display-flex border-2px-solid-white height-10px">
+            <div class="flex-1 background-color-blue"></div>
+            <div class="flex-1 background-color-yellow"></div>
+            <div class="flex-1 background-color-red"></div>
+            <div class="flex-1 background-color-green"></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </header>
 
   <div class="container">
     @RenderBody()
   </div>
 
-  <footer class="width-100 text-align-center">
+  <footer class="width-100 text-align-center background-color-lightcoral border-top-2px-solid-white">
     1998
   </footer>
 </body>

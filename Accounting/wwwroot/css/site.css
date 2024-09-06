@@ -138,12 +138,20 @@ td.fitwidth, th.fitwidth {
   color: #0079C4;
 }
 
+.background-color-yellow {
+  background-color: yellow;
+}
+
 .background-color-red {
   background-color: red;
 }
 
 .background-color-green {
   background-color: green;
+}
+
+.background-color-blue {
+  background-color: blue;
 }
 
 .background-color-white {
@@ -244,6 +252,14 @@ td.fitwidth, th.fitwidth {
 
 .border-1px-solid-dodgerblue {
   border: 1px solid dodgerblue;
+}
+
+.border-2px-solid-white {
+  border: 2px solid white;
+}
+
+.border-2px-solid-black {
+  border: 2px solid black;
 }
 
 .border-2px-solid-red {
@@ -392,6 +408,10 @@ td.fitwidth, th.fitwidth {
   border-radius: 25px;
 }
 
+.border-top-2px-solid-white {
+  border-top: 2px solid white;
+}
+
 .border-top-bottom-left-radius-5px {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
@@ -416,6 +436,14 @@ td.fitwidth, th.fitwidth {
 
 .writing-mode-vertical-lr {
   writing-mode: vertical-lr;
+}
+
+.height-5px {
+  height: 5px;
+}
+
+.height-10px {
+  height: 10px;
 }
 
 .width-1px {
