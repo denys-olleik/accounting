@@ -118,6 +118,10 @@ td.fitwidth, th.fitwidth {
   background-color: lightyellow;
 }
 
+.background-color-wheat {
+  background-color: wheat;
+}
+
 .color-blue {
   color: blue;
 }
@@ -479,6 +483,14 @@ td.fitwidth, th.fitwidth {
   margin-right: 1px;
 }
 
+.margin-top-0px {
+  margin-top: 0px;
+}
+
+.margin-top-5px {
+  margin-top: 5px;
+}
+
 .margin-0 {
   margin: 0;
 }
@@ -505,6 +517,10 @@ td.fitwidth, th.fitwidth {
 
 .margin-left-50px {
   margin-left: 50px;
+}
+
+.margin-bottom-0px {
+  margin-bottom: 0px;
 }
 
 .margin-bottom-2px {
@@ -599,6 +615,10 @@ td.fitwidth, th.fitwidth {
   white-space: nowrap;
 }
 
+.white-space-pre-wrap {
+  white-space: pre-wrap;
+}
+
 .flex-1 {
   flex: 1
 }
@@ -628,9 +648,9 @@ td.fitwidth, th.fitwidth {
 }
 
 .box-shaddow {
-  -webkit-box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.5);
-  -moz-box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.5);
-  box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.9);
+  -moz-box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.9);
+  box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.9);
 }
 
 .cursor-pointer {

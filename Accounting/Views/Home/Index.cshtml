@@ -5,10 +5,132 @@
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<!-- and it's easy to individually load additional languages -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<script>hljs.highlightAll();</script>
+
 @if (!User.Identity.IsAuthenticated)
 {
-  <div class="display-flex margin-bottom-5px background-color-lightcoral padding-15px">
-    <p class="font-size-20px text-align-center font-weight-500">The only system capable of managing everything from a laundromat to an aircraft carrier, uncontaminated by Silicon Valley 🐂💩.</p>
+  <div class="display-flex margin-bottom-5px background-color-wheat padding-15px box-shaddow">
+    <p class="font-size-20px text-align-center font-weight-500">The only system capable of managing everything from a laundromat to a cartel, an aircraft carrier, and everything in between, uncontaminated by Silicon Valley 🐂💩.</p>
+  </div>
+
+  <div class="display-flex background-color-wheat margin-bottom-5px padding-15px box-shaddow font-size-20px font-weight-500">
+    <div class="flex-1">
+      GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
+    </div>
+  </div>
+
+  <div class="display-flex flex-direction-column box-shaddow">
+    <div class="display-flex font-weight-500">
+      <div class="flex-1 background-color-wheat padding-10px">
+        <div class="font-size-20px margin-bottom-5px">The schema</div>
+        <div>Designed to be as simple as possible while allowing for the most complex record-keeping scenarios.</div>
+      </div>
+    </div>
+
+    <div class="display-flex margin-bottom-5px">
+      <div class="flex-1">
+        <pre class="white-space-pre-wrap margin-top-0px margin-bottom-0px"><code class="language-sql">
+  CREATE TABLE "Account"
+  (
+    "AccountID" SERIAL PRIMARY KEY NOT NULL,
+    "Name" VARCHAR(200) NOT NULL,
+    "Type" VARCHAR(50) NOT NULL CHECK ("Type" IN ('assets', 'liabilities', 'equity', 'revenue', 'expense')),
+    "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+    "ParentAccountId" INT NULL,
+    "CreatedById" INT NOT NULL,
+    "OrganizationId" INT NOT NULL,
+    FOREIGN KEY ("ParentAccountId") REFERENCES "Account"("AccountID"),
+    FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+    FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
+    UNIQUE ("Name", "OrganizationId")
+  );
+
+  CREATE TABLE "GeneralLedger"
+  (
+    "GeneralLedgerID" SERIAL PRIMARY KEY NOT NULL,
+    "AccountId" INT NOT NULL,
+    "Credit" DECIMAL(18, 2) NULL,
+    "Debit" DECIMAL(18, 2) NULL,
+    "Memo" TEXT NULL,
+    "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+    "CreatedById" INT NOT NULL,
+    "OrganizationId" INT NOT NULL,
+    FOREIGN KEY ("AccountId") REFERENCES "Account"("AccountID"),
+    FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+    FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+  );
+          </code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="display-flex flex-direction-column box-shaddow">
+    <div class="display-flex font-weight-500">
+      <div class="flex-1 background-color-wheat padding-10px">
+        <div class="font-size-20px margin-bottom-5px">The transaction</div>
+        <div class="font-size-16px">Anything can be thought of as a transaction, from the creation of an invoice and the receiving of a payment to the movement of inventory. A transaction involves entries into multiple tables and results in at least two entries in the journal.</div>
+      </div>
+    </div>
+
+    <div class="display-flex">
+      <div class="flex-1">
+        <pre class="white-space-pre-wrap margin-top-0px margin-bottom-0px"><code class="language-sql">
+CREATE TABLE "GeneralLedgerInvoiceInvoiceLine"
+(
+  "GeneralLedgerInvoiceInvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
+  "GeneralLedgerId" INT NOT NULL,
+  "InvoiceId" INT NOT NULL,
+  "InvoiceLineId" INT NOT NULL,
+  "ReversedGeneralLedgerInvoiceInvoiceLineId" INT NULL,
+  "TransactionGuid" UUID NOT NULL,
+  "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+  "CreatedById" INT NOT NULL,
+  "OrganizationId" INT NOT NULL,
+  FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"("GeneralLedgerID"),
+  FOREIGN KEY ("InvoiceId") REFERENCES "Invoice"("InvoiceID"),
+  FOREIGN KEY ("InvoiceLineId") REFERENCES "InvoiceLine"("InvoiceLineID"),
+  FOREIGN KEY ("ReversedGeneralLedgerInvoiceInvoiceLineId") REFERENCES "GeneralLedgerInvoiceInvoiceLine"("GeneralLedgerInvoiceInvoiceLineID"),
+  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+);
+
+CREATE TABLE "InvoiceLine"
+(
+  "InvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
+  "Title" VARCHAR(100) NOT NULL,
+  "Description" TEXT NULL,
+  "Quantity" DECIMAL(18, 2) NOT NULL,
+  "Price" DECIMAL(18, 2) NOT NULL,
+  "InvoiceId" INT NOT NULL,
+  "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+  "RevenueAccountId" INT NOT NULL,
+  "AssetsAccountId" INT NOT NULL,
+  "CreatedById" INT NOT NULL,
+  "OrganizationId" INT NOT NULL,
+  FOREIGN KEY ("InvoiceId") REFERENCES "Invoice"("InvoiceID"),
+  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+  FOREIGN KEY ("RevenueAccountId") REFERENCES "Account"("AccountID"),
+  FOREIGN KEY ("AssetsAccountId") REFERENCES "Account"("AccountID"),
+  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+);
+            </code></pre>
+      </div>
+    </div>
+
+    <div class="display-flex flex-direction-column background-color-wheat margin-bottom-5px padding-15px box-shaddow font-size-20px font-weight-500">
+      <div class="flex-1 margin-bottom-5px">
+        Why does the <code>InvoiceLine</code> table not have a flag marking it removed if a line item can be removed from the invoice?
+      </div>
+      <div class="font-size-16px">
+        It was determined that revenue calculations should be based solely on the journal entries. Determining which entries should not be counted in the revenue reports by checking if a line item is marked as removed is prone to error. Therefore, the removal of an invoice line item is maintained at the journal level only. The journal maintains a chain of transactions in their chronological order. If the last entries in the transaction for the line item in question are reversals only, meaning they don't have amended entries, or simply checking if the last transaction contains a value in any of the entries for the <code>ReversedGeneralLedgerInvoiceInvoiceLineId</code> column, will indicate that the line item has been effectively removed.
+      </div>
+    </div>
   </div>
 }
 
@@ -138,7 +260,7 @@
           }
         });
       } catch (error) {
-        
+
       }
     })();
   </script>
