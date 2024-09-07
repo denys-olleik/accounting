@@ -43,7 +43,7 @@
 
 <template id="invoice-line-template">
   <div class="display-flex margin-bottom-5px background-color-antiquewhite">
-    <div class="display-flex flex-1 flex-direction-column border-1px-solid-darkgray">
+    <div class="display-flex flex-1 flex-direction-column">
       <div class="display-flex max-width-768-flex-direction-column">
         <div class="display-flex flex-2 flex-direction-column">
           <label>Title</label>
@@ -143,10 +143,10 @@
 </template>
 
 <template id="addresses-and-selected-address-template">
-  <div v-if="selectedAddress" class="border-sides-5px-solid-black margin-bottom-5px border-bottom-2px-solid-black">
-    <div class="color-white background-color-black">{{ addressType === 'billing' ? 'Selected Billing Address' : 'Selected Shipping Address' }}</div>
+  <div v-if="selectedAddress" class="margin-bottom-5px">
+    <div class="border-bottom-1px-solid-1a3b56">{{ addressType === 'billing' ? 'Selected Billing Address' : 'Selected Shipping Address' }}</div>
     <div class="display-flex">
-      <div>
+      <div class="font-Roboto-Mono">
         <div>{{ selectedAddress.extraAboveAddress }}</div>
         <div>{{ selectedAddress.addressLine1 }}</div>
         <div>{{ selectedAddress.addressLine2 }}</div>
@@ -180,7 +180,7 @@
     <span v-if="dropdownVisible">Close Addresses</span>
     <span v-else>{{ addressType === 'billing' ? 'Open Billing Addresses' : 'Open Shipping Addresses' }}</span>
   </a>
-  <div v-if="!selectedCustomer" class="text-align-center color-white background-color-black">
+  <div v-if="!selectedCustomer" class="text-align-center color-darkslategray">
     select customer to see addresses
   </div>
 </template>
@@ -206,7 +206,7 @@
   </div>
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-    <div class="display-flex flex-direction-column flex-1 border-2px-solid-lightgray max-width-768-margin-bottom-5px background-color-antiquewhite">
+    <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
       <addresses-and-selected-address :selected-address="selectedBillingAddress"
                                       @@update:selected-address="handleSelectedAddress($event, 'billing')"
                                       :addresses="selectedCustomer ? selectedCustomer.addresses : []"
@@ -215,7 +215,7 @@
       </addresses-and-selected-address>
     </div>
     <div class="width-5px"></div>
-    <div class="display-flex flex-direction-column flex-1 border-2px-solid-lightgray background-color-antiquewhite">
+    <div class="display-flex flex-direction-column flex-1 background-color-antiquewhite">
       <addresses-and-selected-address :selected-address="selectedShippingAddress"
                                       @@update:selected-address="handleSelectedAddress($event, 'shipping')"
                                       :addresses="selectedCustomer ? selectedCustomer.addresses : []"
@@ -274,7 +274,7 @@
         <legend>Payment Instructions</legend>
         <div class="display-flex flex-direction-column">
           <div class="display-flex flex-direction-column">
-            <textarea asp-for="PaymentInstructions" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100" rows="5"></textarea>
+            <textarea asp-for="PaymentInstructions" class="font-size-20px width-100" rows="5"></textarea>
           </div>
         </div>
         <div class="display-flex">
