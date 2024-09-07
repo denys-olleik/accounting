@@ -206,7 +206,7 @@
   </div>
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-    <div class="display-flex flex-direction-column flex-1 border-2px-solid-lightgray max-width-768-margin-bottom-5px">
+    <div class="display-flex flex-direction-column flex-1 border-2px-solid-lightgray max-width-768-margin-bottom-5px background-color-antiquewhite">
       <addresses-and-selected-address :selected-address="selectedBillingAddress"
                                       @@update:selected-address="handleSelectedAddress($event, 'billing')"
                                       :addresses="selectedCustomer ? selectedCustomer.addresses : []"
@@ -215,7 +215,7 @@
       </addresses-and-selected-address>
     </div>
     <div class="width-5px"></div>
-    <div class="display-flex flex-direction-column flex-1 border-2px-solid-lightgray">
+    <div class="display-flex flex-direction-column flex-1 border-2px-solid-lightgray background-color-antiquewhite">
       <addresses-and-selected-address :selected-address="selectedShippingAddress"
                                       @@update:selected-address="handleSelectedAddress($event, 'shipping')"
                                       :addresses="selectedCustomer ? selectedCustomer.addresses : []"
