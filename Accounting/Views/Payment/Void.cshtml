@@ -9,14 +9,14 @@
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
-<form asp-action="Void" asp-controller="Payment" method="post" class="display-flex flex-direction-column margin-bottom-5px">
-  <div class="display-flex flex-direction-column">
-    <label asp-for="ReferenceNumber">Reference Number</label>
-    <input asp-for="ReferenceNumber" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" disabled />
+<form asp-action="Void" asp-controller="Payment" method="post" class="display-flex flex-direction-column">
+  <div class="display-flex flex-direction-column box-shaddow">
+    <label asp-for="ReferenceNumber" class="background-color-antiquewhite color-darkslategray">Reference Number</label>
+    <input asp-for="ReferenceNumber" class="margin-bottom-5px font-size-20px color-darkslategray background-color-antiquewhite" disabled />
   </div>
-  <div class="display-flex flex-direction-column">
-    <label asp-for="VoidReason">Reason</label>
-    <textarea asp-for="VoidReason" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" rows="6"></textarea>
+  <div class="display-flex flex-direction-column margin-bottom-5px box-shaddow">
+    <label asp-for="VoidReason" class="background-color-antiquewhite color-darkslategray">Reason</label>
+    <textarea asp-for="VoidReason" class="font-size-20px color-darkslategray" rows="6"></textarea>
   </div>
 
   <input type="hidden" asp-for="PaymentID" />
