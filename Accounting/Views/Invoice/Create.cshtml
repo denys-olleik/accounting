@@ -160,9 +160,9 @@
 
   </div>
   <div v-show="dropdownVisible">
-    <div v-for="address in addresses" :key="address.id" class="display-flex margin-bottom-5px">
+    <div v-for="address in addresses" :key="address.id" class="display-flex margin-bottom-5px margin-2px margin-2px">
       <a href="" @@click.prevent="selectAddress(address)" class="display-flex flex-1 text-decoration-none">
-        <div class="flex-1 border-left-5px-solid-dodgerblue border-top-bottom-2px-solid-dodgerblue">
+        <div class="flex-1 border-left-5px-solid-dodgerblue border-top-bottom-2px-solid-dodgerblue font-Roboto-Mono">
           <div>{{ address.extraAboveAddress }}</div>
           <div>{{ address.addressLine1 }}</div>
           <div>{{ address.addressLine2 }}</div>

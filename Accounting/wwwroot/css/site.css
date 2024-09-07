@@ -503,6 +503,10 @@ td.fitwidth, th.fitwidth {
   margin: 0;
 }
 
+.margin-2px {
+  margin: 2px;
+}
+
 .margin-right-2px {
   margin-right: 2px;
 }
