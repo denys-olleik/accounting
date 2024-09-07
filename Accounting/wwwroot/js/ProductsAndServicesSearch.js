@@ -43,7 +43,7 @@
     searchQuery: 'resetSelectedIndex'
   },
   template: `
-    <div class="background-color-black color-white border-radius-5px border-5px-dashed-dodgerblue padding-5px max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono">
+    <div class="color-white max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono box-shaddow">
       <input type="text"
              class="font-size-20px width-100"
              placeholder="Search products and services"
@@ -51,7 +51,7 @@
              @focus="isSearchActive = true"
              @keydown="handleKeyDown">
 
-      <div v-if="searchQuery">
+      <div v-if="searchQuery" class="background-color-black padding-5px">
         <div v-for="(productOrService, index) in filteredProductsOrServices"
              :key="productOrService.id"
              class="dropdown-item font-size-16px"

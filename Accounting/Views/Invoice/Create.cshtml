@@ -16,7 +16,7 @@
     <label for="customerSearch" class="background-color-antiquewhite">Customer search</label>
     <input id="customerSearch" v-model="searchQuery" @@input="filterCustomers" @@keydown.left="onLeftArrowPress" class="border-bottom-2px-solid-1a3b56 font-size-20px" autofocus />
     <div v-if="filteredCustomers.length > 0"
-         class="background-color-black color-white border-radius-5px box-shaddow border-5px-dashed-dodgerblue padding-5px max-height-250px overflow-auto">
+         class="background-color-black color-white border-radius-5px box-shaddow padding-5px max-height-250px overflow-auto">
       <div v-for="customer in filteredCustomers" :key="customer.id" @@click="selectCustomer(customer)">
         {{ customer.firstName }} {{ customer.lastName }} {{ customer.companyName }}
       </div>
@@ -200,10 +200,10 @@
                       @@update:selected-customer="updateSelectedCustomer"></customer-selection>
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-    <div class="display-flex flex-direction-column flex-1 border-2px-solid-lightgray max-width-768-margin-bottom-5px">
+    <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
     </div>
     <div class="width-5px"></div>
-    <div class="display-flex flex-1 flex-direction-column border-2px-solid-lightgray">
+    <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
       <invoice-detail :invoice-date="invoiceDate"
                       :selected-payment-term="selectedPaymentTerm">
       </invoice-detail>
