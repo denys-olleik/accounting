@@ -36,36 +36,36 @@
     <div class="display-flex margin-bottom-5px">
       <div class="flex-1">
         <pre class="white-space-pre-wrap margin-top-0px margin-bottom-0px"><code class="language-sql">
-  CREATE TABLE "Account"
-  (
-    "AccountID" SERIAL PRIMARY KEY NOT NULL,
-    "Name" VARCHAR(200) NOT NULL,
-    "Type" VARCHAR(50) NOT NULL CHECK ("Type" IN ('assets', 'liabilities', 'equity', 'revenue', 'expense')),
-    "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-    "ParentAccountId" INT NULL,
-    "CreatedById" INT NOT NULL,
-    "OrganizationId" INT NOT NULL,
-    FOREIGN KEY ("ParentAccountId") REFERENCES "Account"("AccountID"),
-    FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-    FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
-    UNIQUE ("Name", "OrganizationId")
-  );
+CREATE TABLE "Account"
+(
+  "AccountID" SERIAL PRIMARY KEY NOT NULL,
+  "Name" VARCHAR(200) NOT NULL,
+  "Type" VARCHAR(50) NOT NULL CHECK ("Type" IN ('assets', 'liabilities', 'equity', 'revenue', 'expense')),
+  "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+  "ParentAccountId" INT NULL,
+  "CreatedById" INT NOT NULL,
+  "OrganizationId" INT NOT NULL,
+  FOREIGN KEY ("ParentAccountId") REFERENCES "Account"("AccountID"),
+  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
+  UNIQUE ("Name", "OrganizationId")
+);
 
-  CREATE TABLE "GeneralLedger"
-  (
-    "GeneralLedgerID" SERIAL PRIMARY KEY NOT NULL,
-    "AccountId" INT NOT NULL,
-    "Credit" DECIMAL(18, 2) NULL,
-    "Debit" DECIMAL(18, 2) NULL,
-    "Memo" TEXT NULL,
-    "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-    "CreatedById" INT NOT NULL,
-    "OrganizationId" INT NOT NULL,
-    FOREIGN KEY ("AccountId") REFERENCES "Account"("AccountID"),
-    FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-    FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
-  );
-          </code></pre>
+CREATE TABLE "GeneralLedger"
+(
+  "GeneralLedgerID" SERIAL PRIMARY KEY NOT NULL,
+  "AccountId" INT NOT NULL,
+  "Credit" DECIMAL(18, 2) NULL,
+  "Debit" DECIMAL(18, 2) NULL,
+  "Memo" TEXT NULL,
+  "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+  "CreatedById" INT NOT NULL,
+  "OrganizationId" INT NOT NULL,
+  FOREIGN KEY ("AccountId") REFERENCES "Account"("AccountID"),
+  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+);
+                    </code></pre>
       </div>
     </div>
   </div>
@@ -119,7 +119,7 @@ CREATE TABLE "InvoiceLine"
   FOREIGN KEY ("AssetsAccountId") REFERENCES "Account"("AccountID"),
   FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
-            </code></pre>
+                      </code></pre>
       </div>
     </div>
 
@@ -127,9 +127,135 @@ CREATE TABLE "InvoiceLine"
       <div class="flex-1 margin-bottom-5px">
         Why does the <code>InvoiceLine</code> table not have a flag marking it removed if a line item can be removed from the invoice?
       </div>
-      <div class="font-size-16px">
-        It was determined that revenue calculations should be based solely on the journal entries. Determining which entries should not be counted in the revenue reports by checking if a line item is marked as removed is prone to error. Therefore, the removal of an invoice line item is maintained at the journal level only. The journal maintains a chain of transactions in their chronological order. If the last entries in the transaction for the line item in question are reversals only, meaning they don't have amended entries, or simply checking if the last transaction contains a value in any of the entries for the <code>ReversedGeneralLedgerInvoiceInvoiceLineId</code> column, will indicate that the line item has been effectively removed.
+      <div class="font-size-16px margin-bottom-5px">
+        It was determined that revenue calculations should be based solely on the journal entries. Determining which entries should not be counted in the revenue reports by checking if a line item is marked as removed is prone to error. Therefore, the removal of an invoice line item is maintained at the journal level only. The journal maintains a chain of transactions in their chronological order. If the last entries in the transaction for the line item in question are reversals only, meaning they don't have amended entries, or simply checking if the last transaction contains a value in any of the entries for the <code>ReversedGeneralLedgerInvoiceInvoiceLineId</code> column, will indicate that the line item has been effectively removed. The table below shows that the first line item on the invoice was removed in the third and last transactions for that invoice line item.
       </div>
+      <table class="border-collapse width-100 margin-bottom-5px font-size-16px background-color-white">
+        <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+          <tr>
+            <th class="text-align-left padding-right-20px">ID</th>
+            <th class="text-align-left padding-right-20px">GeneralLedgerId</th>
+            <th class="text-align-left padding-right-20px">InvoiceId</th>
+            <th class="text-align-left padding-right-20px">InvoiceLineId</th>
+            <th class="text-align-left padding-right-20px">ReversedId</th>
+            <th class="text-align-left padding-right-20px">TransactionGuid</th>
+          </tr>
+        </thead>
+        <tbody class="font-Roboto-Mono">
+          <tr>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">2</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">NULL</td>
+            <td class="padding-right-20px">e0b84e1c-e62d-60f2-0a96-61f895c14fcf</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">2</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">NULL</td>
+            <td class="padding-right-20px">e0b84e1c-e62d-60f2-0a96-61f895c14fcf</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">3</td>
+            <td class="padding-right-20px">4</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">2</td>
+            <td class="padding-right-20px">NULL</td>
+            <td class="padding-right-20px">e0b84e1c-e62d-60f2-0a96-61f895c14fcf</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">4</td>
+            <td class="padding-right-20px">3</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">2</td>
+            <td class="padding-right-20px">NULL</td>
+            <td class="padding-right-20px">e0b84e1c-e62d-60f2-0a96-61f895c14fcf</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">5</td>
+            <td class="padding-right-20px">5</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">6</td>
+            <td class="padding-right-20px">6</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">NULL</td>
+            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">7</td>
+            <td class="padding-right-20px">7</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">2</td>
+            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">8</td>
+            <td class="padding-right-20px">8</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">NULL</td>
+            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">9</td>
+            <td class="padding-right-20px">9</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">2</td>
+            <td class="padding-right-20px">3</td>
+            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">10</td>
+            <td class="padding-right-20px">10</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">2</td>
+            <td class="padding-right-20px">NULL</td>
+            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">11</td>
+            <td class="padding-right-20px">11</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">2</td>
+            <td class="padding-right-20px">4</td>
+            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">12</td>
+            <td class="padding-right-20px">12</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">2</td>
+            <td class="padding-right-20px">NULL</td>
+            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">13</td>
+            <td class="padding-right-20px">13</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px background-color-lightcoral color-white">6</td>
+            <td class="padding-right-20px">227fa74a-3166-01b6-61db-0f6a6af4a52e</td>
+          </tr>
+          <tr>
+            <td class="padding-right-20px">14</td>
+            <td class="padding-right-20px">14</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px">1</td>
+            <td class="padding-right-20px background-color-lightcoral color-white">8</td>
+            <td class="padding-right-20px">227fa74a-3166-01b6-61db-0f6a6af4a52e</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 }
