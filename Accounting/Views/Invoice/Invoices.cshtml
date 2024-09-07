@@ -100,7 +100,7 @@
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div>
-    <a asp-action="Create" asp-controller="Invoice" class="font-Roboto font-size-20px">Create Invoice</a>
+    <a asp-action="Create" asp-controller="Invoice" class="font-Roboto font-size-20px text-decoration-none color-darkslategray">Create Invoice</a>
   </div>
 </div>
 
@@ -177,11 +177,11 @@
 
   <div v-if="(page > 1 || nextPage) && !isFiltered" class="margin-bottom-5px display-flex font-Roboto font-size-20px background-color-antiquewhite">
     <div>
-      <a :href="`/i/invoices?page=${page - 1}`" v-if="page > 1">prev</a>
+      <a :href="`/i/invoices?page=${page - 1}`" v-if="page > 1" class="color-darkslategray text-decoration-none">prev</a>
     </div>
     <div class="flex-1"></div>
     <div>
-      <a :href="`/i/invoices?page=${nextPage}`" v-if="nextPage">next</a>
+      <a :href="`/i/invoices?page=${nextPage}`" v-if="nextPage" class="color-darkslategray text-decoration-none">next</a>
     </div>
   </div>
 

@@ -142,6 +142,10 @@ td.fitwidth, th.fitwidth {
   color: white;
 }
 
+.color-darkslategray {
+  color: darkslategrey;
+}
+
 .color-0079C4 {
   color: #0079C4;
 }
