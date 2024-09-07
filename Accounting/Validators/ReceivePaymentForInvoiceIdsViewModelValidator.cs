@@ -16,6 +16,12 @@ namespace Accounting.Validators
           .NotEmpty()
           .WithMessage("You must select an account.");
 
+      RuleFor(x => x.ReferenceNumber)
+          .NotEmpty()
+          .WithMessage("'Reference number' is required.")
+          .MaximumLength(100)
+          .WithMessage("'Reference number' cannot exceed 100 characters.");
+
       RuleFor(x => x.Invoices)
           .MustAsync(async (invoices, cancellation) =>
           {
