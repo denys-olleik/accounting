@@ -262,8 +262,8 @@ CREATE TABLE "InvoiceLine"
 
 @if (User.Identity.IsAuthenticated)
 {
-  <div>
-    <ul>
+  <div class="background-color-white">
+    <ul class="margin-0">
       <li>
         <a href="@Url.Action("Users", "User")">Users</a>
         <ul>
@@ -349,7 +349,7 @@ CREATE TABLE "InvoiceLine"
 
 @if (User.Identity.IsAuthenticated)
 {
-  <div class="display-flex">
+  <div class="display-flex background-color-white">
     <div class="flex-1">
       <canvas id="accountBalanceChart" width="400" height="400"></canvas>
     </div>
