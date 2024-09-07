@@ -18,15 +18,15 @@
 <form asp-action="ReceivePaymentForInvoiceIds" asp-controller="AccountsReceivable" method="post"
       class="display-flex flex-direction-column margin-bottom-5px">
 
-  <div class="display-flex">
-    <div class="flex-1 display-flex flex-direction-column border-bottom-2px-solid-1a3b56 background-color-antiquewhite">
+  <div class="display-flex margin-bottom-5px">
+    <div class="flex-1 display-flex flex-direction-column background-color-antiquewhite">
       <label for="ReferenceNumber" class="font-size-16px">Reference Number</label>
-      <input type="text" name="ReferenceNumber" placeholder="Enter reference number" class="font-size-16px" value="@Model.ReferenceNumber" />
+      <input type="text" name="ReferenceNumber" placeholder="reference number" class="font-size-20px" value="@Model.ReferenceNumber" />
     </div>
     <div class="width-5px"></div>
-    <div class="flex-1 display-flex flex-direction-column border-bottom-2px-solid-1a3b56 background-color-antiquewhite">
+    <div class="flex-1 display-flex flex-direction-column background-color-antiquewhite">
       <label for="SelectedDebitAccountId" class="font-size-16px">Account</label>
-      <select name="SelectedDebitAccountId" class="font-size-16px">
+      <select name="SelectedDebitAccountId" class="font-size-20px">
         <option value="">Select an account</option>
         @foreach (var account in Model.DebitAccounts)
         {
@@ -120,7 +120,7 @@
       <label for="Payment Total" class="font-size-16px font-Roboto background-color-antiquewhite">Payment Total</label>
       <input type="number" step="0.01" name="PaymentTotal"
              placeholder="Payment Total"
-             class="font-size-16px font-Roboto-Mono border-bottom-2px-solid-1a3b56" value="@Model.PaymentTotal" />
+             class="font-size-20px font-Roboto-Mono border-bottom-2px-solid-1a3b56" value="@Model.PaymentTotal" />
     </div>
   </div>
 
