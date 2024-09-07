@@ -42,7 +42,7 @@
 </template>
 
 <template id="invoice-line-template">
-  <div class="display-flex margin-bottom-5px">
+  <div class="display-flex margin-bottom-5px background-color-antiquewhite">
     <div class="display-flex flex-1 flex-direction-column border-1px-solid-darkgray">
       <div class="display-flex max-width-768-flex-direction-column">
         <div class="display-flex flex-2 flex-direction-column">
@@ -88,13 +88,8 @@
 <template id="total-template">
   <div class="display-flex margin-bottom-5px">
     <div class="flex-1 max-width-768-display-none"></div>
-    <div class="flex-1 border-bottom-2px-solid-1a3b56">
+    <div class="flex-1 border-bottom-2px-solid-1a3b56 background-color-antiquewhite">
       <table class="width-100 border-collapse">
-        <thead>
-          <tr>
-            <th colspan="2">Subtotals</th>
-          </tr>
-        </thead>
         <tbody>
           <tr>
             <td class="font-size-20px">Total</td>
@@ -108,7 +103,7 @@
 
 <template id="payment-term-selector-template">
   <div class="display-flex flex-direction-column">
-    <select class="font-size-20px margin-bottom-5px border-bottom-2px-solid-1a3b56"
+    <select class="font-size-20px border-bottom-2px-solid-1a3b56"
             v-model="selectedPaymentTermId"
             name="SelectedPaymentTermId">
       <option value="">Select Payment Term</option>
@@ -162,7 +157,7 @@
       <div class="background-image-right flex-1">
       </div>
     </div>
-    
+
   </div>
   <div v-show="dropdownVisible">
     <div v-for="address in addresses" :key="address.id" class="display-flex margin-bottom-5px">
@@ -241,12 +236,12 @@
                 @@confirm-removal="handleConfirmRemoval">
   </invoice-line>
 
-  <fieldset class="margin-bottom-5px">
+  <div class="background-color-antiquewhite margin-bottom-5px">
     <legend>Payment Terms Selector</legend>
     <payment-term-selector :payment-terms="paymentTerms"
                            v-model:selected-payment-term="selectedPaymentTerm">
     </payment-term-selector>
-  </fieldset>
+  </div>
 
   <total :invoice-lines="invoiceLines"></total>
 
@@ -270,8 +265,8 @@
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
     @* <attachments :attachments="attachments"
-                 @@remove-attachment="removeAttachment"
-                 @@update-attachment-print-order="updateAttachmentPrintOrder"></attachments> *@
+    @@remove-attachment="removeAttachment"
+    @@update-attachment-print-order="updateAttachmentPrintOrder"></attachments> *@
   </div>
   <div class="display-flex">
     <div class="flex-1">
