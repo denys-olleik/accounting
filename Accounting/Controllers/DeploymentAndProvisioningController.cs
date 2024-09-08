@@ -38,7 +38,7 @@ namespace Accounting.Controllers
     public async Task<IActionResult> ProvisionTenant(ProvisionTenantViewModel model)
     {
       ProvisionTenantViewModelValidator validator = new ProvisionTenantViewModelValidator(_tenantService);
-      ValidationResult validationResult = validator.Validate(model);
+      ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
       {
