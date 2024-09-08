@@ -659,7 +659,7 @@ td.fitwidth, th.fitwidth {
   page-break-inside: avoid;
 }
 
-.box-shaddow {
+.box-shadow {
   -webkit-box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.9);
   -moz-box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.9);
   box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.9);
