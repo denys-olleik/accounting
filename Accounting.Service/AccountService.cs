@@ -119,5 +119,12 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetAccountManager().GetAllReconciliationLiabilitiesAndAssetsAsync(organizationId);
     }
+
+    public async Task<string> GetTypeAsync(int accountId)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      string type = await factoryManager.GetAccountManager().GetTypeAsync(accountId);
+      return type;
+    }
   }
 }

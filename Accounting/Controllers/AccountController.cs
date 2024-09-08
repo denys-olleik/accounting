@@ -61,7 +61,7 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Create(CreateAccountViewModel model)
     {
-      CreateAccountViewModelValidator validator = new CreateAccountViewModelValidator();
+      CreateAccountViewModelValidator validator = new CreateAccountViewModelValidator(_accountService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)

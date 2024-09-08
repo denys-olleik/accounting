@@ -630,6 +630,25 @@ namespace Accounting.Database
         return result.SingleOrDefault()!;
       }
 
+      public async Task<string> GetTypeAsync(int accountId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@AccountID", accountId);
+
+        string? result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.ExecuteScalarAsync<string>("""
+            SELECT "Type" 
+            FROM "Account" 
+            WHERE "AccountID" = @AccountID
+            """, p);
+        }
+
+        return result!;
+      }
+
       public int Update(Account entity)
       {
         throw new NotImplementedException();
