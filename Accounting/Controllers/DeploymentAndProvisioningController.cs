@@ -14,9 +14,10 @@ namespace Accounting.Controllers
     private readonly TenantService _tenantService;
     private readonly CloudServices _cloudServices;
 
-    public DeploymentAndProvisioningController(TenantService tenantService)
+    public DeploymentAndProvisioningController(TenantService tenantService, CloudServices cloudServices)
     {
       _tenantService = tenantService;
+      _cloudServices = cloudServices;
     }
 
     [Route("tenants")]
@@ -25,14 +26,14 @@ namespace Accounting.Controllers
       return View();
     }
 
-    [Route("create-tenant")]
+    [Route("provision-tenant")]
     [HttpGet]
-    public async Task<IActionResult> CreateTenant()
+    public async Task<IActionResult> ProvisionTenant()
     {
       return View();
     }
 
-    [Route("create-tenant")]
+    [Route("provision-tenant")]
     [HttpPost]
     public async Task<IActionResult> ProvisionTenant(ProvisionTenantViewModel model)
     {
@@ -57,11 +58,15 @@ namespace Accounting.Controllers
 
         await _cloudServices.GetDigitalOceanService().CreateDropletAsync(tenant);
 
+        // Implement further logic as needed
+        // Example: scope.Complete();
         throw new NotImplementedException();
 
         scope.Complete();
       }
 
+      // Implement further logic as needed
+      // Example: Redirect to success page
       throw new NotImplementedException();
     }
   }
