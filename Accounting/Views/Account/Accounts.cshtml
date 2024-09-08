@@ -9,9 +9,9 @@
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
-<div class="display-flex margin-bottom-5px">
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div>
-    <a asp-action="Create" asp-controller="Account" class="font-Roboto font-size-20px">Create Account</a>
+    <a asp-action="Create" asp-controller="Account" class="font-Roboto font-size-20px text-decoration-none color-darkslategray">Create Account</a>
   </div>
 </div>
 
@@ -24,7 +24,7 @@
         </a>
         <span>&nbsp;</span>
         <div v-if="account.selectedAccountID === account.accountID" class="display-flex">
-          <div class="display-flex flex-direction-column background-color-333333 padding-left-5px border-top-bottom-left-radius-5px padding-right-5px">
+          <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
             <div class="flex-1"></div>
             <a class="font-size-12px font-Roboto  color-white text-decoration-none cursor-default"
                >options:</a>
@@ -45,7 +45,6 @@
               flex-direction-column
               background-color-333333
               padding-right-5px
-              border-top-bottom-right-radius-5px
               padding-left-5px
               margin-left-2px">
             <div class="flex-1"></div>
@@ -65,7 +64,7 @@
   </div>
 </template>
 
-<div id="app" class="display-flex flex-direction-column font-Roboto-Mono">
+<div id="app" class="display-flex flex-direction-column font-Roboto-Mono background-color-antiquewhite">
   <template v-for="account in accounts" :key="account.accountID">
     <account :account="account" @@account-clicked="onAccountClicked"></account>
   </template>
