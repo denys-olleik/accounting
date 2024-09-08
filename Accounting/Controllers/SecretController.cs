@@ -46,7 +46,9 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Create(CreateSecretViewModel model)
     {
-      CreateSecretViewModelValidator validator = new CreateSecretViewModelValidator();
+      model.OrganizationId = GetOrganizationId();
+
+      CreateSecretViewModelValidator validator = new CreateSecretViewModelValidator(_secretService);
       ValidationResult result = await validator.ValidateAsync(model);
 
       if (!result.IsValid)

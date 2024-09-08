@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Accounting.Service;
+using FluentValidation;
 using FluentValidation.Results;
 
 namespace Accounting.Models.SecretViewModels
@@ -17,12 +18,17 @@ namespace Accounting.Models.SecretViewModels
 
     public bool EncryptValue { get; set; }
     public ValidationResult? ValidationResult { get; set; }
+    public int OrganizationId { get; set; }
   }
 
   public class CreateSecretViewModelValidator : AbstractValidator<CreateSecretViewModel>
   {
-    public CreateSecretViewModelValidator()
+    private readonly SecretService _secretService;
+
+    public CreateSecretViewModelValidator(SecretService secretService)
     {
+      _secretService = secretService;
+
       RuleFor(x => x.Key).NotEmpty().WithMessage("Key is required.")
                          .MaximumLength(100).WithMessage("Key cannot exceed 100 characters.");
       RuleFor(x => x.Value).NotEmpty().WithMessage("Value is required.");
@@ -32,6 +38,19 @@ namespace Accounting.Models.SecretViewModels
       RuleFor(x => x)
         .Must(x => !(x.Key?.ToLower() == "master" && x.EncryptValue))
         .WithMessage("The value for the key 'master' cannot be encrypted.");
+
+      RuleFor(x => x)
+        .MustAsync(KeyNotExists)
+        .WithMessage("The key already exists.");
+    }
+
+    private async Task<bool> KeyNotExists(CreateSecretViewModel model, CancellationToken cancellationToken)
+    {
+      if (string.IsNullOrEmpty(model.Key))
+        return true;
+
+      var secret = await _secretService.GetAsync(model.Key, model.OrganizationId);
+      return secret == null;
     }
   }
 }
