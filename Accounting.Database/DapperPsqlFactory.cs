@@ -5080,7 +5080,7 @@ namespace Accounting.Database
 
     public ITenantManager GetTenantManager()
     {
-      throw new NotImplementedException();
+      return new TenantManager();
     }
 
     public class TenantManager : ITenantManager
