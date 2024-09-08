@@ -36,10 +36,6 @@ namespace Accounting.Models.SecretViewModels
       RuleFor(x => x.Purpose).MaximumLength(100).WithMessage("Purpose cannot exceed 100 characters.");
 
       RuleFor(x => x)
-        .Must(x => !(x.Key?.ToLower() == "master" && x.EncryptValue))
-        .WithMessage("The value for the key 'master' cannot be encrypted.");
-
-      RuleFor(x => x)
         .MustAsync(KeyNotExists)
         .WithMessage("The key already exists.");
     }

@@ -585,6 +585,10 @@ CREATE TABLE "Secret"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+CREATE UNIQUE INDEX unique_master_per_organization
+ON "Secret" ("OrganizationId")
+WHERE "Master" = TRUE;
+
 INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
 VALUES ('test@example.com', 'Some', 'Dude', 'sha1:64000:18:IofuE0pk3LtysdvPabvlsENb9NJ4x7XZ:Ui8pLvVoSzlwUXVARJj8MFEL', 1);
 
