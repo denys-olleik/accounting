@@ -16,8 +16,8 @@
 <div id="app" class="display-flex flex-direction-column">
   <h1>{{ toDo.title }}</h1>
 
-  <div v-if="!editMode" v-html="toDo.htmlContent" class="margin-bottom-5px border-bottom-2px-solid-1a3b56"></div>
-  <textarea v-if="editMode" v-model="toDo.markdownContent" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px" rows="6"></textarea>
+  <div v-if="!editMode" v-html="toDo.htmlContent" class="margin-bottom-5px"></div>
+  <textarea v-if="editMode" v-model="toDo.markdownContent" class="margin-bottom-5px" rows="6"></textarea>
   <div class="display-flex">
     <a href="#" v-if="!editMode" @@click.prevent="toggleEditMode('edit')">edit</a>
     <div v-if="editMode">

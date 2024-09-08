@@ -36,29 +36,29 @@
           <label>Title</label>
           <input type="text"
                  ref="titleInput"
-                 class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono width-100"
+                 class="font-size-20px font-Roboto-Mono width-100"
                  v-model="invoiceLine.title" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-2 flex-direction-column">
           <label>Quantity</label>
-          <input type="number" ref="quantityInput" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.quantity" />
+          <input type="number" ref="quantityInput" class="font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.quantity" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-2 flex-direction-column">
           <label>Price</label>
-          <input type="number" step="0.01" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.price" />
+          <input type="number" step="0.01" class="font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.price" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-1 flex-direction-column text-align-right">
           <label>Total</label>
-          <div class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono width-100 background-color-lightgray">{{ lineTotal }}</div>
+          <div class="font-size-20px font-Roboto-Mono width-100 background-color-lightgray">{{ lineTotal }}</div>
         </div>
       </div>
       <div class="display-flex">
         <div class="display-flex flex-1 flex-direction-column">
           <label>Description</label>
-          <textarea v-model="invoiceLine.description" class="border-bottom-2px-solid-1a3b56 font-size-20px font-Roboto-Mono width-100"></textarea>
+          <textarea v-model="invoiceLine.description" class="font-size-20px font-Roboto-Mono width-100"></textarea>
         </div>
       </div>
     </div>
@@ -73,7 +73,7 @@
 <template id="total-template">
   <div class="display-flex margin-bottom-5px">
     <div class="flex-1 max-width-768-display-none"></div>
-    <div class="flex-1 border-bottom-2px-solid-1a3b56">
+    <div class="flex-1">
       <table class="width-100 border-collapse">
         <thead>
           <tr>
@@ -93,7 +93,7 @@
 
 <template id="payment-term-selector-template">
   <div class="display-flex flex-direction-column">
-    <select class="font-size-20px margin-bottom-5px border-bottom-2px-solid-1a3b56"
+    <select class="font-size-20px margin-bottom-5px"
             v-model="selectedPaymentTermId"
             name="SelectedPaymentTermId">
       <option value="">Select Payment Term</option>

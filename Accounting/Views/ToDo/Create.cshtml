@@ -25,11 +25,11 @@
   <input type="hidden" name="SelectedTagIds" v-model="selectedTagsValue">
   <div class="display-flex flex-direction-column">
     <label asp-for="Title"></label>
-    <input asp-for="Title" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+    <input asp-for="Title" class="margin-bottom-5px font-size-20px" />
   </div>
   <div class="display-flex flex-direction-column">
     <label asp-for="Content"></label>
-    <textarea asp-for="Content" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" rows="6"></textarea>
+    <textarea asp-for="Content" class="margin-bottom-5px font-size-20px" rows="6"></textarea>
   </div>
 
   <fieldset class="margin-bottom-5px">
@@ -106,7 +106,7 @@
         <h2>@Model.ParentToDo.Title</h2>
       </div>
       <div class="display-flex flex-direction-column">
-        <textarea asp-for="@Model.ParentToDo.HtmlContent" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" rows="6" disabled></textarea>
+        <textarea asp-for="@Model.ParentToDo.HtmlContent" class="margin-bottom-5px font-size-20px" rows="6" disabled></textarea>
       </div>
     </div>
   </fieldset>

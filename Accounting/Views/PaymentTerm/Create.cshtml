@@ -12,11 +12,11 @@
 <form asp-action="Create" asp-controller="PaymentTerm" method="post" class="display-flex flex-direction-column">
      <div class="display-flex flex-direction-column">
         <label asp-for="Description"></label>
-        <input asp-for="Description" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+        <input asp-for="Description" class="margin-bottom-5px font-size-20px" />
     </div>
     <div class="display-flex flex-direction-column">
         <label asp-for="DaysUntilDue"></label>
-        <input asp-for="DaysUntilDue" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+        <input asp-for="DaysUntilDue" class="margin-bottom-5px font-size-20px" />
     </div>
     <button type="submit" class="full-width-regular-button">Create Payment Term</button>
 </form>

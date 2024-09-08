@@ -14,15 +14,15 @@
 <form id="app" asp-action="Create" asp-controller="Tag" method="post" class="display-flex flex-direction-column">
     <div class="display-flex flex-direction-column">
         <label asp-for="Name"></label>
-        <input asp-for="Name" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+        <input asp-for="Name" class="margin-bottom-5px font-size-20px" />
     </div>
     <div class="display-flex flex-direction-column">
         <label asp-for="Action"></label>
-        <input asp-for="Action" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+        <input asp-for="Action" class="margin-bottom-5px font-size-20px" />
     </div>
     <div class="display-flex flex-direction-column">
         <label asp-for="Metadata"></label>
-        <textarea asp-for="Metadata" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px"></textarea>
+        <textarea asp-for="Metadata" class="margin-bottom-5px font-size-20px"></textarea>
     </div>
     <div class="display-flex flex-direction-column">
         <label asp-for="StatusChangeSequenceIds" class="margin-bottom-5px">Status Change Sequence (higher is older)</label>

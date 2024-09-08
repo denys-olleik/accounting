@@ -12,11 +12,11 @@
 <form asp-action="Create" asp-asp-controller="PaymentInstruction" method="post" class="display-flex flex-direction-column">
     <div class="display-flex flex-direction-column">
         <label asp-for="Title"></label>
-        <input asp-for="Title" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+        <input asp-for="Title" class="margin-bottom-5px font-size-20px" />
     </div>
     <div class="display-flex flex-direction-column">
         <label asp-for="Content"></label>
-        <textarea asp-for="Content" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" rows="6"></textarea>
+        <textarea asp-for="Content" class="margin-bottom-5px font-size-20px" rows="6"></textarea>
     </div>
 
     <button type="submit" class="full-width-regular-button">Create Payment Instruction</button>

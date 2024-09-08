@@ -51,33 +51,33 @@
     <div class="display-flex flex-1 flex-direction-column border-1px-solid-darkgray margin-bottom-5px">
       <div class="display-flex flex-direction-column">
         <label>Extra Above Address (optional)</label>
-        <textarea rows="2" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100" v-model="address.extraAboveAddress"></textarea>
+        <textarea rows="2" class="font-size-20px width-100" v-model="address.extraAboveAddress"></textarea>
       </div>
       <div class="display-flex flex-direction-column">
         <label class="background-color-lightblue">Line 1</label>
-        <input type="text" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100 background-color-lightblue"
+        <input type="text" class="font-size-20px width-100 background-color-lightblue"
                v-model="address.addressLine1" required />
       </div>
       <div class="display-flex flex-direction-column">
         <label>Line 2 (optional)</label>
-        <input type="text" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100" v-model="address.addressLine2" />
+        <input type="text" class="font-size-20px width-100" v-model="address.addressLine2" />
       </div>
       <div class="display-flex flex-direction-column">
         <label>Extra Below Address (optional)</label>
-        <textarea rows="2" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100" v-model="address.extraBelowAddress"></textarea>
+        <textarea rows="2" class="font-size-20px width-100" v-model="address.extraBelowAddress"></textarea>
       </div>
       <div class="display-flex max-width-768-flex-direction-column">
         <div class="display-flex">
           <div class="display-flex flex-1 flex-direction-column">
             <label>City</label>
             <input type="text"
-                   class="border-bottom-2px-solid-1a3b56 font-size-20px width-100"
+                   class="font-size-20px width-100"
                    v-model="address.city" required />
           </div>
           <div class="width-5px"></div>
           <div class="display-flex flex-1 flex-direction-column">
             <label>State/Province</label>
-            <input type="text" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100"
+            <input type="text" class="font-size-20px width-100"
                    v-model="address.stateProvince" required />
           </div>
         </div>
@@ -86,13 +86,13 @@
           <div class="width-5px"></div>
           <div class="display-flex flex-1 flex-direction-column">
             <label>Postal Code</label>
-            <input type="text" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100"
+            <input type="text" class="font-size-20px width-100"
                    v-model="address.postalCode" required />
           </div>
           <div class="width-5px"></div>
           <div class="display-flex flex-1 flex-direction-column">
             <label>Country</label>
-            <input type="text" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100"
+            <input type="text" class="font-size-20px width-100"
                    v-model="address.country" required />
           </div>
         </div>
@@ -109,7 +109,7 @@
 
 <template id="payment-term-and-available-payment-terms-template">
   <div class="display-flex flex-direction-column">
-    <select name="PaymentTermId" v-model="paymentTermId" class="font-size-20px margin-bottom-5px border-bottom-2px-solid-1a3b56">
+    <select name="PaymentTermId" v-model="paymentTermId" class="font-size-20px margin-bottom-5px">
       <option value="">Select Payment Term</option>
       <option v-for="paymentTerm in availablePaymentTerms" :value="paymentTerm.id" :key="paymentTerm.id">{{ paymentTerm.description }}</option>
     </select>
@@ -149,17 +149,17 @@
 
   <div class="display-flex flex-direction-column">
     <label asp-for="CompanyName"></label>
-    <input asp-for="CompanyName" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+    <input asp-for="CompanyName" class="margin-bottom-5px font-size-20px" />
   </div>
   <div class="display-flex">
     <div class="display-flex flex-1 flex-direction-column">
       <label asp-for="FirstName"></label>
-      <input asp-for="FirstName" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+      <input asp-for="FirstName" class="margin-bottom-5px font-size-20px" />
     </div>
     <div class="width-5px"></div>
     <div class="display-flex flex-1 flex-direction-column">
       <label asp-for="LastName"></label>
-      <input asp-for="LastName" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+      <input asp-for="LastName" class="margin-bottom-5px font-size-20px" />
     </div>
   </div>
 

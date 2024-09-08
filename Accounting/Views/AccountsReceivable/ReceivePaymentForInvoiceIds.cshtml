@@ -68,7 +68,7 @@
             <input type="number" name="Invoices[@i].AmountToReceive"
                    value="@Model.Invoices[i].AmountToReceive"
                    placeholder="$0.00"
-                   class="border-bottom-2px-solid-1a3b56 font-size-16px text-align-right width-100 font-Roboto-Mono"
+                   class="font-size-16px text-align-right width-100 font-Roboto-Mono"
                    step="0.01" min="0" />
           </td>
         </tr>
@@ -99,7 +99,7 @@
                         <input type="number" name="Invoices[@i].InvoiceLines[@j].AmountToReceive"
                                value="@Model.Invoices[i].InvoiceLines[j].AmountToReceive"
                                placeholder="$0.00"
-                               class="border-bottom-2px-solid-1a3b56 font-size-16px text-align-right width-100 font-Roboto-Mono"
+                               class="font-size-16px text-align-right width-100 font-Roboto-Mono"
                                step="0.01" min="0">
                       </td>
                     </tr>
@@ -120,7 +120,7 @@
       <label for="Payment Total" class="font-size-16px font-Roboto background-color-antiquewhite">Payment Total</label>
       <input type="number" step="0.01" name="PaymentTotal"
              placeholder="Payment Total"
-             class="font-size-20px font-Roboto-Mono border-bottom-2px-solid-1a3b56" value="@Model.PaymentTotal" />
+             class="font-size-20px font-Roboto-Mono" value="@Model.PaymentTotal" />
     </div>
   </div>
 

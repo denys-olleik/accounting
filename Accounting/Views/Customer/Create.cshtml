@@ -51,25 +51,25 @@
         <div class="display-flex flex-1 flex-direction-column border-1px-solid-darkgray margin-bottom-5px">
             <div class="display-flex flex-direction-column">
                 <label>Line 1</label>
-                <input type="text" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100"
+                <input type="text" class="font-size-20px width-100"
                        v-model="address.addressLine1" required />
             </div>
             <div class="display-flex flex-direction-column">
                 <label>Line 2 (optional)</label>
-                <input type="text" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100" v-model="address.addressLine2" />
+                <input type="text" class="font-size-20px width-100" v-model="address.addressLine2" />
             </div>
             <div class="display-flex max-width-768-flex-direction-column">
                 <div class="display-flex">
                     <div class="display-flex flex-1 flex-direction-column">
                         <label>City</label>
                         <input type="text"
-                               class="border-bottom-2px-solid-1a3b56 font-size-20px width-100"
+                               class="font-size-20px width-100"
                                v-model="address.city" required />
                     </div>
                     <div class="width-5px"></div>
                     <div class="display-flex flex-1 flex-direction-column">
                         <label>State/Province</label>
-                        <input type="text" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100"
+                        <input type="text" class="font-size-20px width-100"
                                v-model="address.stateProvince" required />
                     </div>
                 </div>
@@ -78,13 +78,13 @@
                     <div class="width-5px"></div>
                     <div class="display-flex flex-1 flex-direction-column">
                         <label>Postal Code</label>
-                        <input type="text" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100"
+                        <input type="text" class="font-size-20px width-100"
                                v-model="address.postalCode" required />
                     </div>
                     <div class="width-5px"></div>
                     <div class="display-flex flex-1 flex-direction-column">
                         <label>Country</label>
-                        <input type="text" class="border-bottom-2px-solid-1a3b56 font-size-20px width-100"
+                        <input type="text" class="font-size-20px width-100"
                                v-model="address.country" required />
                     </div>
                 </div>
@@ -130,17 +130,17 @@
 
     <div class="display-flex flex-direction-column">
         <label asp-for="CompanyName"></label>
-        <input asp-for="CompanyName" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+        <input asp-for="CompanyName" class="margin-bottom-5px font-size-20px" />
     </div>
     <div class="display-flex">
         <div class="display-flex flex-1 flex-direction-column">
             <label asp-for="FirstName"></label>
-            <input asp-for="FirstName" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+            <input asp-for="FirstName" class="margin-bottom-5px font-size-20px" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-1 flex-direction-column">
             <label asp-for="LastName"></label>
-            <input asp-for="LastName" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px" />
+            <input asp-for="LastName" class="margin-bottom-5px font-size-20px" />
         </div>
     </div>
 
@@ -163,7 +163,7 @@
         <legend>Payment Terms</legend>
         <div class="display-flex flex-direction-column">
             <label asp-for="SelectedPaymentTermId" hidden>Payment Term</label>
-            <select asp-for="SelectedPaymentTermId" asp-items="@(new SelectList(Model.AvailablePaymentTerms, "ID", "DisplayText"))" class="border-bottom-2px-solid-1a3b56 margin-bottom-5px font-size-20px">
+            <select asp-for="SelectedPaymentTermId" asp-items="@(new SelectList(Model.AvailablePaymentTerms, "ID", "DisplayText"))" class="margin-bottom-5px font-size-20px">
                 <option>Select payment terms</option>
             </select>
         </div>
