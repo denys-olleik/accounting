@@ -8,12 +8,12 @@ namespace Accounting.Models.SecretViewModels
   {
     private string? _key;
     private string? _value;
-    private string? _vendor;
+    private string? _type;
     private string? _purpose;
 
     public string? Key { get => _key; set => _key = value?.Trim(); }
     public string? Value { get => _value; set => _value = value?.Trim(); }
-    public string? Vendor { get => _vendor; set => _vendor = value?.Trim(); }
+    public string? Type { get => _type; set => _type = value?.Trim(); }
     public string? Purpose { get => _purpose; set => _purpose = value?.Trim(); }
 
     public bool EncryptValue { get; set; }
@@ -33,7 +33,16 @@ namespace Accounting.Models.SecretViewModels
       RuleFor(x => x.Key).NotEmpty().WithMessage("Key is required.")
                          .MaximumLength(100).WithMessage("Key cannot exceed 100 characters.");
       RuleFor(x => x.Value).NotEmpty().WithMessage("Value is required.");
-      RuleFor(x => x.Vendor).MaximumLength(20).WithMessage("Vendor name cannot exceed 20 characters.");
+
+      RuleFor(x => x.Type)
+          .NotEmpty().When(x => !x.Master)
+          .WithMessage("Type is required for non-master keys.")
+          .MaximumLength(20).WithMessage("Type cannot exceed 20 characters.");
+
+      RuleFor(x => x.Type)
+          .Empty().When(x => x.Master)
+          .WithMessage("Master keys cannot have a type.");
+
       RuleFor(x => x.Purpose).MaximumLength(100).WithMessage("Purpose cannot exceed 100 characters.");
 
       RuleFor(x => x)
