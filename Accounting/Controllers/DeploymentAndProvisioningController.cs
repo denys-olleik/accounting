@@ -15,10 +15,11 @@ namespace Accounting.Controllers
     private readonly CloudServices _cloudServices;
     private readonly SecretService _secretService;
 
-    public DeploymentAndProvisioningController(TenantService tenantService, CloudServices cloudServices)
+    public DeploymentAndProvisioningController(TenantService tenantService, CloudServices cloudServices, SecretService secretService)
     {
       _tenantService = tenantService;
       _cloudServices = cloudServices;
+      _secretService = secretService;
     }
 
     [Route("tenants")]

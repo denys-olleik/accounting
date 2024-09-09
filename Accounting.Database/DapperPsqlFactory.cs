@@ -5161,7 +5161,27 @@ namespace Accounting.Database
 
     public class SecretManager : ISecretManager
     {
+//CREATE TABLE "Secret"
+//(
+//	"SecretID" SERIAL PRIMARY KEY NOT NULL,
+//	"Key" VARCHAR(100) NOT NULL UNIQUE,
+//	"Master" BOOLEAN DEFAULT FALSE,
+//	"Value" TEXT NOT NULL,
+//	"Type" VARCHAR(20) CHECK("Type" IN ('email', 'sms', 'cloud')) NULL,
+//	"Purpose" VARCHAR(100) NULL,
+//	"Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+//	"CreatedById" INT NOT NULL,
+//	"OrganizationId" INT NOT NULL,
+//	FOREIGN KEY("CreatedById") REFERENCES "User"("UserID"),
+//	FOREIGN KEY("OrganizationId") REFERENCES "Organization"("OrganizationID")
+//);
 
+//CREATE UNIQUE INDEX unique_master_per_organization
+//ON "Secret" ("OrganizationId")
+//WHERE "Master" = TRUE;
+
+//CREATE UNIQUE INDEX unique_type_per_organization
+//ON "Secret" ("OrganizationId", "Type");
       public Secret Create(Secret entity)
       {
         throw new NotImplementedException();
@@ -5299,6 +5319,27 @@ namespace Accounting.Database
             SELECT * 
             FROM "Secret" 
             WHERE "Key" = @Key
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return result.SingleOrDefault();
+      }
+
+      public async Task<Secret?> GetByTypeAsync(string type, int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Type", type);
+        p.Add("@OrganizationId", organizationId);
+
+        IEnumerable<Secret> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Secret>("""
+            SELECT * 
+            FROM "Secret" 
+            WHERE "Type" = @Type
             AND "OrganizationId" = @OrganizationId
             """, p);
         }
