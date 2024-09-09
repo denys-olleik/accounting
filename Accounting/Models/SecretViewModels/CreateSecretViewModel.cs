@@ -17,6 +17,7 @@ namespace Accounting.Models.SecretViewModels
     public string? Purpose { get => _purpose; set => _purpose = value?.Trim(); }
 
     public bool EncryptValue { get; set; }
+    public bool Master { get; set; }
     public ValidationResult? ValidationResult { get; set; }
     public int OrganizationId { get; set; }
   }
@@ -38,6 +39,10 @@ namespace Accounting.Models.SecretViewModels
       RuleFor(x => x)
         .MustAsync(KeyNotExists)
         .WithMessage("The key already exists.");
+
+      RuleFor(x => x)
+        .Must(x => !(x.Master && x.EncryptValue))
+        .WithMessage("A master key cannot have its value encrypted.");
     }
 
     private async Task<bool> KeyNotExists(CreateSecretViewModel model, CancellationToken cancellationToken)
