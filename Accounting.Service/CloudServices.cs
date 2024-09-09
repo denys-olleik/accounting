@@ -6,7 +6,7 @@ namespace Accounting.Service
   {
     public DigitalOceanService GetDigitalOceanService()
     {
-      throw new NotImplementedException();
+      return new DigitalOceanService();
     }
 
     public class DigitalOceanService

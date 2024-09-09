@@ -39,6 +39,8 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> ProvisionTenant(ProvisionTenantViewModel model)
     {
+      model.OrganizationId = GetOrganizationId();
+
       ProvisionTenantViewModelValidator validator = new ProvisionTenantViewModelValidator(_tenantService, _secretService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
