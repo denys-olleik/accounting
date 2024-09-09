@@ -25,6 +25,11 @@ namespace Accounting.Service
       return await manager.GetSecretManager().DeleteAsync(id, organizationId);
     }
 
+    public async Task<int> DeleteMasterAsync(int v)
+    {
+      throw new NotImplementedException();
+    }
+
     public async Task<List<Secret>> GetAllAsync(int organizationId)
     {
       FactoryManager manager = new FactoryManager();

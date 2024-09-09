@@ -24,7 +24,7 @@ namespace Accounting.Controllers
       List<Secret> secrets = await _secretService.GetAllAsync(GetOrganizationId());
 
       SecretsViewModel model = new SecretsViewModel();
-      model.Secrets = secrets.Select(secret => new SecretViewModel
+      model.Secrets = secrets.Select(secret => new SecretsViewModel.SecretViewModel
       {
         SecretID = secret.SecretID,
         Key = secret.Key,
@@ -60,6 +60,11 @@ namespace Accounting.Controllers
       using (TransactionScope scope = new TransactionScope(
         TransactionScopeAsyncFlowOption.Enabled))
       {
+        if (model.Master)
+        {
+          await _secretService.DeleteMasterAsync(GetOrganizationId());
+        }
+
         await _secretService.CreateAsync(
           model.Key, model.Value, model.Vendor, model.Purpose, GetOrganizationId(), GetUserId());
 
