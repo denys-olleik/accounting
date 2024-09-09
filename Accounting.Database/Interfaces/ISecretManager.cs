@@ -9,6 +9,7 @@ namespace Accounting.Database.Interfaces
     Task<int> DeleteMasterAsync(int organizationId);
     Task<List<Secret>> GetAllAsync(int organizationId);
     Task<Secret> GetAsync(int id, int organizationId);
-    Task<Secret> GetAsync(string key, int organizationId);
+    Task<Secret?> GetAsync(string key, int organizationId);
+    Task<Secret?> GetMasterAsync(int organizationId);
   }
 }

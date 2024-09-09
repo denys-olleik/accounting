@@ -43,6 +43,10 @@ namespace Accounting.Models.SecretViewModels
       RuleFor(x => x)
         .Must(x => !(x.Master && x.EncryptValue))
         .WithMessage("A master key cannot have its value encrypted.");
+
+      RuleFor(x => x)
+        .MustAsync(async (model, cancellationToken) => await MasterKeyExistsIfEncryptValueAsync(model))
+        .WithMessage("A master key must be present if the value is to be encrypted.");
     }
 
     private async Task<bool> KeyNotExists(CreateSecretViewModel model, CancellationToken cancellationToken)
@@ -52,6 +56,15 @@ namespace Accounting.Models.SecretViewModels
 
       var secret = await _secretService.GetAsync(model.Key, model.OrganizationId);
       return secret == null;
+    }
+
+    private async Task<bool> MasterKeyExistsIfEncryptValueAsync(CreateSecretViewModel model)
+    {
+      if (!model.EncryptValue)
+        return true;
+
+      var masterSecret = await _secretService.GetMasterAsync(model.OrganizationId);
+      return masterSecret != null;
     }
   }
 }

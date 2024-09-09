@@ -5305,7 +5305,7 @@ namespace Accounting.Database
         return result.Single();
       }
 
-      public async Task<Secret> GetAsync(string key, int organizationId)
+      public async Task<Secret?> GetAsync(string key, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Key", key);
@@ -5320,6 +5320,26 @@ namespace Accounting.Database
             FROM "Secret" 
             WHERE "Key" = @Key
             AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return result.SingleOrDefault();
+      }
+
+      public async Task<Secret?> GetMasterAsync(int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@OrganizationId", organizationId);
+
+        IEnumerable<Secret> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Secret>("""
+            SELECT * 
+            FROM "Secret" 
+            WHERE "OrganizationId" = @OrganizationId
+            AND "Master" = TRUE
             """, p);
         }
 
