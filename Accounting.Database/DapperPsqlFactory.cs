@@ -5161,26 +5161,6 @@ namespace Accounting.Database
 
     public class SecretManager : ISecretManager
     {
-//CREATE EXTENSION pgcrypto;
-
-//CREATE TABLE "Secret"
-//(
-//	"SecretID" SERIAL PRIMARY KEY NOT NULL,
-//	"Key" VARCHAR(100) NOT NULL UNIQUE,
-//	"Master" BOOLEAN DEFAULT FALSE,
-//	"Value" TEXT NOT NULL,
-//	"Vendor" VARCHAR(20) NULL,
-//	"Purpose" VARCHAR(100) NULL,
-//	"Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-//	"CreatedById" INT NOT NULL,
-//	"OrganizationId" INT NOT NULL,
-//	FOREIGN KEY("CreatedById") REFERENCES "User"("UserID"),
-//	FOREIGN KEY("OrganizationId") REFERENCES "Organization"("OrganizationID")
-//);
-
-//CREATE UNIQUE INDEX unique_master_per_organization
-//ON "Secret" ("OrganizationId")
-//WHERE "Master" = TRUE;
 
       public Secret Create(Secret entity)
       {
@@ -5192,13 +5172,13 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<Secret> CreateAsync(string? key, bool master, string? value, string? vendor, string? purpose, int organizationId, int createdById)
+      public async Task<Secret> CreateAsync(string? key, bool master, string? value, string? type, string? purpose, int organizationId, int createdById)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Key", key);
         p.Add("@Master", master);
         p.Add("@Value", value);
-        p.Add("@Vendor", vendor);
+        p.Add("@Type", type);
         p.Add("@Purpose", purpose);
         p.Add("@OrganizationId", organizationId);
         p.Add("@CreatedById", createdById);
@@ -5208,8 +5188,8 @@ namespace Accounting.Database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Secret>("""
-            INSERT INTO "Secret" ("Key", "Master", "Value", "Vendor", "Purpose", "OrganizationId", "CreatedById")
-            VALUES (@Key, @Master, @Value, @Vendor, @Purpose, @OrganizationId, @CreatedById)
+            INSERT INTO "Secret" ("Key", "Master", "Value", "Type", "Purpose", "OrganizationId", "CreatedById")
+            VALUES (@Key, @Master, @Value, @Type, @Purpose, @OrganizationId, @CreatedById)
             RETURNING *;
             """, p);
         }

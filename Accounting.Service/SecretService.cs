@@ -9,7 +9,7 @@ namespace Accounting.Service
       string? key, 
       bool master,
       string? value, 
-      string? vendor,
+      string? type,
       string? purpose,
       int organizationId, 
       int createdById)
@@ -17,7 +17,7 @@ namespace Accounting.Service
       FactoryManager manager = new FactoryManager();
       return await manager
         .GetSecretManager()
-        .CreateAsync(key, master, value, vendor, purpose, organizationId, createdById);
+        .CreateAsync(key, master, value, type, purpose, organizationId, createdById);
     }
 
     public async Task<int> DeleteAsync(int id, int organizationId)
