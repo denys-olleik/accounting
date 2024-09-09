@@ -6,8 +6,14 @@ namespace Accounting.Validators
 {
   public class ProvisionTenantViewModelValidator : AbstractValidator<ProvisionTenantViewModel>
   {
-    public ProvisionTenantViewModelValidator(TenantService tenantService)
+    private readonly TenantService _tenantService;
+    private readonly SecretService _secretService;
+
+    public ProvisionTenantViewModelValidator(TenantService tenantService, SecretService secretService)
     {
+      _tenantService = tenantService;
+      _secretService = secretService;
+
       RuleFor(x => x.Email)
           .NotEmpty()
           .WithMessage("Email is required.")
@@ -21,7 +27,7 @@ namespace Accounting.Validators
                     RuleFor(x => x.Email)
                       .MustAsync(async (email, cancellation) =>
                           {
-                            return !await tenantService.ExistsAsync(email!);
+                            return !await _tenantService.ExistsAsync(email!);
                           })
                       .WithMessage("A tenant with this email already exists.");
                   });

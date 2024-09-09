@@ -13,6 +13,7 @@ namespace Accounting.Controllers
   {
     private readonly TenantService _tenantService;
     private readonly CloudServices _cloudServices;
+    private readonly SecretService _secretService;
 
     public DeploymentAndProvisioningController(TenantService tenantService, CloudServices cloudServices)
     {
@@ -37,7 +38,7 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> ProvisionTenant(ProvisionTenantViewModel model)
     {
-      ProvisionTenantViewModelValidator validator = new ProvisionTenantViewModelValidator(_tenantService);
+      ProvisionTenantViewModelValidator validator = new ProvisionTenantViewModelValidator(_tenantService, _secretService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
