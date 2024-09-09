@@ -7,6 +7,7 @@ namespace Accounting.Service
   {
     public async Task<Secret> CreateAsync(
       string? key, 
+      bool master,
       string? value, 
       string? vendor,
       string? purpose,
@@ -16,7 +17,7 @@ namespace Accounting.Service
       FactoryManager manager = new FactoryManager();
       return await manager
         .GetSecretManager()
-        .CreateAsync(key, value, vendor, purpose, organizationId, createdById);
+        .CreateAsync(key, master, value, vendor, purpose, organizationId, createdById);
     }
 
     public async Task<int> DeleteAsync(int id, int organizationId)
@@ -25,9 +26,10 @@ namespace Accounting.Service
       return await manager.GetSecretManager().DeleteAsync(id, organizationId);
     }
 
-    public async Task<int> DeleteMasterAsync(int v)
+    public async Task<int> DeleteMasterAsync(int organizationId)
     {
-      throw new NotImplementedException();
+      FactoryManager manager = new FactoryManager();
+      return await manager.GetSecretManager().DeleteMasterAsync(organizationId);
     }
 
     public async Task<List<Secret>> GetAllAsync(int organizationId)

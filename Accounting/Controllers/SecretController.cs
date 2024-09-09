@@ -28,6 +28,7 @@ namespace Accounting.Controllers
       {
         SecretID = secret.SecretID,
         Key = secret.Key,
+        Master = secret.Master,
         Vendor = secret.Vendor,
         Purpose = secret.Purpose
       }).ToList();
@@ -66,7 +67,7 @@ namespace Accounting.Controllers
         }
 
         await _secretService.CreateAsync(
-          model.Key, model.Value, model.Vendor, model.Purpose, GetOrganizationId(), GetUserId());
+          model.Key, model.Master, model.Value, model.Vendor, model.Purpose, GetOrganizationId(), GetUserId());
 
         scope.Complete();
       };
