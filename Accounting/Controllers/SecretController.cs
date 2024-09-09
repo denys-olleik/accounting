@@ -28,7 +28,7 @@ namespace Accounting.Controllers
         SecretID = secret.SecretID,
         Key = secret.Key,
         Master = secret.Master,
-        Vendor = secret.Vendor,
+        Type = secret.Type,
         Purpose = secret.Purpose
       }).ToList();
 
@@ -84,7 +84,7 @@ namespace Accounting.Controllers
       {
         SecretID = secret.SecretID,
         Key = secret.Key,
-        Vendor = secret.Vendor,
+        Type = secret.Type,
         Purpose = secret.Purpose
       };
 
