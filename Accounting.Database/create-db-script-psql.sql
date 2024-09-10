@@ -7,6 +7,7 @@
 	"AccountsPayableEmail" VARCHAR(100) NULL,
 	"AccountsReceivablePhone" VARCHAR(20) NULL,
 	"AccountsPayablePhone" VARCHAR(20) NULL,
+	"BaseCurrency" VARCHAR(3) NOT NULL DEFAULT 'USD',
 	"Website" VARCHAR(100) NULL,
   "PaymentInstructions" TEXT,
   "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
@@ -432,8 +433,10 @@ CREATE TABLE "GeneralLedger"
 (
 	"GeneralLedgerID" SERIAL PRIMARY KEY NOT NULL,
 	"AccountId" INT NOT NULL,
-	"Credit" DECIMAL(18, 2) NULL,
-	"Debit" DECIMAL(18, 2) NULL,
+	"Credit" DECIMAL(20, 4) NULL,
+	"Debit" DECIMAL(20, 4) NULL,
+	"CurrencyCode" VARCHAR(3) NULL,
+	"ExchangeRate" DECIMAL(20, 5) NULL,
 	"Memo" TEXT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
