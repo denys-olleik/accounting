@@ -1,12 +1,10 @@
 # GAAP & IFRS Compliant ERP System Design
 
-Implementation of a forward-only double-entry accounting method with a relational database.
+The only system capable of managing everything from a laundromat to a cartel, an aircraft carrier, and everything in between, uncontaminated by Silicon Valley 🐂💩.
 
 * **Using**: C# • ASP.NET MVC • Vue.js • PostgreSQL
 
-Personally, I think accounting is snake oil—it's all made up. Do you think some distant alien civilization also came up with debits, credits, and all the other 🐂💩 that comes with it? I didn't think so.
-
-Ask anyone to give you a one-sentence definition of accounting, and you'll realize just how stupid everyone is. I won't even try.
+GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
 
 0. Have `dotnet` installed.
 1. Have `psql` installed.
