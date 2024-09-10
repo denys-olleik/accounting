@@ -5,4 +5,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="SSH.NET" Version="2024.1.0" />
+	</ItemGroup>
 </Project>

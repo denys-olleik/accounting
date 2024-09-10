@@ -60,7 +60,7 @@ namespace Accounting.Controllers
           CreatedById = GetUserId(),
         });
 
-        await _cloudServices.GetDigitalOceanService().CreateDropletAsync(tenant);
+        await _cloudServices.GetDigitalOceanService(_secretService, _tenantService, GetOrganizationId()).CreateDropletAsync(tenant);
 
         // Implement further logic as needed
         // Example: scope.Complete();
