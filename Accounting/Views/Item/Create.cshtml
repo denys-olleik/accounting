@@ -47,25 +47,25 @@
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
 
-    <label asp-for="Name"></label>
+    <label asp-for="Name" class="background-color-antiquewhite"></label>
     <input asp-for="Name"
            class="font-size-20px"
            maxlength="100" />
   </div>
   <div class="display-flex flex-direction-column margin-bottom-5px">
 
-    <label asp-for="Description"></label>
+    <label asp-for="Description" class="background-color-antiquewhite"></label>
     <textarea asp-for="Description" class="font-size-20px" rows="6"></textarea>
   </div>
 
-  <fieldset>
-    <legend>Item Type</legend>
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label class="background-color-antiquewhite">Item Type</label>
     <item-type-selector :item-types="itemTypes"></item-type-selector>
-  </fieldset>
+  </div>
 
 
-  <fieldset class="margin-bottom-5px">
-    <legend>Inventory Method</legend>
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label class="background-color-antiquewhite">Inventory Method</label>
     <select asp-for="SelectedInventoryMethod" class="font-size-20px width-100">
       @foreach (var method in Model.AvailableInventoryMethods)
       {
@@ -79,12 +79,12 @@
         }
       }
     </select>
-  </fieldset>
+  </div>
 
-  <fieldset class="margin-bottom-5px">
-    <legend>Inventory</legend>
+  <div class="display-flex flex-direction-column">
+    <label class="background-color-antiquewhite">Inventory</label>
     <div class="display-flex flex-direction-column margin-bottom-5px">
-      <label for="LocationId">Location</label>
+      <label for="LocationId" class="background-color-antiquewhite">Location</label>
       <select asp-for="SelectedLocationId" v-model="selectedLocationId" class="font-size-20px width-100">
         <option value="">Select Location</option>
         @foreach (var location in Model.Locations)
@@ -93,19 +93,20 @@
         }
       </select>
     </div>
-    <div v-if="selectedLocationId" class="display-flex">
-      <div class="display-flex flex-1 flex-direction-column margin-bottom-5px">
-        <label for="Quantity">Quantity</label>
-        <input asp-for="Quantity" type="number" class="width-100 font-size-20px" v-model="quantity" />
+    <div v-if="selectedLocationId" class="display-flex flex-direction-column">
+      <div class="display-flex margin-bottom-5px">
+        <div class="display-flex flex-1 flex-direction-column">
+          <label for="Quantity" class="background-color-antiquewhite">Quantity</label>
+          <input asp-for="Quantity" type="number" class="width-100 font-size-20px" v-model="quantity" />
+        </div>
+        <div class="width-5px"></div>
+        <div class="display-flex flex-1 flex-direction-column">
+          <label for="SalePrice" class="background-color-antiquewhite">Revenue/Sale Price</label>
+          <input asp-for="SalePrice" type="number" step="0.01" class="width-100 font-size-20px" v-model="salePrice" />
+        </div>
       </div>
-      <div class="width-5px"></div>
-      <div class="display-flex flex-1 flex-direction-column margin-bottom-5px">
-        <label for="SalePrice">Revenue/Sale Price</label>
-        <input asp-for="SalePrice" type="number" step="0.01" class="width-100 font-size-20px" v-model="salePrice" />
-      </div>
-      <div class="width-5px"></div>
     </div>
-  </fieldset>
+  </div>
 
   <fieldset class="margin-bottom-5px" v-if="salePrice > 0">
     <legend>Revenue Accounts</legend>
@@ -213,11 +214,5 @@
 
 @if (Context.RequestServices.GetService<IWebHostEnvironment>()!.IsDevelopment())
 {
-  <fieldset>
-    <legend>Developer Notes:</legend>
-    <ul>
-      <li>
-      </li>
-    </ul>
-  </fieldset>
+  
 }
