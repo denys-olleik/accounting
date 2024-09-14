@@ -8,7 +8,6 @@
     public static ConfigurationSingleton Instance { get { return _lazy.Value; } }
 
     public string? ApplicationName { get; set; }
-    public string? ConnectionString { get; set; }
     public int InvitationExpirationMinutes { get; set; }
     public string? AdminPsql { get; set; }
     public string? SendgridKey { get; set; }
