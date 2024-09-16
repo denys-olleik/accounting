@@ -4,60 +4,89 @@ The only system capable of managing everything from a laundromat to a cartel, an
 
 * **Using**: C# • ASP.NET MVC • Vue.js • PostgreSQL
 
-0. Have `dotnet` installed.
-1. Have `psql` installed.
-   1. Have `CREATE EXTENSION IF NOT EXISTS postgis;` installed.
-   2. Have `CREATE EXTENSION IF NOT EXISTS pgcrypto;` installed.
-3. Update connection strings in `appsettings.json`.
-5. Set `database-reset.json` to `true` and run. This does two things...
-   1. Uses main database context to create application database.
-   2. Runs create-db script to create tables, columns, relationships, indexes.
-   3. I will later add optional sample data.
+This solution contains examples of three feature-specific junction tables which are used to group the journal entries specific to that transaction.
 
-## Journal and accounts
+A feature should be integrated with the journal if it affects one of the following account types: revenue, expense, liabilities, assets, or equity.
 
-Journal entries are recorded against specific accounts, each of which falls into one of five categories: Assets, Liabilities, Equity, Revenues, and Expenses.
+Because all features that affect the journal result in at least two entries, a `TransactionGuid` column is used to group them.
 
-Journal entries are made in transactions of at least two entries, where the sum of the debits equals the sum of the credits.
+To implement a new feature affecting the journal, create a table to group the transaction. Prefix the table with `GeneralLedger...`, then append the names of the tables referenced by the foreign keys that appear immediately after the `GeneralLedgerId` foreign key and before the `Reversed...` column (excluding the "Id" suffix from each). For example, `GeneralLedgerInvoiceInvoiceLine` is named as such because the foreign keys after the `GeneralLedgerId` but before `Reversed...` columns are `InvoiceId` and `InvoiceLineId`. Include a `Reversed...` column to reference the entries being reversed, and a `TransactionGuid` for grouping entries. This structure supports a reversal-and-amendment strategy in a forward-only journal, where entries cannot be modified once recorded. For example, if the revenue recognition for invoice line-items needs to be adjusted after initial creation, the original entries are reversed, and new ones are added.
 
-"Double entry" doesn't mean you can't have odd number of entries in a transaction.
+```sql
+CREATE TABLE "GeneralLedgerInvoiceInvoiceLine"
+(
+	"GeneralLedgerInvoiceInvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
+	"GeneralLedgerId" INT NOT NULL,
+	"InvoiceId" INT NOT NULL,
+	"InvoiceLineId" INT NOT NULL,
+	"ReversedGeneralLedgerInvoiceInvoiceLineId" INT NULL,
+	"TransactionGuid" UUID NOT NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+	"CreatedById" INT NOT NULL,
+	"OrganizationId" INT NOT NULL,
+	FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"("GeneralLedgerID"),
+	FOREIGN KEY ("InvoiceId") REFERENCES "Invoice"("InvoiceID"),
+	FOREIGN KEY ("InvoiceLineId") REFERENCES "InvoiceLine"("InvoiceLineID"),
+	FOREIGN KEY ("ReversedGeneralLedgerInvoiceInvoiceLineId") REFERENCES "GeneralLedgerInvoiceInvoiceLine"("GeneralLedgerInvoiceInvoiceLineID"),
+	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+);
+```
+
+This naming strategy makes it easy for developers to understand the relationship between a features and the journal.
+
+The `GeneralLedgerInvoiceInvoiceLine` is used to record entries during creation of the invoice, the modification of the line-items, and the removal of the line-items from the invoice. However, if you require these concepts to be separated even further, you could adopt a different naming strategy, for example, `GeneralLedgerInvoiceCreated`, `GeneralLedgerInvoiceUpdated`, `GeneralLedgerLineItemRemoved`.
+
+For example, it may be useful to know how much revenue is lost due to line-items being removed from the invoice.
+
+## Journal, accounts, and double-entry
 
 ```sql
 CREATE TABLE "Account"
 (
-  "AccountID" SERIAL PRIMARY KEY NOT NULL,
-  "Name" VARCHAR(200) NOT NULL,
-  "Type" VARCHAR(50) NOT NULL CHECK ("Type" IN  ('assets', 'liabilities', 'equity',  'revenue',  'expense')),
-  ...
-  "Created" TIMESTAMPTZ NOT NULL DEFAULT  (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-  "ParentAccountId" INT NULL,
-  "CreatedById" INT NOT NULL,
-  "OrganizationId" INT NOT NULL,
-  FOREIGN KEY ("ParentAccountId") REFERENCES "Account"("AccountID"),
-  FOREIGN KEY ("CreatedById") REFERENCES "User" ("UserID"),
-  FOREIGN KEY ("OrganizationId") REFERENCES   "Organization"("OrganizationID"),
-  UNIQUE ("Name", "OrganizationId")
-);
-
-CREATE TABLE "GeneralLedger"
-(
-  "GeneralLedgerID" SERIAL PRIMARY KEY NOT NULL,
-  "AccountId" INT NOT NULL,
-  "Credit" DECIMAL(18, 2) NULL,
-  "Debit" DECIMAL(18, 2) NULL,
-  "Memo" TEXT NULL,
-  "Created" TIMESTAMPTZ NOT NULL DEFAULT  (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-  "CreatedById" INT NOT NULL,
-  "OrganizationId" INT NOT NULL,
-  FOREIGN KEY ("AccountId") REFERENCES "Account"("AccountID"),
-  FOREIGN KEY ("CreatedById") REFERENCES "User" ("UserID"),
-  FOREIGN KEY ("OrganizationId") REFERENCES   "Organization"("OrganizationID")
+	"AccountID" SERIAL PRIMARY KEY NOT NULL,
+	"Name" VARCHAR(200) NOT NULL,
+	"Type" VARCHAR(50) NOT NULL CHECK ("Type" IN ('assets', 'liabilities', 'equity', 'revenue', 'expense')),
+	-- ...
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+	"ParentAccountId" INT NULL,
+	"CreatedById" INT NOT NULL,
+	"OrganizationId" INT NOT NULL,
+	FOREIGN KEY ("ParentAccountId") REFERENCES "Account"("AccountID"),
+	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
+	UNIQUE ("Name", "OrganizationId")
 );
 ```
 
-The `GeneralLedger` is the journal table and contains the `credit` and `debit` columns.
+The `ParentAccountId` allows for hierarchical relationships which allow for better reporting and analysis. However, ensuring that the `ParentAccountId` is of the same `Type` as the `AccountID` is enforced at application level.
 
-A typical `Account` might look like...
+```sql
+CREATE TABLE "GeneralLedger"
+(
+	"GeneralLedgerID" SERIAL PRIMARY KEY NOT NULL,
+	"AccountId" INT NOT NULL,
+	"Credit" DECIMAL(20, 4) NULL,
+	"Debit" DECIMAL(20, 4) NULL,
+	"CurrencyCode" VARCHAR(3) NULL, 
+	"ExchangeRate" DECIMAL(12, 5) NULL, 
+	"Memo" TEXT NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+	"CreatedById" INT NOT NULL,
+	"OrganizationId" INT NOT NULL,
+	FOREIGN KEY ("AccountId") REFERENCES "Account"("AccountID"),
+	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+);
+```
+
+Journal entries are made in transactions of at least two entries where the sum of credits equals debits.
+
+Double entry is misleading because some people assume the entries of a transactions are made in pairs, or have an even number of entries.
+
+
+
+A typical chart-of-accounts might look like...
 
 | AccountID        | Name                          | Type       | ParentAccountId        |
 |------------------|-------------------------------|------------|------------------------|
@@ -78,13 +107,7 @@ A typical `Account` might look like...
 
 Keep an eye on number 14.
 
-The `ParentAccountId` allows for hierarchical relationships which allow for better reporting and analysis. However, ensuring that the `ParentAccountId` is of the same `Type` as the `AccountID` would have to be enforced at the application level.
-
-### Double entry is misleading
-
-Double entry accounting is misleading because a transaction doesn't always have to have only a pair of credit and debit entries.
-
-For example, consider an invoice with one line item where the sales tax has to be collected. Here is what the journal entries might look like...
+Consider a transaction where an invoice is created with one line-item which requires sales tax to be collected...
 
 | GeneralLedgerID | AccountId        | Credit  | Debit   |
 |-----------------|------------------|---------|---------|
@@ -92,39 +115,9 @@ For example, consider an invoice with one line item where the sales tax has to b
 | 2               | 2  (revenue)     | 1000.00 | 0.00    |
 | 3               | 14 (liabilities) | 100.00  | 0.00    |
 
-As you can see there is one   debit and two credit entries.
+The above table shows a valid transaction made up of three entries where debits equal credits.
 
-Essentially a tripple entry transaction.
-
-### Forward only
-
-When an invoice is created, initial entries are made in the journal. If the invoice needs to be modified, those entries are reversed, and new ones are appended.
-
-Because of the requirements to track the revenue at the line item level, each line item will have it's own set of ledger entries that represent its current and historical state.
-
-The `GeneralLedgerInvoiceInvoiceLine` links the journal entries with the creation, update, and removal of invoice line item events.
-
-```sql
-CREATE TABLE "GeneralLedgerInvoiceInvoiceLine"
-(
-  "GeneralLedgerInvoiceInvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
-  "GeneralLedgerId" INT NOT NULL,
-  "InvoiceId" INT NOT NULL,
-  "InvoiceLineId" INT NOT NULL,
-  "ReversedGeneralLedgerInvoiceInvoiceLineId" INT NULL,
-  "TransactionGuid" UUID NOT NULL,
-  "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-  "CreatedById" INT NOT NULL,
-  "OrganizationId" INT NOT NULL,
-  FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"("GeneralLedgerID"),
-  FOREIGN KEY ("InvoiceId") REFERENCES "Invoice"("InvoiceID"),
-  FOREIGN KEY ("InvoiceLineId") REFERENCES "InvoiceLine"("InvoiceLineID"),
-  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
-);
-```
-
-Below is the result of `SELECT * FROM "GeneralLedgerInvoiceInvoiceLine";` after the invoice was created, updated, and had one of its line items removed. You can tell the sequence of events by examining the `TransactionGuid`.
+Examine the `TransactionGuid` column in the table below from the result of `SELECT * FROM "GeneralLedgerInvoiceInvoiceLine";` to identify transaction boundary.
 
 |ID|GeneralLedgerId|InvoiceId|InvoiceLineId|ReversedId|TransactionGuid|
 |---|---|---|---|---|---|
@@ -145,15 +138,17 @@ Below is the result of `SELECT * FROM "GeneralLedgerInvoiceInvoiceLine";` after 
 
 Note the reversing entries and the three separate transactions.
 
-1. IDs 1-4 invoice is created.
-2. IDs 5-12 both line items updated, the reversal and new entries are same transaction. 
-3. IDs 13-14 one line item is removed.
+1. Rows 1-4 invoice with two line-items is created.
+2. Rows 5-12 both line-items updated.
+3. Rows 13-14 one line-item is removed.
 
-To prevent confusion regarding how to determine if a line item was removed from an invoice, and without adding additional flags or columns, the line items whose transactions end with a reversal are considered removed from the invoice.
+**To prevent confusion regarding how to determine if a line-item was removed from an invoice, and without adding additional flags or columns to indicate line-item removal, the line-items whose transactions end with a reversal are considered removed from the invoice.**
 
 ## Payments
 
-Payments are received against invoice line items, can be partial, and can apply against multiple invoices.
+* Payments are received against invoice line-items.
+* Payments can be partial.
+* The relationship between payment and invoice is many-to-many.
 
 The `GeneralLedgerInvoiceInvoiceLinePayment` links the journal entries with the payment.
 
@@ -176,9 +171,13 @@ CREATE TABLE "GeneralLedgerInvoiceInvoiceLinePayment"
 );
 ```
 
-The pattern repeats in the `GeneralLedgerReconciliationTransaction` table. A bank or credit card statement contains rows of transactions. Credit card statements will mostly have expense transactions while bank statements will have both expense and revenue transactions.
+An incoming check is usually entered into the system before it is deposited. Ideally, the check should be entered into a check-in-transit or similar asset account and later synchronized when it appears on the statement.
 
-Each transaction in the statement should be uniquely identifiable, but they rarely are—especially when the statement is imported from a CSV file.
+## Reconciliations
+
+The pattern repeats in the `GeneralLedgerReconciliationTransaction` table. A bank or credit card statement contains rows of transactions. Credit card statements will have expense transactions while bank statements will have both expense and revenue transactions.
+
+Each transaction in the statement should be uniquely identifiable, but often the exported CSV does not contain a column to uniquely identify the row.
 
 ```sql
 CREATE TABLE "GeneralLedgerReconciliationTransaction"
@@ -199,11 +198,20 @@ CREATE TABLE "GeneralLedgerReconciliationTransaction"
 );
 ```
 
-There are integration options with banks and credit cards, but the option to import a CSV file is still a requirement.
+Integration with banks to pull the transaction data programatically is possible, but CSV import is used as universal fallback option.
 
-Note: An incoming check is usually entered into the system before it's deposited. Ideally, the check should be entered into a check-in-transit or similar account and further reconciled when the deposit appears on the statement.
+## Installation
 
-## Backups
+0. Have `dotnet` installed.
+1. Have `psql` installed.
+   1. Have `CREATE EXTENSION IF NOT EXISTS postgis;` installed.
+   2. Have `CREATE EXTENSION IF NOT EXISTS pgcrypto;` installed.
+3. Update connection strings in `appsettings.json`.
+5. Set `database-reset.json` to `true` and run. This does two things...
+   1. Uses the main database context to create the application database.
+   2. Runs `create-db...` script to create tables, columns, relationships, indexes, etc. I will later separate sample data to be optional.
+
+## Future backup strategy
 
 The system will have three levels of backups.
 
