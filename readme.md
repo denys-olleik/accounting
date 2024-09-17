@@ -1,10 +1,12 @@
+## Introduction
+
 GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
 
 The only system capable of managing everything from a laundromat to a cartel, an aircraft carrier, and everything in between, uncontaminated by Silicon Valley 🐂💩.
 
 * **Using**: C# • ASP.NET MVC • Vue.js • PostgreSQL
 
-This solution contains examples of three feature-specific junction tables which are used to group the journal entries specific to that transaction.
+This solution contains example integrations of feature-specific junction tables which group the journal entries into a transaction for specific user action or feature.
 
 A feature should be integrated with the journal if it affects one of the following account types: revenue, expense, liabilities, assets, or equity.
 
@@ -206,10 +208,13 @@ Integration with banks to pull the transaction data programatically is possible,
 1. Have `psql` installed.
    1. Have `CREATE EXTENSION IF NOT EXISTS postgis;` installed.
    2. Have `CREATE EXTENSION IF NOT EXISTS pgcrypto;` installed.
-3. Update connection strings in `appsettings.json`.
-5. Set `database-reset.json` to `true` and run. This does two things...
+2. Update connection strings in `appsettings.json`.
+3. Set `database-reset.json` to `true` and run. This does two things...
    1. Uses the main database context to create the application database.
    2. Runs `create-db...` script to create tables, columns, relationships, indexes, etc. I will later separate sample data to be optional.
+4. Use `test@example.com` pw `test` to login and choose "Farm To Market LLC", it already has sample chart of accounts.
+5. Create invoice.
+6. Receive payment.
 
 ## Future backup strategy
 
@@ -218,3 +223,21 @@ The system will have three levels of backups.
 1. **Ledger** - System will attempt to perform a backup upon every action/transaction that affects the ledger. Backups will be in human and machine readable format such as csv, json, or xml (you'll get to pick whichever you hate the least). 
 2. **Database** - Performed as often as resources allow, ideally every hour.
 3. **Instance** - Entire virtual machine instance is backed up daily.
+
+---
+
+## Ambitions of Grandeur: Rebuilding an Institution
+
+Why doesn't anyone want to be an accountant? Because it's not accounting anymore.
+
+![test](Double-entry_example_from_1926.png)
+
+I don't remember QwackBooks ever looking like that.
+
+Intuit didn't invent accounting; they've stolen it.
+
+Accounting existed before computers, databases, and software. In the past, accountants had to physically write journal entries into a paper journal. Now accountants have to find the right input field in whatever suite of software they use, completely sidelining the need to understand the effect on the journal.
+
+None of you can call yourselves accountants; you're just QwackBooks users. The truck drivers of the office. Your boss thinks of you as a whiny, tail-dragging █████. That's why he just need one of you who knows the entire system. Maybe you'll get lucky with an assistant, but most likely they'll cause more problems, because it'll be the boss's daughter and she doesn't give a ████.
+
+Companies that adopt my system are far less likely to get audited than those using QwackBooks or some half-baked ERP system thrown together by a committee in India and managed by another in San Francisco—one which still has to go through months of customization and setup before it can be used.

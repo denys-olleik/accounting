@@ -558,18 +558,18 @@ CREATE TABLE "RequestLog"
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
-CREATE EXTENSION postgis;
+--CREATE EXTENSION postgis;
 
-CREATE TABLE "ZipCode"
-(
-    "ID" SERIAL PRIMARY KEY NOT NULL,
-    "Zip5" VARCHAR(5) NOT NULL,
-    "Latitude" FLOAT NULL,
-    "Longitude" FLOAT NULL,
-    "City" VARCHAR(50) NOT NULL,
-    "State2" VARCHAR(2) NOT NULL,
-    "Location" GEOGRAPHY NULL
-);
+--CREATE TABLE "ZipCode"
+--(
+--    "ID" SERIAL PRIMARY KEY NOT NULL,
+--    "Zip5" VARCHAR(5) NOT NULL,
+--    "Latitude" FLOAT NULL,
+--    "Longitude" FLOAT NULL,
+--    "City" VARCHAR(50) NOT NULL,
+--    "State2" VARCHAR(2) NOT NULL,
+--    "Location" GEOGRAPHY NULL
+--);
 
 CREATE EXTENSION pgcrypto;
 
