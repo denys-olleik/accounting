@@ -1,8 +1,22 @@
+## It doesn't have to be this confusing...
+
+| Account Type        | Debit Means Increase | Credit Means Increase |
+|---------------------|----------------------|-----------------------|
+| Assets              | Yes                  | No                    |
+| Liabilities         | No                   | Yes                   |
+| Equity/Capital      | No                   | Yes                   |
+| Revenue/Income      | No                   | Yes                   |
+| Expenses            | Yes                  | No                    |
+
+![test](https://www.youtube.com/embed/MoYr0cgosOY)
+
 ## Introduction
 
 GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
 
-The only system capable of managing everything from a laundromat to a cartel, an aircraft carrier, and everything in between, uncontaminated by Silicon Valley 🐂💩.
+The only system capable of managing everything from a single laundromat to a cartel, multiple aircraft carriers, and everything in between, uncontaminated by Silicon Valley 🐂💩.
+
+Due to its wide scope, the system is designed to be incomplete, allowing organizations to finalize the implementation.
 
 * **Using**: C# • ASP.NET MVC • Vue.js • PostgreSQL
 
@@ -10,7 +24,7 @@ This solution contains example integrations of feature-specific junction tables 
 
 A feature should be integrated with the journal if it affects one of the following account types: revenue, expense, liabilities, assets, or equity.
 
-Because all features that affect the journal result in at least two entries, a `TransactionGuid` column is used to group them.
+Since every feature that impacts the journal requires a minimum of two entries, a `TransactionGuid` column is used to group these entries together.
 
 To implement a new feature affecting the journal, create a table to group the transaction. Prefix the table with `GeneralLedger...`, then append the names of the tables referenced by the foreign keys that appear immediately after the `GeneralLedgerId` foreign key and before the `Reversed...` column (excluding the "Id" suffix from each). For example, `GeneralLedgerInvoiceInvoiceLine` is named as such because the foreign keys after the `GeneralLedgerId` but before `Reversed...` columns are `InvoiceId` and `InvoiceLineId`. Include a `Reversed...` column to reference the entries being reversed, and a `TransactionGuid` for grouping entries. This structure supports a reversal-and-amendment strategy in a forward-only journal, where entries cannot be modified once recorded. For example, if the revenue recognition for invoice line-items needs to be adjusted after initial creation, the original entries are reversed, and new ones are added.
 
@@ -35,9 +49,9 @@ CREATE TABLE "GeneralLedgerInvoiceInvoiceLine"
 );
 ```
 
-This naming strategy makes it easy for developers to understand the relationship between a features and the journal.
+This naming strategy makes it easy for developers to understand the relationship between features and the journal.
 
-The `GeneralLedgerInvoiceInvoiceLine` is used to record entries during creation of the invoice, the modification of the line-items, and the removal of the line-items from the invoice. However, if you require these concepts to be separated even further, you could adopt a different naming strategy, for example, `GeneralLedgerInvoiceCreated`, `GeneralLedgerInvoiceUpdated`, `GeneralLedgerLineItemRemoved`.
+The `GeneralLedgerInvoiceInvoiceLine` is used to record entries during creation of the invoice, the modification of the line-items, and the removal of the line-items from the invoice. However, if you require these concepts to be separated even further, you could adopt a different naming strategy, for example, `GeneralLedgerInvoiceInvoiceLineCreated`, `GeneralLedgerInvoiceInvoiceLineUpdated`, `GeneralLedgerInvoiceInvoiceLineRemoved`.
 
 For example, it may be useful to know how much revenue is lost due to line-items being removed from the invoice.
 
@@ -236,8 +250,9 @@ I don't remember QwackBooks ever looking like that.
 
 Intuit didn't invent accounting; they've stolen it.
 
-Accounting existed before computers, databases, and software. In the past, accountants had to physically write journal entries into a paper journal. Now accountants have to find the right input field in whatever suite of software they use, completely sidelining the need to understand the effect on the journal.
+Accounting existed before computers, databases, and software. Transactions were recorded in physical journals using pen and paper, which forced accountants to have a better understanding of company finances due to the process of manual entry, with little room for error. Now, the process has been automated through software, and the journal entries are hidden away, leaving only the final report to spot errors and fraud.
 
-None of you can call yourselves accountants; you're just QwackBooks users. The truck drivers of the office. Your boss thinks of you as a whiny, tail-dragging █████. That's why he just need one of you who knows the entire system. Maybe you'll get lucky with an assistant, but most likely they'll cause more problems, because it'll be the boss's daughter and she doesn't give a ████.
+None of you can call yourselves accountants; you're just QwackBooks users. The truck drivers of the office. Your boss thinks of you as a whiny, tail-dragging █████. That's why he needs just one of you who knows the entire system. Maybe you'll get lucky with an assistant, but most likely they'll cause more problems, because it'll be the boss's daughter and she doesn't give a ████.
 
-Companies that adopt my system are far less likely to get audited than those using QwackBooks or some half-baked ERP system thrown together by a committee in India and managed by another in San Francisco—one which still has to go through months of customization and setup before it can be used.
+Companies that adopt my system are far less likely to get audited than those using QwackBooks or some half-baked ERP system thrown together by a committee in India and managed by another in San Francisco. These systems often go through months of customization and setup before they can be used, and still end in failed implementations.
+

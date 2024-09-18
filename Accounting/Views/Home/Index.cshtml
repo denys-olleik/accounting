@@ -15,379 +15,148 @@
 
 @if (!User.Identity.IsAuthenticated)
 {
-  <div class="display-flex margin-bottom-5px background-color-wheat padding-15px box-shadow">
-    <p class="font-size-20px text-align-center font-weight-500">The only system capable of managing everything from a laundromat to a cartel, an aircraft carrier, and everything in between, uncontaminated by Silicon Valley 🐂💩.</p>
-  </div>
-
-  <div class="display-flex background-color-wheat margin-bottom-5px padding-15px box-shadow font-size-20px font-weight-500">
-    <div class="flex-1">
-      GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
-    </div>
-  </div>
-
-  <div class="display-flex flex-direction-column box-shadow">
-    <div class="display-flex font-weight-500">
-      <div class="flex-1 background-color-wheat padding-10px">
-        <div class="font-size-20px margin-bottom-5px">The schema</div>
-        <div>Designed to be as simple as possible while allowing for the most complex record-keeping scenarios.</div>
-      </div>
+    <div class="display-flex margin-bottom-5px background-color-wheat padding-15px box-shadow">
+      <p class="font-size-20px text-align-center font-weight-500">The only system capable of managing everything from a laundromat to a cartel, an aircraft carrier, and everything in between, uncontaminated by Silicon Valley 🐂💩.</p>
     </div>
 
-    <div class="display-flex margin-bottom-5px">
+    <div class="display-flex background-color-wheat margin-bottom-5px padding-15px box-shadow font-size-20px font-weight-500">
       <div class="flex-1">
-        <pre class="white-space-pre-wrap margin-top-0px margin-bottom-0px"><code class="language-sql">
-CREATE TABLE "Account"
-(
-  "AccountID" SERIAL PRIMARY KEY NOT NULL,
-  "Name" VARCHAR(200) NOT NULL,
-  "Type" VARCHAR(50) NOT NULL CHECK ("Type" IN ('assets', 'liabilities', 'equity', 'revenue', 'expense')),
-  "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-  "ParentAccountId" INT NULL,
-  "CreatedById" INT NOT NULL,
-  "OrganizationId" INT NOT NULL,
-  FOREIGN KEY ("ParentAccountId") REFERENCES "Account"("AccountID"),
-  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
-  UNIQUE ("Name", "OrganizationId")
-);
-
-CREATE TABLE "GeneralLedger"
-(
-  "GeneralLedgerID" SERIAL PRIMARY KEY NOT NULL,
-  "AccountId" INT NOT NULL,
-  "Credit" DECIMAL(18, 2) NULL,
-  "Debit" DECIMAL(18, 2) NULL,
-  "Memo" TEXT NULL,
-  "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-  "CreatedById" INT NOT NULL,
-  "OrganizationId" INT NOT NULL,
-  FOREIGN KEY ("AccountId") REFERENCES "Account"("AccountID"),
-  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
-);
-                    </code></pre>
+        GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
       </div>
     </div>
-  </div>
-
-  <div class="display-flex flex-direction-column box-shadow">
-    <div class="display-flex font-weight-500">
-      <div class="flex-1 background-color-wheat padding-10px">
-        <div class="font-size-20px margin-bottom-5px">The transaction</div>
-        <div class="font-size-16px">Anything can be thought of as a transaction, from the creation of an invoice and the receiving of a payment to the movement of inventory. A transaction involves entries into multiple tables and results in at least two entries in the journal.</div>
-      </div>
+    <div class="text-align-center">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/MoYr0cgosOY" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
+}
 
-    <div class="display-flex">
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="background-color-antiquewhite">
+      <ul class="margin-0">
+        <li>
+          <a href="@Url.Action("Users", "User")">Users</a>
+          <ul>
+            <li><a href="@Url.Action("Create", "User")">Create User</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="@Url.Action("ToDos", "ToDo")">Tasks</a>
+          <ul>
+            <li><a href="@Url.Action("Create", "ToDo")">Create Task</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="@Url.Action("Invoices", "Invoice")">Invoices</a>
+          <ul>
+            <li><a href="@Url.Action("Create", "Invoice")">Create Invoice</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="@Url.Action("Customers", "Customer")">Customers and Vendors</a>
+          <ul>
+            <li><a href="@Url.Action("Create", "Customer")">Create Customer and or Vendor</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="@Url.Action("PaymentTerms", "PaymentTerm")">Payment Terms</a>
+          <ul>
+            <li><a href="@Url.Action("Create", "PaymentTerm")">Create Payment Term</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="@Url.Action("PaymentInstructions", "PaymentInstruction")">Payment Instructions</a>
+          <ul>
+            <li><a href="@Url.Action("Create", "PaymentInstruction")">Create Payment Instruction</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="@Url.Action("ProductsAndServices", "Item")">Products and Services</a>
+          <ul>
+            <li><a href="@Url.Action("Create", "Item")">Create Product or Service</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="@Url.Action("Locations", "Location")">Locations</a>
+          <ul>
+            <li><a href="@Url.Action("Create", "Location")">Create Location</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="@Url.Action("Update", "Organization")">Organization</a>
+        </li>
+        <li>
+          <a href="@Url.Action("Reconciliations", "Reconciliation")">Reconciliations</a>
+          <ul>
+            <li><a href="@Url.Action("Import", "Reconciliation")">Import</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="@Url.Action("Accounts", "Account")">Accounts</a>
+          <ul>
+            <li><a href="@Url.Action("Create", "Account")">Create Account</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="@Url.Action("Backup", "Backup")">Backup</a>
+          <ul>
+            <li><a href="@Url.Action("Export", "Backup")">Export</a></li>
+            <li><a href="@Url.Action("Import", "Backup")">Import</a></li>
+          </ul>
+        </li>
+        <li>
+          <a href="@Url.Action("ShippingAndReceiving", "ShippingAndReceiving")">Shipping and Receiving</a>
+        </li>
+        <li>
+          <a href="@Url.Action("Tenants", "DeploymentAndProvisioning")">Deployment and Provisioning</a>
+        </li>
+        <li>
+          <a href="@Url.Action("Secrets", "Secret")">Secrets</a>
+        </li>
+      </ul>
+    </div>
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="display-flex background-color-white">
       <div class="flex-1">
-        <pre class="white-space-pre-wrap margin-top-0px margin-bottom-0px"><code class="language-sql">
-CREATE TABLE "GeneralLedgerInvoiceInvoiceLine"
-(
-  "GeneralLedgerInvoiceInvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
-  "GeneralLedgerId" INT NOT NULL,
-  "InvoiceId" INT NOT NULL,
-  "InvoiceLineId" INT NOT NULL,
-  "ReversedGeneralLedgerInvoiceInvoiceLineId" INT NULL,
-  "TransactionGuid" UUID NOT NULL,
-  "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-  "CreatedById" INT NOT NULL,
-  "OrganizationId" INT NOT NULL,
-  FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"("GeneralLedgerID"),
-  FOREIGN KEY ("InvoiceId") REFERENCES "Invoice"("InvoiceID"),
-  FOREIGN KEY ("InvoiceLineId") REFERENCES "InvoiceLine"("InvoiceLineID"),
-  FOREIGN KEY ("ReversedGeneralLedgerInvoiceInvoiceLineId") REFERENCES "GeneralLedgerInvoiceInvoiceLine"("GeneralLedgerInvoiceInvoiceLineID"),
-  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
-);
-
-CREATE TABLE "InvoiceLine"
-(
-  "InvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
-  "Title" VARCHAR(100) NOT NULL,
-  "Description" TEXT NULL,
-  "Quantity" DECIMAL(18, 2) NOT NULL,
-  "Price" DECIMAL(18, 2) NOT NULL,
-  "InvoiceId" INT NOT NULL,
-  "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-  "RevenueAccountId" INT NOT NULL,
-  "AssetsAccountId" INT NOT NULL,
-  "CreatedById" INT NOT NULL,
-  "OrganizationId" INT NOT NULL,
-  FOREIGN KEY ("InvoiceId") REFERENCES "Invoice"("InvoiceID"),
-  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-  FOREIGN KEY ("RevenueAccountId") REFERENCES "Account"("AccountID"),
-  FOREIGN KEY ("AssetsAccountId") REFERENCES "Account"("AccountID"),
-  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
-);
-                      </code></pre>
+        <canvas id="accountBalanceChart" width="400" height="400"></canvas>
+      </div>
+      <div class="width-5px">
+      </div>
+      <div class="flex-1">
       </div>
     </div>
-
-    <div class="display-flex flex-direction-column background-color-wheat margin-bottom-5px padding-15px box-shadow font-size-20px font-weight-500">
-      <div class="flex-1 margin-bottom-5px">
-        Why does the <code>InvoiceLine</code> table not have a flag marking it removed if a line item can be removed from the invoice?
-      </div>
-      <div class="font-size-16px margin-bottom-5px">
-        It was determined that revenue calculations should be based solely on the journal entries. Determining which entries should not be counted in the revenue reports by checking if a line item is marked as removed is prone to error. Therefore, the removal of an invoice line item is maintained at the journal level only. The journal maintains a chain of transactions in their chronological order. If the last entries in the transaction for the line item in question are reversals only, meaning they don't have amended entries, or simply checking if the last transaction contains a value in any of the entries for the <code>ReversedGeneralLedgerInvoiceInvoiceLineId</code> column, will indicate that the line item has been effectively removed. The table below shows that the first line item on the invoice was removed in the third and last transactions for that invoice line item.
-      </div>
-      <table class="border-collapse width-100 margin-bottom-5px font-size-16px background-color-white">
-        <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
-          <tr>
-            <th class="text-align-left padding-right-20px">ID</th>
-            <th class="text-align-left padding-right-20px">GeneralLedgerId</th>
-            <th class="text-align-left padding-right-20px">InvoiceId</th>
-            <th class="text-align-left padding-right-20px">InvoiceLineId</th>
-            <th class="text-align-left padding-right-20px">ReversedId</th>
-            <th class="text-align-left padding-right-20px">TransactionGuid</th>
-          </tr>
-        </thead>
-        <tbody class="font-Roboto-Mono">
-          <tr>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">2</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">NULL</td>
-            <td class="padding-right-20px">e0b84e1c-e62d-60f2-0a96-61f895c14fcf</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">2</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">NULL</td>
-            <td class="padding-right-20px">e0b84e1c-e62d-60f2-0a96-61f895c14fcf</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">3</td>
-            <td class="padding-right-20px">4</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">2</td>
-            <td class="padding-right-20px">NULL</td>
-            <td class="padding-right-20px">e0b84e1c-e62d-60f2-0a96-61f895c14fcf</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">4</td>
-            <td class="padding-right-20px">3</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">2</td>
-            <td class="padding-right-20px">NULL</td>
-            <td class="padding-right-20px">e0b84e1c-e62d-60f2-0a96-61f895c14fcf</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">5</td>
-            <td class="padding-right-20px">5</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">6</td>
-            <td class="padding-right-20px">6</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">NULL</td>
-            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">7</td>
-            <td class="padding-right-20px">7</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">2</td>
-            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">8</td>
-            <td class="padding-right-20px">8</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">NULL</td>
-            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">9</td>
-            <td class="padding-right-20px">9</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">2</td>
-            <td class="padding-right-20px">3</td>
-            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">10</td>
-            <td class="padding-right-20px">10</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">2</td>
-            <td class="padding-right-20px">NULL</td>
-            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">11</td>
-            <td class="padding-right-20px">11</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">2</td>
-            <td class="padding-right-20px">4</td>
-            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">12</td>
-            <td class="padding-right-20px">12</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">2</td>
-            <td class="padding-right-20px">NULL</td>
-            <td class="padding-right-20px">91977936-5d6a-401b-7ea6-9092eee92918</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">13</td>
-            <td class="padding-right-20px">13</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px background-color-lightcoral color-white">6</td>
-            <td class="padding-right-20px">227fa74a-3166-01b6-61db-0f6a6af4a52e</td>
-          </tr>
-          <tr>
-            <td class="padding-right-20px">14</td>
-            <td class="padding-right-20px">14</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px">1</td>
-            <td class="padding-right-20px background-color-lightcoral color-white">8</td>
-            <td class="padding-right-20px">227fa74a-3166-01b6-61db-0f6a6af4a52e</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 }
 
 @if (User.Identity.IsAuthenticated)
 {
-  <div class="background-color-antiquewhite">
-    <ul class="margin-0">
-      <li>
-        <a href="@Url.Action("Users", "User")">Users</a>
-        <ul>
-          <li><a href="@Url.Action("Create", "User")">Create User</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="@Url.Action("ToDos", "ToDo")">Tasks</a>
-        <ul>
-          <li><a href="@Url.Action("Create", "ToDo")">Create Task</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="@Url.Action("Invoices", "Invoice")">Invoices</a>
-        <ul>
-          <li><a href="@Url.Action("Create", "Invoice")">Create Invoice</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="@Url.Action("Customers", "Customer")">Customers and Vendors</a>
-        <ul>
-          <li><a href="@Url.Action("Create", "Customer")">Create Customer and or Vendor</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="@Url.Action("PaymentTerms", "PaymentTerm")">Payment Terms</a>
-        <ul>
-          <li><a href="@Url.Action("Create", "PaymentTerm")">Create Payment Term</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="@Url.Action("PaymentInstructions", "PaymentInstruction")">Payment Instructions</a>
-        <ul>
-          <li><a href="@Url.Action("Create", "PaymentInstruction")">Create Payment Instruction</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="@Url.Action("ProductsAndServices", "Item")">Products and Services</a>
-        <ul>
-          <li><a href="@Url.Action("Create", "Item")">Create Product or Service</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="@Url.Action("Locations", "Location")">Locations</a>
-        <ul>
-          <li><a href="@Url.Action("Create", "Location")">Create Location</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="@Url.Action("Update", "Organization")">Organization</a>
-      </li>
-      <li>
-        <a href="@Url.Action("Reconciliations", "Reconciliation")">Reconciliations</a>
-        <ul>
-          <li><a href="@Url.Action("Import", "Reconciliation")">Import</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="@Url.Action("Accounts", "Account")">Accounts</a>
-        <ul>
-          <li><a href="@Url.Action("Create", "Account")">Create Account</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="@Url.Action("Backup", "Backup")">Backup</a>
-        <ul>
-          <li><a href="@Url.Action("Export", "Backup")">Export</a></li>
-          <li><a href="@Url.Action("Import", "Backup")">Import</a></li>
-        </ul>
-      </li>
-      <li>
-        <a href="@Url.Action("ShippingAndReceiving", "ShippingAndReceiving")">Shipping and Receiving</a>
-      </li>
-      <li>
-        <a href="@Url.Action("Tenants", "DeploymentAndProvisioning")">Deployment and Provisioning</a>
-      </li>
-      <li>
-        <a href="@Url.Action("Secrets", "Secret")">Secrets</a>
-      </li>
-    </ul>
-  </div>
-}
+    <script>
+      (async () => {
+        try {
+          const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${window.location.port ? window.location.port : ''}/api/r/get-account-balance-report`);
+          const apiData = await response.json();
 
-@if (User.Identity.IsAuthenticated)
-{
-  <div class="display-flex background-color-white">
-    <div class="flex-1">
-      <canvas id="accountBalanceChart" width="400" height="400"></canvas>
-    </div>
-    <div class="width-5px">
-    </div>
-    <div class="flex-1">
-    </div>
-  </div>
-}
+          const accountNumbers = apiData.map(item => item.name);
+          const currentBalances = apiData.map(item => item.currentBalance);
 
-@if (User.Identity.IsAuthenticated)
-{
-  <script>
-    (async () => {
-      try {
-        const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${window.location.port ? window.location.port : ''}/api/r/get-account-balance-report`);
-        const apiData = await response.json();
+          const ctx = document.getElementById('accountBalanceChart').getContext('2d');
+          const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: accountNumbers,
+              datasets: [{
+                label: 'Current Balance',
+                data: currentBalances,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+              }]
+            }
+          });
+        } catch (error) {
 
-        const accountNumbers = apiData.map(item => item.name);
-        const currentBalances = apiData.map(item => item.currentBalance);
-
-        const ctx = document.getElementById('accountBalanceChart').getContext('2d');
-        const myChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: accountNumbers,
-            datasets: [{
-              label: 'Current Balance',
-              data: currentBalances,
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              borderColor: 'rgba(75, 192, 192, 1)',
-              borderWidth: 1
-            }]
-          }
-        });
-      } catch (error) {
-
-      }
-    })();
-  </script>
+        }
+      })();
+    </script>
 }
