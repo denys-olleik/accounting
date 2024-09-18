@@ -1,12 +1,12 @@
 ## It doesn't have to be this confusing...
 
-| Account Type        | Debit Means Increase | Credit Means Increase |
-|---------------------|----------------------|-----------------------|
-| Assets              | Yes                  | No                    |
-| Liabilities         | No                   | Yes                   |
-| Equity/Capital      | No                   | Yes                   |
-| Revenue/Income      | No                   | Yes                   |
-| Expenses            | Yes                  | No                    |
+| Account Type        | Debit    | Credit   |
+|---------------------|----------|----------|
+| Assets              | Increase | Decrease |
+| Liabilities         | Decrease | Increase |
+| Equity/Capital      | Decrease | Increase |
+| Revenue/Income      | Decrease | Increase |
+| Expenses            | Increase | Decrease |
 
 [![Watch the video](https://img.youtube.com/vi/MoYr0cgosOY/maxresdefault.jpg)](https://www.youtube.com/watch?v=MoYr0cgosOY)
 
