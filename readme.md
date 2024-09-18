@@ -1,3 +1,7 @@
+![Watch the video](yt-thumb.png)
+
+[Watch the video on YouTube](https://www.youtube.com/watch?v=MoYr0cgosOY)
+
 ## It doesn't have to be this confusing...
 
 | Account Type        | Debit    | Credit   |
@@ -7,10 +11,6 @@
 | Equity/Capital      | Decrease | Increase |
 | Revenue/Income      | Decrease | Increase |
 | Expenses            | Increase | Decrease |
-
-![Watch the video](yt-thumb.png)
-
-[Watch the video on YouTube](https://www.youtube.com/watch?v=MoYr0cgosOY)
 
 ## Introduction
 
