@@ -8,7 +8,7 @@
 | Revenue/Income      | Decrease | Increase |
 | Expenses            | Increase | Decrease |
 
-![Watch the video](yt-thumb.png)]
+![Watch the video](yt-thumb.png)
 
 [Watch the video on YouTube](https://www.youtube.com/watch?v=MoYr0cgosOY)
 
