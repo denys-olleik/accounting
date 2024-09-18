@@ -10,6 +10,8 @@
 
 [![Watch the video](https://img.youtube.com/vi/MoYr0cgosOY/maxresdefault.jpg)](https://www.youtube.com/watch?v=MoYr0cgosOY)
 
+[Watch the video on YouTube](https://www.youtube.com/watch?v=MoYr0cgosOY)
+
 ## Introduction
 
 GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
