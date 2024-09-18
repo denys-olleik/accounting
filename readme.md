@@ -12,6 +12,16 @@
 | Revenue/Income      | Decrease | Increase |
 | Expenses            | Increase | Decrease |
 
+## Screenshots
+
+![Watch the video](chrome_1YoniUtAt3.gif)
+---
+![Watch the video](chrome_gp6bHABAqw.png)
+---
+![Watch the video](chrome_CodNSOn0C2.png)
+---
+![Watch the video](chrome_YHpC5nO5Ir.png)
+
 ## Introduction
 
 GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
