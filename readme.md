@@ -8,7 +8,7 @@
 | Revenue/Income      | No                   | Yes                   |
 | Expenses            | Yes                  | No                    |
 
-![test](https://www.youtube.com/embed/MoYr0cgosOY)
+[![Watch the video](https://img.youtube.com/vi/MoYr0cgosOY/maxresdefault.jpg)](https://www.youtube.com/watch?v=MoYr0cgosOY)
 
 ## Introduction
 
