@@ -242,7 +242,7 @@ Integration with banks to pull the transaction data programatically is possible,
 5. Create invoice.
 6. Receive payment.
 
-## Future backup strategy
+## Backup and import/export strategy
 
 The system will have three levels of backups.
 
