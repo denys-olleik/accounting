@@ -17,27 +17,25 @@
 
   @if (Model.ParentLocation != null)
   {
-    <div class="display-flex margin-bottom-5px">
+    <div class="display-flex margin-bottom-5px background-color-antiquewhite">
       <div>Parent Location:</div>
       <div class="display-flex flex-direction-column">
-        <div class="flex-1"></div>
         <a asp-action="Update"
            asp-controller="Location"
            asp-route-locationId="@Model.ParentLocationId"
-           class="font-Roboto-Mono">@Model.ParentLocation.Name</a>
-        <div class="flex-1"></div>
+           class="font-Roboto-Mono margin-left-5px">@Model.ParentLocation.Name</a>
       </div>
     </div>
   }
 
-  <div class="display-flex flex-direction-column margin-bottom-5px">
+  <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
     <label asp-for="Name"></label>
     <input asp-for="Name"
            class="font-size-20px"
            maxlength="100" />
   </div>
 
-  <div class="display-flex flex-direction-column margin-bottom-5px">
+  <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
     <label asp-for="Description"></label>
     <textarea asp-for="Description" class="font-size-20px" rows="6"></textarea>
   </div>
