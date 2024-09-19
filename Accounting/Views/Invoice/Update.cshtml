@@ -93,7 +93,7 @@
 
 <template id="payment-term-selector-template">
   <div class="display-flex flex-direction-column">
-    <select class="font-size-20px margin-bottom-5px"
+    <select class="font-size-20px"
             v-model="selectedPaymentTermId"
             name="SelectedPaymentTermId">
       <option value="">Select Payment Term</option>
@@ -186,7 +186,7 @@
 
     </div>
     <div class="width-5px"></div>
-    <div class="display-flex flex-1 flex-direction-column">
+    <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
       <invoice-detail :invoice-date="invoiceDate"
                       :selected-payment-term="selectedPaymentTerm"
                       :due-date="dueDate">
@@ -205,12 +205,12 @@
                 @@confirm-removal="handleConfirmRemoval">
   </invoice-line>
 
-  <fieldset class="margin-bottom-5px">
-    <legend>Payment Terms Selector</legend>
+  <div class="background-color-antiquewhite margin-bottom-5px">
+    <label>Payment Terms Selector</label>
     <payment-term-selector :payment-terms="paymentTerms"
                            v-model:selected-payment-term="selectedPaymentTerm">
     </payment-term-selector>
-  </fieldset>
+  </div>
 
   <total :invoice-lines="invoiceLines"></total>
 
