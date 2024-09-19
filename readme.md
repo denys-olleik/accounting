@@ -268,3 +268,4 @@ None of you can call yourselves accountants; you're just QwackBooks users. The t
 
 Companies that adopt my system are far less likely to get audited than those using QwackBooks or some half-baked ERP system thrown together by a committee in India and managed by another in San Francisco. These systems often go through months of customization and setup before they can be used, and still end in failed implementations.
 
+![](david-vs-goliath.png)
