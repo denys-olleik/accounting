@@ -44,8 +44,8 @@
   </div>
 </div>
 
-<div id="app" class="background-color-antiquewhite">
-  <table class="border-collapse width-100 margin-bottom-5px">
+<div id="app">
+  <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
       <tr>
         <th class="text-align-left width-1px padding-right-20px">Product or Service</th>
@@ -130,13 +130,13 @@
     </tbody>
   </table>
 
-  <div class="margin-bottom-5px display-flex font-Roboto font-size-20px">
+  <div class="margin-bottom-5px display-flex font-Roboto font-size-20px background-color-antiquewhite">
     <div>
-      <a :href="`/item/products-and-services?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1 && !isFiltered">prev</a>
+      <a :href="`/item/products-and-services?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1 && !isFiltered" class="color-darkslategray text-decoration-none">prev</a>
     </div>
     <div class="flex-1"></div>
     <div>
-      <a :href="`/item/products-and-services?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage && !isFiltered">next</a>
+      <a :href="`/item/products-and-services?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage && !isFiltered" class="color-darkslategray text-decoration-none">next</a>
     </div>
   </div>
 </div>
