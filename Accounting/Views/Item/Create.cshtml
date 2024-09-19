@@ -108,8 +108,8 @@
     </div>
   </div>
 
-  <fieldset class="margin-bottom-5px" v-if="salePrice > 0">
-    <legend>Revenue Accounts</legend>
+  <div class="margin-bottom-5px background-color-antiquewhite" v-if="salePrice > 0">
+    <label>Revenue Accounts</label>
     <div class="display-flex flex-direction-column">
       <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Revenue')"
                         :key="account.accountID"
@@ -117,10 +117,10 @@
                         @@select-account="updateSelectedAccountId">
       </account>
     </div>
-  </fieldset>
+  </div>
 
-  <fieldset class="margin-bottom-5px" v-if="salePrice > 0">
-    <legend>Assets Accounts</legend>
+  <div class="margin-bottom-5px background-color-antiquewhite" v-if="salePrice > 0">
+    <label>Assets Accounts</label>
     <div class="display-flex flex-direction-column">
       <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Assets')"
                         :key="account.accountID"
@@ -128,7 +128,7 @@
                         @@select-account="updateSelectedAccountId">
       </account>
     </div>
-  </fieldset>
+  </div>
 
   <button type="submit" class="full-width-regular-button">Create Product or Service</button>
 </form>
