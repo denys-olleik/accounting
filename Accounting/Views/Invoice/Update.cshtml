@@ -133,19 +133,25 @@
 </template>
 
 <template id="addresses-and-selected-address-template">
-  <div v-if="selectedAddress" class="border-sides-5px-solid-black margin-bottom-5px border-bottom-2px-solid-black">
-    <div class="color-white background-color-black">Selected Address</div>
-    <div>{{ selectedAddress.extraAboveAddress }}</div>
-    <div>{{ selectedAddress.addressLine1 }}</div>
-    <div>{{ selectedAddress.addressLine2 }}</div>
-    <div>{{ selectedAddress.extraBelowAddress }}</div>
-    <div>{{ selectedAddress.city }}, {{ selectedAddress.stateProvince }} {{ selectedAddress.postalCode }}</div>
-    <div>{{ selectedAddress.country }}</div>
+  <div v-if="selectedAddress" class="margin-bottom-5px">
+    <div class="border-bottom-1px-solid-1a3b56">{{ addressType === 'billing' ? 'Selected Billing Address' : 'Selected Shipping Address' }}</div>
+    <div class="display-flex">
+      <div class="font-Roboto-Mono">
+        <div>{{ selectedAddress.extraAboveAddress }}</div>
+        <div>{{ selectedAddress.addressLine1 }}</div>
+        <div>{{ selectedAddress.addressLine2 }}</div>
+        <div>{{ selectedAddress.extraBelowAddress }}</div>
+        <div>{{ selectedAddress.city }}, {{ selectedAddress.stateProvince }} {{ selectedAddress.postalCode }}</div>
+        <div>{{ selectedAddress.country }}</div>
+      </div>
+      <div class="background-image-right flex-1">
+      </div>
+    </div>
   </div>
   <div v-show="dropdownVisible">
-    <div v-for="address in addresses" :key="address.id" class="display-flex margin-bottom-5px">
+    <div v-for="address in addresses" :key="address.id" class="display-flex margin-bottom-5px margin-2px">
       <a href="" @@click.prevent="selectAddress(address)" class="display-flex flex-1 text-decoration-none">
-        <div class="flex-1 border-left-5px-solid-dodgerblue border-top-bottom-2px-solid-dodgerblue">
+        <div class="flex-1 border-left-5px-solid-dodgerblue border-top-bottom-2px-solid-dodgerblue font-Roboto-Mono">
           <div>{{ address.extraAboveAddress }}</div>
           <div>{{ address.addressLine1 }}</div>
           <div>{{ address.addressLine2 }}</div>
@@ -161,9 +167,9 @@
   </div>
   <a href="#" v-if="customer" class="" @@click.prevent="dropdownVisible = !dropdownVisible">
     <span v-if="dropdownVisible">Close Addresses</span>
-    <span v-else>Open Addresses</span>
+    <span v-else>{{ addressType === 'billing' ? 'Open Billing Addresses' : 'Open Shipping Addresses' }}</span>
   </a>
-  <div v-if="!customer" class="text-align-center color-white background-color-black">
+  <div v-if="!customer" class="text-align-center color-darkslategray">
     select customer to see addresses
   </div>
 </template>
@@ -172,7 +178,7 @@
       class="display-flex flex-direction-column margin-bottom-5px">
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-    <div class="display-flex flex-direction-column flex-1 border-2px-solid-lightgray max-width-768-margin-bottom-5px">
+    <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
       <addresses-and-selected-address :addresses="customer ? customer.addresses : []"
                                       v-model:selected-address="selectedAddress"
                                       :customer="customer">
@@ -180,7 +186,7 @@
 
     </div>
     <div class="width-5px"></div>
-    <div class="display-flex flex-1 flex-direction-column border-2px-solid-lightgray">
+    <div class="display-flex flex-1 flex-direction-column">
       <invoice-detail :invoice-date="invoiceDate"
                       :selected-payment-term="selectedPaymentTerm"
                       :due-date="dueDate">
