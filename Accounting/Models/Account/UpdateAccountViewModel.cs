@@ -154,6 +154,5 @@ namespace Accounting.Validators
 
       return false;
     }
-
   }
 }
