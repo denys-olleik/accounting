@@ -5,6 +5,8 @@ using Accounting.Database.Interfaces;
 using Npgsql;
 using System.Data;
 using static Accounting.Business.Invoice;
+using Renci.SshNet.Security;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Accounting.Database
 {
@@ -1159,6 +1161,26 @@ namespace Accounting.Database
         return result.ToList();
       }
 
+      public async Task<bool> HasEntriesAsync(int accountId, int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@AccountId", accountId);
+        p.Add("@OrganizationId", organizationId);
+
+        int count;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          count = await con.ExecuteScalarAsync<int>("""
+            SELECT COUNT(*) 
+            FROM "GeneralLedger" 
+            WHERE "AccountId" = @AccountId
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return count > 0;
+      }
 
       public int Update(GeneralLedger entity)
       {

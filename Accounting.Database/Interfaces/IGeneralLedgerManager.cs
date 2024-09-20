@@ -6,5 +6,6 @@ namespace Accounting.Database.Interfaces
   {
     Task<GeneralLedger> GetAsync(int generalLedgerId, int organizationId);
     Task<List<GeneralLedger>> GetLedgerEntriesAsync(int[] ledgerContextIds, int organizationId);
+    Task<bool> HasEntriesAsync(int accountId, int organizationId);
   }
 }
