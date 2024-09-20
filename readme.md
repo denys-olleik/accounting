@@ -18,7 +18,7 @@
 ---
 ![Watch the video](chrome_gp6bHABAqw.png)
 ---
-![Watch the video](chrome_CodNSOn0C2.png)
+![Watch the video](chrome_Uifj7dm4tD.gif)
 ---
 ![Watch the video](chrome_YHpC5nO5Ir.png)
 
