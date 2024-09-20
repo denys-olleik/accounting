@@ -32,15 +32,13 @@
 
   @if (Model.ParentItemId != null)
   {
-    <div class="display-flex margin-bottom-5px">
+    <div class="display-flex margin-bottom-5px background-color-antiquewhite">
       <div>Parent Item:</div>
       <div class="display-flex flex-direction-column">
-        <div class="flex-1"></div>
         <a asp-action="Update"
            asp-controller="Item"
            asp-route-accountId="@Model.ParentItemId"
-           class="font-Roboto-Mono">@Model.ParentItem.Name</a>
-        <div class="flex-1"></div>
+           class="font-Roboto-Mono margin-left-5px">@Model.ParentItem.Name</a>
       </div>
     </div>
   }
