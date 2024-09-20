@@ -1,6 +1,6 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
-using Accounting.Models.AccountViewModels;
+using Accounting.Models.UserAccountViewModels;
 using Accounting.Service;
 using Accounting.Validators;
 using FluentValidation.Results;
