@@ -1,5 +1,6 @@
 ﻿using Accounting.Common;
 using System.Reflection;
+
 namespace Accounting.Business
 {
   public class Account : IIdentifiable<int>
