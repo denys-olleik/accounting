@@ -24,14 +24,14 @@
 
   @if (Model.ParentAccount != null)
   {
-    <div class="display-flex margin-bottom-5px">
+    <div class="display-flex margin-bottom-5px background-color-antiquewhite">
       <div>Parent Account:</div>
       <div class="display-flex flex-direction-column">
         <div class="flex-1"></div>
         <a asp-action="Update"
            asp-controller="Account"
            asp-route-accountId="@Model.ParentAccountId"
-           class="font-Roboto-Mono">@Model.ParentAccount.Name</a>
+           class="font-Roboto-Mono margin-left-5px">@Model.ParentAccount.Name</a>
         <div class="flex-1"></div>
       </div>
     </div>
@@ -41,23 +41,23 @@
     <div class="display-flex flex-1 flex-direction-column">
       @if (Model.ParentAccountId != null)
       {
-        <label asp-for="AccountName">Sub Account Name</label>
+        <label asp-for="AccountName" class="background-color-antiquewhite">Sub Account Name</label>
       }
       else
       {
-        <label asp-for="AccountName">Account Name</label>
+        <label asp-for="AccountName" class="background-color-antiquewhite">Account Name</label>
       }
       <input asp-for="AccountName" class="font-size-20px width-100" />
     </div>
   </div>
 
-  <fieldset class="margin-bottom-5px">
-    <legend>Acount Type</legend>
+  <div class="margin-bottom-5px background-color-antiquewhite">
+    <label>Acount Type</label>
     <account-type-selector :account-types="accountTypes"></account-type-selector>
-  </fieldset>
+  </div>
 
-  <fieldset class="margin-bottom-5px">
-    <legend>Show in drop-down options for...</legend>
+  <div class="margin-bottom-5px background-color-antiquewhite">
+    <label class="">Show in drop-down options for...</label>
     <div class="display-flex flex-direction-column">
       <div class="display-flex flex-direction-column">
         <div class="display-flex flex-1">
@@ -88,7 +88,7 @@
         </div>
       </div>
     </div>
-  </fieldset>
+  </div>
 
   <div class="display-flex flex-direction-column">
     <button type="submit" class="full-width-regular-button width-100">Create Account</button>
