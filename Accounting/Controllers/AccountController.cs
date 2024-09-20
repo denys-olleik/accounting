@@ -147,6 +147,19 @@ namespace Accounting.Controllers
         model.ValidationResult = validationResult;
         model.AvailableAccountTypes = Account.AccountTypeConstants.All.ToList();
 
+        if (model.ParentAccountId.HasValue)
+        {
+          var parentAccount = await _accountService.GetAsync(model.ParentAccountId.Value, GetOrganizationId());
+          if (parentAccount != null)
+          {
+            model.ParentAccount = new UpdateAccountViewModel.AccountViewModel()
+            {
+              AccountID = parentAccount.AccountID,
+              Name = parentAccount.Name
+            };
+          }
+        }
+
         return View(model);
       }
 
