@@ -23,7 +23,7 @@ namespace Accounting.Service
     //  return await factoryManager.GetGeneralLedgerManager().GetLedgerEntriesAsync(ledgerContextIds, organizationId);
     //}
 
-    public async Task<bool> HasEntriesAsync(int accountId, int organizationId)
+    public async Task<bool> HasEntriesUpToRootAsync(int accountId, int organizationId)
     {
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetGeneralLedgerManager().HasEntriesAsync(accountId, organizationId);

@@ -468,17 +468,30 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<List<Account>> GetAllAsync(int organizationId)
+      public async Task<List<Account>> GetAllAsync(int organizationId, bool includeCountJournalEntries)
       {
         IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<Account>("""
-            SELECT * 
-            FROM "Account" 
-            WHERE "OrganizationId" = @OrganizationId
-            """, new { OrganizationId = organizationId });
+          if (includeCountJournalEntries)
+          {
+            result = await con.QueryAsync<Account>("""
+                SELECT a.*, COUNT(gl."GeneralLedgerID") AS "JournalEntryCount"
+                FROM "Account" a
+                LEFT JOIN "GeneralLedger" gl ON a."AccountID" = gl."AccountId" AND a."OrganizationId" = gl."OrganizationId"
+                WHERE a."OrganizationId" = @OrganizationId
+                GROUP BY a."AccountID"
+                """, new { OrganizationId = organizationId });
+          }
+          else
+          {
+            result = await con.QueryAsync<Account>("""
+                SELECT * 
+                FROM "Account"
+                WHERE "OrganizationId" = @OrganizationId
+                """, new { OrganizationId = organizationId });
+          }
         }
 
         return result.ToList();

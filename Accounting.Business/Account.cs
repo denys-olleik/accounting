@@ -26,6 +26,7 @@ namespace Accounting.Business
     public int OrganizationId { get; set; }
 
     public decimal CurrentBalance { get; set; }
+    public int JournalEntryCount { get; set; }
     public List<Account>? Children { get; set; }
 
     public int Identifiable => this.AccountID;

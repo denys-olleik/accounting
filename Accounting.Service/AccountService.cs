@@ -5,10 +5,10 @@ namespace Accounting.Service
 {
   public class AccountService
   {
-    public async Task<List<Account>> GetAllAsync(int organizationId)
+    public async Task<List<Account>> GetAllAsync(int organizationId, bool includeCountJournalEntries)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetAccountManager().GetAllAsync(organizationId);
+      return await factoryManager.GetAccountManager().GetAllAsync(organizationId, includeCountJournalEntries);
     }
 
     public async Task<List<Account>> GetAccountBalanceReport(int organizationId)
@@ -65,10 +65,10 @@ namespace Accounting.Service
       return await factoryManager.GetAccountManager().GetByAccountNameAsync(accountName, organizationId);
     }
 
-    public async Task<List<Account>> GetAllHierachicalAsync(int organizationId)
+    public async Task<List<Account>> GetAllHierachicalAsync(int organizationId, bool includeCountJournalEntries)
     {
-      var allOrganizationAccountsFlatList = await GetAllAsync(organizationId);
-      var rootAccounts = allOrganizationAccountsFlatList.Where(x => x.ParentAccountId == null).ToList();
+      List<Account> allOrganizationAccountsFlatList = await GetAllAsync(organizationId, includeCountJournalEntries);
+      List<Account> rootAccounts = allOrganizationAccountsFlatList.Where(x => x.ParentAccountId == null).ToList();
 
       foreach (var account in rootAccounts)
       {

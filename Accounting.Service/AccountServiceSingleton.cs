@@ -28,7 +28,7 @@ namespace Accounting.Service
     {
       var instance = new AccountServiceSingleton(organizationId);
       AccountService accountService = new AccountService();
-      instance.Accounts = await accountService.GetAllAsync(organizationId);
+      instance.Accounts = await accountService.GetAllAsync(organizationId, false);
       return instance;
     }
   }

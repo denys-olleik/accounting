@@ -11,6 +11,7 @@
     public int AccountID { get; set; }
     public string Name { get; set; }
     public string Type { get; set; }
+    public int JournalEntryCount { get; set; }
     public bool InvoiceCreationForCredit { get; set; }
     public bool InvoiceCreationForDebit { get; set; }
     public bool ReceiptOfPaymentForCredit { get; set; }

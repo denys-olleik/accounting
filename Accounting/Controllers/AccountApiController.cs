@@ -28,7 +28,7 @@ namespace Accounting.Controllers
     public async Task<IActionResult> GetAllAccounts()
     {
       var organizationId = GetOrganizationId();
-      List<Account> accounts = await _accountService.GetAllHierachicalAsync(organizationId);
+      List<Account> accounts = await _accountService.GetAllHierachicalAsync(organizationId, true);
 
       List<AccountViewModel> accountsViewmodel = accounts
           .Where(account => account.ParentAccountId == null)
@@ -93,6 +93,7 @@ namespace Accounting.Controllers
         AccountID = account.AccountID,
         Name = account.Name,
         Type = account.Type,
+        JournalEntryCount = account.JournalEntryCount,
         InvoiceCreationForCredit = account.InvoiceCreationForCredit,
         InvoiceCreationForDebit = account.InvoiceCreationForDebit,
         ReceiptOfPaymentForCredit = account.ReceiptOfPaymentForCredit,

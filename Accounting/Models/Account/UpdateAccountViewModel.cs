@@ -62,7 +62,7 @@ namespace Accounting.Validators
           .MaximumLength(50).WithMessage("'Account Type' cannot be longer than 50 characters.")
           .Must(x => Account.AccountTypeConstants.All.Contains(x)).WithMessage("'Account Type' is invalid.")
           .MustAsync(async (model, accountType, cancellation) =>
-              await CanUpdateAccountType(model.AccountID, accountType, organizationId))
+              await CanUpdateAccountType(model.AccountID, accountType, organizationId, model.SelectedAccountType))
           .WithMessage("Account Type cannot be changed if there are existing journal entries.");
     }
 
@@ -72,17 +72,88 @@ namespace Accounting.Validators
       return result == null || result.AccountID == accountId;
     }
 
-    private async Task<bool> CanUpdateAccountType(int accountId, string newAccountType, int organizationId)
+    private async Task<bool> CanUpdateAccountType(int accountId, string newAccountType, int organizationId, string currentAccountType)
     {
-      var account = await _accountService.GetAsync(accountId, organizationId);
-      if (account == null) return false;
+      List<Account> accounts = await _accountService.GetAllAsync(organizationId, true);
 
-      var hasJournalEntries = await _generalLedgerService.HasEntriesAsync(accountId, organizationId);
-      if (hasJournalEntries)
+      Account? account = accounts.SingleOrDefault(x => x.AccountID == accountId);
+
+      if (account == null)
       {
-        return account.Type == newAccountType;
+        return false;
       }
+
+      // Only perform checks if the account type is actually being changed
+      if (account.Type == newAccountType)
+      {
+        return true;
+      }
+
+      // Check if parent account is of the same type
+      if (account.ParentAccountId.HasValue)
+      {
+        Account? parentAccount = accounts.SingleOrDefault(x => x.AccountID == account.ParentAccountId.Value);
+
+        if (parentAccount == null || parentAccount.Type != newAccountType)
+        {
+          return false;
+        }
+      }
+
+      // Check for journal entries up the tree
+      if (HasJournalEntriesInParents(account, accounts))
+      {
+        return false;
+      }
+
+      // Check for journal entries down the tree
+      if (HasJournalEntriesInChildren(account, accounts))
+      {
+        return false;
+      }
+
       return true;
     }
+
+    private bool HasJournalEntriesInParents(Account account, List<Account> accounts)
+    {
+      Account? currentAccount = account;
+      while (currentAccount != null)
+      {
+        if (currentAccount.JournalEntryCount > 0)
+        {
+          return true;
+        }
+
+        if (currentAccount.ParentAccountId.HasValue)
+        {
+          currentAccount = accounts.SingleOrDefault(x => x.AccountID == currentAccount.ParentAccountId.Value);
+        }
+        else
+        {
+          currentAccount = null;
+        }
+      }
+      return false;
+    }
+
+    private bool HasJournalEntriesInChildren(Account account, List<Account> accounts)
+    {
+      foreach (var childAccount in accounts.Where(x => x.ParentAccountId == account.AccountID))
+      {
+        if (childAccount.JournalEntryCount > 0)
+        {
+          return true;
+        }
+
+        if (HasJournalEntriesInChildren(childAccount, accounts))
+        {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
   }
 }
