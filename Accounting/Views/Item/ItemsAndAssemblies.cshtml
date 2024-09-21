@@ -1,18 +1,17 @@
 ﻿@model Accounting.Models.PaginatedViewModel
 
 @{
-  ViewData["Title"] = "Assemblies - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Items and Assemblies - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 @{
-  string headerText = "Assemblies";
+  string headerText = "Items and Assemblies";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 <div id="app">
-
   <div class="margin-bottom-5px display-flex font-Roboto font-size-20px background-color-antiquewhite">
     <div>
       <a :href="`/item/assemblies?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-darkslategray text-decoration-none">prev</a>
@@ -35,6 +34,12 @@
         pageSize: @Model.PageSize,
         nextPage: null,
       }
+    },
+    methods() {
+
+    },
+    mounted() {
+      this.fetchItems();
     }
   });
 

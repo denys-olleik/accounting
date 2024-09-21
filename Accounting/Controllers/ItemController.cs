@@ -55,8 +55,8 @@ namespace Accounting.Controllers
     }
 
     [HttpGet]
-    [Route("assemblies")]
-    public async Task<IActionResult> Assemblies(int page = 1, int pageSize = 10)
+    [Route("items-and-assemblies")]
+    public async Task<IActionResult> ItemsAndAssemblies(int page = 1, int pageSize = 10)
     {
       var vm = new AssembliesPaginatedViewModel
       {
@@ -240,7 +240,7 @@ namespace Accounting.Controllers
 
             GeneralLedger creditEntry = await _generalLedgerService.CreateAsync(new GeneralLedger
             {
-              AccountId = creditInventoryOpeningBalanceAccount.AccountID,
+              //AccountId = creditInventoryOpeningBalanceAccount.AccountID,
               Debit = null,
               Credit = model.InitialCost,
               CreatedById = GetUserId(),
