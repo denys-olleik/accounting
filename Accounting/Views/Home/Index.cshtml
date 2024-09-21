@@ -15,148 +15,149 @@
 
 @if (!User.Identity.IsAuthenticated)
 {
-    <div class="display-flex margin-bottom-5px background-color-wheat padding-15px box-shadow">
-      <p class="font-size-20px text-align-center font-weight-500">The only system capable of managing everything from a laundromat to a cartel, an aircraft carrier, and everything in between, uncontaminated by Silicon Valley 🐂💩.</p>
-    </div>
+  <div class="display-flex margin-bottom-5px background-color-wheat padding-15px box-shadow">
+    <p class="font-size-20px text-align-center font-weight-500">The only system capable of managing everything from a laundromat to a cartel, an aircraft carrier, and everything in between, uncontaminated by Silicon Valley 🐂💩.</p>
+  </div>
 
-    <div class="display-flex background-color-wheat margin-bottom-5px padding-15px box-shadow font-size-20px font-weight-500">
-      <div class="flex-1">
-        GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
-      </div>
+  <div class="display-flex background-color-wheat margin-bottom-5px padding-15px box-shadow font-size-20px font-weight-500">
+    <div class="flex-1">
+      GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
     </div>
-    <div class="text-align-center">
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/MoYr0cgosOY" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
+  </div>
+  <div class="text-align-center">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/MoYr0cgosOY" frameborder="0" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
 }
 
 @if (User.Identity.IsAuthenticated)
 {
-    <div class="background-color-antiquewhite">
-      <ul class="margin-0">
-        <li>
-          <a href="@Url.Action("Users", "User")">Users</a>
-          <ul>
-            <li><a href="@Url.Action("Create", "User")">Create User</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="@Url.Action("ToDos", "ToDo")">Tasks</a>
-          <ul>
-            <li><a href="@Url.Action("Create", "ToDo")">Create Task</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="@Url.Action("Invoices", "Invoice")">Invoices</a>
-          <ul>
-            <li><a href="@Url.Action("Create", "Invoice")">Create Invoice</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="@Url.Action("Customers", "Customer")">Customers and Vendors</a>
-          <ul>
-            <li><a href="@Url.Action("Create", "Customer")">Create Customer and or Vendor</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="@Url.Action("PaymentTerms", "PaymentTerm")">Payment Terms</a>
-          <ul>
-            <li><a href="@Url.Action("Create", "PaymentTerm")">Create Payment Term</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="@Url.Action("PaymentInstructions", "PaymentInstruction")">Payment Instructions</a>
-          <ul>
-            <li><a href="@Url.Action("Create", "PaymentInstruction")">Create Payment Instruction</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="@Url.Action("ProductsAndServices", "Item")">Products and Services</a>
-          <ul>
-            <li><a href="@Url.Action("Create", "Item")">Create Product or Service</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="@Url.Action("Locations", "Location")">Locations</a>
-          <ul>
-            <li><a href="@Url.Action("Create", "Location")">Create Location</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="@Url.Action("Update", "Organization")">Organization</a>
-        </li>
-        <li>
-          <a href="@Url.Action("Reconciliations", "Reconciliation")">Reconciliations</a>
-          <ul>
-            <li><a href="@Url.Action("Import", "Reconciliation")">Import</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="@Url.Action("Accounts", "Account")">Accounts</a>
-          <ul>
-            <li><a href="@Url.Action("Create", "Account")">Create Account</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="@Url.Action("Backup", "Backup")">Backup</a>
-          <ul>
-            <li><a href="@Url.Action("Export", "Backup")">Export</a></li>
-            <li><a href="@Url.Action("Import", "Backup")">Import</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="@Url.Action("ShippingAndReceiving", "ShippingAndReceiving")">Shipping and Receiving</a>
-        </li>
-        <li>
-          <a href="@Url.Action("Tenants", "DeploymentAndProvisioning")">Deployment and Provisioning</a>
-        </li>
-        <li>
-          <a href="@Url.Action("Secrets", "Secret")">Secrets</a>
-        </li>
-      </ul>
-    </div>
+  <div class="background-color-antiquewhite">
+    <ul class="margin-0">
+      <li>
+        <a href="@Url.Action("Users", "User")">Users</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "User")">Create User</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("ToDos", "ToDo")">Tasks</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "ToDo")">Create Task</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Invoices", "Invoice")">Invoices</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "Invoice")">Create Invoice</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Customers", "Customer")">Customers and Vendors</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "Customer")">Create Customer and or Vendor</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("PaymentTerms", "PaymentTerm")">Payment Terms</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "PaymentTerm")">Create Payment Term</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("PaymentInstructions", "PaymentInstruction")">Payment Instructions</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "PaymentInstruction")">Create Payment Instruction</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("ProductsAndServices", "Item")">Products and Services</a>
+        <ul>
+          <li><a href="@Url.Action("Assemblies", "Item")">Assemblies</a></li>
+          <li><a href="@Url.Action("Create", "Item")">Create Product or Service</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Locations", "Location")">Locations</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "Location")">Create Location</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Update", "Organization")">Organization</a>
+      </li>
+      <li>
+        <a href="@Url.Action("Reconciliations", "Reconciliation")">Reconciliations</a>
+        <ul>
+          <li><a href="@Url.Action("Import", "Reconciliation")">Import</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Accounts", "Account")">Accounts</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "Account")">Create Account</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("Backup", "Backup")">Backup</a>
+        <ul>
+          <li><a href="@Url.Action("Export", "Backup")">Export</a></li>
+          <li><a href="@Url.Action("Import", "Backup")">Import</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="@Url.Action("ShippingAndReceiving", "ShippingAndReceiving")">Shipping and Receiving</a>
+      </li>
+      <li>
+        <a href="@Url.Action("Tenants", "DeploymentAndProvisioning")">Deployment and Provisioning</a>
+      </li>
+      <li>
+        <a href="@Url.Action("Secrets", "Secret")">Secrets</a>
+      </li>
+    </ul>
+  </div>
 }
 
 @if (User.Identity.IsAuthenticated)
 {
-    <div class="display-flex background-color-white">
-      <div class="flex-1">
-        <canvas id="accountBalanceChart" width="400" height="400"></canvas>
-      </div>
-      <div class="width-5px">
-      </div>
-      <div class="flex-1">
-      </div>
+  <div class="display-flex background-color-white">
+    <div class="flex-1">
+      <canvas id="accountBalanceChart" width="400" height="400"></canvas>
     </div>
+    <div class="width-5px">
+    </div>
+    <div class="flex-1">
+    </div>
+  </div>
 }
 
 @if (User.Identity.IsAuthenticated)
 {
-    <script>
-      (async () => {
-        try {
-          const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${window.location.port ? window.location.port : ''}/api/r/get-account-balance-report`);
-          const apiData = await response.json();
+  <script>
+    (async () => {
+      try {
+        const response = await fetch(`${window.location.protocol}//${window.location.hostname}:${window.location.port ? window.location.port : ''}/api/r/get-account-balance-report`);
+        const apiData = await response.json();
 
-          const accountNumbers = apiData.map(item => item.name);
-          const currentBalances = apiData.map(item => item.currentBalance);
+        const accountNumbers = apiData.map(item => item.name);
+        const currentBalances = apiData.map(item => item.currentBalance);
 
-          const ctx = document.getElementById('accountBalanceChart').getContext('2d');
-          const myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: accountNumbers,
-              datasets: [{
-                label: 'Current Balance',
-                data: currentBalances,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-              }]
-            }
-          });
-        } catch (error) {
+        const ctx = document.getElementById('accountBalanceChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: accountNumbers,
+            datasets: [{
+              label: 'Current Balance',
+              data: currentBalances,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          }
+        });
+      } catch (error) {
 
-        }
-      })();
-    </script>
+      }
+    })();
+  </script>
 }

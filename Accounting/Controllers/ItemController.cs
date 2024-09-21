@@ -53,7 +53,20 @@ namespace Accounting.Controllers
 
       return View(vm);
     }
-    
+
+    [HttpGet]
+    [Route("assemblies")]
+    public async Task<IActionResult> Assemblies(int page = 1, int pageSize = 10)
+    {
+      var vm = new AssembliesPaginatedViewModel
+      {
+        Page = page,
+        PageSize = pageSize
+      };
+
+      return View(vm);
+    }
+
     [HttpGet]
     [Route("create/{parentItemId?}")]
     public async Task<IActionResult> Create(int? parentItemId)
@@ -212,7 +225,9 @@ namespace Accounting.Controllers
             Guid transactonGuid = GuidExtensions.CreateSecureGuid();
 
             Account debitInventoryAccount = await _accountService.GetByAccountNameAsync("inventory", GetOrganizationId());
-            Account creditInventoryOpeningBalanceAccount = await _accountService.GetByAccountNameAsync("inventory-opening-balance", GetOrganizationId());
+
+            throw new NotImplementedException("I have no idea if beyond this line is accurate at this time.");
+            //Account creditInventoryOpeningBalanceAccount = await _accountService.GetByAccountNameAsync("inventory-opening-balance", GetOrganizationId());
 
             GeneralLedger debitEntry = await _generalLedgerService.CreateAsync(new GeneralLedger
             {

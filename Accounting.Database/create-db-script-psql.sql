@@ -662,8 +662,6 @@ INSERT INTO "Account" ("Name", "Type", "ReconciliationExpense", "ParentAccountId
 INSERT INTO "Account" ("Name", "Type", "ReconciliationExpense", "ParentAccountId", "CreatedById", "OrganizationId") VALUES ('expense-maintenance', 'expense', TRUE,  8, 1, 1);
 INSERT INTO "Account" ("Name", "Type", "ReconciliationLiabilitiesAndAssets", "CreatedById", "OrganizationId") VALUES ('discover-5555', 'liabilities', TRUE, 1, 1);
 INSERT INTO "Account" ("Name", "Type", "CreatedById", "OrganizationId") VALUES ('inventory', 'assets', 1, 1);
-INSERT INTO "Account" ("Name", "Type", "CreatedById", "OrganizationId") VALUES ('inventory-opening-balance', 'equity', 1, 1);
-
 INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "OrganizationId", "CreatedById") VALUES ('Net 30', 30, 1, 1);
 INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "OrganizationId", "CreatedById") VALUES ('Net 60', 60, 1, 1);
 

@@ -1,0 +1,42 @@
+﻿@model Accounting.Models.PaginatedViewModel
+
+@{
+  ViewData["Title"] = "Assemblies - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Assemblies";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<div id="app">
+
+  <div class="margin-bottom-5px display-flex font-Roboto font-size-20px background-color-antiquewhite">
+    <div>
+      <a :href="`/item/assemblies?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-darkslategray text-decoration-none">prev</a>
+    </div>
+    <div class="flex-1"></div>
+    <div>
+      <a :href="`/item/assemblies?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-darkslategray text-decoration-none">next</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const { createApp } = Vue;
+  
+  const app = createApp({
+    data() {
+      return {
+        items: [],
+        page: @Model.Page,
+        pageSize: @Model.PageSize,
+        nextPage: null,
+      }
+    }
+  });
+
+  app.mount('#app');
+</script>
