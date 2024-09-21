@@ -269,3 +269,57 @@ None of you can call yourselves accountants; you're just QwackBooks users. The t
 Companies that adopt my system are far less likely to get audited than those using QwackBooks or some half-baked ERP system thrown together by a committee in India and managed by another in San Francisco. These systems often go through months of customization and setup before they can be used, and still end in failed implementations.
 
 ![](david-vs-goliath.png)
+
+## Roadmap
+
+- [ ] Journal
+	- [ ] Rename GeneralLedger to Journal
+	- [ ] Check in transit, after entry into system, but before deposit, then reconcile. Need to think about this.
+- [ ] Jurisdictions
+	- [ ] Tax (probably custom class written such that it can be unite tested). Optionally attachable to location where location is `Location`.`[Geograohy]` type, can be circles, squares, whatever, city, zip. Integrated with zip code and city databases. There could be so many different ways to define a tax juridsiciton for different purposes that it might be best to allow import of jurisdiction as dll. So people around the world can make custom tax jurisdictions others can use. Texes, fees, discounts, and other. These will attach to invoice-line-items and dictate what journal entries are made to recognize those extra modifications. A jurisdiction plugin.
+- [ ] Invoice
+	- [ ] Add and arrange attachments to optionally print supporting documents.
+	- [ ] Need a way to clearn the company and choose another.
+	- [ ] Figure out what to place into upper left, left of invoice details.
+  - [ ] I'm against allowing the user to create and define inventory in create-invoice view. User should define items and inventory before creating invoice. It'll make this view more difficult to maintain. Shouldn't you know what you're selling before you create an invoice? Fight me.
+- [ ] Payments
+	- [ ] Probably stripe.
+- [ ] Items and Assemblies
+	- [ ] Fairly streight forward to continue where I left off (currently in progress).
+	- [ ] Item is definition (assembly schema if has children) `Item`.`"Quantity" DECIMAL(18,2) NULL,` is how many needed to assemble. `Inventory`.`"Quantity" DECIMAL(18,2) NULL,` is how many available.
+- [ ] Reporting
+	- [ ] JSReports for now, IronPDF when I can afford it.
+	- [ ] Just whatever the basic reports, I think there's three... balance sheet, income statement, and cash flow.
+		- [ ] Pick start/end date, choose report to generate, and out comes pdf.
+	- [ ] Inventory value
+- [ ] Provisioning
+	- [ ] Create instance on DO, install PostgreSQL, web server, certificates, run some scripts, send email to tenant when ready.
+- [ ] Task Management
+  - [ ] Assign shtuff to others for approval.
+	- [ ] Assign assembly to user.
+		- [ ] Subscribe users to be notified when assembly is ready.
+- [ ] Shipping and Receiving
+	- [ ] Barcode scanner/printer, rfid, etc.
+	- [ ] Stuff moving in, out, and within organization.
+		- [ ] Journal entries to asset accounts.
+ - [ ] Is it possible not to care about the value of some inventory item? Could it be so that you accept inventory without affect on asset accounts? And since inventory is always at location, the inventory service should automatically manage journal entries.
+- [ ] User Management
+	- [ ] Roles and permissions. Can create invoice, receive payment, adjust inventory, etc.
+- [ ] Taxes
+	- [ ] Personal returns for all 50 states, single, no house, no spouse. I can probably do one state myself.
+	- [ ] Tax return plugins? lol
+- [ ] Localization/globalization
+	- [ ] Currency, date, time, number, language (en-us in url).
+- [ ] Integrations
+	- [ ] Instance to instance
+
+ 
+## Other thoughts
+
+Is PO/SO affect journal? PO might increase liability to vendor. Purchasing receivable inventory asset account? SO sales liability account? Both can have approval task assigned to people and notified on completion. But approval rules could be different, from above x amount, to certain items, to requiring approval of multiple people.
+
+There will need to be a schema for tasks similar to how assemblies are defined, where a hierarchical structure of tasks to be completed can be defined, like assembly, process, approval...
+
+## ETA
+
+at least 2 more years unless people contribute or throw money at me to work on this full time.
