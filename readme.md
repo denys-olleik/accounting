@@ -287,7 +287,7 @@ Companies that adopt my system are far less likely to get audited than those usi
 - [ ] Payments
 	- [ ] Stripe.
 - [ ] Items and Assemblies (currently in progress)
-	- [ ] `Item`.`Quantity` is quantity of assembly. `Inventory`.`Quantity` is quantity on hand.
+	- [ ] `Item`.`Quantity` is quantity in assembly. `Inventory`.`Quantity` is quantity on hand.
 - [ ] Reporting
 	- [ ] IronPDF with watermarks until I can afford it.
 	- [ ] Balance sheet, income statement, and cash flow. Pick start/end date, choose report type.
