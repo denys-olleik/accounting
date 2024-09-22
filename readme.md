@@ -307,7 +307,7 @@ Companies that adopt my system are far less likely to get audited than those usi
 	- [ ] Roles and permissions. Can create invoice, receive payment, adjust inventory, etc.
 - [ ] Taxes
 	- [ ] Personal returns for all 50 states, single, no house, no spouse. I can probably do one state myself.
-	- [ ] Tax return plugins? lol
+	- [ ] Tax return plugins?
 - [ ] Localization/globalization
 	- [ ] Currency, date, time, number, language (en-us in url).
 - [ ] Integrations
