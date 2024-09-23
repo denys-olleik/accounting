@@ -13,11 +13,11 @@
 
 <form asp-action="Void" asp-controller="Invoice" method="post" class="display-flex flex-direction-column margin-bottom-5px">
   <div class="display-flex flex-direction-column">
-    <label asp-for="InvoiceNumber">Invoice Number</label>
+    <label asp-for="InvoiceNumber" class="background-color-antiquewhite">Invoice Number</label>
     <input asp-for="InvoiceNumber" class="margin-bottom-5px font-size-20px" disabled />
   </div>
   <div class="display-flex flex-direction-column">
-    <label asp-for="VoidReason">Reason</label>
+    <label asp-for="VoidReason" class="background-color-antiquewhite">Reason</label>
     <textarea asp-for="VoidReason" class="margin-bottom-5px font-size-20px" rows="6"></textarea>
   </div>
 
