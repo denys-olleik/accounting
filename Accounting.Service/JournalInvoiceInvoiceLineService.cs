@@ -5,21 +5,21 @@ using Accounting.Database.Interfaces;
 
 namespace Accounting.Service
 {
-  public class GeneralLedgerInvoiceInvoiceLineService
+  public class JournalInvoiceInvoiceLineService
   {
     private readonly InvoiceLineService _invoiceLineService;
-    private readonly GeneralLedgerService _generalLedgerService;
+    private readonly JournalService _journalService;
 
-    public GeneralLedgerInvoiceInvoiceLineService(InvoiceLineService invoiceLineService, GeneralLedgerService generalLedgerService)
+    public JournalInvoiceInvoiceLineService(InvoiceLineService invoiceLineService, JournalService journalService)
     {
       _invoiceLineService = invoiceLineService;
-      _generalLedgerService = generalLedgerService;
+      _journalService = journalService;
     }
 
-    public async Task<GeneralLedgerInvoiceInvoiceLine> CreateAsync(GeneralLedgerInvoiceInvoiceLine generalLedger_Invoice_InvoiceLine)
+    public async Task<JournalInvoiceInvoiceLine> CreateAsync(JournalInvoiceInvoiceLine journal_Invoice_InvoiceLine)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetGeneralLedgerInvoiceInvoiceLineManager().CreateAsync(generalLedger_Invoice_InvoiceLine);
+      return await factoryManager.GetJournalInvoiceInvoiceLineManager().CreateAsync(journal_Invoice_InvoiceLine);
     }
 
     public async Task UpdateInvoiceLinesAsync(
@@ -31,36 +31,36 @@ namespace Accounting.Service
       int organizationId)
     {
       FactoryManager factoryManager = new FactoryManager();
-      IGeneralLedgerInvoiceInvoiceLineManager generalLedgerInvoiceInvoiceLineManager 
-        = factoryManager.GetGeneralLedgerInvoiceInvoiceLineManager();
+      IJournalInvoiceInvoiceLineManager journalInvoiceInvoiceLineManager 
+        = factoryManager.GetJournalInvoiceInvoiceLineManager();
 
       Guid transactionGuid = GuidExtensions.CreateSecureGuid();
 
       foreach (InvoiceLine invoiceLine in deletedLines)
       {
-        List<GeneralLedgerInvoiceInvoiceLine> lastTransaction
-          = await generalLedgerInvoiceInvoiceLineManager.GetLastTransactionAsync(
+        List<JournalInvoiceInvoiceLine> lastTransaction
+          = await journalInvoiceInvoiceLineManager.GetLastTransactionAsync(
             invoiceLine.InvoiceLineID, 
             organizationId, 
             true);
 
         foreach (var gliil in lastTransaction)
         {
-          GeneralLedger undoEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+          Journal undoEntry = await _journalService.CreateAsync(new Journal()
           {
-            AccountId = gliil.GeneralLedger!.AccountId,
-            Credit = gliil.GeneralLedger.Debit,
-            Debit = gliil.GeneralLedger.Credit,
+            AccountId = gliil.Journal!.AccountId,
+            Credit = gliil.Journal.Debit,
+            Debit = gliil.Journal.Credit,
             CreatedById = userId,
             OrganizationId = organizationId,
           });
 
-          await generalLedgerInvoiceInvoiceLineManager.CreateAsync(new GeneralLedgerInvoiceInvoiceLine()
+          await journalInvoiceInvoiceLineManager.CreateAsync(new JournalInvoiceInvoiceLine()
           {
-            GeneralLedgerId = undoEntry.GeneralLedgerID,
+            JournalId = undoEntry.JournalID,
             InvoiceLineId = invoiceLine.InvoiceLineID,
             InvoiceId = invoice.InvoiceID,
-            ReversedGeneralLedgerInvoiceInvoiceLineId = gliil.GeneralLedgerInvoiceInvoiceLineID,
+            ReversedJournalInvoiceInvoiceLineId = gliil.JournalInvoiceInvoiceLineID,
             TransactionGuid = transactionGuid,
             CreatedById = userId,
             OrganizationId = organizationId,
@@ -70,8 +70,8 @@ namespace Accounting.Service
 
       foreach (InvoiceLine line in existingLines)
       {
-        List<GeneralLedgerInvoiceInvoiceLine> lastTransaction
-          = await generalLedgerInvoiceInvoiceLineManager.GetLastTransactionAsync(
+        List<JournalInvoiceInvoiceLine> lastTransaction
+          = await journalInvoiceInvoiceLineManager.GetLastTransactionAsync(
             line.InvoiceLineID, 
             organizationId, 
             true);
@@ -80,39 +80,39 @@ namespace Accounting.Service
 
         foreach (var gliil in lastTransaction)
         {
-          GeneralLedger undoEntry
-            = await _generalLedgerService.CreateAsync(new GeneralLedger()
+          Journal undoEntry
+            = await _journalService.CreateAsync(new Journal()
           {
-            AccountId = gliil.GeneralLedger!.AccountId,
-            Credit = gliil.GeneralLedger.Debit,
-            Debit = gliil.GeneralLedger.Credit,
+            AccountId = gliil.Journal!.AccountId,
+            Credit = gliil.Journal.Debit,
+            Debit = gliil.Journal.Credit,
             CreatedById = userId,
             OrganizationId = organizationId,
           });
 
-          await generalLedgerInvoiceInvoiceLineManager.CreateAsync(new GeneralLedgerInvoiceInvoiceLine()
+          await journalInvoiceInvoiceLineManager.CreateAsync(new JournalInvoiceInvoiceLine()
           {
-            GeneralLedgerId = undoEntry.GeneralLedgerID,
+            JournalId = undoEntry.JournalID,
             InvoiceLineId = line.InvoiceLineID,
             InvoiceId = invoice.InvoiceID,
-            ReversedGeneralLedgerInvoiceInvoiceLineId = gliil.GeneralLedgerInvoiceInvoiceLineID,
+            ReversedJournalInvoiceInvoiceLineId = gliil.JournalInvoiceInvoiceLineID,
             TransactionGuid = transactionGuid,
             CreatedById = userId,
             OrganizationId = organizationId,
           });
 
-          GeneralLedger newEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+          Journal newEntry = await _journalService.CreateAsync(new Journal()
           {
-            AccountId = gliil.GeneralLedger.AccountId,
-            Debit = gliil.GeneralLedger.Debit.HasValue ? totalAmount : (decimal?)null,
-            Credit = gliil.GeneralLedger.Credit.HasValue ? totalAmount : (decimal?)null,
+            AccountId = gliil.Journal.AccountId,
+            Debit = gliil.Journal.Debit.HasValue ? totalAmount : (decimal?)null,
+            Credit = gliil.Journal.Credit.HasValue ? totalAmount : (decimal?)null,
             CreatedById = userId,
             OrganizationId = organizationId,
           });
 
-          await generalLedgerInvoiceInvoiceLineManager.CreateAsync(new GeneralLedgerInvoiceInvoiceLine()
+          await journalInvoiceInvoiceLineManager.CreateAsync(new JournalInvoiceInvoiceLine()
           {
-            GeneralLedgerId = newEntry.GeneralLedgerID,
+            JournalId = newEntry.JournalID,
             InvoiceLineId = line.InvoiceLineID,
             InvoiceId = invoice.InvoiceID,
             TransactionGuid = transactionGuid,
@@ -128,7 +128,7 @@ namespace Accounting.Service
       {
         foreach (var invoiceLine in newLines!)
         {
-          GeneralLedger debitGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+          Journal debitGlEntry = await _journalService.CreateAsync(new Journal()
           {
             AccountId = invoiceLine.AssetsAccountId,
             Debit = invoiceLine.Price * invoiceLine.Quantity,
@@ -137,7 +137,7 @@ namespace Accounting.Service
             OrganizationId = organizationId,
           });
 
-          GeneralLedger creditGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+          Journal creditGlEntry = await _journalService.CreateAsync(new Journal()
           {
             AccountId = invoiceLine.RevenueAccountId,
             Debit = null,
@@ -146,9 +146,9 @@ namespace Accounting.Service
             OrganizationId = organizationId,
           });
 
-          await CreateAsync(new GeneralLedgerInvoiceInvoiceLine()
+          await CreateAsync(new JournalInvoiceInvoiceLine()
           {
-            GeneralLedgerId = creditGlEntry.GeneralLedgerID,
+            JournalId = creditGlEntry.JournalID,
             InvoiceId = invoice.InvoiceID,
             InvoiceLineId = invoiceLine.InvoiceLineID,
             TransactionGuid = transactionGuid,
@@ -156,9 +156,9 @@ namespace Accounting.Service
             OrganizationId = organizationId,
           });
 
-          await CreateAsync(new GeneralLedgerInvoiceInvoiceLine()
+          await CreateAsync(new JournalInvoiceInvoiceLine()
           {
-            GeneralLedgerId = debitGlEntry.GeneralLedgerID,
+            JournalId = debitGlEntry.JournalID,
             InvoiceId = invoice.InvoiceID,
             InvoiceLineId = invoiceLine.InvoiceLineID,
             TransactionGuid = transactionGuid,
@@ -172,13 +172,13 @@ namespace Accounting.Service
     public async Task<List<InvoiceLine>> GetByInvoiceIdAsync(int invoiceID, int organizationId, bool onlyCurrent = false)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetGeneralLedgerInvoiceInvoiceLineManager().GetByInvoiceIdAsync(invoiceID, organizationId, onlyCurrent); 
+      return await factoryManager.GetJournalInvoiceInvoiceLineManager().GetByInvoiceIdAsync(invoiceID, organizationId, onlyCurrent); 
     }
 
-    public async Task<List<GeneralLedgerInvoiceInvoiceLine>> GetAllAsync(int invoiceId, int organizationId, bool includeRemoved)
+    public async Task<List<JournalInvoiceInvoiceLine>> GetAllAsync(int invoiceId, int organizationId, bool includeRemoved)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetGeneralLedgerInvoiceInvoiceLineManager().GetAllAsync(invoiceId, organizationId, includeRemoved);
+      return await factoryManager.GetJournalInvoiceInvoiceLineManager().GetAllAsync(invoiceId, organizationId, includeRemoved);
     }
   }
 }

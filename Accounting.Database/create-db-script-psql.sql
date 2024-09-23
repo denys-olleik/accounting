@@ -430,9 +430,9 @@ CREATE TABLE "InvoiceAttachment"
 	UNIQUE ("InvoiceId", "PrintOrder")
 );
 
-CREATE TABLE "GeneralLedger"
+CREATE TABLE "Journal"
 (
-	"GeneralLedgerID" SERIAL PRIMARY KEY NOT NULL,
+	"JournalID" SERIAL PRIMARY KEY NOT NULL,
 	"AccountId" INT NOT NULL,
 	"Credit" DECIMAL(20, 4) NULL,
 	"Debit" DECIMAL(20, 4) NULL,
@@ -447,38 +447,38 @@ CREATE TABLE "GeneralLedger"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
-CREATE TABLE "GeneralLedgerInventoryAdjustment"
+CREATE TABLE "JournalInventoryAdjustment"
 (
-	"GeneralLedgerInventoryAdjustmentID" SERIAL PRIMARY KEY NOT NULL,
-	"GeneralLedgerId" INT NOT NULL,
+	"JournalInventoryAdjustmentID" SERIAL PRIMARY KEY NOT NULL,
+	"JournalId" INT NOT NULL,
 	"InventoryAdjustmentId" INT NOT NULL,
-	"ReversedGeneralLedgerInventoryAdjustmentId" INT NULL,
+	"ReversedJournalInventoryAdjustmentId" INT NULL,
 	"TransactionGuid" UUID NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
-	FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"("GeneralLedgerID"),
+	FOREIGN KEY ("JournalId") REFERENCES "Journal"("JournalID"),
 	FOREIGN KEY ("InventoryAdjustmentId") REFERENCES "InventoryAdjustment"("InventoryAdjustmentID"),
-	FOREIGN KEY ("ReversedGeneralLedgerInventoryAdjustmentId") REFERENCES "GeneralLedgerInventoryAdjustment"("GeneralLedgerInventoryAdjustmentID"),
+	FOREIGN KEY ("ReversedJournalInventoryAdjustmentId") REFERENCES "JournalInventoryAdjustment"("JournalInventoryAdjustmentID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
-CREATE TABLE "GeneralLedgerInvoiceInvoiceLine"
+CREATE TABLE "JournalInvoiceInvoiceLine"
 (
-	"GeneralLedgerInvoiceInvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
-	"GeneralLedgerId" INT NOT NULL,
+	"JournalInvoiceInvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
+	"JournalId" INT NOT NULL,
 	"InvoiceId" INT NOT NULL,
 	"InvoiceLineId" INT NOT NULL,
-	"ReversedGeneralLedgerInvoiceInvoiceLineId" INT NULL,
+	"ReversedJournalInvoiceInvoiceLineId" INT NULL,
 	"TransactionGuid" UUID NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
-	FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"("GeneralLedgerID"),
+	FOREIGN KEY ("JournalId") REFERENCES "Journal"("JournalID"),
 	FOREIGN KEY ("InvoiceId") REFERENCES "Invoice"("InvoiceID"),
 	FOREIGN KEY ("InvoiceLineId") REFERENCES "InvoiceLine"("InvoiceLineID"),
-	FOREIGN KEY ("ReversedGeneralLedgerInvoiceInvoiceLineId") REFERENCES "GeneralLedgerInvoiceInvoiceLine"("GeneralLedgerInvoiceInvoiceLineID"),
+	FOREIGN KEY ("ReversedJournalInvoiceInvoiceLineId") REFERENCES "JournalInvoiceInvoiceLine"("JournalInvoiceInvoiceLineID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
@@ -500,36 +500,36 @@ CREATE TABLE "InvoiceInvoiceLinePayment"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
-CREATE TABLE "GeneralLedgerInvoiceInvoiceLinePayment"
+CREATE TABLE "JournalInvoiceInvoiceLinePayment"
 (
-	"GeneralLedgerInvoiceInvoiceLinePaymentID" SERIAL PRIMARY KEY NOT NULL,
-	"GeneralLedgerId" INT NOT NULL,
+	"JournalInvoiceInvoiceLinePaymentID" SERIAL PRIMARY KEY NOT NULL,
+	"JournalId" INT NOT NULL,
 	"InvoiceInvoiceLinePaymentId" INT NOT NULL,
-	"ReversedGeneralLedgerInvoiceInvoiceLinePaymentId" INT NULL,
+	"ReversedJournalInvoiceInvoiceLinePaymentId" INT NULL,
 	"TransactionGuid" UUID NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
-	FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"("GeneralLedgerID"),
+	FOREIGN KEY ("JournalId") REFERENCES "Journal"("JournalID"),
 	FOREIGN KEY ("InvoiceInvoiceLinePaymentId") REFERENCES "InvoiceInvoiceLinePayment"("InvoiceInvoiceLinePaymentID"),
-	FOREIGN KEY ("ReversedGeneralLedgerInvoiceInvoiceLinePaymentId") REFERENCES "GeneralLedgerInvoiceInvoiceLinePayment"("GeneralLedgerInvoiceInvoiceLinePaymentID"),
+	FOREIGN KEY ("ReversedJournalInvoiceInvoiceLinePaymentId") REFERENCES "JournalInvoiceInvoiceLinePayment"("JournalInvoiceInvoiceLinePaymentID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
-CREATE TABLE "GeneralLedgerReconciliationTransaction"
+CREATE TABLE "JournalReconciliationTransaction"
 (
-	"GeneralLedgerReconciliationTransactionID" SERIAL PRIMARY KEY NOT NULL,
-	"GeneralLedgerId" INT NOT NULL,
+	"JournalReconciliationTransactionID" SERIAL PRIMARY KEY NOT NULL,
+	"JournalId" INT NOT NULL,
 	"ReconciliationTransactionId" INT NOT NULL,
-	"ReversedGeneralLedgerReconciliationTransactionId" INT NULL,
+	"ReversedJournalReconciliationTransactionId" INT NULL,
 	"TransactionGuid" UUID NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
-	FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"("GeneralLedgerID"),
+	FOREIGN KEY ("JournalId") REFERENCES "Journal"("JournalID"),
 	FOREIGN KEY ("ReconciliationTransactionId") REFERENCES "ReconciliationTransaction"("ReconciliationTransactionID"),
-	FOREIGN KEY ("ReversedGeneralLedgerReconciliationTransactionId") REFERENCES "GeneralLedgerReconciliationTransaction"("GeneralLedgerReconciliationTransactionID"),
+	FOREIGN KEY ("ReversedJournalReconciliationTransactionId") REFERENCES "JournalReconciliationTransaction"("JournalReconciliationTransactionID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );

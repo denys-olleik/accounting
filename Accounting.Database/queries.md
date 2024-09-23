@@ -2,8 +2,8 @@
 -- Invoice creation and updates
 SELECT * FROM "Invoice";
 SELECT * FROM "InvoiceLine";
-SELECT * FROM "GeneralLedger";
-SELECT * FROM "GeneralLedgerInvoiceInvoiceLine";
+SELECT * FROM "Journal";
+SELECT * FROM "JournalInvoiceInvoiceLine";
 ```
 
 ```sql
@@ -11,14 +11,14 @@ SELECT * FROM "GeneralLedgerInvoiceInvoiceLine";
 SELECT * FROM "Invoice" order by "InvoiceID" desc;
 SELECT * FROM "Payment" order by "PaymentID" desc;
 SELECT * FROM "InvoiceInvoiceLinePayment" order by "InvoiceInvoiceLinePaymentID" desc;
-SELECT * FROM "GeneralLedger" order by "GeneralLedgerID" desc;
-SELECT * FROM "GeneralLedgerInvoiceInvoiceLinePayment" order by "GeneralLedgerInvoiceInvoiceLinePaymentID" desc;
+SELECT * FROM "Journal" order by "JournalID" desc;
+SELECT * FROM "JournalInvoiceInvoiceLinePayment" order by "JournalInvoiceInvoiceLinePaymentID" desc;
 ```
 
 ```sql
 -- Expense reconciliation
 select * from "Account";
 select * from "ReconciliationTransaction";
-select * from "GeneralLedger";
-select * from "GeneralLedgerReconciliationTransaction";
+select * from "Journal";
+select * from "JournalReconciliationTransaction";
 ```

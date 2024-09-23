@@ -26,9 +26,9 @@ namespace Accounting.Database
       return databaseFactoryDefinition.GetBusinessEntityManager();
     }
 
-    public IGeneralLedgerManager GetGeneralLedgerManager()
+    public IJournalManager GetJournalManager()
     {
-      return databaseFactoryDefinition.GetGeneralLedgerManager();
+      return databaseFactoryDefinition.GetJournalManager();
     }
 
     public IInvitationManager GetInvitationManager()
@@ -51,14 +51,9 @@ namespace Accounting.Database
       return databaseFactoryDefinition.GetItemManager();
     }
 
-    //public IGeneralLedgerInvoiceManager GetGeneralLedgerInvoiceManager()
-    //{
-    //  return databaseFactoryDefinition.GetGeneralLedgerInvoiceManager();
-    //}
-
-    public IGeneralLedgerInvoiceInvoiceLineManager GetGeneralLedgerInvoiceInvoiceLineManager()
+    public IJournalInvoiceInvoiceLineManager GetJournalInvoiceInvoiceLineManager()
     {
-      return databaseFactoryDefinition.GetGeneralLedgerInvoiceInvoiceLineManager();
+      return databaseFactoryDefinition.GetJournalInvoiceInvoiceLineManager();
     }
 
     public IPaymentInstructionManager GetPaymentInstructionManager()
@@ -106,9 +101,9 @@ namespace Accounting.Database
       return databaseFactoryDefinition.GetInvoiceInvoiceLinePaymentManager();
     }
 
-    public IGeneralLedgerInvoiceInvoiceLinePaymentManager GetGeneralLedgerInvoiceInvoiceLinePaymentManager()
+    public IJournalInvoiceInvoiceLinePaymentManager GetJournalInvoiceInvoiceLinePaymentManager()
     {
-      return databaseFactoryDefinition.GetGeneralLedgerInvoiceInvoiceLinePaymentManager();
+      return databaseFactoryDefinition.GetJournalInvoiceInvoiceLinePaymentManager();
     }
 
     public IUserOrganizationManager GetUserOrganizationManager()
@@ -141,9 +136,9 @@ namespace Accounting.Database
       return databaseFactoryDefinition.GetReconiliationAttachmentManager();
     }
 
-    public IGeneralLedgerReconciliationTransactionManager GetGeneralLedgerReconciliationTransactionManager()
+    public IJournalReconciliationTransactionManager GetJournalReconciliationTransactionManager()
     {
-      return databaseFactoryDefinition.GetGeneralLedgerReconciliationExpenseManager();
+      return databaseFactoryDefinition.GetJournalReconciliationExpenseManager();
     }
 
     public IReconciliationExpenseManager GetExpenseManager()

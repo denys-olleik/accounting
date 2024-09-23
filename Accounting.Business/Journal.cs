@@ -2,9 +2,9 @@
 
 namespace Accounting.Business
 {
-  public class GeneralLedger : IIdentifiable<int>
+  public class Journal : IIdentifiable<int>
   {
-    public int GeneralLedgerID { get; set; }
+    public int JournalID { get; set; }
     public int AccountId { get; set; }
     public Account? Account { get; set; }
     public decimal? Debit { get; set; }
@@ -14,6 +14,6 @@ namespace Accounting.Business
     public int OrganizationId { get; set; }
     public DateTime Created { get; set; }
 
-    public int Identifiable => this.GeneralLedgerID;
+    public int Identifiable => this.JournalID;
   }
 }

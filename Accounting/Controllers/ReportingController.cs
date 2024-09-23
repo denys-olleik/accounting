@@ -17,15 +17,15 @@ namespace Accounting.Controllers
     private readonly InvoiceService _invoiceService;
     private readonly OrganizationService _organizationService;
     private readonly BusinessEntityService _businessEntityService;
-    private readonly GeneralLedgerInvoiceInvoiceLineService _generalLedgerInvoiceInvoiceLineService;
+    private readonly JournalInvoiceInvoiceLineService _journalInvoiceInvoiceLineService;
 
-    public ReportingController(IronPdfService ironPdfService, InvoiceService invoiceService, OrganizationService organizationService, BusinessEntityService businessEntityService, GeneralLedgerInvoiceInvoiceLineService generalLedgerInvoiceInvoiceLineService)
+    public ReportingController(IronPdfService ironPdfService, InvoiceService invoiceService, OrganizationService organizationService, BusinessEntityService businessEntityService, JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService)
     {
       _ironPdfService = ironPdfService;
       _invoiceService = invoiceService;
       _organizationService = organizationService;
       _businessEntityService = businessEntityService;
-      _generalLedgerInvoiceInvoiceLineService = generalLedgerInvoiceInvoiceLineService;
+      _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
     }
 
     //[HttpGet("print-invoice/{id}")]
@@ -41,7 +41,7 @@ namespace Accounting.Controllers
       Invoice invoice = await _invoiceService.GetAsync(id, GetOrganizationId());
       invoice.IssuingOrganization = await _organizationService.GetAsync(invoice.OrganizationId);
       invoice.BusinessEntity = await _businessEntityService.GetAsync(invoice.BusinessEntityId, GetOrganizationId());
-      invoice.InvoiceLines = await _generalLedgerInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
+      invoice.InvoiceLines = await _journalInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
 
       if (IsValidJson(invoice.BillingAddressJSON!))
       {

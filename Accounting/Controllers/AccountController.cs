@@ -14,14 +14,14 @@ namespace Accounting.Controllers
     : BaseController
   {
     private readonly AccountService _accountService;
-    private readonly GeneralLedgerService _generalLedgerService;
+    private readonly JournalService _journalService;
 
     public AccountController(
       AccountService accountService, 
-      GeneralLedgerService generalLedgerService)
+      JournalService journalService)
     {
       _accountService = accountService;
-      _generalLedgerService = generalLedgerService;
+      _journalService = journalService;
     }
 
     [Route("accounts")]
@@ -139,7 +139,7 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Update(int accountId, UpdateAccountViewModel model)
     {
-      UpdateAccountViewModelValidator validator = new UpdateAccountViewModelValidator(_accountService, _generalLedgerService, GetOrganizationId());
+      UpdateAccountViewModelValidator validator = new UpdateAccountViewModelValidator(_accountService, _journalService, GetOrganizationId());
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)

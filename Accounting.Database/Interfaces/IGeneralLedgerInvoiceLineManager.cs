@@ -2,10 +2,10 @@
 
 namespace Accounting.Database.Interfaces
 {
-  public interface IGeneralLedgerInvoiceInvoiceLineManager : IGenericRepository<GeneralLedgerInvoiceInvoiceLine, int>
+  public interface IJournalInvoiceInvoiceLineManager : IGenericRepository<JournalInvoiceInvoiceLine, int>
   {
-    Task<List<GeneralLedgerInvoiceInvoiceLine>> GetAllAsync(int invoiceId, int organizationId, bool includeRemoved);
+    Task<List<JournalInvoiceInvoiceLine>> GetAllAsync(int invoiceId, int organizationId, bool includeRemoved);
     Task<List<InvoiceLine>> GetByInvoiceIdAsync(int invoiceId, int organizationId, bool onlyCurrent = true);
-    Task<List<GeneralLedgerInvoiceInvoiceLine>> GetLastTransactionAsync(int invoiceLineID, int organizationId, bool loadChildren = false);
+    Task<List<JournalInvoiceInvoiceLine>> GetLastTransactionAsync(int invoiceLineID, int organizationId, bool loadChildren = false);
   }
 }

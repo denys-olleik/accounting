@@ -16,22 +16,22 @@ namespace Accounting.Controllers
   {
     private readonly ReconciliationTransactionService _reconciliationTransactionService;
     private readonly ReconciliationService _reconciliationService;
-    private readonly GeneralLedgerService _generalLedgerService;
-    private readonly GeneralLedgerReconciliationTransactionService _generalLedgerReconciliationTransactionService;
+    private readonly JournalService _journalService;
+    private readonly JournalReconciliationTransactionService _journalReconciliationTransactionService;
     private readonly AccountService _accountService;
 
     public ReconciliationApiController(
       ReconciliationTransactionService reconciliationTransactionService,
       ReconciliationService reconciliationService,
-      GeneralLedgerReconciliationTransactionService generalLedgerExpenseService,
+      JournalReconciliationTransactionService journalExpenseService,
       AccountService accountService,
-      GeneralLedgerService generalLedgerService)
+      JournalService journalService)
     {
       _reconciliationTransactionService = reconciliationTransactionService;
       _reconciliationService = reconciliationService;
-      _generalLedgerReconciliationTransactionService = generalLedgerExpenseService;
+      _journalReconciliationTransactionService = journalExpenseService;
       _accountService = accountService;
-      _generalLedgerService = generalLedgerService;
+      _journalService = journalService;
     }
 
     [HttpPost]
@@ -48,36 +48,36 @@ namespace Accounting.Controllers
       {
         using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
-          List<GeneralLedgerReconciliationTransaction> lastTransaction = await _generalLedgerReconciliationTransactionService.GetLastRelevantTransactionsAsync(reconciliationTransaction.ReconciliationTransactionID, GetOrganizationId(), true);
+          List<JournalReconciliationTransaction> lastTransaction = await _journalReconciliationTransactionService.GetLastRelevantTransactionsAsync(reconciliationTransaction.ReconciliationTransactionID, GetOrganizationId(), true);
 
           var expenseAccount = accountService.Accounts.Single(x => x.AccountID == model.SelectedReconciliationExpenseAccountId);
           var liabilitiesOrAssetAccount = accountService.Accounts.Single(x => x.AccountID == model.SelectedReconciliationLiabilitiesAndAssetsAccountId);
 
-          if (lastTransaction.Any() && !lastTransaction.Any(x => x.ReversedGeneralLedgerReconciliationTransactionId.HasValue))
+          if (lastTransaction.Any() && !lastTransaction.Any(x => x.ReversedJournalReconciliationTransactionId.HasValue))
           {
             foreach (var entry in lastTransaction)
             {
-              GeneralLedger reversingGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+              Journal reversingGlEntry = await _journalService.CreateAsync(new Journal()
               {
-                AccountId = entry.GeneralLedger!.AccountId,
-                Debit = entry.GeneralLedger!.Credit,
-                Credit = entry.GeneralLedger!.Debit,
+                AccountId = entry.Journal!.AccountId,
+                Debit = entry.Journal!.Credit,
+                Credit = entry.Journal!.Debit,
                 CreatedById = GetUserId(),
                 OrganizationId = GetOrganizationId()
               });
 
-              await _generalLedgerReconciliationTransactionService.CreateAsync(new GeneralLedgerReconciliationTransaction()
+              await _journalReconciliationTransactionService.CreateAsync(new JournalReconciliationTransaction()
               {
                 ReconciliationTransactionId = entry.ReconciliationTransactionId,
-                GeneralLedgerId = reversingGlEntry.GeneralLedgerID,
+                JournalId = reversingGlEntry.JournalID,
                 TransactionGuid = transactionGuid,
-                ReversedGeneralLedgerReconciliationTransactionId = entry.GeneralLedgerReconciliationTransactionID,
+                ReversedJournalReconciliationTransactionId = entry.JournalReconciliationTransactionID,
                 CreatedById = GetUserId(),
                 OrganizationId = GetOrganizationId(),
               });
             }
           }
-          GeneralLedger debit = await _generalLedgerService.CreateAsync(new GeneralLedger()
+          Journal debit = await _journalService.CreateAsync(new Journal()
           {
             AccountId = expenseAccount.AccountID,
             Debit = reconciliationTransaction.Amount,
@@ -86,7 +86,7 @@ namespace Accounting.Controllers
             OrganizationId = GetOrganizationId()
           });
 
-          GeneralLedger credit = await _generalLedgerService.CreateAsync(new GeneralLedger()
+          Journal credit = await _journalService.CreateAsync(new Journal()
           {
             AccountId = liabilitiesOrAssetAccount.AccountID,
             Debit = 0,
@@ -95,19 +95,19 @@ namespace Accounting.Controllers
             OrganizationId = GetOrganizationId()
           });
 
-          await _generalLedgerReconciliationTransactionService.CreateAsync(new GeneralLedgerReconciliationTransaction()
+          await _journalReconciliationTransactionService.CreateAsync(new JournalReconciliationTransaction()
           {
             ReconciliationTransactionId = reconciliationTransaction.ReconciliationTransactionID,
-            GeneralLedgerId = debit.GeneralLedgerID,
+            JournalId = debit.JournalID,
             TransactionGuid = transactionGuid,
             CreatedById = GetUserId(),
             OrganizationId = GetOrganizationId(),
           });
 
-          await _generalLedgerReconciliationTransactionService.CreateAsync(new GeneralLedgerReconciliationTransaction()
+          await _journalReconciliationTransactionService.CreateAsync(new JournalReconciliationTransaction()
           {
             ReconciliationTransactionId = reconciliationTransaction.ReconciliationTransactionID,
-            GeneralLedgerId = credit.GeneralLedgerID,
+            JournalId = credit.JournalID,
             TransactionGuid = transactionGuid,
             CreatedById = GetUserId(),
             OrganizationId = GetOrganizationId(),
@@ -186,27 +186,27 @@ namespace Accounting.Controllers
 
       using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        List<GeneralLedgerReconciliationTransaction> lastTransaction = await _generalLedgerReconciliationTransactionService.GetLastRelevantTransactionsAsync(reconciliationTransaction.ReconciliationTransactionID, GetOrganizationId(), true);
+        List<JournalReconciliationTransaction> lastTransaction = await _journalReconciliationTransactionService.GetLastRelevantTransactionsAsync(reconciliationTransaction.ReconciliationTransactionID, GetOrganizationId(), true);
 
-        if (lastTransaction.Any() && !lastTransaction.Any(x => x.ReversedGeneralLedgerReconciliationTransactionId.HasValue))
+        if (lastTransaction.Any() && !lastTransaction.Any(x => x.ReversedJournalReconciliationTransactionId.HasValue))
         {
           foreach (var entry in lastTransaction)
           {
-            GeneralLedger reversingGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+            Journal reversingGlEntry = await _journalService.CreateAsync(new Journal()
             {
-              AccountId = entry.GeneralLedger!.AccountId,
-              Debit = entry.GeneralLedger!.Credit,
-              Credit = entry.GeneralLedger!.Debit,
+              AccountId = entry.Journal!.AccountId,
+              Debit = entry.Journal!.Credit,
+              Credit = entry.Journal!.Debit,
               CreatedById = GetUserId(),
               OrganizationId = GetOrganizationId()
             });
 
-            await _generalLedgerReconciliationTransactionService.CreateAsync(new GeneralLedgerReconciliationTransaction()
+            await _journalReconciliationTransactionService.CreateAsync(new JournalReconciliationTransaction()
             {
               ReconciliationTransactionId = entry.ReconciliationTransactionId,
-              GeneralLedgerId = reversingGlEntry.GeneralLedgerID,
+              JournalId = reversingGlEntry.JournalID,
               TransactionGuid = transactionGuid,
-              ReversedGeneralLedgerReconciliationTransactionId = entry.GeneralLedgerReconciliationTransactionID,
+              ReversedJournalReconciliationTransactionId = entry.JournalReconciliationTransactionID,
               CreatedById = GetUserId(),
               OrganizationId = GetOrganizationId(),
             });

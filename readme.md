@@ -38,24 +38,24 @@ A feature should be integrated with the journal if it affects one of the followi
 
 Since every feature that impacts the journal requires a minimum of two entries, a `TransactionGuid` column is used to group these entries together.
 
-To implement a new feature affecting the journal, create a table to group the transaction. Prefix the table with `GeneralLedger...`, then append the names of the tables referenced by the foreign keys that appear immediately after the `GeneralLedgerId` foreign key and before the `Reversed...` column (excluding the "Id" suffix from each). For example, `GeneralLedgerInvoiceInvoiceLine` is named as such because the foreign keys after the `GeneralLedgerId` but before `Reversed...` columns are `InvoiceId` and `InvoiceLineId`. Include a `Reversed...` column to reference the entries being reversed, and a `TransactionGuid` for grouping entries. This structure supports a reversal-and-amendment strategy in a forward-only journal, where entries cannot be modified once recorded. For example, if the revenue recognition for invoice line-items needs to be adjusted after initial creation, the original entries are reversed, and new ones are added.
+To implement a new feature affecting the journal, create a table to group the transaction. Prefix the table with `Journal...`, then append the names of the tables referenced by the foreign keys that appear immediately after the `JournalId` foreign key and before the `Reversed...` column (excluding the "Id" suffix from each). For example, `JournalInvoiceInvoiceLine` is named as such because the foreign keys after the `JournalId` but before `Reversed...` columns are `InvoiceId` and `InvoiceLineId`. Include a `Reversed...` column to reference the entries being reversed, and a `TransactionGuid` for grouping entries. This structure supports a reversal-and-amendment strategy in a forward-only journal, where entries cannot be modified once recorded. For example, if the revenue recognition for invoice line-items needs to be adjusted after initial creation, the original entries are reversed, and new ones are added.
 
 ```sql
-CREATE TABLE "GeneralLedgerInvoiceInvoiceLine"
+CREATE TABLE "JournalInvoiceInvoiceLine"
 (
-	"GeneralLedgerInvoiceInvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
-	"GeneralLedgerId" INT NOT NULL,
+	"JournalInvoiceInvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
+	"JournalId" INT NOT NULL,
 	"InvoiceId" INT NOT NULL,
 	"InvoiceLineId" INT NOT NULL,
-	"ReversedGeneralLedgerInvoiceInvoiceLineId" INT NULL,
+	"ReversedJournalInvoiceInvoiceLineId" INT NULL,
 	"TransactionGuid" UUID NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
-	FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"("GeneralLedgerID"),
+	FOREIGN KEY ("JournalId") REFERENCES "Journal"("JournalID"),
 	FOREIGN KEY ("InvoiceId") REFERENCES "Invoice"("InvoiceID"),
 	FOREIGN KEY ("InvoiceLineId") REFERENCES "InvoiceLine"("InvoiceLineID"),
-	FOREIGN KEY ("ReversedGeneralLedgerInvoiceInvoiceLineId") REFERENCES "GeneralLedgerInvoiceInvoiceLine"("GeneralLedgerInvoiceInvoiceLineID"),
+	FOREIGN KEY ("ReversedJournalInvoiceInvoiceLineId") REFERENCES "JournalInvoiceInvoiceLine"("JournalInvoiceInvoiceLineID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
@@ -63,7 +63,7 @@ CREATE TABLE "GeneralLedgerInvoiceInvoiceLine"
 
 This naming strategy makes it easy for developers to understand the relationship between features and the journal.
 
-The `GeneralLedgerInvoiceInvoiceLine` is used to record entries during creation of the invoice, the modification of the line-items, and the removal of the line-items from the invoice. However, if you require these concepts to be separated even further, you could adopt a different naming strategy, for example, `GeneralLedgerInvoiceInvoiceLineCreated`, `GeneralLedgerInvoiceInvoiceLineUpdated`, `GeneralLedgerInvoiceInvoiceLineRemoved`.
+The `JournalInvoiceInvoiceLine` is used to record entries during creation of the invoice, the modification of the line-items, and the removal of the line-items from the invoice. However, if you require these concepts to be separated even further, you could adopt a different naming strategy, for example, `JournalInvoiceInvoiceLineCreated`, `JournalInvoiceInvoiceLineUpdated`, `JournalInvoiceInvoiceLineRemoved`.
 
 For example, it may be useful to know how much revenue is lost due to line-items being removed from the invoice.
 
@@ -90,9 +90,9 @@ CREATE TABLE "Account"
 The `ParentAccountId` allows for hierarchical relationships which allow for better reporting and analysis. However, ensuring that the `ParentAccountId` is of the same `Type` as the `AccountID` is enforced at application level.
 
 ```sql
-CREATE TABLE "GeneralLedger"
+CREATE TABLE "Journal"
 (
-	"GeneralLedgerID" SERIAL PRIMARY KEY NOT NULL,
+	"JournalID" SERIAL PRIMARY KEY NOT NULL,
 	"AccountId" INT NOT NULL,
 	"Credit" DECIMAL(20, 4) NULL,
 	"Debit" DECIMAL(20, 4) NULL,
@@ -137,7 +137,7 @@ Keep an eye on number 14.
 
 Consider a transaction where an invoice is created with one line-item which requires sales tax to be collected...
 
-| GeneralLedgerID | AccountId        | Credit  | Debit   |
+| JournalID       | AccountId        | Credit  | Debit   |
 |-----------------|------------------|---------|---------|
 | 1               | 1  (ar)          | 0.00    | 1100.00 |
 | 2               | 2  (revenue)     | 1000.00 | 0.00    |
@@ -145,9 +145,9 @@ Consider a transaction where an invoice is created with one line-item which requ
 
 The above table shows a valid transaction made up of three entries where debits equal credits.
 
-Examine the `TransactionGuid` column in the table below from the result of `SELECT * FROM "GeneralLedgerInvoiceInvoiceLine";` to identify transaction boundary.
+Examine the `TransactionGuid` column in the table below from the result of `SELECT * FROM "JournalInvoiceInvoiceLine";` to identify transaction boundary.
 
-|ID|GeneralLedgerId|InvoiceId|InvoiceLineId|ReversedId|TransactionGuid|
+|ID|JournalId|InvoiceId|InvoiceLineId|ReversedId|TransactionGuid|
 |---|---|---|---|---|---|
 |1|2|1|1|NULL|e0b84e1c-e62d-60f2-0a96-61f895c14fcf|2024-06-19 22:55:38.882187-05|
 |2|1|1|1|NULL|e0b84e1c-e62d-60f2-0a96-61f895c14fcf|2024-06-19 22:55:38.882187-05|
@@ -178,22 +178,22 @@ Note the reversing entries and the three separate transactions.
 * Payments can be partial.
 * The relationship between payment and invoice is many-to-many.
 
-The `GeneralLedgerInvoiceInvoiceLinePayment` links the journal entries with the payment.
+The `JournalInvoiceInvoiceLinePayment` links the journal entries with the payment.
 
 ```sql
-CREATE TABLE "GeneralLedgerInvoiceInvoiceLinePayment"
+CREATE TABLE "JournalInvoiceInvoiceLinePayment"
 (
-  "GeneralLedgerInvoiceInvoiceLinePaymentID" SERIAL PRIMARY KEY NOT NULL,
-  "GeneralLedgerId" INT NOT NULL,
+  "JournalInvoiceInvoiceLinePaymentID" SERIAL PRIMARY KEY NOT NULL,
+  "JournalId" INT NOT NULL,
   "InvoiceInvoiceLinePaymentId" INT NOT NULL,
-  "ReversedGeneralLedgerInvoiceInvoiceLinePaymentId" INT NULL,
+  "ReversedJournalInvoiceInvoiceLinePaymentId" INT NULL,
   "TransactionGuid" UUID NOT NULL,
   "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE  'UTC'),
   "CreatedById" INT NOT NULL,
   "OrganizationId" INT NOT NULL,
-  FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"  ("GeneralLedgerID"),
+  FOREIGN KEY ("JournalId") REFERENCES "Journal"  ("JournalID"),
   FOREIGN KEY ("InvoiceInvoiceLinePaymentId") REFERENCES  "InvoiceInvoiceLinePayment"("InvoiceInvoiceLinePaymentID"),
-  FOREIGN KEY ("ReversedGeneralLedgerInvoiceInvoiceLinePaymentId")  REFERENCES "GeneralLedgerInvoiceInvoiceLinePayment"  ("GeneralLedgerInvoiceInvoiceLinePaymentID"),
+  FOREIGN KEY ("ReversedJournalInvoiceInvoiceLinePaymentId")  REFERENCES "JournalInvoiceInvoiceLinePayment"  ("JournalInvoiceInvoiceLinePaymentID"),
   FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
   FOREIGN KEY ("OrganizationId") REFERENCES "Organization"  ("OrganizationID")
 );
@@ -203,24 +203,24 @@ An incoming check is usually entered into the system before it is deposited. Ide
 
 ## Reconciliations
 
-The pattern repeats in the `GeneralLedgerReconciliationTransaction` table. A bank or credit card statement contains rows of transactions. Credit card statements will have expense transactions while bank statements will have both expense and revenue transactions.
+The pattern repeats in the `JournalReconciliationTransaction` table. A bank or credit card statement contains rows of transactions. Credit card statements will have expense transactions while bank statements will have both expense and revenue transactions.
 
 Each transaction in the statement should be uniquely identifiable, but often the exported CSV does not contain a column to uniquely identify the row.
 
 ```sql
-CREATE TABLE "GeneralLedgerReconciliationTransaction"
+CREATE TABLE "JournalReconciliationTransaction"
 (
-  "GeneralLedgerReconciliationTransactionID" SERIAL PRIMARY KEY NOT NULL,
-  "GeneralLedgerId" INT NOT NULL,
+  "JournalReconciliationTransactionID" SERIAL PRIMARY KEY NOT NULL,
+  "JournalId" INT NOT NULL,
   "ReconciliationTransactionId" INT NOT NULL,
-  "ReversedGeneralLedgerReconciliationTransactionId" INT NULL,
+  "ReversedJournalReconciliationTransactionId" INT NULL,
   "TransactionGuid" UUID NOT NULL,
   "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE  'UTC'),
   "CreatedById" INT NOT NULL,
   "OrganizationId" INT NOT NULL,
-  FOREIGN KEY ("GeneralLedgerId") REFERENCES "GeneralLedger"  ("GeneralLedgerID"),
+  FOREIGN KEY ("JournalId") REFERENCES "Journal"  ("JournalID"),
   FOREIGN KEY ("ReconciliationTransactionId") REFERENCES  "ReconciliationTransaction"("ReconciliationTransactionID"),
-  FOREIGN KEY ("ReversedGeneralLedgerReconciliationTransactionId")  REFERENCES "GeneralLedgerReconciliationTransaction"  ("GeneralLedgerReconciliationTransactionID"),
+  FOREIGN KEY ("ReversedJournalReconciliationTransactionId")  REFERENCES "JournalReconciliationTransaction"  ("JournalReconciliationTransactionID"),
   FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
   FOREIGN KEY ("OrganizationId") REFERENCES "Organization"  ("OrganizationID")
 );
@@ -273,7 +273,7 @@ Companies that adopt my system are far less likely to get audited than those usi
 ## Roadmap
 
 - [ ] Journal
-	- [ ] Rename `GeneralLedger` to Journal.
+	- [ ] Rename `Journal` to Journal.
 	- [ ] Implement check-in-transit flow.
 - [ ] Jurisdictions
 	- [ ] Taxes, fees, and discounts.

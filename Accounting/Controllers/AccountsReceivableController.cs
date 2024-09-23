@@ -21,33 +21,33 @@ namespace Accounting.Controllers
     private readonly InvoiceService _invoiceService;
     private readonly AccountService _accountService;
     private readonly InvoiceLineService _invoiceLineService;
-    private readonly GeneralLedgerService _generalLedgerService;
+    private readonly JournalService _journalService;
     private readonly BusinessEntityService _businessEntityService;
     private readonly PaymentService _paymentService;
     private readonly InvoiceInvoiceLinePaymentService _invoicePaymentService;
-    private readonly GeneralLedgerInvoiceInvoiceLinePaymentService _generalLedgerInvoicePaymentService;
-    private readonly GeneralLedgerInvoiceInvoiceLineService _generalLedgerInvoiceInvoiceLineService;
+    private readonly JournalInvoiceInvoiceLinePaymentService _journalInvoicePaymentService;
+    private readonly JournalInvoiceInvoiceLineService _journalInvoiceInvoiceLineService;
 
     public AccountsReceivableController(
         InvoiceService invoiceService,
         AccountService accountService,
         InvoiceLineService invoiceLineService,
-        GeneralLedgerService generalLedgerService,
+        JournalService journalService,
         BusinessEntityService businessEntityService,
         PaymentService paymentService,
         InvoiceInvoiceLinePaymentService invoicePaymentService,
-        GeneralLedgerInvoiceInvoiceLinePaymentService generalLedgerPaymentService,
-        GeneralLedgerInvoiceInvoiceLineService generalLedgerInvoiceInvoiceLineService)
+        JournalInvoiceInvoiceLinePaymentService journalInvoiceInvoiceLinePaymentService,
+        JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService)
     {
       _invoiceService = invoiceService;
       _accountService = accountService;
       _invoiceLineService = invoiceLineService;
-      _generalLedgerService = generalLedgerService;
+      _journalService = journalService;
       _businessEntityService = businessEntityService;
       _paymentService = paymentService;
       _invoicePaymentService = invoicePaymentService;
-      _generalLedgerInvoicePaymentService = generalLedgerPaymentService;
-      _generalLedgerInvoiceInvoiceLineService = generalLedgerInvoiceInvoiceLineService;
+      _journalInvoicePaymentService = journalInvoiceInvoiceLinePaymentService;
+      _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
     }
 
     [Route("receive-payment-for-invoice-ids")]
@@ -106,7 +106,7 @@ namespace Accounting.Controllers
             var debitAccount = await _accountService.GetAsync(int.Parse(model.SelectedDebitAccountId!), GetOrganizationId());
 
             // Debit Entry
-            var debitGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+            var debitGlEntry = await _journalService.CreateAsync(new Journal()
             {
               AccountId = debitAccount.AccountID,
               Debit = invoiceLine.AmountToReceive,
@@ -116,7 +116,7 @@ namespace Accounting.Controllers
             });
 
             // Credit Entry
-            var creditGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+            var creditGlEntry = await _journalService.CreateAsync(new Journal()
             {
               AccountId = invoiceLine.AssetsAccountId,
               Debit = null,
@@ -125,18 +125,18 @@ namespace Accounting.Controllers
               OrganizationId = GetOrganizationId()
             });
 
-            await _generalLedgerInvoicePaymentService.CreateAsync(new GeneralLedgerInvoiceInvoiceLinePayment()
+            await _journalInvoicePaymentService.CreateAsync(new JournalInvoiceInvoiceLinePayment()
             {
-              GeneralLedgerId = debitGlEntry.GeneralLedgerID,
+              JournalId = debitGlEntry.JournalID,
               InvoiceInvoiceLinePaymentId = ip.InvoiceInvoiceLinePaymentID,
               TransactionGuid = transactionGuid,
               CreatedById = GetUserId(),
               OrganizationId = GetOrganizationId()
             });
 
-            await _generalLedgerInvoicePaymentService.CreateAsync(new GeneralLedgerInvoiceInvoiceLinePayment()
+            await _journalInvoicePaymentService.CreateAsync(new JournalInvoiceInvoiceLinePayment()
             {
-              GeneralLedgerId = creditGlEntry.GeneralLedgerID,
+              JournalId = creditGlEntry.JournalID,
               InvoiceInvoiceLinePaymentId = ip.InvoiceInvoiceLinePaymentID,
               TransactionGuid = transactionGuid,
               CreatedById = GetUserId(),
@@ -203,7 +203,7 @@ namespace Accounting.Controllers
       foreach (var invoice in invoices)
       {
         invoice.BusinessEntity = await _businessEntityService.GetAsync(invoice.BusinessEntityId, GetOrganizationId());
-        invoice.InvoiceLines = await _generalLedgerInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
+        invoice.InvoiceLines = await _journalInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
       }
       return invoices;
     }

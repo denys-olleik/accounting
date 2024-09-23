@@ -20,8 +20,8 @@ namespace Accounting.Controllers
     private readonly InventoryService _inventoryService;
     private readonly ItemService _itemService;
     private readonly InventoryAdjustmentService _inventoryAdjustmentService;
-    private readonly GeneralLedgerInventoryAdjustmentService _generalLedgerInventoryAdjustmentService;
-    private readonly GeneralLedgerService _generalLedgerService;
+    private readonly JournalInventoryAdjustmentService _journalInventoryAdjustmentService;
+    private readonly JournalService _journalService;
 
     public ItemController(
       AccountService accountService, 
@@ -29,16 +29,16 @@ namespace Accounting.Controllers
       InventoryService inventoryService, 
       ItemService itemService,
       InventoryAdjustmentService inventoryAdjustmentService,
-      GeneralLedgerInventoryAdjustmentService generalLedgerInventoryAdjustmentService,
-      GeneralLedgerService generalLedgerService)
+      JournalInventoryAdjustmentService journalInventoryAdjustmentService,
+      JournalService journalService)
     {
       _accountService = accountService;
       _locationService = locationService;
       _inventoryService = inventoryService;
       _itemService = itemService;
       _inventoryAdjustmentService = inventoryAdjustmentService;
-      _generalLedgerInventoryAdjustmentService = generalLedgerInventoryAdjustmentService;
-      _generalLedgerService = generalLedgerService;
+      _journalInventoryAdjustmentService = journalInventoryAdjustmentService;
+      _journalService = journalService;
     }
 
     [HttpGet]
@@ -229,7 +229,7 @@ namespace Accounting.Controllers
             throw new NotImplementedException("I have no idea if beyond this line is accurate at this time.");
             //Account creditInventoryOpeningBalanceAccount = await _accountService.GetByAccountNameAsync("inventory-opening-balance", GetOrganizationId());
 
-            GeneralLedger debitEntry = await _generalLedgerService.CreateAsync(new GeneralLedger
+            Journal debitEntry = await _journalService.CreateAsync(new Journal
             {
               AccountId = debitInventoryAccount.AccountID,
               Debit = model.InitialCost,
@@ -238,7 +238,7 @@ namespace Accounting.Controllers
               OrganizationId = GetOrganizationId(),
             });
 
-            GeneralLedger creditEntry = await _generalLedgerService.CreateAsync(new GeneralLedger
+            Journal creditEntry = await _journalService.CreateAsync(new Journal
             {
               //AccountId = creditInventoryOpeningBalanceAccount.AccountID,
               Debit = null,
@@ -247,10 +247,10 @@ namespace Accounting.Controllers
               OrganizationId = GetOrganizationId(),
             });
 
-            //await _generalLedgerInventoryAdjustmentService.CreateAsync(new GeneralLedgerInventoryAdjustment
+            //await _journalInventoryAdjustmentService.CreateAsync(new JournalInventoryAdjustment
             //{
-            //  InventoryAdjustmentId = debitEntry.GeneralLedgerID,
-            //  GeneralLedgerId = creditEntry.GeneralLedgerID,
+            //  InventoryAdjustmentId = debitEntry.JournalID,
+            //  JournalId = creditEntry.JournalID,
             //  TransactionGuid = transactonGuid,
             //  CreatedById = GetUserId(),
             //  OrganizationId = GetOrganizationId()

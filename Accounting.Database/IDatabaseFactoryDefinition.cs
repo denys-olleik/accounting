@@ -17,11 +17,11 @@ namespace Accounting.Database
     IInvoiceManager GetInvoiceManager();
     IItemManager GetItemManager();
     IInvoiceLineManager GetInvoiceLineManager();
-    IGeneralLedgerManager GetGeneralLedgerManager();
+    IJournalManager GetJournalManager();
     IAccountManager GetAccountManager();
     IPaymentManager GetPaymentManager();
     IInvoiceInvoiceLinePaymentManager GetInvoiceInvoiceLinePaymentManager();
-    IGeneralLedgerInvoiceInvoiceLinePaymentManager GetGeneralLedgerInvoiceInvoiceLinePaymentManager();
+    IJournalInvoiceInvoiceLinePaymentManager GetJournalInvoiceInvoiceLinePaymentManager();
     IUserOrganizationManager GetUserOrganizationManager();
     IOrganizationManager GetOrganizationManager();
     IInvoiceAttachmentManager GetInvoiceAttachmentManager();
@@ -29,10 +29,10 @@ namespace Accounting.Database
     IReconciliationManager GetReconciliationManager();
     IReconiliationAttachmentManager GetReconiliationAttachmentManager();
     IReconciliationExpenseManager GetExpenseManager();
-    IGeneralLedgerReconciliationTransactionManager GetGeneralLedgerReconciliationExpenseManager();
+    IJournalReconciliationTransactionManager GetJournalReconciliationExpenseManager();
     IReconciliationExpenseCategoryManager GetReconciliationExpenseCategoryManager();
     IDatabaseManager GetDatabaseManager();
-    IGeneralLedgerInvoiceInvoiceLineManager GetGeneralLedgerInvoiceInvoiceLineManager();
+    IJournalInvoiceInvoiceLineManager GetJournalInvoiceInvoiceLineManager();
     ILocationManager GetLocationManager();
     IInventoryManager GetInventoryManager();
     IRequestLogManager GetRequestLogManager();

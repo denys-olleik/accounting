@@ -371,7 +371,7 @@ namespace Accounting.Database
                     ELSE SUM(COALESCE(gl."Credit", 0)) - SUM(COALESCE(gl."Debit", 0))
                 END AS "CurrentBalance"
             FROM "Account" a
-            LEFT JOIN "GeneralLedger" gl ON a."AccountID" = gl."AccountId" AND a."OrganizationId" = gl."OrganizationId"
+            LEFT JOIN "Journal" gl ON a."AccountID" = gl."AccountId" AND a."OrganizationId" = gl."OrganizationId"
             WHERE a."OrganizationId" = @OrganizationId
             GROUP BY a."AccountID", a."Name", a."Type"
         """;
@@ -477,9 +477,9 @@ namespace Accounting.Database
           if (includeCountJournalEntries)
           {
             result = await con.QueryAsync<Account>("""
-                SELECT a.*, COUNT(gl."GeneralLedgerID") AS "JournalEntryCount"
+                SELECT a.*, COUNT(gl."JournalID") AS "JournalEntryCount"
                 FROM "Account" a
-                LEFT JOIN "GeneralLedger" gl ON a."AccountID" = gl."AccountId" AND a."OrganizationId" = gl."OrganizationId"
+                LEFT JOIN "Journal" gl ON a."AccountID" = gl."AccountId" AND a."OrganizationId" = gl."OrganizationId"
                 WHERE a."OrganizationId" = @OrganizationId
                 GROUP BY a."AccountID"
                 """, new { OrganizationId = organizationId });
@@ -704,37 +704,37 @@ namespace Accounting.Database
       }
     }
 
-    //public IGeneralLedgerInvoiceManager GetGeneralLedgerInvoiceManager()
+    //public IJournalInvoiceManager GetJournalInvoiceManager()
     //{
-    //  return new GeneralLedgerInvoiceManager();
+    //  return new JournalInvoiceManager();
     //}
 
-    //public class GeneralLedgerInvoiceManager : IGeneralLedgerInvoiceManager
+    //public class JournalInvoiceManager : IJournalInvoiceManager
     //{
-    //  public GeneralLedgerInvoice Create(GeneralLedgerInvoice entity)
+    //  public JournalInvoice Create(JournalInvoice entity)
     //  {
     //    throw new NotImplementedException();
     //  }
 
-    //  public async Task<GeneralLedgerInvoice> CreateAsync(GeneralLedgerInvoice entity)
+    //  public async Task<JournalInvoice> CreateAsync(JournalInvoice entity)
     //  {
     //    DynamicParameters p = new DynamicParameters();
-    //    p.Add("@GeneralLedgerId", entity.GeneralLedgerId);
+    //    p.Add("@JournalId", entity.JournalId);
     //    p.Add("@InvoiceId", entity.InvoiceId);
-    //    p.Add("@ReversedGeneralLedgerInvoiceId", entity.ReversedGeneralLedgerInvoiceId);
+    //    p.Add("@ReversedJournalInvoiceId", entity.ReversedJournalInvoiceId);
     //    p.Add("@TransactionGuid", entity.TransactionGuid);
     //    p.Add("@OrganizationId", entity.OrganizationId);
     //    p.Add("@CreatedById", entity.CreatedById);
 
-    //    IEnumerable<GeneralLedgerInvoice> result;
+    //    IEnumerable<JournalInvoice> result;
 
     //    using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
     //    {
-    //      result = await con.QueryAsync<GeneralLedgerInvoice>("""
-    //        INSERT INTO "GeneralLedgerInvoice" 
-    //        ("GeneralLedgerId", "InvoiceId", "ReversedGeneralLedgerInvoiceId", "TransactionGuid", "OrganizationId", "CreatedById") 
+    //      result = await con.QueryAsync<JournalInvoice>("""
+    //        INSERT INTO "JournalInvoice" 
+    //        ("JournalId", "InvoiceId", "ReversedJournalInvoiceId", "TransactionGuid", "OrganizationId", "CreatedById") 
     //        VALUES 
-    //        (@GeneralLedgerId, @InvoiceId, @ReversedGeneralLedgerInvoiceId, @TransactionGuid, @OrganizationId, @CreatedById)
+    //        (@JournalId, @InvoiceId, @ReversedJournalInvoiceId, @TransactionGuid, @OrganizationId, @CreatedById)
     //        RETURNING *;
     //        """, p);
     //    }
@@ -747,28 +747,28 @@ namespace Accounting.Database
     //    throw new NotImplementedException();
     //  }
 
-    //  public GeneralLedgerInvoice Get(int id)
+    //  public JournalInvoice Get(int id)
     //  {
     //    throw new NotImplementedException();
     //  }
 
-    //  public IEnumerable<GeneralLedgerInvoice> GetAll()
+    //  public IEnumerable<JournalInvoice> GetAll()
     //  {
     //    throw new NotImplementedException();
     //  }
 
-    //  public async Task<List<GeneralLedgerInvoice>> GetAllAsync(int invoiceId, bool getReversedEntries, int organizationId)
+    //  public async Task<List<JournalInvoice>> GetAllAsync(int invoiceId, bool getReversedEntries, int organizationId)
     //  {
     //    DynamicParameters p = new DynamicParameters();
     //    p.Add("@InvoiceId", invoiceId);
     //    p.Add("@OrganizationId", organizationId);
 
     //    string query = """
-    //    SELECT * FROM "GeneralLedgerInvoice" 
+    //    SELECT * FROM "JournalInvoice" 
     //    WHERE "InvoiceId" = @InvoiceId 
     //    AND "TransactionGuid" = (
     //        SELECT "TransactionGuid" 
-    //        FROM "GeneralLedgerInvoice" 
+    //        FROM "JournalInvoice" 
     //        WHERE "InvoiceId" = @InvoiceId
     //        AND "OrganizationId" = @OrganizationId
     //        ORDER BY "Created" DESC
@@ -777,24 +777,24 @@ namespace Accounting.Database
 
     //    if (getReversedEntries)
     //    {
-    //      query += " AND \"ReversedGeneralLedgerInvoiceId\" IS NOT NULL";
+    //      query += " AND \"ReversedJournalInvoiceId\" IS NOT NULL";
     //    }
     //    else
     //    {
-    //      query += " AND \"ReversedGeneralLedgerInvoiceId\" IS NULL";
+    //      query += " AND \"ReversedJournalInvoiceId\" IS NULL";
     //    }
 
-    //    IEnumerable<GeneralLedgerInvoice> result;
+    //    IEnumerable<JournalInvoice> result;
 
     //    using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
     //    {
-    //      result = await con.QueryAsync<GeneralLedgerInvoice>(query, p);
+    //      result = await con.QueryAsync<JournalInvoice>(query, p);
     //    }
 
     //    return result.ToList();
     //  }
 
-    //  public async Task<List<GeneralLedgerInvoice>> GetLastTransaction(
+    //  public async Task<List<JournalInvoice>> GetLastTransaction(
     //    int invoiceId,
     //    int organizationId,
     //    bool loadChildren)
@@ -803,45 +803,45 @@ namespace Accounting.Database
     //    p.Add("@InvoiceId", invoiceId);
     //    p.Add("@OrganizationId", organizationId);
 
-    //    IEnumerable<GeneralLedgerInvoice> result;
+    //    IEnumerable<JournalInvoice> result;
 
     //    if (loadChildren)
     //    {
     //      using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
     //      {
-    //        result = await con.QueryAsync<GeneralLedgerInvoice, GeneralLedger, GeneralLedgerInvoice>($"""
+    //        result = await con.QueryAsync<JournalInvoice, Journal, JournalInvoice>($"""
     //        SELECT gli.*, gl.*
-    //        FROM "GeneralLedgerInvoice" gli
-    //        INNER JOIN "GeneralLedger" gl ON gli."GeneralLedgerId" = gl."GeneralLedgerID"
+    //        FROM "JournalInvoice" gli
+    //        INNER JOIN "Journal" gl ON gli."JournalId" = gl."JournalID"
     //        WHERE gli."InvoiceId" = @InvoiceId
     //        AND "TransactionGuid" = (
     //            SELECT "TransactionGuid" 
-    //            FROM "GeneralLedgerInvoice" 
+    //            FROM "JournalInvoice" 
     //            WHERE "InvoiceId" = @InvoiceId
     //            AND "OrganizationId" = @OrganizationId
-    //            ORDER BY "GeneralLedgerInvoiceID" DESC
+    //            ORDER BY "JournalInvoiceID" DESC
     //            LIMIT 1
     //        )
     //        """, (gli, gl) =>
     //        {
-    //          gli.GeneralLedger = gl;
+    //          gli.Journal = gl;
     //          return gli;
-    //        }, p, splitOn: "GeneralLedgerID");
+    //        }, p, splitOn: "JournalID");
     //      }
     //    }
     //    else
     //    {
     //      using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
     //      {
-    //        result = await con.QueryAsync<GeneralLedgerInvoice>("""
-    //        SELECT * FROM "GeneralLedgerInvoice" 
+    //        result = await con.QueryAsync<JournalInvoice>("""
+    //        SELECT * FROM "JournalInvoice" 
     //        WHERE "InvoiceId" = @InvoiceId 
     //        AND "TransactionGuid" = (
     //            SELECT "TransactionGuid" 
-    //            FROM "GeneralLedgerInvoice" 
+    //            FROM "JournalInvoice" 
     //            WHERE "InvoiceId" = @InvoiceId
     //            AND "OrganizationId" = @OrganizationId
-    //            ORDER BY "GeneralLedgerInvoiceID" DESC
+    //            ORDER BY "JournalInvoiceID" DESC
     //            LIMIT 1
     //        )
     //        """, p);
@@ -850,45 +850,45 @@ namespace Accounting.Database
     //    return result.ToList();
     //  }
 
-    //  public int Update(GeneralLedgerInvoice entity)
+    //  public int Update(JournalInvoice entity)
     //  {
     //    throw new NotImplementedException();
     //  }
     //}
 
-    public IGeneralLedgerInvoiceInvoiceLinePaymentManager GetGeneralLedgerInvoiceInvoiceLinePaymentManager()
+    public IJournalInvoiceInvoiceLinePaymentManager GetJournalInvoiceInvoiceLinePaymentManager()
     {
-      return new GeneralLedgerInvoiceInvoiceLinePaymentManager();
+      return new JournalInvoiceInvoiceLinePaymentManager();
     }
 
-    public class GeneralLedgerInvoiceInvoiceLinePaymentManager : IGeneralLedgerInvoiceInvoiceLinePaymentManager
+    public class JournalInvoiceInvoiceLinePaymentManager : IJournalInvoiceInvoiceLinePaymentManager
     {
-      public GeneralLedgerInvoiceInvoiceLinePayment Create(GeneralLedgerInvoiceInvoiceLinePayment entity)
+      public JournalInvoiceInvoiceLinePayment Create(JournalInvoiceInvoiceLinePayment entity)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<GeneralLedgerInvoiceInvoiceLinePayment> CreateAsync(GeneralLedgerInvoiceInvoiceLinePayment entity)
+      public async Task<JournalInvoiceInvoiceLinePayment> CreateAsync(JournalInvoiceInvoiceLinePayment entity)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@GeneralLedgerId", entity.GeneralLedgerId);
+        p.Add("@JournalId", entity.JournalId);
         p.Add("@InvoiceInvoiceLinePaymentId", entity.InvoiceInvoiceLinePaymentId);
-        p.Add("@ReversedGeneralLedgerInvoiceInvoiceLinePaymentId", entity.ReversedGeneralLedgerInvoiceInvoiceLinePaymentId);
+        p.Add("@ReversedJournalInvoiceInvoiceLinePaymentId", entity.ReversedJournalInvoiceInvoiceLinePaymentId);
         p.Add("@TransactionGuid", entity.TransactionGuid);
         p.Add("@OrganizationId", entity.OrganizationId);
         p.Add("@CreatedById", entity.CreatedById);
 
-        IEnumerable<GeneralLedgerInvoiceInvoiceLinePayment> result;
+        IEnumerable<JournalInvoiceInvoiceLinePayment> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           string insertQuery = """
-            INSERT INTO "GeneralLedgerInvoiceInvoiceLinePayment" ("GeneralLedgerId", "InvoiceInvoiceLinePaymentId", "ReversedGeneralLedgerInvoiceInvoiceLinePaymentId", "TransactionGuid", "CreatedById", "OrganizationId") 
-            VALUES (@GeneralLedgerId, @InvoiceInvoiceLinePaymentId, @ReversedGeneralLedgerInvoiceInvoiceLinePaymentId, @TransactionGuid, @CreatedById, @OrganizationId)
+            INSERT INTO "JournalInvoiceInvoiceLinePayment" ("JournalId", "InvoiceInvoiceLinePaymentId", "ReversedJournalInvoiceInvoiceLinePaymentId", "TransactionGuid", "CreatedById", "OrganizationId") 
+            VALUES (@JournalId, @InvoiceInvoiceLinePaymentId, @ReversedJournalInvoiceInvoiceLinePaymentId, @TransactionGuid, @CreatedById, @OrganizationId)
             RETURNING *;
             """;
 
-          result = await con.QueryAsync<GeneralLedgerInvoiceInvoiceLinePayment>(insertQuery, p);
+          result = await con.QueryAsync<JournalInvoiceInvoiceLinePayment>(insertQuery, p);
         }
 
         return result.Single();
@@ -899,34 +899,34 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public GeneralLedgerInvoiceInvoiceLinePayment Get(int id)
+      public JournalInvoiceInvoiceLinePayment Get(int id)
       {
         throw new NotImplementedException();
       }
 
-      public IEnumerable<GeneralLedgerInvoiceInvoiceLinePayment> GetAll()
+      public IEnumerable<JournalInvoiceInvoiceLinePayment> GetAll()
       {
         throw new NotImplementedException();
       }
 
-      public Task<List<GeneralLedgerInvoiceInvoiceLinePayment>> GetAllAsync(int paymentId, bool getReversedEntries)
+      public Task<List<JournalInvoiceInvoiceLinePayment>> GetAllAsync(int paymentId, bool getReversedEntries)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<List<GeneralLedgerInvoiceInvoiceLinePayment>> GetAllAsync(int invoicePaymentId, int organizationId)
+      public async Task<List<JournalInvoiceInvoiceLinePayment>> GetAllAsync(int invoicePaymentId, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@InvoicePaymentId", invoicePaymentId);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<GeneralLedgerInvoiceInvoiceLinePayment> result;
+        IEnumerable<JournalInvoiceInvoiceLinePayment> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<GeneralLedgerInvoiceInvoiceLinePayment>($"""
+          result = await con.QueryAsync<JournalInvoiceInvoiceLinePayment>($"""
             SELECT * 
-            FROM "GeneralLedgerInvoicePayment" 
+            FROM "JournalInvoicePayment" 
             WHERE "InvoicePaymentId" = @InvoicePaymentId 
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -935,67 +935,67 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<List<GeneralLedgerInvoiceInvoiceLinePayment>?> GetAllByInvoiceIdAsync(int invoiceId, int organizationId, bool includeReversedEntries = false)
+      public async Task<List<JournalInvoiceInvoiceLinePayment>?> GetAllByInvoiceIdAsync(int invoiceId, int organizationId, bool includeReversedEntries = false)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@InvoiceId", invoiceId);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<GeneralLedgerInvoiceInvoiceLinePayment> result;
+        IEnumerable<JournalInvoiceInvoiceLinePayment> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           string query = $"""
             SELECT * 
-            FROM "GeneralLedgerInvoiceInvoiceLinePayment" 
+            FROM "JournalInvoiceInvoiceLinePayment" 
             WHERE "InvoiceInvoiceLinePaymentId" = @InvoiceId 
             AND "OrganizationId" = @OrganizationId
             """;
 
           if (!includeReversedEntries)
           {
-            query += " AND \"ReversedGeneralLedgerInvoiceInvoiceLinePaymentId\" IS NULL";
+            query += " AND \"ReversedJournalInvoiceInvoiceLinePaymentId\" IS NULL";
           }
 
-          result = await con.QueryAsync<GeneralLedgerInvoiceInvoiceLinePayment>(query, p);
+          result = await con.QueryAsync<JournalInvoiceInvoiceLinePayment>(query, p);
         }
 
         return result.ToList();
       }
 
-      public async Task<List<GeneralLedgerInvoiceInvoiceLinePayment>> GetAllByPaymentIdAsync(int paymentId, int organizationId)
+      public async Task<List<JournalInvoiceInvoiceLinePayment>> GetAllByPaymentIdAsync(int paymentId, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@PaymentId", paymentId);
         p.Add("@OrganizationId", organizationId);
 
-        List<GeneralLedgerInvoiceInvoiceLinePayment> result = new List<GeneralLedgerInvoiceInvoiceLinePayment>();
+        List<JournalInvoiceInvoiceLinePayment> result = new List<JournalInvoiceInvoiceLinePayment>();
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           var query = $"""
             SELECT glilp.*, gl.*
-            FROM "GeneralLedgerInvoiceInvoiceLinePayment" glilp
+            FROM "JournalInvoiceInvoiceLinePayment" glilp
             JOIN "InvoiceInvoiceLinePayment" ilp ON glilp."InvoiceInvoiceLinePaymentId" = ilp."InvoiceInvoiceLinePaymentID"
-            JOIN "GeneralLedger" gl ON glilp."GeneralLedgerId" = gl."GeneralLedgerID"
+            JOIN "Journal" gl ON glilp."JournalId" = gl."JournalID"
             WHERE glilp."TransactionGuid" = (
                 SELECT "TransactionGuid" 
-                FROM "GeneralLedgerInvoiceInvoiceLinePayment" 
+                FROM "JournalInvoiceInvoiceLinePayment" 
                 WHERE "PaymentId" = @PaymentId
                 AND "OrganizationId" = @OrganizationId
-                ORDER BY "GeneralLedgerInvoiceInvoiceLinePaymentID" DESC
+                ORDER BY "JournalInvoiceInvoiceLinePaymentID" DESC
                 LIMIT 1
-            ) AND glilp."ReversedGeneralLedgerInvoiceInvoiceLinePaymentId" IS NULL
+            ) AND glilp."ReversedJournalInvoiceInvoiceLinePaymentId" IS NULL
             """;
 
-          var invoicePayments = await con.QueryAsync<GeneralLedgerInvoiceInvoiceLinePayment, GeneralLedger, GeneralLedgerInvoiceInvoiceLinePayment>(
+          var invoicePayments = await con.QueryAsync<JournalInvoiceInvoiceLinePayment, Journal, JournalInvoiceInvoiceLinePayment>(
               query,
               (glilp, gl) =>
               {
-                glilp.GeneralLedger = gl;
+                glilp.Journal = gl;
                 return glilp;
               },
-              splitOn: "GeneralLedgerID",
+              splitOn: "JournalID",
               param: p
           );
 
@@ -1005,13 +1005,13 @@ namespace Accounting.Database
         return result;
       }
 
-      public async Task<List<GeneralLedgerInvoiceInvoiceLinePayment>> GetLastTransactionsAsync(int paymentId, int organizationId, bool loadChildren)
+      public async Task<List<JournalInvoiceInvoiceLinePayment>> GetLastTransactionsAsync(int paymentId, int organizationId, bool loadChildren)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@PaymentId", paymentId);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<GeneralLedgerInvoiceInvoiceLinePayment> result;
+        IEnumerable<JournalInvoiceInvoiceLinePayment> result;
 
         if (loadChildren)
         {
@@ -1019,28 +1019,28 @@ namespace Accounting.Database
           {
             string query = """
                 SELECT giiilp.*, gl.*
-                FROM "GeneralLedgerInvoiceInvoiceLinePayment" giiilp
-                JOIN "GeneralLedger" gl ON giiilp."GeneralLedgerId" = gl."GeneralLedgerID"
+                FROM "JournalInvoiceInvoiceLinePayment" giiilp
+                JOIN "Journal" gl ON giiilp."JournalId" = gl."JournalID"
                 WHERE giiilp."TransactionGuid" = (
                   SELECT "TransactionGuid"
-                  FROM "GeneralLedgerInvoiceInvoiceLinePayment"
+                  FROM "JournalInvoiceInvoiceLinePayment"
                   WHERE "InvoiceInvoiceLinePaymentId" IN (
                     SELECT "InvoiceInvoiceLinePaymentID"
                     FROM "InvoiceInvoiceLinePayment"
                     WHERE "PaymentId" = @PaymentId
                   )
-                  ORDER BY "GeneralLedgerInvoiceInvoiceLinePaymentID" DESC
+                  ORDER BY "JournalInvoiceInvoiceLinePaymentID" DESC
                   LIMIT 1
                 )
-                AND giiilp."ReversedGeneralLedgerInvoiceInvoiceLinePaymentId" IS NULL
+                AND giiilp."ReversedJournalInvoiceInvoiceLinePaymentId" IS NULL
                 AND giiilp."OrganizationId" = @OrganizationId
                 """;
 
-            result = await con.QueryAsync<GeneralLedgerInvoiceInvoiceLinePayment, GeneralLedger, GeneralLedgerInvoiceInvoiceLinePayment>(query, (giiilp, gl) =>
+            result = await con.QueryAsync<JournalInvoiceInvoiceLinePayment, Journal, JournalInvoiceInvoiceLinePayment>(query, (giiilp, gl) =>
             {
-              giiilp.GeneralLedger = gl;
+              giiilp.Journal = gl;
               return giiilp;
-            }, p, splitOn: "GeneralLedgerID");
+            }, p, splitOn: "JournalID");
           }
         }
         else
@@ -1049,63 +1049,63 @@ namespace Accounting.Database
           {
             string query = """
                 SELECT *
-                FROM "GeneralLedgerInvoiceInvoiceLinePayment"
+                FROM "JournalInvoiceInvoiceLinePayment"
                 WHERE "TransactionGuid" = (
                   SELECT "TransactionGuid"
-                  FROM "GeneralLedgerInvoiceInvoiceLinePayment"
+                  FROM "JournalInvoiceInvoiceLinePayment"
                   WHERE "InvoiceInvoiceLinePaymentId" IN (
                     SELECT "InvoiceInvoiceLinePaymentID"
                     FROM "InvoiceInvoiceLinePayment"
                     WHERE "PaymentId" = @PaymentId
                   )
-                  ORDER BY "GeneralLedgerInvoiceInvoiceLinePaymentID" DESC
+                  ORDER BY "JournalInvoiceInvoiceLinePaymentID" DESC
                   LIMIT 1
                 )
-                AND "ReversedGeneralLedgerInvoiceInvoiceLinePaymentId" IS NULL
+                AND "ReversedJournalInvoiceInvoiceLinePaymentId" IS NULL
                 AND "OrganizationId" = @OrganizationId
                 """;
 
-            result = await con.QueryAsync<GeneralLedgerInvoiceInvoiceLinePayment>(query, p);
+            result = await con.QueryAsync<JournalInvoiceInvoiceLinePayment>(query, p);
           }
         }
 
         return result.ToList();
       }
 
-      public int Update(GeneralLedgerInvoiceInvoiceLinePayment entity)
+      public int Update(JournalInvoiceInvoiceLinePayment entity)
       {
         throw new NotImplementedException();
       }
     }
 
-    public IGeneralLedgerManager GetGeneralLedgerManager()
+    public IJournalManager GetJournalManager()
     {
-      return new GeneralLedgerManager();
+      return new JournalManager();
     }
 
-    public class GeneralLedgerManager : IGeneralLedgerManager
+    public class JournalManager : IJournalManager
     {
-      public GeneralLedger Create(GeneralLedger entity)
+      public Journal Create(Journal entity)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<GeneralLedger> CreateAsync(GeneralLedger generalLedger)
+      public async Task<Journal> CreateAsync(Journal journal)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@AccountId", generalLedger.AccountId);
-        p.Add("@Debit", generalLedger.Debit);
-        p.Add("@Credit", generalLedger.Credit);
-        p.Add("@Memo", generalLedger.Memo);
-        p.Add("@CreatedById", generalLedger.CreatedById);
-        p.Add("@OrganizationId", generalLedger.OrganizationId);
+        p.Add("@AccountId", journal.AccountId);
+        p.Add("@Debit", journal.Debit);
+        p.Add("@Credit", journal.Credit);
+        p.Add("@Memo", journal.Memo);
+        p.Add("@CreatedById", journal.CreatedById);
+        p.Add("@OrganizationId", journal.OrganizationId);
 
-        IEnumerable<GeneralLedger> result;
+        IEnumerable<Journal> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<GeneralLedger>("""
-            INSERT INTO "GeneralLedger" 
+          result = await con.QueryAsync<Journal>("""
+            INSERT INTO "Journal" 
             ("AccountId", "Debit", "Credit", "Memo", "CreatedById", "OrganizationId") 
             VALUES 
             (@AccountId, @Debit, @Credit, @Memo, @CreatedById, @OrganizationId)
@@ -1121,30 +1121,30 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public GeneralLedger Get(int id)
+      public Journal Get(int id)
       {
         throw new NotImplementedException();
       }
 
-      public IEnumerable<GeneralLedger> GetAll()
+      public IEnumerable<Journal> GetAll()
       {
         throw new NotImplementedException();
       }
 
-      public async Task<GeneralLedger> GetAsync(int generalLedgerId, int organizationId)
+      public async Task<Journal> GetAsync(int journalId, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@GeneralLedgerId", generalLedgerId);
+        p.Add("@JournalId", journalId);
         p.Add("@OrganizationId", organizationId);
 
-        GeneralLedger? result;
+        Journal? result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QuerySingleOrDefaultAsync<GeneralLedger>("""
+          result = await con.QuerySingleOrDefaultAsync<Journal>("""
             SELECT * 
-            FROM "GeneralLedger" 
-            WHERE "GeneralLedgerID" = @GeneralLedgerId
+            FROM "Journal" 
+            WHERE "JournalID" = @JournalId
             AND "OrganizationId" = @OrganizationId
             """, p);
         }
@@ -1153,20 +1153,20 @@ namespace Accounting.Database
       }
 
 
-      public async Task<List<GeneralLedger>> GetLedgerEntriesAsync(int[] generalLedgerIds, int organizationId)
+      public async Task<List<Journal>> GetLedgerEntriesAsync(int[] journalIds, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@GeneralLedgerIds", generalLedgerIds);
+        p.Add("@JournalIds", journalIds);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<GeneralLedger> result;
+        IEnumerable<Journal> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<GeneralLedger>("""
+          result = await con.QueryAsync<Journal>("""
             SELECT * 
-            FROM "GeneralLedger" 
-            WHERE "GeneralLedgerID" = ANY(@GeneralLedgerIds)
+            FROM "Journal" 
+            WHERE "JournalID" = ANY(@JournalIds)
             AND "OrganizationId" = @OrganizationId
             """, p);
         }
@@ -1186,7 +1186,7 @@ namespace Accounting.Database
         {
           count = await con.ExecuteScalarAsync<int>("""
             SELECT COUNT(*) 
-            FROM "GeneralLedger" 
+            FROM "Journal" 
             WHERE "AccountId" = @AccountId
             AND "OrganizationId" = @OrganizationId
             """, p);
@@ -1195,7 +1195,7 @@ namespace Accounting.Database
         return count > 0;
       }
 
-      public int Update(GeneralLedger entity)
+      public int Update(Journal entity)
       {
         throw new NotImplementedException();
       }
@@ -1648,15 +1648,15 @@ namespace Accounting.Database
             AND "OrganizationId" = @OrganizationId
             AND NOT EXISTS (
                 SELECT 1
-                FROM "GeneralLedgerInvoiceInvoiceLine" AS GLIIL
+                FROM "JournalInvoiceInvoiceLine" AS GLIIL
                 JOIN (
-                    SELECT "InvoiceLineId", MAX("GeneralLedgerInvoiceInvoiceLineID") AS MaxGLIILId
-                    FROM "GeneralLedgerInvoiceInvoiceLine"
+                    SELECT "InvoiceLineId", MAX("JournalInvoiceInvoiceLineID") AS MaxGLIILId
+                    FROM "JournalInvoiceInvoiceLine"
                     GROUP BY "InvoiceLineId"
                 ) AS LatestGLIIL ON GLIIL."InvoiceLineId" = LatestGLIIL."InvoiceLineId" 
-                                 AND GLIIL."GeneralLedgerInvoiceInvoiceLineID" = LatestGLIIL.MaxGLIILId
+                                 AND GLIIL."JournalInvoiceInvoiceLineID" = LatestGLIIL.MaxGLIILId
                 WHERE GLIIL."InvoiceLineId" = "InvoiceLine"."InvoiceLineID"
-                AND GLIIL."ReversedGeneralLedgerInvoiceInvoiceLineId" IS NOT NULL
+                AND GLIIL."ReversedJournalInvoiceInvoiceLineId" IS NOT NULL
             )
             """, p);
 
@@ -1697,15 +1697,15 @@ namespace Accounting.Database
             AND "OrganizationId" = @OrganizationId
             AND NOT EXISTS (
                 SELECT 1
-                FROM "GeneralLedgerInvoiceInvoiceLine" AS GLIIL
+                FROM "JournalInvoiceInvoiceLine" AS GLIIL
                 JOIN (
-                    SELECT "InvoiceLineId", MAX("GeneralLedgerInvoiceInvoiceLineID") AS MaxGLIILId
-                    FROM "GeneralLedgerInvoiceInvoiceLine"
+                    SELECT "InvoiceLineId", MAX("JournalInvoiceInvoiceLineID") AS MaxGLIILId
+                    FROM "JournalInvoiceInvoiceLine"
                     GROUP BY "InvoiceLineId"
                 ) AS LatestGLIIL ON GLIIL."InvoiceLineId" = LatestGLIIL."InvoiceLineId" 
-                                 AND GLIIL."GeneralLedgerInvoiceInvoiceLineID" = LatestGLIIL.MaxGLIILId
+                                 AND GLIIL."JournalInvoiceInvoiceLineID" = LatestGLIIL.MaxGLIILId
                 WHERE GLIIL."InvoiceLineId" = "InvoiceLine"."InvoiceLineID"
-                AND GLIIL."ReversedGeneralLedgerInvoiceInvoiceLineId" IS NOT NULL
+                AND GLIIL."ReversedJournalInvoiceInvoiceLineId" IS NOT NULL
             )
             """;
 
@@ -4377,37 +4377,37 @@ namespace Accounting.Database
       }
     }
 
-    public IGeneralLedgerReconciliationTransactionManager GetGeneralLedgerReconciliationExpenseManager()
+    public IJournalReconciliationTransactionManager GetJournalReconciliationExpenseManager()
     {
-      return new GeneralLedgerReconciliationTransactionManager();
+      return new JournalReconciliationTransactionManager();
     }
 
-    public class GeneralLedgerReconciliationTransactionManager : IGeneralLedgerReconciliationTransactionManager
+    public class JournalReconciliationTransactionManager : IJournalReconciliationTransactionManager
     {
-      public GeneralLedgerReconciliationTransaction Create(GeneralLedgerReconciliationTransaction entity)
+      public JournalReconciliationTransaction Create(JournalReconciliationTransaction entity)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<GeneralLedgerReconciliationTransaction> CreateAsync(GeneralLedgerReconciliationTransaction entity)
+      public async Task<JournalReconciliationTransaction> CreateAsync(JournalReconciliationTransaction entity)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@GeneralLedgerId", entity.GeneralLedgerId);
+        p.Add("@JournalId", entity.JournalId);
         p.Add("@ReconciliationTransactionId", entity.ReconciliationTransactionId);
-        p.Add("@ReversedGeneralLedgerReconciliationTransactionId", entity.ReversedGeneralLedgerReconciliationTransactionId);
+        p.Add("@ReversedJournalReconciliationTransactionId", entity.ReversedJournalReconciliationTransactionId);
         p.Add("@TransactionGuid", entity.TransactionGuid);
         p.Add("@CreatedById", entity.CreatedById);
         p.Add("@OrganizationId", entity.OrganizationId);
 
-        IEnumerable<GeneralLedgerReconciliationTransaction> result;
+        IEnumerable<JournalReconciliationTransaction> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<GeneralLedgerReconciliationTransaction>("""
-            INSERT INTO "GeneralLedgerReconciliationTransaction" 
-            ("GeneralLedgerId", "ReversedGeneralLedgerReconciliationTransactionId", "ReconciliationTransactionId", "TransactionGuid", "CreatedById", "OrganizationId") 
+          result = await con.QueryAsync<JournalReconciliationTransaction>("""
+            INSERT INTO "JournalReconciliationTransaction" 
+            ("JournalId", "ReversedJournalReconciliationTransactionId", "ReconciliationTransactionId", "TransactionGuid", "CreatedById", "OrganizationId") 
             VALUES 
-            (@GeneralLedgerId, @ReversedGeneralLedgerReconciliationTransactionId, @ReconciliationTransactionId, @TransactionGuid, @CreatedById, @OrganizationId)
+            (@JournalId, @ReversedJournalReconciliationTransactionId, @ReconciliationTransactionId, @TransactionGuid, @CreatedById, @OrganizationId)
             RETURNING *;
             """, p);
         }
@@ -4420,17 +4420,17 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public GeneralLedgerReconciliationTransaction Get(int id)
+      public JournalReconciliationTransaction Get(int id)
       {
         throw new NotImplementedException();
       }
 
-      public IEnumerable<GeneralLedgerReconciliationTransaction> GetAll()
+      public IEnumerable<JournalReconciliationTransaction> GetAll()
       {
         throw new NotImplementedException();
       }
 
-      public async Task<List<GeneralLedgerReconciliationTransaction>> GetLastTransactionAsync(
+      public async Task<List<JournalReconciliationTransaction>> GetLastTransactionAsync(
         int reconciliationTransactionId,
         int organizationId,
         bool loadChildren = false)
@@ -4439,44 +4439,44 @@ namespace Accounting.Database
         p.Add("@ReconciliationTransactionId", reconciliationTransactionId);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<GeneralLedgerReconciliationTransaction> result;
+        IEnumerable<JournalReconciliationTransaction> result;
 
         if (loadChildren)
         {
           using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
           {
-            result = await con.QueryAsync<GeneralLedgerReconciliationTransaction, GeneralLedger, GeneralLedgerReconciliationTransaction>("""
+            result = await con.QueryAsync<JournalReconciliationTransaction, Journal, JournalReconciliationTransaction>("""
               SELECT glrt.*, gl.*
-              FROM "GeneralLedgerReconciliationTransaction" glrt
-              JOIN "GeneralLedger" gl ON glrt."GeneralLedgerId" = gl."GeneralLedgerID"
+              FROM "JournalReconciliationTransaction" glrt
+              JOIN "Journal" gl ON glrt."JournalId" = gl."JournalID"
               WHERE glrt."TransactionGuid" IN (
                   SELECT "TransactionGuid"
-                  FROM "GeneralLedgerReconciliationTransaction"
+                  FROM "JournalReconciliationTransaction"
                   WHERE "ReconciliationTransactionId" = @ReconciliationTransactionId
                   AND "OrganizationId" = @OrganizationId
-                  ORDER BY "GeneralLedgerReconciliationTransactionID" DESC
+                  ORDER BY "JournalReconciliationTransactionID" DESC
                   LIMIT 1
               );
               """, (glrt, gl) =>
             {
-              glrt.GeneralLedger = gl;
+              glrt.Journal = gl;
               return glrt;
-            }, p, splitOn: "GeneralLedgerID");
+            }, p, splitOn: "JournalID");
           }
         }
         else
         {
           using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
           {
-            result = await con.QueryAsync<GeneralLedgerReconciliationTransaction>("""
+            result = await con.QueryAsync<JournalReconciliationTransaction>("""
               SELECT *
-              FROM "GeneralLedgerReconciliationTransaction"
+              FROM "JournalReconciliationTransaction"
               WHERE "TransactionGuid" IN (
                   SELECT "TransactionGuid"
-                  FROM "GeneralLedgerReconciliationTransaction"
+                  FROM "JournalReconciliationTransaction"
                   WHERE "ReconciliationTransactionId" = @ReconciliationTransactionId
                   AND "OrganizationId" = @OrganizationId
-                  ORDER BY "GeneralLedgerReconciliationTransactionID" DESC
+                  ORDER BY "JournalReconciliationTransactionID" DESC
                   LIMIT 1
               );
               """, p);
@@ -4486,7 +4486,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public int Update(GeneralLedgerReconciliationTransaction entity)
+      public int Update(JournalReconciliationTransaction entity)
       {
         throw new NotImplementedException();
       }
@@ -4628,38 +4628,38 @@ namespace Accounting.Database
       }
     }
 
-    public IGeneralLedgerInvoiceInvoiceLineManager GetGeneralLedgerInvoiceInvoiceLineManager()
+    public IJournalInvoiceInvoiceLineManager GetJournalInvoiceInvoiceLineManager()
     {
-      return new GeneralLedgerInvoiceInvoiceLineManager();
+      return new JournalInvoiceInvoiceLineManager();
     }
 
-    public class GeneralLedgerInvoiceInvoiceLineManager : IGeneralLedgerInvoiceInvoiceLineManager
+    public class JournalInvoiceInvoiceLineManager : IJournalInvoiceInvoiceLineManager
     {
-      public GeneralLedgerInvoiceInvoiceLine Create(GeneralLedgerInvoiceInvoiceLine entity)
+      public JournalInvoiceInvoiceLine Create(JournalInvoiceInvoiceLine entity)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<GeneralLedgerInvoiceInvoiceLine> CreateAsync(GeneralLedgerInvoiceInvoiceLine entity)
+      public async Task<JournalInvoiceInvoiceLine> CreateAsync(JournalInvoiceInvoiceLine entity)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@GeneralLedgerId", entity.GeneralLedgerId);
+        p.Add("@JournalId", entity.JournalId);
         p.Add("@InvoiceId", entity.InvoiceId);
         p.Add("@InvoiceLineId", entity.InvoiceLineId);
-        p.Add("@ReverseGeneralLedgerInvoiceInvoiceLineId", entity.ReversedGeneralLedgerInvoiceInvoiceLineId);
+        p.Add("@ReverseJournalInvoiceInvoiceLineId", entity.ReversedJournalInvoiceInvoiceLineId);
         p.Add("@TransactionGuid", entity.TransactionGuid);
         p.Add("@CreatedById", entity.CreatedById);
         p.Add("@OrganizationId", entity.OrganizationId);
 
-        IEnumerable<GeneralLedgerInvoiceInvoiceLine> result;
+        IEnumerable<JournalInvoiceInvoiceLine> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<GeneralLedgerInvoiceInvoiceLine>("""
-            INSERT INTO "GeneralLedgerInvoiceInvoiceLine" 
-            ("GeneralLedgerId", "InvoiceId", "InvoiceLineId", "ReversedGeneralLedgerInvoiceInvoiceLineId", "TransactionGuid", "CreatedById", "OrganizationId")
+          result = await con.QueryAsync<JournalInvoiceInvoiceLine>("""
+            INSERT INTO "JournalInvoiceInvoiceLine" 
+            ("JournalId", "InvoiceId", "InvoiceLineId", "ReversedJournalInvoiceInvoiceLineId", "TransactionGuid", "CreatedById", "OrganizationId")
             VALUES 
-            (@GeneralLedgerId, @InvoiceId, @InvoiceLineId, @ReverseGeneralLedgerInvoiceInvoiceLineId, @TransactionGuid, @CreatedById, @OrganizationId)
+            (@JournalId, @InvoiceId, @InvoiceLineId, @ReverseJournalInvoiceInvoiceLineId, @TransactionGuid, @CreatedById, @OrganizationId)
             RETURNING *;
             """, p);
         }
@@ -4672,30 +4672,30 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public GeneralLedgerInvoiceInvoiceLine Get(int id)
+      public JournalInvoiceInvoiceLine Get(int id)
       {
         throw new NotImplementedException();
       }
 
-      public IEnumerable<GeneralLedgerInvoiceInvoiceLine> GetAll()
+      public IEnumerable<JournalInvoiceInvoiceLine> GetAll()
       {
         throw new NotImplementedException();
       }
 
-      public async Task<List<GeneralLedgerInvoiceInvoiceLine>> GetAllAsync(int invoiceId, int organizationId, bool includeRemoved)
+      public async Task<List<JournalInvoiceInvoiceLine>> GetAllAsync(int invoiceId, int organizationId, bool includeRemoved)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@InvoiceId", invoiceId);
         p.Add("@OrganizationId", organizationId);
         p.Add("@IncludeRemoved", includeRemoved);
 
-        IEnumerable<GeneralLedgerInvoiceInvoiceLine> result;
+        IEnumerable<JournalInvoiceInvoiceLine> result;
 
         throw new NotImplementedException();
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<GeneralLedgerInvoiceInvoiceLine>("""
+          result = await con.QueryAsync<JournalInvoiceInvoiceLine>("""
 
             """, p);
         }
@@ -4721,14 +4721,14 @@ namespace Accounting.Database
                 AND il."OrganizationId" = @OrganizationId
                 AND EXISTS (
                     SELECT 1
-                    FROM "GeneralLedgerInvoiceInvoiceLine" gliil
+                    FROM "JournalInvoiceInvoiceLine" gliil
                     INNER JOIN (
-                        SELECT "InvoiceLineId", MAX("GeneralLedgerInvoiceInvoiceLineID") AS MaxGLIILID
-                        FROM "GeneralLedgerInvoiceInvoiceLine"
+                        SELECT "InvoiceLineId", MAX("JournalInvoiceInvoiceLineID") AS MaxGLIILID
+                        FROM "JournalInvoiceInvoiceLine"
                         GROUP BY "InvoiceLineId"
-                    ) AS LastTransactions ON gliil."InvoiceLineId" = LastTransactions."InvoiceLineId" AND gliil."GeneralLedgerInvoiceInvoiceLineID" = LastTransactions.MaxGLIILID
+                    ) AS LastTransactions ON gliil."InvoiceLineId" = LastTransactions."InvoiceLineId" AND gliil."JournalInvoiceInvoiceLineID" = LastTransactions.MaxGLIILID
                     WHERE gliil."InvoiceLineId" = il."InvoiceLineID"
-                    AND gliil."ReversedGeneralLedgerInvoiceInvoiceLineId" IS NULL
+                    AND gliil."ReversedJournalInvoiceInvoiceLineId" IS NULL
                 )
                 """;
           }
@@ -4748,7 +4748,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<List<GeneralLedgerInvoiceInvoiceLine>> GetLastTransactionAsync(
+      public async Task<List<JournalInvoiceInvoiceLine>> GetLastTransactionAsync(
         int invoiceLineId,
         int organizationId,
         bool loadChildren)
@@ -4757,7 +4757,7 @@ namespace Accounting.Database
         p.Add("@InvoiceLineId", invoiceLineId);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<GeneralLedgerInvoiceInvoiceLine> result;
+        IEnumerable<JournalInvoiceInvoiceLine> result;
 
         if (loadChildren)
         {
@@ -4767,26 +4767,26 @@ namespace Accounting.Database
               SELECT
                   gliil.*,
                   gl.*
-              FROM "GeneralLedgerInvoiceInvoiceLine" gliil
-              INNER JOIN "GeneralLedger" gl ON gliil."GeneralLedgerId" = gl."GeneralLedgerID"
+              FROM "JournalInvoiceInvoiceLine" gliil
+              INNER JOIN "Journal" gl ON gliil."JournalId" = gl."JournalID"
               WHERE 
                 gliil."TransactionGuid" = (
                   SELECT "TransactionGuid"
-                  FROM "GeneralLedgerInvoiceInvoiceLine"
+                  FROM "JournalInvoiceInvoiceLine"
                   WHERE "InvoiceLineId" = @InvoiceLineId
-                  ORDER BY "GeneralLedgerInvoiceInvoiceLineID" DESC
+                  ORDER BY "JournalInvoiceInvoiceLineID" DESC
                   LIMIT 1
                 )
                 AND "InvoiceLineId" = @InvoiceLineId
-                AND gliil."ReversedGeneralLedgerInvoiceInvoiceLineId" IS NULL
+                AND gliil."ReversedJournalInvoiceInvoiceLineId" IS NULL
                 AND gliil."OrganizationId" = @OrganizationId
               """;
 
-            result = await con.QueryAsync<GeneralLedgerInvoiceInvoiceLine, GeneralLedger, GeneralLedgerInvoiceInvoiceLine>(query, (gliil, gl) =>
+            result = await con.QueryAsync<JournalInvoiceInvoiceLine, Journal, JournalInvoiceInvoiceLine>(query, (gliil, gl) =>
             {
-              gliil.GeneralLedger = gl;
+              gliil.Journal = gl;
               return gliil;
-            }, p, splitOn: "GeneralLedgerID");
+            }, p, splitOn: "JournalID");
           }
         }
         else
@@ -4795,26 +4795,26 @@ namespace Accounting.Database
           {
             string query = """
               SELECT *
-              FROM "GeneralLedgerInvoiceInvoiceLine"
+              FROM "JournalInvoiceInvoiceLine"
               WHERE "TransactionGuid" = (
                 SELECT "TransactionGuid"
-                FROM "GeneralLedgerInvoiceInvoiceLine"
+                FROM "JournalInvoiceInvoiceLine"
                 WHERE "InvoiceLineId" = @InvoiceLineId
                 ORDER BY "Created" DESC
                 LIMIT 1
               )
-              AND "ReversedGeneralLedgerInvoiceInvoiceLineId" IS NULL
+              AND "ReversedJournalInvoiceInvoiceLineId" IS NULL
               AND "OrganizationId" = @OrganizationId
               """;
 
-            result = await con.QueryAsync<GeneralLedgerInvoiceInvoiceLine>(query, p);
+            result = await con.QueryAsync<JournalInvoiceInvoiceLine>(query, p);
           }
         }
 
         return result.ToList();
       }
 
-      public int Update(GeneralLedgerInvoiceInvoiceLine entity)
+      public int Update(JournalInvoiceInvoiceLine entity)
       {
         throw new NotImplementedException();
       }

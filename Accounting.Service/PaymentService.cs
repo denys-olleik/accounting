@@ -33,27 +33,27 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager();
       await factoryManager.GetPaymentManager().UpdateVoidReasonAsync(payment.PaymentID, voidReason, organizationId);
 
-      List<GeneralLedgerInvoiceInvoiceLinePayment> lastTransactions
-        = await factoryManager.GetGeneralLedgerInvoiceInvoiceLinePaymentManager()
+      List<JournalInvoiceInvoiceLinePayment> lastTransactions
+        = await factoryManager.GetJournalInvoiceInvoiceLinePaymentManager()
         .GetLastTransactionsAsync(payment.PaymentID, organizationId, true);
 
       Guid transactionGuid = GuidExtensions.CreateSecureGuid();
 
-      foreach (GeneralLedgerInvoiceInvoiceLinePayment entry in lastTransactions)
+      foreach (JournalInvoiceInvoiceLinePayment entry in lastTransactions)
       {
-        GeneralLedger undoEntry = await factoryManager.GetGeneralLedgerManager().CreateAsync(new GeneralLedger()
+        Journal undoEntry = await factoryManager.GetJournalManager().CreateAsync(new Journal()
         {
-          AccountId = entry.GeneralLedger!.AccountId,
-          Credit = entry.GeneralLedger.Debit,
-          Debit = entry.GeneralLedger.Credit,
+          AccountId = entry.Journal!.AccountId,
+          Credit = entry.Journal.Debit,
+          Debit = entry.Journal.Credit,
           CreatedById = userId,
           OrganizationId = organizationId,
         });
 
-        await factoryManager.GetGeneralLedgerInvoiceInvoiceLinePaymentManager().CreateAsync(new GeneralLedgerInvoiceInvoiceLinePayment()
+        await factoryManager.GetJournalInvoiceInvoiceLinePaymentManager().CreateAsync(new JournalInvoiceInvoiceLinePayment()
         {
-          GeneralLedgerId = undoEntry.GeneralLedgerID,
-          ReversedGeneralLedgerInvoiceInvoiceLinePaymentId = entry.GeneralLedgerInvoiceInvoiceLinePaymentID,
+          JournalId = undoEntry.JournalID,
+          ReversedJournalInvoiceInvoiceLinePaymentId = entry.JournalInvoiceInvoiceLinePaymentID,
           InvoiceInvoiceLinePaymentId = entry.InvoiceInvoiceLinePaymentId,
           TransactionGuid = transactionGuid,
           CreatedById = userId,

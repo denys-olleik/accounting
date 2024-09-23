@@ -40,12 +40,12 @@ namespace Accounting.Validators
   public class UpdateAccountViewModelValidator : AbstractValidator<UpdateAccountViewModel>
   {
     private readonly AccountService _accountService;
-    private readonly GeneralLedgerService _generalLedgerService;
+    private readonly JournalService _journalService;
 
-    public UpdateAccountViewModelValidator(AccountService accountService, GeneralLedgerService generalLedgerService, int organizationId)
+    public UpdateAccountViewModelValidator(AccountService accountService, JournalService journalService, int organizationId)
     {
       _accountService = accountService;
-      _generalLedgerService = generalLedgerService;
+      _journalService = journalService;
 
       RuleFor(x => x.AccountID)
           .NotEmpty().WithMessage("'Account ID' is required.");

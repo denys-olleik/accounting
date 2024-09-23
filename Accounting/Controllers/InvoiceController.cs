@@ -27,8 +27,8 @@ namespace Accounting.Controllers
     private readonly InvoiceService _invoiceService;
     private readonly InvoiceLineService _invoiceLineService;
     private readonly ItemService _itemService;
-    private readonly GeneralLedgerService _generalLedgerService;
-    private readonly GeneralLedgerInvoiceInvoiceLineService _generalLedgerInvoiceInvoiceLineService;
+    private readonly JournalService _journalService;
+    private readonly JournalInvoiceInvoiceLineService _journalInvoiceInvoiceLineService;
     private readonly InvoiceInvoiceLinePaymentService _invoicePaymentService;
     private readonly InvoiceAttachmentService _invoiceAttachmentService;
     private readonly OrganizationService _organizationService;
@@ -37,7 +37,7 @@ namespace Accounting.Controllers
     public InvoiceController(
       AddressService addressService,
       BusinessEntityService businessEntityService,
-      GeneralLedgerService generalLedgerService,
+      JournalService journalLedgerService,
       InvoiceAttachmentService invoiceAttachmentService,
       InvoiceLineService invoiceLineService,
       InvoiceInvoiceLinePaymentService invoicePaymentService,
@@ -46,11 +46,11 @@ namespace Accounting.Controllers
       OrganizationService organizationService,
       PaymentTermsService paymentTermsService,
       AccountService accountService,
-      GeneralLedgerInvoiceInvoiceLineService generalLedgerInvoiceInvoiceLineService)
+      JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService)
     {
       _addressService = addressService;
       _businessEntityService = businessEntityService;
-      _generalLedgerService = generalLedgerService;
+      _journalService = journalLedgerService;
       _invoiceAttachmentService = invoiceAttachmentService;
       _invoiceLineService = invoiceLineService;
       _invoicePaymentService = invoicePaymentService;
@@ -59,7 +59,7 @@ namespace Accounting.Controllers
       _organizationService = organizationService;
       _paymentTermsService = paymentTermsService;
       _accountService = accountService;
-      _generalLedgerInvoiceInvoiceLineService = generalLedgerInvoiceInvoiceLineService;
+      _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
     }
 
     [Route("invoices")]
@@ -245,7 +245,7 @@ namespace Accounting.Controllers
 
       foreach (var invoiceLine in model.InvoiceLines!)
       {
-        GeneralLedger debitGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+        Journal debitGlEntry = await _journalService.CreateAsync(new Journal()
         {
           AccountId = invoiceLine.AssetsAccountId,
           Debit = invoiceLine.Price * invoiceLine.Quantity,
@@ -254,7 +254,7 @@ namespace Accounting.Controllers
           OrganizationId = GetOrganizationId(),
         });
 
-        GeneralLedger creditGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+        Journal creditGlEntry = await _journalService.CreateAsync(new Journal()
         {
           AccountId = invoiceLine.RevenueAccountId,
           Debit = null,
@@ -263,9 +263,9 @@ namespace Accounting.Controllers
           OrganizationId = GetOrganizationId(),
         });
 
-        await _generalLedgerInvoiceInvoiceLineService.CreateAsync(new GeneralLedgerInvoiceInvoiceLine()
+        await _journalInvoiceInvoiceLineService.CreateAsync(new JournalInvoiceInvoiceLine()
         {
-          GeneralLedgerId = creditGlEntry.GeneralLedgerID,
+          JournalId = creditGlEntry.JournalID,
           InvoiceId = invoice.InvoiceID,
           InvoiceLineId = invoiceLine.ID,
           TransactionGuid = transactionGuid,
@@ -273,9 +273,9 @@ namespace Accounting.Controllers
           CreatedById = GetUserId(),
         });
 
-        await _generalLedgerInvoiceInvoiceLineService.CreateAsync(new GeneralLedgerInvoiceInvoiceLine()
+        await _journalInvoiceInvoiceLineService.CreateAsync(new JournalInvoiceInvoiceLine()
         {
-          GeneralLedgerId = debitGlEntry.GeneralLedgerID,
+          JournalId = debitGlEntry.JournalID,
           InvoiceId = invoice.InvoiceID,
           InvoiceLineId = invoiceLine.ID,
           TransactionGuid = transactionGuid,
@@ -291,7 +291,7 @@ namespace Accounting.Controllers
     {
       foreach (var line in invoiceLines)
       {
-        GeneralLedger debitGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+        Journal debitGlEntry = await _journalService.CreateAsync(new Journal()
         {
           AccountId = line.AssetsAccountId,
           Debit = line.Price * line.Quantity,
@@ -300,16 +300,16 @@ namespace Accounting.Controllers
           OrganizationId = GetOrganizationId(),
         });
 
-        await _generalLedgerInvoiceInvoiceLineService.CreateAsync(new GeneralLedgerInvoiceInvoiceLine()
+        await _journalInvoiceInvoiceLineService.CreateAsync(new JournalInvoiceInvoiceLine()
         {
-          GeneralLedgerId = debitGlEntry.GeneralLedgerID,
+          JournalId = debitGlEntry.JournalID,
           InvoiceLineId = line.InvoiceLineID,
           TransactionGuid = transactionGuid,
           CreatedById = GetUserId(),
           OrganizationId = GetOrganizationId(),
         });
 
-        GeneralLedger creditGlEntry = await _generalLedgerService.CreateAsync(new GeneralLedger()
+        Journal creditGlEntry = await _journalService.CreateAsync(new Journal()
         {
           AccountId = line.RevenueAccountId,
           Debit = null,
@@ -318,9 +318,9 @@ namespace Accounting.Controllers
           OrganizationId = GetOrganizationId(),
         });
 
-        await _generalLedgerInvoiceInvoiceLineService.CreateAsync(new GeneralLedgerInvoiceInvoiceLine()
+        await _journalInvoiceInvoiceLineService.CreateAsync(new JournalInvoiceInvoiceLine()
         {
-          GeneralLedgerId = creditGlEntry.GeneralLedgerID,
+          JournalId = creditGlEntry.JournalID,
           InvoiceLineId = line.InvoiceLineID,
           TransactionGuid = transactionGuid,
           CreatedById = GetUserId(),
@@ -358,7 +358,7 @@ namespace Accounting.Controllers
 
       invoice.BusinessEntity = await _businessEntityService.GetAsync(invoice.BusinessEntityId, GetOrganizationId());
       invoice.BusinessEntity.Addresses = await _addressService.GetByAsync(invoice.BusinessEntityId);
-      invoice.InvoiceLines = await _generalLedgerInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
+      invoice.InvoiceLines = await _journalInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
 
       var model = new UpdateInvoiceViewModel
       {
@@ -518,7 +518,7 @@ namespace Accounting.Controllers
           AssetsAccountId = x.AssetsAccountId,
         }).ToList();
 
-        await _generalLedgerInvoiceInvoiceLineService
+        await _journalInvoiceInvoiceLineService
           .UpdateInvoiceLinesAsync(
             existingLines.Where(x => x.QuantityOrPriceModified).ToList(), 
             newLines,

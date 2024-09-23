@@ -13,24 +13,24 @@ namespace Accounting.Controllers
   [Route("api/i")]
   public class InvoiceApiController : BaseController
   {
-    private readonly GeneralLedgerService _generalLedgerService;
-    private readonly GeneralLedgerInvoiceInvoiceLineService _generalLedgerInvoiceInvoiceLineService;
-    private readonly GeneralLedgerInvoiceInvoiceLinePaymentService _generalLedgerInvoiceInvoiceLinePaymentService;
+    private readonly JournalService _journalService;
+    private readonly JournalInvoiceInvoiceLineService _journalInvoiceInvoiceLineService;
+    private readonly JournalInvoiceInvoiceLinePaymentService _journalInvoiceInvoiceLinePaymentService;
     private readonly PaymentService _paymentService;
     private readonly InvoiceInvoiceLinePaymentService _invoiceInvoiceLinePaymentService;
     private readonly InvoiceLineService _invoiceLineService;
 
     public InvoiceApiController(
-      GeneralLedgerService generalLedgerService, 
-      GeneralLedgerInvoiceInvoiceLineService generalLedgerInvoiceInvoiceLineService,
-      GeneralLedgerInvoiceInvoiceLinePaymentService generalLedgerInvoiceInvoiceLinePaymentService,
+      JournalService journalService, 
+      JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService,
+      JournalInvoiceInvoiceLinePaymentService journalInvoiceInvoiceLinePaymentService,
       PaymentService paymentService,
       InvoiceInvoiceLinePaymentService invoiceInvoiceLinePaymentService,
       InvoiceLineService invoiceLineService)
     {
-      _generalLedgerService = generalLedgerService;
-      _generalLedgerInvoiceInvoiceLineService = generalLedgerInvoiceInvoiceLineService;
-      _generalLedgerInvoiceInvoiceLinePaymentService = generalLedgerInvoiceInvoiceLinePaymentService;
+      _journalService = journalService;
+      _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
+      _journalInvoiceInvoiceLinePaymentService = journalInvoiceInvoiceLinePaymentService;
       _paymentService = paymentService;
       _invoiceInvoiceLinePaymentService = invoiceInvoiceLinePaymentService;
       _invoiceLineService = invoiceLineService;
@@ -43,7 +43,7 @@ namespace Accounting.Controllers
     string inStatus = $"{InvoiceStatusConstants.Unpaid},{InvoiceStatusConstants.PartiallyPaid},{InvoiceStatusConstants.Paid}",
     bool includeVoidInvoices = false)
     {
-      InvoiceService invoiceService = new InvoiceService(_generalLedgerService, _generalLedgerInvoiceInvoiceLineService);
+      InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService);
       var (invoices, nextPageNumber) = await invoiceService.GetAllAsync(
           page,
           pageSize,
@@ -55,7 +55,7 @@ namespace Accounting.Controllers
       foreach (var invoice in invoices)
       {
         invoice.Payments = await _invoiceInvoiceLinePaymentService.GetAllPaymentsByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
-        invoice.InvoiceLines = await _generalLedgerInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
+        invoice.InvoiceLines = await _journalInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
 
         foreach (var invoiceLine in invoice.InvoiceLines)
         {
@@ -124,14 +124,14 @@ namespace Accounting.Controllers
         string invoiceNumbers = null,
         string company = null)
     {
-      InvoiceService invoiceService = new InvoiceService(_generalLedgerService, _generalLedgerInvoiceInvoiceLineService);
+      InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService);
       List<Invoice> invoices = await invoiceService.SearchInvoicesAsync(inStatus?.Split(","), invoiceNumbers, company, GetOrganizationId());
 
       InvoiceInvoiceLinePaymentService invoicePaymentService = new InvoiceInvoiceLinePaymentService();
       foreach (var invoice in invoices)
       {
         invoice.Payments = await _invoiceInvoiceLinePaymentService.GetAllPaymentsByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
-        invoice.InvoiceLines = await _generalLedgerInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
+        invoice.InvoiceLines = await _journalInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
 
         foreach (var invoiceLine in invoice.InvoiceLines)
         {

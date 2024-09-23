@@ -31,11 +31,11 @@ namespace Accounting.Service
     {
       throw new NotImplementedException(
         "Do not implement this method. " +
-        "Use generalLedgerInvoiceInvoiceLineService.GetByInvoiceIdAsync");
+        "Use journalInvoiceInvoiceLineService.GetByInvoiceIdAsync");
 
-      //GeneralLedgerInvoiceInvoiceLineService generalLedgerInvoiceInvoiceLineService
-      //  = new GeneralLedgerInvoiceInvoiceLineService(this, new GeneralLedgerService());
-      //return await generalLedgerInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoiceId, organizationId, true);
+      //JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService
+      //  = new JournalInvoiceInvoiceLineService(this, new JournalService());
+      //return await journalInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoiceId, organizationId, true);
     }
 
     public async Task<int> UpdateAsync(InvoiceLine line, int organizationId)
