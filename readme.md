@@ -273,7 +273,7 @@ Companies that adopt my system are far less likely to get audited than those usi
 ## Roadmap
 
 - [ ] Journal
-	- [ ] Rename `Journal` to Journal.
+	- [X] Rename `GeneralLedger` to Journal. [VIDEO](https://youtu.be/ouUkyeA0Ls8?si=0KSpwO1OYIL0n7iQ)
 	- [ ] Implement check-in-transit flow.
 - [ ] Jurisdictions
 	- [ ] Taxes, fees, and discounts.
