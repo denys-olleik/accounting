@@ -10,6 +10,7 @@
 	"BaseCurrency" VARCHAR(3) NULL,
 	"Website" VARCHAR(100) NULL,
   "PaymentInstructions" TEXT,
+	"ElevatedSecurity" BOOLEAN NOT NULL DEFAULT FALSE,
   "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
