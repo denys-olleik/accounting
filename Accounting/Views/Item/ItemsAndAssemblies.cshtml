@@ -37,7 +37,7 @@
     },
     methods: {
       fetchItems() {
-        fetch(`/api/item/items-and-assemblies?page=${this.page}&pageSize=${this.pageSize}`)
+        fetch(`/api/inv/items-and-assemblies?page=${this.page}&pageSize=${this.pageSize}`)
           .then(response => response.json())
           .then(data => {
             this.items = data.items;

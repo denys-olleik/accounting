@@ -24,6 +24,21 @@ namespace Accounting.Controllers
       _locationService = locationService;
     }
 
+    [HttpGet("items-and-assemblies")]
+    public async Task<IActionResult> ItemsAndAssemblies(
+      int page, 
+      int pageSize = 2)
+    {
+      var (items, nextPageNumber) = 
+        await _itemService.GetAllAsync(
+          page, 
+          pageSize, 
+          false, 
+          GetOrganizationId());
+
+      throw new NotImplementedException();
+    }
+
     [HttpGet("inventories")]
     public async Task<IActionResult> Inventories(
       int page = 1,
