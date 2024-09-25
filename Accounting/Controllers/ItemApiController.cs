@@ -46,7 +46,8 @@ namespace Accounting.Controllers
           Quantity = x.Quantity
         }).ToList(),
         NextPage = nextPageNumber,
-        Page = page
+        Page = page,
+        PageSize = pageSize
       };
 
       return Ok(vm);
