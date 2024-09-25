@@ -1,12 +1,17 @@
 using Accounting.Common;
 using Accounting.Events;
+using Accounting.Filters;
 using Accounting.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
+builder.Services.AddControllersWithViews(options =>
+{
+  options.Filters.Add<PreventIdentifiableResponseFilter>();
+})
+.AddNewtonsoftJson(options =>
 {
   options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
   {

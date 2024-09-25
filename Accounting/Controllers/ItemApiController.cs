@@ -36,7 +36,20 @@ namespace Accounting.Controllers
           false, 
           GetOrganizationId());
 
-      throw new NotImplementedException();
+      ItemsAndAssembliesViewModel vm = new ItemsAndAssembliesViewModel
+      {
+        Items = items.Select(x => new ItemsAndAssembliesViewModel.ItemViewModel
+        {
+          ItemID = x.ItemID,
+          Name = x.Name,
+          Description = x.Description,
+          Quantity = x.Quantity
+        }).ToList(),
+        NextPage = nextPageNumber,
+        Page = page
+      };
+
+      return Ok(vm);
     }
 
     [HttpGet("inventories")]

@@ -8,6 +8,7 @@ namespace Accounting.Business
     public int ItemID { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
+    public decimal Quantity { get; set; }
     public int? UnitTypeId { get; set; }
     public string? ItemType { get; set; }
     public string InventoryMethod { get; set; } = InventoryMethods.FIFO;
