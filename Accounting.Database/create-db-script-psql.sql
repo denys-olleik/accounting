@@ -663,6 +663,7 @@ INSERT INTO "Account" ("Name", "Type", "ReconciliationExpense", "ParentAccountId
 INSERT INTO "Account" ("Name", "Type", "ReconciliationExpense", "ParentAccountId", "CreatedById", "OrganizationId") VALUES ('expense-maintenance', 'expense', TRUE,  8, 1, 1);
 INSERT INTO "Account" ("Name", "Type", "ReconciliationLiabilitiesAndAssets", "CreatedById", "OrganizationId") VALUES ('discover-5555', 'liabilities', TRUE, 1, 1);
 INSERT INTO "Account" ("Name", "Type", "CreatedById", "OrganizationId") VALUES ('inventory', 'assets', 1, 1);
+
 INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "OrganizationId", "CreatedById") VALUES ('Net 30', 30, 1, 1);
 INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "OrganizationId", "CreatedById") VALUES ('Net 60', 60, 1, 1);
 
@@ -684,7 +685,7 @@ values
 ('Attention Imaging', '123 Main St.', 'Anytown', 'CA', '12345', 'USA', 4, 1, 1),
 ('Attention Shipping', '456 Main St.', 'Anytown', 'CA', '12345', 'USA', 4, 1, 1);
 
--- Inserting realistic Products for a manufacturing company
+ -- Inserting realistic Products for a manufacturing company
 INSERT INTO "Item" ("Name", "Description", "ItemType", "RevenueAccountId", "AssetsAccountId", "CreatedById", "OrganizationId") VALUES
 ('Industrial Pump', 'High-capacity industrial water pump for manufacturing and agricultural applications.', 'product', 4, 1, 1, 1),
 ('CNC Milling Machine', 'Precision CNC milling machine for metalworking and fabrication.', 'product', 4, 1, 1, 1),

@@ -270,18 +270,16 @@
   </div>
   <div class="display-flex">
     <div class="flex-1">
-      <fieldset>
-        <legend>Payment Instructions</legend>
+      <div class="display-flex flex-direction-column">
+        <label class="background-color-antiquewhite">Payment Instructions</label>
         <div class="display-flex flex-direction-column">
-          <div class="display-flex flex-direction-column">
-            <textarea asp-for="PaymentInstructions" class="font-size-20px width-100" rows="5"></textarea>
-          </div>
+          <textarea asp-for="PaymentInstructions" class="font-size-20px width-100" rows="5"></textarea>
         </div>
-        <div class="display-flex">
+        <div class="display-flex background-color-antiquewhite">
           <input type="checkbox" asp-for="RememberPaymentInstructions">
           <label asp-for="RememberPaymentInstructions">Remember</label>
         </div>
-      </fieldset>
+      </div>
     </div>
     <div class="width-5px"></div>
     <div class="flex-1">
