@@ -4,9 +4,6 @@ using Accounting.Common;
 using Accounting.Database.Interfaces;
 using Npgsql;
 using System.Data;
-using static Accounting.Business.Invoice;
-using Renci.SshNet.Security;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Accounting.Database
 {
@@ -1672,15 +1669,15 @@ namespace Accounting.Database
 
         if (receivedAmount == 0)
         {
-          return InvoiceStatusConstants.Unpaid;
+          return Invoice.InvoiceStatusConstants.Unpaid;
         }
         else if (receivedAmount < invoiceTotal)
         {
-          return InvoiceStatusConstants.PartiallyPaid;
+          return Invoice.InvoiceStatusConstants.PartiallyPaid;
         }
         else
         {
-          return InvoiceStatusConstants.Paid;
+          return Invoice.InvoiceStatusConstants.Paid;
         }
       }
 
@@ -1755,7 +1752,7 @@ namespace Accounting.Database
         p.Add("@BillingAddressJSON", entity.BillingAddressJSON);
         p.Add("@ShippingAddressJSON", entity.ShippingAddressJSON ?? "{}");
         p.Add("@DueDate", entity.DueDate);
-        p.Add("@Status", InvoiceStatusConstants.Unpaid);
+        p.Add("@Status", Invoice.InvoiceStatusConstants.Unpaid);
         p.Add("@PaymentInstructions", entity.PaymentInstructions);
         p.Add("@CreatedById", entity.CreatedById);
         p.Add("@OrganizationId", entity.OrganizationId);
@@ -2145,7 +2142,7 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@InvoiceID", invoiceId);
         p.Add("@VoidReason", voidReason);
-        p.Add("@Status", InvoiceStatusConstants.Void);
+        p.Add("@Status", Invoice.InvoiceStatusConstants.Void);
         p.Add("@OrganizationId", organizationId);
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))

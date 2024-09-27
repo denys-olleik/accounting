@@ -4,7 +4,6 @@ using Accounting.Models.BusinessEntityViewModels;
 using Accounting.Models.InvoiceViewModels;
 using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
-using static Accounting.Business.Invoice;
 
 namespace Accounting.Controllers
 {
@@ -40,7 +39,7 @@ namespace Accounting.Controllers
     public async Task<IActionResult> GetInvoices(
     int page = 1,
     int pageSize = 10,
-    string inStatus = $"{InvoiceStatusConstants.Unpaid},{InvoiceStatusConstants.PartiallyPaid},{InvoiceStatusConstants.Paid}",
+    string inStatus = $"{Invoice.InvoiceStatusConstants.Unpaid},{Invoice.InvoiceStatusConstants.PartiallyPaid},{Invoice.InvoiceStatusConstants.Paid}",
     bool includeVoidInvoices = false)
     {
       InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService);

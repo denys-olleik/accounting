@@ -13,7 +13,6 @@ using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Transactions;
-using static Accounting.Business.Invoice;
 
 namespace Accounting.Controllers
 {
@@ -137,7 +136,7 @@ namespace Accounting.Controllers
         Customers = await GetAllCustomersWithAddresses(),
         PaymentTerms = await GetAllPaymentTerms(),
         InvoiceDate = DateTime.UtcNow,
-        InvoiceStatuses = InvoiceStatusConstants.All.ToList(),
+        InvoiceStatuses = Invoice.InvoiceStatusConstants.All.ToList(),
         ProductsAndServices = await GetAllProductsAndServices(orgId),
         PaymentInstructions = await _organizationService.GetPaymentInstructions(orgId)
       };
@@ -177,7 +176,7 @@ namespace Accounting.Controllers
 
       model.Customers = await GetAllCustomersWithAddresses();
       model.PaymentTerms = await GetAllPaymentTerms();
-      model.InvoiceStatuses = InvoiceStatusConstants.All.ToList();
+      model.InvoiceStatuses = Invoice.InvoiceStatusConstants.All.ToList();
       model.ProductsAndServices = await GetAllProductsAndServices(GetOrganizationId());
       model.ValidationResult = validationResult;
 
@@ -366,7 +365,7 @@ namespace Accounting.Controllers
         InvoiceDate = invoice.Created,
         DueDate = invoice.DueDate,
         LastUpdated = invoice.LastUpdated,
-        InvoiceStatuses = InvoiceStatusConstants.All.ToList(),
+        InvoiceStatuses = Invoice.InvoiceStatusConstants.All.ToList(),
         ProductsAndServices = await GetAllProductsAndServices(GetOrganizationId()),
         Customer = new BusinessEntityViewModel()
         {
@@ -423,7 +422,7 @@ namespace Accounting.Controllers
       model.PaymentTerms = await GetAllPaymentTerms();
       model.InvoiceDate = invoice.Created;
       model.DueDate = invoice.DueDate;
-      model.InvoiceStatuses = InvoiceStatusConstants.All.ToList();
+      model.InvoiceStatuses = Invoice.InvoiceStatusConstants.All.ToList();
       model.ProductsAndServices = await GetAllProductsAndServices(GetOrganizationId());
       model.Customer = new BusinessEntityViewModel()
       {
