@@ -361,7 +361,6 @@ namespace Accounting.Models.Account
   }
 }
 
-
 namespace Accounting.Validators
 {
   public class UpdateAccountViewModelValidator : AbstractValidator<UpdateAccountViewModel>
