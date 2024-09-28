@@ -51,7 +51,7 @@ namespace Accounting.Controllers
       if (parentAccount != null)
       {
         model.ParentAccountId = parentAccountId;
-        model.ParentAccount = new CreateAccountViewModel.AccountViewModel()
+        model.ParentAccount = new AccountViewModel()
         {
           AccountID = parentAccount!.AccountID,
           Name = parentAccount!.Name
@@ -126,7 +126,7 @@ namespace Accounting.Controllers
       if (parentAccount != null)
       {
         model.ParentAccountId = parentAccount.AccountID;
-        model.ParentAccount = new UpdateAccountViewModel.AccountViewModel()
+        model.ParentAccount = new AccountViewModel()
         {
           AccountID = parentAccount.AccountID,
           Name = parentAccount.Name
@@ -153,7 +153,7 @@ namespace Accounting.Controllers
           var parentAccount = await _accountService.GetAsync(model.ParentAccountId.Value, GetOrganizationId());
           if (parentAccount != null)
           {
-            model.ParentAccount = new UpdateAccountViewModel.AccountViewModel()
+            model.ParentAccount = new AccountViewModel()
             {
               AccountID = parentAccount.AccountID,
               Name = parentAccount.Name
@@ -296,19 +296,18 @@ namespace Accounting.Controllers
 
 namespace Accounting.Models.Account
 {
+  public abstract class BaseAccountViewModel
+  {
+    public int? ParentAccountId { get; set; }
+    public AccountViewModel? ParentAccount { get; set; }
+    public List<string> AvailableAccountTypes { get; set; } = new List<string>();
+  }
+
   public class AccountsViewModel
   {
-    public List<AccountViewModel> Accounts { get; set; }
-      = new List<AccountViewModel>();
-
-    public class AccountViewModel
-    {
-      public int AccountID { get; set; }
-      public string? Name { get; set; }
-      public string? Type { get; set; }
-      public int? ParentAccountId { get; set; }
-    }
+    public List<AccountViewModel> Accounts { get; set; } = new List<AccountViewModel>();
   }
+
   public class AccountViewModel
   {
     public AccountViewModel()
@@ -332,60 +331,36 @@ namespace Accounting.Models.Account
     public int CreatedById { get; set; }
     public List<AccountViewModel>? Children { get; set; }
   }
-  public class CreateAccountViewModel
+
+  public class CreateAccountViewModel : BaseAccountViewModel
   {
-    public int? ParentAccountId { get; set; }
-    public AccountViewModel? ParentAccount { get; set; }
     public string? AccountName { get; set; }
     public string? SelectedAccountType { get; set; }
-
     public bool ShowInInvoiceCreationDropDownForCredit { get; set; }
     public bool ShowInInvoiceCreationDropDownForDebit { get; set; }
     public bool ShowInReceiptOfPaymentDropDownForCredit { get; set; }
     public bool ShowInReceiptOfPaymentDropDownForDebit { get; set; }
     public bool ReconciliationExpense { get; set; }
     public bool ReconciliationLiabilitiesAndAssets { get; set; }
-
-
-    public List<string> AvailableAccountTypes { get; set; } = new List<string>();
-
     public ValidationResult? ValidationResult { get; set; }
-
-    public class AccountViewModel
-    {
-      public int AccountID { get; set; }
-      public string? Name { get; set; }
-      public string? Type { get; set; }
-    }
   }
-  public class UpdateAccountViewModel
+
+  public class UpdateAccountViewModel : BaseAccountViewModel
   {
     public int AccountID { get; set; }
-    public int? ParentAccountId { get; set; }
-    public AccountViewModel? ParentAccount { get; set; }
     public string? AccountNumber { get; set; }
     public string? AccountName { get; set; }
     public string? SelectedAccountType { get; set; }
-
     public bool ShowInInvoiceCreationDropDownForCredit { get; set; }
     public bool ShowInInvoiceCreationDropDownForDebit { get; set; }
     public bool ShowInReceiptOfPaymentDropDownForCredit { get; set; }
     public bool ShowInReceiptOfPaymentDropDownForDebit { get; set; }
     public bool ReconciliationExpense { get; set; }
     public bool ReconciliationLiabilitiesAndAssets { get; set; }
-
-
-    public List<string> AvailableAccountTypes { get; set; } = new List<string>();
-
     public ValidationResult? ValidationResult { get; set; }
-
-    public class AccountViewModel
-    {
-      public int AccountID { get; set; }
-      public string Name { get; set; } = string.Empty;
-    }
   }
 }
+
 
 namespace Accounting.Validators
 {
