@@ -1,7 +1,7 @@
 ﻿namespace Accounting.Models.InvoiceViewModels
 {
-    public class InvoicesPaginatedViewModel : PaginatedViewModel
-    {
+  public class InvoicesPaginatedViewModel : PaginatedViewModel
+  {
 
-    }
+  }
 }

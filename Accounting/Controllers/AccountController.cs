@@ -27,10 +27,17 @@ namespace Accounting.Controllers
 
     [Route("accounts")]
     [HttpGet]
-    public IActionResult Accounts()
+    public IActionResult Accounts(int page = 1, int pageSize = 2)
     {
-      return View();
+      var vm = new AccountsPaginatedViewModel
+      {
+        Page = page,
+        PageSize = pageSize
+      };
+
+      return View(vm);
     }
+
 
     [Route("create/{parentAccountId?}")]
     [HttpGet]
@@ -358,6 +365,11 @@ namespace Accounting.Models.Account
     public bool ReconciliationExpense { get; set; }
     public bool ReconciliationLiabilitiesAndAssets { get; set; }
     public ValidationResult? ValidationResult { get; set; }
+  }
+
+  public class AccountsPaginatedViewModel : PaginatedViewModel
+  {
+
   }
 }
 
