@@ -296,6 +296,42 @@ namespace Accounting.Controllers
 
 namespace Accounting.Models.Account
 {
+  public class AccountsViewModel
+  {
+    public List<AccountViewModel> Accounts { get; set; }
+      = new List<AccountViewModel>();
+
+    public class AccountViewModel
+    {
+      public int AccountID { get; set; }
+      public string? Name { get; set; }
+      public string? Type { get; set; }
+      public int? ParentAccountId { get; set; }
+    }
+  }
+  public class AccountViewModel
+  {
+    public AccountViewModel()
+    {
+      Name = string.Empty;
+      Type = string.Empty;
+    }
+
+    public int AccountID { get; set; }
+    public string Name { get; set; }
+    public string Type { get; set; }
+    public int JournalEntryCount { get; set; }
+    public bool InvoiceCreationForCredit { get; set; }
+    public bool InvoiceCreationForDebit { get; set; }
+    public bool ReceiptOfPaymentForCredit { get; set; }
+    public bool ReceiptOfPaymentForDebit { get; set; }
+    public bool ReconciliationExpense { get; set; }
+    public bool ReconciliationLiabilitiesAndAssets { get; set; }
+    public DateTime Created { get; set; }
+    public int? ParentAccountId { get; set; }
+    public int CreatedById { get; set; }
+    public List<AccountViewModel>? Children { get; set; }
+  }
   public class CreateAccountViewModel
   {
     public int? ParentAccountId { get; set; }
@@ -322,7 +358,6 @@ namespace Accounting.Models.Account
       public string? Type { get; set; }
     }
   }
-
   public class UpdateAccountViewModel
   {
     public int AccountID { get; set; }
@@ -348,44 +383,6 @@ namespace Accounting.Models.Account
     {
       public int AccountID { get; set; }
       public string Name { get; set; } = string.Empty;
-    }
-  }
-
-  public class AccountViewModel
-  {
-    public AccountViewModel()
-    {
-      Name = string.Empty;
-      Type = string.Empty;
-    }
-
-    public int AccountID { get; set; }
-    public string Name { get; set; }
-    public string Type { get; set; }
-    public int JournalEntryCount { get; set; }
-    public bool InvoiceCreationForCredit { get; set; }
-    public bool InvoiceCreationForDebit { get; set; }
-    public bool ReceiptOfPaymentForCredit { get; set; }
-    public bool ReceiptOfPaymentForDebit { get; set; }
-    public bool ReconciliationExpense { get; set; }
-    public bool ReconciliationLiabilitiesAndAssets { get; set; }
-    public DateTime Created { get; set; }
-    public int? ParentAccountId { get; set; }
-    public int CreatedById { get; set; }
-    public List<AccountViewModel>? Children { get; set; }
-  }
-
-  public class AccountsViewModel
-  {
-    public List<AccountViewModel> Accounts { get; set; }
-      = new List<AccountViewModel>();
-
-    public class AccountViewModel
-    {
-      public int AccountID { get; set; }
-      public string? Name { get; set; }
-      public string? Type { get; set; }
-      public int? ParentAccountId { get; set; }
     }
   }
 }
