@@ -65,9 +65,9 @@ namespace Accounting.Service
       return await factoryManager.GetAccountManager().GetByAccountNameAsync(accountName, organizationId);
     }
 
-    public async Task<List<Account>> GetAllHierachicalAsync(int organizationId, bool includeCountJournalEntries)
+    public async Task<List<Account>> GetAllHierachicalAsync(int organizationId, bool includeJournalEntriesCount)
     {
-      List<Account> allOrganizationAccountsFlatList = await GetAllAsync(organizationId, includeCountJournalEntries);
+      List<Account> allOrganizationAccountsFlatList = await GetAllAsync(organizationId, includeJournalEntriesCount);
       List<Account> rootAccounts = allOrganizationAccountsFlatList.Where(x => x.ParentAccountId == null).ToList();
 
       foreach (var account in rootAccounts)
