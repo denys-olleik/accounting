@@ -515,6 +515,48 @@ namespace Accounting.Database
         return result.ToList();
       }
 
+      public async Task<List<Account>> GetAllAsync(int page, int pageSize, int organizationId, bool includeDescendants)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Page", page);
+        p.Add("@PageSize", pageSize);
+        p.Add("@OrganizationId", organizationId);
+
+        IEnumerable<Account> allAccounts;
+        IEnumerable<Account> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          allAccounts = await con.QueryAsync<Account>($"""
+            SELECT *
+            FROM "Account"
+            WHERE "OrganizationId" = @OrganizationId
+            """, p);
+
+          if (includeDescendants)
+          {
+            result = allAccounts.Where(x => x.ParentAccountId == null).OrderBy(x => x.Name).Skip(pageSize * (page - 1)).Take(pageSize);
+
+            foreach (var account in result)
+            {
+              account.Children = allAccounts.Where(x => x.ParentAccountId == account.AccountID).OrderBy(x => x.Name).ToList();
+
+              if (account.Children.Any())
+              {
+                PopulateChildrenRecursively(account.Children, allAccounts);
+              }
+            }
+          }
+          else
+          {
+            result = allAccounts.OrderBy(x => x.Name).Skip(pageSize * (page - 1)).Take(pageSize);
+          }
+        }
+
+        return result.ToList();
+      }
+
+
       public async Task<List<Account>> GetAllReconciliationExpenseAsync(int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
@@ -5193,27 +5235,27 @@ namespace Accounting.Database
 
     public class SecretManager : ISecretManager
     {
-//CREATE TABLE "Secret"
-//(
-//	"SecretID" SERIAL PRIMARY KEY NOT NULL,
-//	"Key" VARCHAR(100) NOT NULL UNIQUE,
-//	"Master" BOOLEAN DEFAULT FALSE,
-//	"Value" TEXT NOT NULL,
-//	"Type" VARCHAR(20) CHECK("Type" IN ('email', 'sms', 'cloud')) NULL,
-//	"Purpose" VARCHAR(100) NULL,
-//	"Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-//	"CreatedById" INT NOT NULL,
-//	"OrganizationId" INT NOT NULL,
-//	FOREIGN KEY("CreatedById") REFERENCES "User"("UserID"),
-//	FOREIGN KEY("OrganizationId") REFERENCES "Organization"("OrganizationID")
-//);
+      //CREATE TABLE "Secret"
+      //(
+      //	"SecretID" SERIAL PRIMARY KEY NOT NULL,
+      //	"Key" VARCHAR(100) NOT NULL UNIQUE,
+      //	"Master" BOOLEAN DEFAULT FALSE,
+      //	"Value" TEXT NOT NULL,
+      //	"Type" VARCHAR(20) CHECK("Type" IN ('email', 'sms', 'cloud')) NULL,
+      //	"Purpose" VARCHAR(100) NULL,
+      //	"Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+      //	"CreatedById" INT NOT NULL,
+      //	"OrganizationId" INT NOT NULL,
+      //	FOREIGN KEY("CreatedById") REFERENCES "User"("UserID"),
+      //	FOREIGN KEY("OrganizationId") REFERENCES "Organization"("OrganizationID")
+      //);
 
-//CREATE UNIQUE INDEX unique_master_per_organization
-//ON "Secret" ("OrganizationId")
-//WHERE "Master" = TRUE;
+      //CREATE UNIQUE INDEX unique_master_per_organization
+      //ON "Secret" ("OrganizationId")
+      //WHERE "Master" = TRUE;
 
-//CREATE UNIQUE INDEX unique_type_per_organization
-//ON "Secret" ("OrganizationId", "Type");
+      //CREATE UNIQUE INDEX unique_type_per_organization
+      //ON "Secret" ("OrganizationId", "Type");
       public Secret Create(Secret entity)
       {
         throw new NotImplementedException();
