@@ -535,7 +535,11 @@ namespace Accounting.Database
 
           if (includeDescendants)
           {
-            result = allAccounts.Where(x => x.ParentAccountId == null).OrderBy(x => x.Name).Skip(pageSize * (page - 1)).Take(pageSize);
+            result = allAccounts
+              .Where(x => x.ParentAccountId == null)
+              .OrderBy(x => x.Name)
+              .Skip(pageSize * (page - 1))
+              .Take(pageSize);
 
             foreach (var account in result)
             {

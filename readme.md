@@ -1,6 +1,4 @@
-![Watch the video](yt-thumb.png)
-
-[Watch the video on YouTube](https://www.youtube.com/watch?v=MoYr0cgosOY)
+![0](yt-thumb.png)
 
 ## It doesn't have to be this confusing...
 
@@ -14,13 +12,13 @@
 
 ## Screenshots
 
-![Watch the video](chrome_1YoniUtAt3.gif)
+![1](chrome_1YoniUtAt3.gif)
 ---
-![Watch the video](chrome_gp6bHABAqw.png)
+![2](chrome_gp6bHABAqw.png)
 ---
-![Watch the video](chrome_Uifj7dm4tD.gif)
+![3](chrome_Uifj7dm4tD.gif)
 ---
-![Watch the video](chrome_YHpC5nO5Ir.png)
+![4](chrome_YHpC5nO5Ir.png)
 
 ## Introduction
 
@@ -226,8 +224,6 @@ CREATE TABLE "JournalReconciliationTransaction"
 );
 ```
 
-Integration with banks to pull the transaction data programatically is possible, but CSV import is used as universal fallback option.
-
 ## Installation
 
 0. Have `dotnet` installed.
@@ -242,79 +238,6 @@ Integration with banks to pull the transaction data programatically is possible,
 5. Create invoice.
 6. Receive payment.
 
-## Backup and import/export strategy
-
-The system will have three levels of backups.
-
-1. **Ledger** - System will attempt to perform a backup upon every action/transaction that affects the ledger. Backups will be in human and machine readable format such as csv, json, or xml (you'll get to pick whichever you hate the least). 
-2. **Database** - Performed as often as resources allow, ideally every hour.
-3. **Instance** - Entire virtual machine instance is backed up daily.
-
----
-
-## Ambitions of Grandeur: Rebuilding an Institution
-
-Why doesn't anyone want to be an accountant? Because it's not accounting anymore.
-
-![test](Double-entry_example_from_1926.png)
-
-I don't remember QwackBooks ever looking like that.
-
-Intuit didn't invent accounting; they've stolen it.
-
-Accounting existed before computers, databases, and software. Transactions were recorded in physical journals using pen and paper, which forced accountants to have a better understanding of company finances due to the process of manual entry, with little room for error. Now, the process has been automated through software, and the journal entries are hidden away, leaving only the final report to spot errors and fraud.
-
-None of you can call yourselves accountants; you're just QwackBooks users. The truck drivers of the office. Your boss thinks of you as a whiny, tail-dragging █████. That's why he needs just one of you who knows the entire system. Maybe you'll get lucky with an assistant, but most likely they'll cause more problems, because it'll be the boss's daughter and she doesn't give a ████.
-
-Companies that adopt my system are far less likely to get audited than those using QwackBooks or some half-baked ERP system thrown together by a committee in India and managed by another in San Francisco. These systems often go through months of customization and setup before they can be used, and still end in failed implementations.
-
 ![](david-vs-goliath.png)
 
-## Roadmap
-
-- [ ] Journal
-	- [X] Rename `GeneralLedger` to Journal. [VIDEO](https://youtu.be/ouUkyeA0Ls8?si=0KSpwO1OYIL0n7iQ)
-	- [ ] Implement check-in-transit flow.
-- [ ] Jurisdictions
-	- [ ] Taxes, fees, and discounts.
-- [ ] Invoice
-	- [ ] Attachments and supporting documents.
-		- [ ] Optionally print supporting documents to pdf.
-				- [ ] Print order.
-	- [ ] Clear company during invoice creation.
-	- [ ] Fill remaning empty space.
-  - [ ] Don't let user define items or inventory during invoice creation. Fight me.
-- [ ] Payments
-	- [ ] Stripe.
-- [ ] Items and Assemblies (currently in progress)
-	- [ ] `Item`.`Quantity` is quantity in assembly. `Inventory`.`Quantity` is quantity on hand.
-- [ ] Reporting
-	- [ ] IronPDF with watermarks until I can afford it.
-	- [ ] Balance sheet, income statement, and cash flow. Pick start/end date, choose report type.
-	- [ ] Inventory value
-- [ ] Provisioning
-	- [ ] Virtual machine, database, web server, certificates, scripts, and notify tenant when ready.
-- [ ] Task Management
-  - [ ] Assembly of tasks.
-	- [ ] Assign tasks to users.
-		- [ ] Task completion notification.
-- [ ] Shipping and Receiving
-	- [ ] Barcode, scanner, printer, etc.
-	- [ ] Stuff moving in, out, and within organization.
-		- [ ] Journal entries to asset accounts.
-- [ ] User Management
-	- [ ] Roles and permissions.
-- [ ] Taxes
-	- [ ] PUBLICATION 5718.
-- [ ] Localization and globalization
-	- [ ] Currency, date, time, number, language (`en-us` in url).
-- [ ] Integrations
-	- [ ] Instance to instance
- 
-## Other thoughts
-
-PO/SOs are inventory receivables and liabilities.
-
-## ETA
-
-Two more years at current pace.
+3-24 months.
