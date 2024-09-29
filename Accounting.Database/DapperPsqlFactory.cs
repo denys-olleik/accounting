@@ -515,7 +515,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<List<Account>> GetAllAsync(int page, int pageSize, int organizationId, bool includeDescendants)
+      public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, bool includeDescendants)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
