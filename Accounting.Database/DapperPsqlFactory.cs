@@ -515,7 +515,12 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, bool includeCountJournalEntries, bool includeDescendants)
+      public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(
+        int page, 
+        int pageSize, 
+        int organizationId, 
+        bool includeCountJournalEntries, 
+        bool includeDescendants)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
@@ -529,7 +534,7 @@ namespace Accounting.Database
           result = await con.QueryAsync<Account>($"""
             SELECT * 
             FROM "Account"
-            WHERE "OrganizationId" = @OrganizationId
+            WHERE "OrganizationId" = @OrganizationId AND "ParentAccountId" IS NULL
             ORDER BY "Name"
             LIMIT @PageSize OFFSET @Offset
             """, new { PageSize = pageSize, Offset = pageSize * (page - 1), OrganizationId = organizationId });
