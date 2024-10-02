@@ -27,7 +27,7 @@ namespace Accounting.Controllers
 
     [Route("accounts")]
     [HttpGet]
-    public IActionResult Accounts(int page = 1, int pageSize = 2)
+    public IActionResult Accounts(int page = 1, int pageSize = 5)
     {
       var vm = new AccountsPaginatedViewModel
       {

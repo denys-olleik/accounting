@@ -563,12 +563,12 @@ namespace Accounting.Database
           using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
           {
             var journalEntryCounts = await con.QueryAsync<(int AccountID, int JournalEntryCount)>($"""
-                SELECT a."AccountID", COUNT(gl."JournalID") AS "JournalEntryCount"
-                FROM "Account" a
-                LEFT JOIN "Journal" gl ON a."AccountID" = gl."AccountId" AND a."OrganizationId" = gl."OrganizationId"
-                WHERE a."AccountID" IN @AccountIds
-                GROUP BY a."AccountID"
-                """, new { AccountIds = accountIds });
+              SELECT a."AccountID", COUNT(gl."JournalID") AS "JournalEntryCount"
+              FROM "Account" a
+              LEFT JOIN "Journal" gl ON a."AccountID" = gl."AccountId" AND a."OrganizationId" = gl."OrganizationId"
+              WHERE a."AccountID" = ANY(@AccountIds)
+              GROUP BY a."AccountID"
+              """, new { AccountIds = accountIds.ToArray() });
 
             var journalEntryCountDict = journalEntryCounts.ToDictionary(x => x.AccountID, x => x.JournalEntryCount);
 
