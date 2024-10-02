@@ -101,7 +101,7 @@
     methods: {
       handleAccountClick(accountID) {
         console.log(accountID);
-        this.$emit('account-clicked', accountID);
+        this.$emit('account-clicked', accountID); 
       },
     }
   };
@@ -137,10 +137,10 @@
       },
     },
     mounted() {
-      fetch('/api/a/all')
+      fetch('/api/a/all-accounts')
         .then(response => response.json())
         .then(data => {
-          this.accounts = this.addSelectedAccountID(data);
+          this.accounts = this.addSelectedAccountID(data.accounts);
         });
     },
   });

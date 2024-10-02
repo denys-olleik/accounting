@@ -224,9 +224,12 @@ namespace Accounting.Controllers
           includeChildren, 
           includeJournalEntriesCount);
 
-      List<AccountViewModel> accountsViewmodel = Accounts.Select(ConvertToViewModel).ToList();
-
-      return Ok(accountsViewmodel);
+      return Ok(new GetAccountsViewModel
+      {
+        Accounts = Accounts.Select(ConvertToViewModel).ToList(),
+        CurrentPage = page,
+        NextPage = NextPageNumber
+      });
     }
 
     [HttpGet("all-reconciliation-expense")]
@@ -372,6 +375,13 @@ namespace Accounting.Models.Account
     public bool ReconciliationExpense { get; set; }
     public bool ReconciliationLiabilitiesAndAssets { get; set; }
     public ValidationResult? ValidationResult { get; set; }
+  }
+
+  public class GetAccountsViewModel
+  {
+    public List<AccountViewModel>? Accounts { get; set; }
+    public int? CurrentPage { get; set; }
+    public int? NextPage { get; set; }
   }
 
   public class AccountsPaginatedViewModel : PaginatedViewModel
