@@ -523,41 +523,42 @@ namespace Accounting.Database
         p.Add("@OrganizationId", organizationId);
 
         IEnumerable<Account> allAccounts;
-        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           allAccounts = await con.QueryAsync<Account>($"""
-            SELECT *
-            FROM "Account"
-            WHERE "OrganizationId" = @OrganizationId
-            """, p);
+          SELECT *
+          FROM "Account"
+          WHERE "OrganizationId" = @OrganizationId
+          """, p);
+        }
 
-          if (includeDescendants)
-          {
-            result = allAccounts
+        IEnumerable<Account> result;
+        if (includeDescendants)
+        {
+          result = allAccounts
               .Where(x => x.ParentAccountId == null)
               .OrderBy(x => x.Name)
               .Skip(pageSize * (page - 1))
               .Take(pageSize);
 
-            foreach (var account in result)
-            {
-              account.Children = allAccounts.Where(x => x.ParentAccountId == account.AccountID).OrderBy(x => x.Name).ToList();
+          foreach (var account in result)
+          {
+            account.Children = allAccounts.Where(x => x.ParentAccountId == account.AccountID).OrderBy(x => x.Name).ToList();
 
-              if (account.Children.Any())
-              {
-                PopulateChildrenRecursively(account.Children, allAccounts);
-              }
+            if (account.Children.Any())
+            {
+              PopulateChildrenRecursively(account.Children, allAccounts);
             }
           }
-          else
-          {
-            result = allAccounts.OrderBy(x => x.Name).Skip(pageSize * (page - 1)).Take(pageSize);
-          }
         }
+        else
+        {
+          result = allAccounts.OrderBy(x => x.Name).Skip(pageSize * (page - 1)).Take(pageSize);
+        }
+        bool hasNextPage = allAccounts.Skip(pageSize * page).Any();
 
-        return 
+        return (result.ToList(), hasNextPage ? page + 1 : (int?)null);
       }
 
       private void PopulateChildrenRecursively(List<Account> children, IEnumerable<Account> allAccounts)

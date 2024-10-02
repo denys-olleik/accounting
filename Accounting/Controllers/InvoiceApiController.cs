@@ -36,11 +36,11 @@ namespace Accounting.Controllers
     }
 
     [HttpGet("get-invoices")]
-    public async Task<IActionResult> GetInvoices(
-    int page = 1,
-    int pageSize = 10,
-    string inStatus = $"{Invoice.InvoiceStatusConstants.Unpaid},{Invoice.InvoiceStatusConstants.PartiallyPaid},{Invoice.InvoiceStatusConstants.Paid}",
-    bool includeVoidInvoices = false)
+      public async Task<IActionResult> GetInvoices(
+      int page = 1,
+      int pageSize = 10,
+      string inStatus = $"{Invoice.InvoiceStatusConstants.Unpaid},{Invoice.InvoiceStatusConstants.PartiallyPaid},{Invoice.InvoiceStatusConstants.Paid}",
+      bool includeVoidInvoices = false)
     {
       InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService);
       var (invoices, nextPageNumber) = await invoiceService.GetAllAsync(

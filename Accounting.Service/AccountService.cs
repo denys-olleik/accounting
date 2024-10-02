@@ -65,7 +65,7 @@ namespace Accounting.Service
       return await factoryManager.GetAccountManager().GetByAccountNameAsync(accountName, organizationId);
     }
 
-    public async Task<List<Account>> GetAllAsync(int page, int pageSize, int organizationId, bool includeDescendants)
+    public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, bool includeDescendants)
     {
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetAccountManager().GetAllAsync(page, pageSize, organizationId, includeDescendants);

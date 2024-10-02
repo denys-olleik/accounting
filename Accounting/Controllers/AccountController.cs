@@ -208,8 +208,12 @@ namespace Accounting.Controllers
       return Ok(Account.AccountTypeConstants.All);
     }
 
-    [HttpGet("all")]
-    public async Task<IActionResult> GetAllAccounts()
+    [HttpGet("all-accounts")]
+    public async Task<IActionResult> GetAccounts(
+      bool includeChildren,
+      bool includeJournalEntriesCount,
+      int page = 1,
+      int pageSize = 10)
     {
       var organizationId = GetOrganizationId();
       List<Account> accounts = await _accountService.GetAllHierachicalAsync(organizationId, true);
