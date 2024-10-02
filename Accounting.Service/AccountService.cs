@@ -5,12 +5,6 @@ namespace Accounting.Service
 {
   public class AccountService
   {
-    public async Task<List<Account>> GetAllAsync(int organizationId, bool includeCountJournalEntries)
-    {
-      FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetAccountManager().GetAllAsync(organizationId, includeCountJournalEntries);
-    }
-
     public async Task<List<Account>> GetAccountBalanceReport(int organizationId)
     {
       FactoryManager factoryManager = new FactoryManager();
@@ -65,28 +59,10 @@ namespace Accounting.Service
       return await factoryManager.GetAccountManager().GetByAccountNameAsync(accountName, organizationId);
     }
 
-    public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, bool includeDescendants)
+    public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, bool includeJournalEntriesCount, bool includeDescendants)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetAccountManager().GetAllAsync(page, pageSize, organizationId, includeDescendants);
-    }
-
-    public async Task<List<Account>> GetAllHierachicalAsync(int organizationId, bool includeJournalEntriesCount)
-    {
-      List<Account> allOrganizationAccountsFlatList = await GetAllAsync(organizationId, includeJournalEntriesCount);
-      List<Account> rootAccounts = allOrganizationAccountsFlatList.Where(x => x.ParentAccountId == null).ToList();
-
-      foreach (var account in rootAccounts)
-      {
-        account.Children = allOrganizationAccountsFlatList.Where(x => x.ParentAccountId == account.AccountID).ToList();
-
-        if (account.Children.Any())
-        {
-          PopulateChildrenRecursively(account.Children, allOrganizationAccountsFlatList);
-        }
-      }
-
-      return rootAccounts;
+      return await factoryManager.GetAccountManager().GetAllAsync(page, pageSize, organizationId, includeJournalEntriesCount, includeDescendants);
     }
 
     private void PopulateChildrenRecursively(List<Account> children, List<Account> allOrganizationAccountsFlatList)
@@ -131,6 +107,12 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager();
       string type = await factoryManager.GetAccountManager().GetTypeAsync(accountId);
       return type;
+    }
+
+    public async Task<List<Account>> GetAllAsync(int organizationId, bool includeJournalEntriesCount)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      return await factoryManager.GetAccountManager().GetAllAsync(organizationId, includeJournalEntriesCount);
     }
   }
 }

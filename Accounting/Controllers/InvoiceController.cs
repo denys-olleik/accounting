@@ -146,20 +146,20 @@ namespace Accounting.Controllers
       return model;
     }
 
-    private async Task<List<AccountViewModel>> GetFilteredAccountsAsync(string[] accountNames)
-    {
-      var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
+    //private async Task<List<AccountViewModel>> GetFilteredAccountsAsync(string[] accountNames)
+    //{
+    //  var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
 
-      return accountService.Accounts
-          .Where(x => accountNames.Contains(x.Name))
-          .Select(x => new AccountViewModel()
-          {
-            AccountID = x.AccountID,
-            Name = x.Name,
-            Type = x.Type,
-          })
-          .ToList();
-    }
+    //  return accountService.Accounts
+    //      .Where(x => accountNames.Contains(x.Name))
+    //      .Select(x => new AccountViewModel()
+    //      {
+    //        AccountID = x.AccountID,
+    //        Name = x.Name,
+    //        Type = x.Type,
+    //      })
+    //      .ToList();
+    //}
 
     private async Task<ValidationResult> ValidateCreateInvoiceModel(CreateInvoiceViewModel model)
     {
@@ -172,7 +172,7 @@ namespace Accounting.Controllers
 
     private async Task<CreateInvoiceViewModel> InitializeErrorCreateInvoiceViewModel(CreateInvoiceViewModel model, ValidationResult validationResult)
     {
-      var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
+      //var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
 
       model.Customers = await GetAllCustomersWithAddresses();
       model.PaymentTerms = await GetAllPaymentTerms();
@@ -240,7 +240,7 @@ namespace Accounting.Controllers
 
       Guid transactionGuid = GuidExtensions.CreateSecureGuid();
 
-      var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
+      //var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
 
       foreach (var invoiceLine in model.InvoiceLines!)
       {

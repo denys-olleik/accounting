@@ -10,9 +10,9 @@ namespace Accounting.Database.Interfaces
     Task<List<Account>> GetAccountOptionsForInvoiceCreationDebit(int organizationId);
     Task<List<Account>> GetAccountOptionsForPaymentReceptionCredit(int organizationId);
     Task<List<Account>> GetAccountOptionsForPaymentReceptionDebit(int organizationId);
-    Task<List<Account>> GetAllAsync(int organizationId, bool includeCountJournalEntries);
     Task<List<Account>> GetAllAsync(string accountType, int organizationId);
-    Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, bool includeDescendants);
+    Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, bool includeJournalEntriesCount, bool includeDescendants);
+    Task<List<Account>> GetAllAsync(int organizationId, bool includeJournalEntriesCount);
     Task<List<Account>> GetAllReconciliationExpenseAsync(int organizationId);
     Task<List<Account>> GetAllReconciliationLiabilitiesAndAssetsAsync(int organizationId);
     Task<List<Account>> GetAsync(string[] accountName, int organizationId);

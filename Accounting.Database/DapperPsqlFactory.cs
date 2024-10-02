@@ -515,48 +515,74 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, bool includeDescendants)
+      public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, bool includeCountJournalEntries, bool includeDescendants)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
         p.Add("@PageSize", pageSize);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<Account> allAccounts;
+        IEnumerable<Account> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          allAccounts = await con.QueryAsync<Account>($"""
-          SELECT *
-          FROM "Account"
-          WHERE "OrganizationId" = @OrganizationId
-          """, p);
+          result = await con.QueryAsync<Account>($"""
+            SELECT * 
+            FROM "Account"
+            WHERE "OrganizationId" = @OrganizationId
+            ORDER BY "Name"
+            LIMIT @PageSize OFFSET @Offset
+            """, new { PageSize = pageSize, Offset = pageSize * (page - 1), OrganizationId = organizationId });
         }
 
-        IEnumerable<Account> result;
         if (includeDescendants)
         {
-          result = allAccounts
-              .Where(x => x.ParentAccountId == null)
-              .OrderBy(x => x.Name)
-              .Skip(pageSize * (page - 1))
-              .Take(pageSize);
-
-          foreach (var account in result)
+          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
           {
-            account.Children = allAccounts.Where(x => x.ParentAccountId == account.AccountID).OrderBy(x => x.Name).ToList();
+            var allAccounts = await con.QueryAsync<Account>($"""
+                SELECT * 
+                FROM "Account"
+                WHERE "OrganizationId" = @OrganizationId
+                """, p);
 
-            if (account.Children.Any())
+            foreach (var account in result)
             {
-              PopulateChildrenRecursively(account.Children, allAccounts);
+              account.Children = allAccounts.Where(x => x.ParentAccountId == account.AccountID).OrderBy(x => x.Name).ToList();
+              if (account.Children.Any())
+              {
+                PopulateChildrenRecursively(account.Children, allAccounts);
+              }
             }
           }
         }
-        else
+
+        if (includeCountJournalEntries)
         {
-          result = allAccounts.OrderBy(x => x.Name).Skip(pageSize * (page - 1)).Take(pageSize);
+          var accountIds = result.Select(a => a.AccountID).ToList();
+
+          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+          {
+            var journalEntryCounts = await con.QueryAsync<(int AccountID, int JournalEntryCount)>($"""
+                SELECT a."AccountID", COUNT(gl."JournalID") AS "JournalEntryCount"
+                FROM "Account" a
+                LEFT JOIN "Journal" gl ON a."AccountID" = gl."AccountId" AND a."OrganizationId" = gl."OrganizationId"
+                WHERE a."AccountID" IN @AccountIds
+                GROUP BY a."AccountID"
+                """, new { AccountIds = accountIds });
+
+            var journalEntryCountDict = journalEntryCounts.ToDictionary(x => x.AccountID, x => x.JournalEntryCount);
+
+            foreach (var account in result)
+            {
+              if (journalEntryCountDict.TryGetValue(account.AccountID, out var count))
+              {
+                account.JournalEntryCount = count;
+              }
+            }
+          }
         }
-        bool hasNextPage = allAccounts.Skip(pageSize * page).Any();
+
+        bool hasNextPage = result.Count() == pageSize;
 
         return (result.ToList(), hasNextPage ? page + 1 : (int?)null);
       }

@@ -216,12 +216,15 @@ namespace Accounting.Controllers
       int pageSize = 10)
     {
       var organizationId = GetOrganizationId();
-      List<Account> accounts = await _accountService.GetAllHierachicalAsync(organizationId, true);
+      (List<Account> Accounts, int? NextPageNumber)   
+        = await _accountService.GetAllAsync(
+          page, 
+          pageSize, 
+          organizationId, 
+          includeChildren, 
+          includeJournalEntriesCount);
 
-      List<AccountViewModel> accountsViewmodel = accounts
-          .Where(account => account.ParentAccountId == null)
-          .Select(ConvertToViewModel)
-          .ToList();
+      List<AccountViewModel> accountsViewmodel = Accounts.Select(ConvertToViewModel).ToList();
 
       return Ok(accountsViewmodel);
     }
