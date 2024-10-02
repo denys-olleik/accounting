@@ -516,10 +516,10 @@ namespace Accounting.Database
       }
 
       public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(
-        int page, 
-        int pageSize, 
-        int organizationId, 
-        bool includeCountJournalEntries, 
+        int page,
+        int pageSize,
+        int organizationId,
+        bool includeJournalEntriesCount,
         bool includeDescendants)
       {
         DynamicParameters p = new DynamicParameters();
@@ -545,10 +545,10 @@ namespace Accounting.Database
           using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
           {
             var allAccounts = await con.QueryAsync<Account>($"""
-                SELECT * 
-                FROM "Account"
-                WHERE "OrganizationId" = @OrganizationId
-                """, p);
+              SELECT * 
+              FROM "Account"
+              WHERE "OrganizationId" = @OrganizationId
+              """, p);
 
             foreach (var account in result)
             {
@@ -561,9 +561,40 @@ namespace Accounting.Database
           }
         }
 
-        if (includeCountJournalEntries)
+        void PopulateChildrenRecursively(List<Account> children, IEnumerable<Account> allAccounts)
         {
-          var accountIds = result.Select(a => a.AccountID).ToList();
+          foreach (var child in children)
+          {
+            child.Children = allAccounts.Where(x => x.ParentAccountId == child.AccountID).OrderBy(x => x.Name).ToList();
+            if (child.Children.Any())
+            {
+              PopulateChildrenRecursively(child.Children, allAccounts);
+            }
+          }
+        }
+
+        List<int> allIds = new List<int>();
+
+        void GetAllAccountIds(Account account, List<int> ids)
+        {
+          ids.Add(account.AccountID);
+          if (account.Children != null)
+          {
+            foreach (var child in account.Children)
+            {
+              GetAllAccountIds(child, ids);
+            }
+          }
+        }
+
+        foreach (var account in result)
+        {
+          GetAllAccountIds(account, allIds);
+        }
+
+        if (includeJournalEntriesCount)
+        {
+          var accountIds = allIds;
 
           using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
           {
