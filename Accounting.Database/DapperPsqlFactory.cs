@@ -557,9 +557,21 @@ namespace Accounting.Database
           }
         }
 
-        return result.ToList();
+        return 
       }
 
+      private void PopulateChildrenRecursively(List<Account> children, IEnumerable<Account> allAccounts)
+      {
+        foreach (var child in children)
+        {
+          child.Children = allAccounts.Where(x => x.ParentAccountId == child.AccountID).OrderBy(x => x.Name).ToList();
+
+          if (child.Children.Any())
+          {
+            PopulateChildrenRecursively(child.Children, allAccounts);
+          }
+        }
+      }
 
       public async Task<List<Account>> GetAllReconciliationExpenseAsync(int organizationId)
       {
