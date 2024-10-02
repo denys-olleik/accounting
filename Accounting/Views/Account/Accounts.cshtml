@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Accounting.Models.Account.AccountsPaginatedViewModel
+
+@{
   ViewData["Title"] = "Accounts - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
@@ -16,7 +18,7 @@
 </div>
 
 <template id="account-template">
-  <div>
+  <div class="background-color-antiquewhite">
     <div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
       <div class="display-flex flex-1">
         <a href="#" @@click.prevent="handleAccountClick(account.accountID)">
@@ -85,10 +87,22 @@
   </div>
 </template>
 
-<div id="app" class="display-flex flex-direction-column font-Roboto-Mono background-color-antiquewhite">
-  <template v-for="account in accounts" :key="account.accountID">
-    <account :account="account" @@account-clicked="onAccountClicked"></account>
-  </template>
+<div id="app" class="display-flex flex-direction-column font-Roboto-Mono">
+  <div>
+    <template v-for="account in accounts" :key="account.accountID">
+      <account :account="account" @@account-clicked="onAccountClicked"></account>
+    </template>
+  </div>
+
+  <div class="margin-bottom-5px display-flex font-Roboto font-size-20px background-color-antiquewhite margin-top-5px">
+    <div>
+      <a :href="`/a/accounts?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-darkslategray text-decoration-none">prev</a>
+    </div>
+    <div class="flex-1"></div>
+    <div>
+      <a :href="`/a/accounts?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-darkslategray text-decoration-none">next</a>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -101,7 +115,7 @@
     methods: {
       handleAccountClick(accountID) {
         console.log(accountID);
-        this.$emit('account-clicked', accountID); 
+        this.$emit('account-clicked', accountID);
       },
     }
   };
@@ -113,7 +127,10 @@
     data() {
       return {
         accounts: [],
-        selectedAccountID: null
+        selectedAccountID: null,
+        page: @Model.Page,
+        pageSize: @Model.PageSize,
+        nextPage: null,
       }
     },
     methods: {
@@ -141,6 +158,8 @@
         .then(response => response.json())
         .then(data => {
           this.accounts = this.addSelectedAccountID(data.accounts);
+          this.page = data.page;
+          this.nextPage = data.nextPage;
         });
     },
   });

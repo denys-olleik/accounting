@@ -32,7 +32,7 @@ namespace Accounting.Controllers
       var vm = new AccountsPaginatedViewModel
       {
         Page = page,
-        PageSize = pageSize
+        PageSize = pageSize,
       };
 
       return View(vm);
