@@ -217,18 +217,48 @@ namespace Accounting.Controllers
       int page = 1,
       int pageSize = 10)
     {
-      (List<Account> accounts, int? nextPage)   
+      (List<Account> accounts, int? nextPage)
         = await _accountService.GetAllAsync(
-          page, 
+          page,
           pageSize,
-          GetOrganizationId(), 
+          GetOrganizationId(),
           includeJournalEntriesCount,
           includeDescendants);
+
+      AccountViewModel ConvertToViewModel(Account account)
+      {
+        var viewModel = new AccountViewModel
+        {
+          AccountID = account.AccountID,
+          Name = account.Name,
+          Type = account.Type,
+          JournalEntryCount = account.JournalEntryCount,
+          InvoiceCreationForCredit = account.InvoiceCreationForCredit,
+          InvoiceCreationForDebit = account.InvoiceCreationForDebit,
+          ReceiptOfPaymentForCredit = account.ReceiptOfPaymentForCredit,
+          ReceiptOfPaymentForDebit = account.ReceiptOfPaymentForDebit,
+          Created = account.Created,
+          ParentAccountId = account.ParentAccountId,
+          CreatedById = account.CreatedById,
+          Children = new List<AccountViewModel>()
+        };
+
+        if (account.Children != null)
+        {
+          foreach (var child in account.Children)
+          {
+            viewModel.Children.Add(ConvertToViewModel(child));
+          }
+        }
+
+        return viewModel;
+      }
 
       return Ok(new GetAllAccountsViewModel
       {
         Accounts = accounts.Select(ConvertToViewModel).ToList(),
         Page = page,
+        PageSize = pageSize,
         NextPage = nextPage
       });
     }
@@ -281,34 +311,7 @@ namespace Accounting.Controllers
       return Ok(accountsViewmodel);
     }
 
-    private AccountViewModel ConvertToViewModel(Account account)
-    {
-      var viewModel = new AccountViewModel
-      {
-        AccountID = account.AccountID,
-        Name = account.Name,
-        Type = account.Type,
-        JournalEntryCount = account.JournalEntryCount,
-        InvoiceCreationForCredit = account.InvoiceCreationForCredit,
-        InvoiceCreationForDebit = account.InvoiceCreationForDebit,
-        ReceiptOfPaymentForCredit = account.ReceiptOfPaymentForCredit,
-        ReceiptOfPaymentForDebit = account.ReceiptOfPaymentForDebit,
-        Created = account.Created,
-        ParentAccountId = account.ParentAccountId,
-        CreatedById = account.CreatedById,
-        Children = new List<AccountViewModel>()
-      };
-
-      if (account.Children != null)
-      {
-        foreach (var child in account.Children)
-        {
-          viewModel.Children.Add(ConvertToViewModel(child));
-        }
-      }
-
-      return viewModel;
-    }
+    
   }
 }
 

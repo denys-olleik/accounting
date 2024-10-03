@@ -534,9 +534,6 @@ namespace Accounting.Database
           result = await con.QueryAsync<Account>($"""
             SELECT * 
             FROM "Account"
-            WHERE "OrganizationId" = @OrganizationId AND "ParentAccountId" IS NULL
-            ORDER BY "Name"
-            LIMIT @PageSize OFFSET @Offset
             """, new { PageSize = pageSize, Offset = pageSize * (page - 1), OrganizationId = organizationId });
         }
 
