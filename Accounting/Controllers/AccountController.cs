@@ -378,11 +378,9 @@ namespace Accounting.Models.Account
     public ValidationResult? ValidationResult { get; set; }
   }
 
-  public class GetAllAccountsViewModel
+  public class GetAllAccountsViewModel : PaginatedViewModel
   {
     public List<AccountViewModel>? Accounts { get; set; }
-    public int? Page { get; set; }
-    public int? NextPage { get; set; }
   }
 
   public class AccountsPaginatedViewModel : PaginatedViewModel
