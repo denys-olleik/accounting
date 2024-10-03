@@ -27,7 +27,9 @@ namespace Accounting.Controllers
 
     [Route("accounts")]
     [HttpGet]
-    public IActionResult Accounts(int page = 1, int pageSize = 5)
+    public IActionResult Accounts(
+      int page = 1, 
+      int pageSize = 5)
     {
       var vm = new AccountsPaginatedViewModel
       {
@@ -215,12 +217,11 @@ namespace Accounting.Controllers
       int page = 1,
       int pageSize = 10)
     {
-      var organizationId = GetOrganizationId();
       (List<Account> Accounts, int? NextPageNumber)   
         = await _accountService.GetAllAsync(
           page, 
-          pageSize, 
-          organizationId, 
+          pageSize,
+          GetOrganizationId(), 
           includeChildren, 
           includeJournalEntriesCount);
 

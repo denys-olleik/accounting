@@ -26,7 +26,7 @@ namespace Accounting.Controllers
 
     [HttpGet("items-and-assemblies")]
     public async Task<IActionResult> ItemsAndAssemblies(
-      int page, 
+      int page = 1, 
       int pageSize = 2)
     {
       var (items, nextPageNumber) = 

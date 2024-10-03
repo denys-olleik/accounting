@@ -2708,7 +2708,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<(List<Item> Items, int? NextPageNumber)> GetAllAsync(int page, int pageSize, bool loadChildren, int organizationId)
+      public async Task<(List<Item> Items, int? NextPageNumber)> GetAllAsync(int page, int pageSize, bool includeChildren, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
@@ -2729,7 +2729,7 @@ namespace Accounting.Database
             WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
             """, p);
 
-          if (loadChildren)
+          if (includeChildren)
           {
             foreach (var item in result)
             {

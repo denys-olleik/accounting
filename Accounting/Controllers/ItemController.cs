@@ -56,7 +56,7 @@ namespace Accounting.Controllers
 
     [HttpGet]
     [Route("items-and-assemblies")]
-    public async Task<IActionResult> ItemsAndAssemblies(
+    public IActionResult ItemsAndAssemblies(
       int page = 1, 
       int pageSize = 2)
     {
