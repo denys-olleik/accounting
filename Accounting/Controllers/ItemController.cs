@@ -1,6 +1,7 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
 using Accounting.CustomAttributes;
+using Accounting.Models.Item;
 using Accounting.Models.ItemViewModels;
 using Accounting.Service;
 using Accounting.Validators;
@@ -372,6 +373,22 @@ namespace Accounting.Controllers
       };
 
       return Ok(vm);
+    }
+  }
+}
+
+namespace Accounting.Models.Item
+{
+  public class ItemsAndAssembliesViewModel : PaginatedViewModel
+  {
+    public List<ItemViewModel>? Items { get; set; }
+
+    public class ItemViewModel
+    {
+      public int ItemID { get; set; }
+      public string? Name { get; set; }
+      public string? Description { get; set; }
+      public decimal Quantity { get; set; }
     }
   }
 }

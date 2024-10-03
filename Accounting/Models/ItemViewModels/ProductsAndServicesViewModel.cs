@@ -4,6 +4,6 @@ namespace Accounting.Models.ItemViewModels
 {
   public class ProductsAndServicesViewModel
   {
-    public List<Item>? Items { get; set; }
+    public List<Business.Item>? Items { get; set; }
   }
 }
