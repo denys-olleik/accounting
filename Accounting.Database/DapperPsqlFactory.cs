@@ -607,12 +607,24 @@ namespace Accounting.Database
 
             var journalEntryCountDict = journalEntryCounts.ToDictionary(x => x.AccountID, x => x.JournalEntryCount);
 
-            foreach (var account in result)
+            void UpdateJournalEntryCounts(Account account)
             {
               if (journalEntryCountDict.TryGetValue(account.AccountID, out var count))
               {
                 account.JournalEntryCount = count;
               }
+              if (account.Children != null)
+              {
+                foreach (var child in account.Children)
+                {
+                  UpdateJournalEntryCounts(child);
+                }
+              }
+            }
+
+            foreach (var account in result)
+            {
+              UpdateJournalEntryCounts(account);
             }
           }
         }
