@@ -193,7 +193,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<(List<BusinessEntity> BusinessEntities, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId)
+      public async Task<(List<BusinessEntity> businessEntities, int? nextPage)> GetAllAsync(int page, int pageSize, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
@@ -214,15 +214,15 @@ namespace Accounting.Database
         }
 
         var resultList = result.ToList();
-        int? nextPageNumber = null;
+        int? nextPage = null;
 
         if (resultList.Count > pageSize)
         {
           resultList.RemoveAt(resultList.Count - 1);
-          nextPageNumber = page + 1;
+          nextPage = page + 1;
         }
 
-        return (resultList, nextPageNumber);
+        return (resultList, nextPage);
       }
 
       public async Task<BusinessEntity> GetByIdAsync(int id, int organizationId)
@@ -515,7 +515,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(
+      public async Task<(List<Account> accounts, int? nextPage)> GetAllAsync(
         int page,
         int pageSize,
         int organizationId,
@@ -1964,7 +1964,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<(List<Invoice> Invoices, int? NextPageNumber)> GetAllAsync(
+      public async Task<(List<Invoice> invoices, int? nextPage)> GetAllAsync(
         int page,
         int pageSize,
         string[] Statuses,
@@ -1979,11 +1979,11 @@ namespace Accounting.Database
 
         string voidCondition = includeVoidInvoices ? "" : "AND (\"VoidReason\" IS NULL)";
 
-        IEnumerable<Invoice> result;
+        IEnumerable<Invoice> paginatedResult;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<Invoice>($"""
+          paginatedResult = await con.QueryAsync<Invoice>($"""
             SELECT * FROM (
                 SELECT *,
                        ROW_NUMBER() OVER (ORDER BY "InvoiceID" DESC) AS RowNumber
@@ -1996,16 +1996,16 @@ namespace Accounting.Database
             """, p);
         }
 
-        var resultList = result.ToList();
-        int? nextPageNumber = null;
+        var result = paginatedResult.ToList();
+        int? nextPage = null;
 
-        if (resultList.Count > pageSize)
+        if (result.Count > pageSize)
         {
-          resultList.RemoveAt(resultList.Count - 1);
-          nextPageNumber = page + 1;
+          result.RemoveAt(result.Count - 1);
+          nextPage = page + 1;
         }
 
-        return (resultList, nextPageNumber);
+        return (result, nextPage);
       }
 
       public async Task<List<Invoice>> GetAllAsync(int organizationId, string[] inStatus)
@@ -2347,7 +2347,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<(List<InvoiceInvoiceLinePayment> InvoicePayments, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, List<string> typesToLoad = null)
+      public async Task<(List<InvoiceInvoiceLinePayment> invoicePayments, int? nextPage)> GetAllAsync(int page, int pageSize, int organizationId, List<string> typesToLoad = null)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
@@ -2370,12 +2370,12 @@ namespace Accounting.Database
         }
 
         var resultList = result.ToList();
-        int? nextPageNumber = null;
+        int? nextPage = null;
 
         if (resultList.Count > pageSize)
         {
           resultList.RemoveAt(resultList.Count - 1);
-          nextPageNumber = page + 1;
+          nextPage = page + 1;
         }
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
@@ -2404,7 +2404,7 @@ namespace Accounting.Database
           }
         }
 
-        return (resultList, nextPageNumber);
+        return (resultList, nextPage);
       }
 
       public async Task<List<Invoice>> GetAllInvoicesByPaymentIdAsync(int paymentId, int organizationId)
@@ -2518,12 +2518,12 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<(List<InvoiceInvoiceLinePayment> InvoicePayments, int? NextPageNumber)> SearchInvoicePaymentsAsync(
-  int page,
-  int pageSize,
-  string customerSearchQuery,
-  List<string> typesToLoad,
-  int organizationId)
+      public async Task<(List<InvoiceInvoiceLinePayment> invoicePayments, int? nextPage)> SearchInvoicePaymentsAsync(
+        int page,
+        int pageSize,
+        string customerSearchQuery,
+        List<string> typesToLoad,
+        int organizationId)
       {
         QueryBuilder builder = new QueryBuilder();
 
@@ -2567,12 +2567,12 @@ namespace Accounting.Database
         }
 
         var resultList = result.ToList();
-        int? nextPageNumber = null;
+        int? nextPage = null;
 
         if (resultList.Count > pageSize)
         {
           resultList.RemoveAt(resultList.Count - 1);
-          nextPageNumber = page + 1;
+          nextPage = page + 1;
         }
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
@@ -2601,7 +2601,7 @@ namespace Accounting.Database
           }
         }
 
-        return (resultList, nextPageNumber);
+        return (resultList, nextPage);
       }
 
       public int Update(InvoiceInvoiceLinePayment entity)
@@ -2708,7 +2708,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<(List<Item> Items, int? NextPageNumber)> GetAllAsync(int page, int pageSize, bool includeDescendants, int organizationId)
+      public async Task<(List<Item> items, int? nextPage)> GetAllAsync(int page, int pageSize, bool includeDescendants, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
@@ -3486,7 +3486,7 @@ namespace Accounting.Database
         return result.SingleOrDefault()!;
       }
 
-      public async Task<(List<ReconciliationTransaction> ReconciliationTransactions, int? NextPageNumber)> GetReconciliationTransactionAsync(int reconciliationId, int page, int pageSize)
+      public async Task<(List<ReconciliationTransaction> reconciliationTransactions, int? nextPage)> GetReconciliationTransactionAsync(int reconciliationId, int page, int pageSize)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@ReconciliationId", reconciliationId);
@@ -3499,10 +3499,10 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<ReconciliationTransaction>($"""
             SELECT * FROM (
-                SELECT *,
-                       ROW_NUMBER() OVER (ORDER BY "ReconciliationTransactionID" DESC) AS RowNumber
-                FROM "ReconciliationTransaction"
-                WHERE "ReconciliationId" = @ReconciliationId
+              SELECT *,
+                ROW_NUMBER() OVER (ORDER BY "ReconciliationTransactionID" DESC) AS RowNumber
+              FROM "ReconciliationTransaction"
+              WHERE "ReconciliationId" = @ReconciliationId
             ) AS NumberedReconciliationTransactions
             WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
             """, p);
@@ -3543,27 +3543,27 @@ namespace Accounting.Database
                 """
                 INSERT INTO "ReconciliationTransaction" 
                 (
-                    "ReconciliationId",    
-                    "RawData", 
-                    "TransactionDate", 
-                    "PostedDate", 
-                    "Description", 
-                    "Amount", 
-                    "Category", 
-                    "CreatedById", 
-                    "OrganizationId"
+                  "ReconciliationId",    
+                  "RawData", 
+                  "TransactionDate", 
+                  "PostedDate", 
+                  "Description", 
+                  "Amount", 
+                  "Category", 
+                  "CreatedById", 
+                  "OrganizationId"
                 ) 
                 VALUES 
                 (
-                    @ReconciliationId,
-                    @RawData, 
-                    @TransactionDate, 
-                    @PostedDate, 
-                    @Description, 
-                    @Amount, 
-                    @Category, 
-                    @CreatedById, 
-                    @OrganizationId
+                  @ReconciliationId,
+                  @RawData, 
+                  @TransactionDate, 
+                  @PostedDate, 
+                  @Description, 
+                  @Amount, 
+                  @Category, 
+                  @CreatedById, 
+                  @OrganizationId
                 );
                 """, p);
           }

@@ -7,7 +7,7 @@ namespace Accounting.Database.Interfaces
     Task<string> CalculateInvoiceStatusAsync(int invoiceId, int organizationId);
     Task<int> ComputeAndUpdateTotalAmountAndReceivedAmount(int invoiceId, int organizationId);
     Task<bool> ExistsAsync(int invoiceId, int organizationId);
-    Task<(List<Invoice> Invoices, int? NextPageNumber)> GetAllAsync(int page, int pageSize, string[] paymentStatuses, int organizationId, bool includeVoidInvoices);
+    Task<(List<Invoice> invoices, int? nextPage)> GetAllAsync(int page, int pageSize, string[] paymentStatuses, int organizationId, bool includeVoidInvoices);
     Task<List<Invoice>> GetAllAsync(int organizationId, string[] inPaymentStatus);
     Task<Invoice> GetAsync(int id, int organizationId);
     Task<List<Invoice>> GetAsync(string invoiceIdsCsv, int organizationId);

@@ -6,7 +6,7 @@ namespace Accounting.Database.Interfaces
   {
     Task<List<ReconciliationTransaction>> GetAllByIdAsync(int reconciliationId, int organizationId);
     Task<ReconciliationTransaction> GetAsync(int reconciliationTransactionID);
-    Task<(List<ReconciliationTransaction> ReconciliationTransactions, int? NextPageNumber)> GetReconciliationTransactionAsync(int reconciliationId, int page, int pageSize);
+    Task<(List<ReconciliationTransaction> reconciliationTransactions, int? nextPage)> GetReconciliationTransactionAsync(int reconciliationId, int page, int pageSize);
     Task<int> ImportAsync(List<ReconciliationTransaction> reconciliationTransactions);
     Task<int> UpdateAssetOrLiabilityAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationLiabilitiesAndAssetsAccountId);
     Task<int> UpdateExpenseAccountIdAsync(int reconciliationTransactionID, int selectedReconciliationExpenseAccountId);

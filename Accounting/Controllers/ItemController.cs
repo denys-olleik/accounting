@@ -293,7 +293,7 @@ namespace Accounting.Controllers
       int page = 1,
       int pageSize = 2)
     {
-      (List<Item> items, int? nextPageNumber) =
+      (List<Item> items, int? nextPage) =
         await _itemService.GetAllAsync(
           page,
           pageSize,
@@ -309,7 +309,7 @@ namespace Accounting.Controllers
           Description = x.Description,
           Quantity = x.Quantity
         }).ToList(),
-        NextPage = nextPageNumber,
+        NextPage = nextPage,
         Page = page,
         PageSize = pageSize
       };

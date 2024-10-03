@@ -11,7 +11,7 @@ namespace Accounting.Service
       return await factoryManager.GetLocationService().CreateAsync(location);
     }
 
-    public async Task<(List<Location> locations, int? nextPageNumber)> GetAllAsync(
+    public async Task<(List<Location> locations, int? nextPage)> GetAllAsync(
       int page, 
       int pageSize, 
       int organizationId)
