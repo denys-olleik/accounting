@@ -225,7 +225,7 @@ namespace Accounting.Controllers
           includeJournalEntriesCount,
           includeDescendants);
 
-      return Ok(new GetAccountsViewModel
+      return Ok(new GetAllAccountsViewModel
       {
         Accounts = accounts.Select(ConvertToViewModel).ToList(),
         CurrentPage = page,
@@ -378,7 +378,7 @@ namespace Accounting.Models.Account
     public ValidationResult? ValidationResult { get; set; }
   }
 
-  public class GetAccountsViewModel
+  public class GetAllAccountsViewModel
   {
     public List<AccountViewModel>? Accounts { get; set; }
     public int? CurrentPage { get; set; }
