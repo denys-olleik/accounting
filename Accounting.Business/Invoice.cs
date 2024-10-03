@@ -25,7 +25,7 @@ namespace Accounting.Business
     public BusinessEntity? BusinessEntity { get; set; }
     public Organization? IssuingOrganization { get; set; }
 
-    #region Extra Properties
+    #region Extra properties
     public List<InvoiceLine>? InvoiceLines { get; set; }
     public List<Payment>? Payments { get; set; }
     public int? RowNumber { get; set; }
