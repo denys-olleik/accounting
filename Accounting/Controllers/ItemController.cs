@@ -55,8 +55,8 @@ namespace Accounting.Controllers
     }
 
     [HttpGet]
-    [Route("items-and-assemblies")]
-    public IActionResult ItemsAndAssemblies(
+    [Route("items")]
+    public IActionResult Items(
       int page = 1, 
       int pageSize = 2)
     {

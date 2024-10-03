@@ -25,8 +25,9 @@ namespace Accounting.Controllers
       _locationService = locationService;
     }
 
-    [HttpGet("items-and-assemblies")]
+    [HttpGet("items")]
     public async Task<IActionResult> ItemsAndAssemblies(
+      bool includeDescendants,
       int page = 1, 
       int pageSize = 2)
     {
