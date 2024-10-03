@@ -300,21 +300,27 @@ namespace Accounting.Controllers
           includeDescendants,
           GetOrganizationId());
 
-      ItemsAndAssembliesViewModel vm = new ItemsAndAssembliesViewModel
-      {
-        Items = items.Select(x => new ItemsAndAssembliesViewModel.ItemViewModel
-        {
-          ItemID = x.ItemID,
-          Name = x.Name,
-          Description = x.Description,
-          Quantity = x.Quantity
-        }).ToList(),
-        NextPage = nextPage,
-        Page = page,
-        PageSize = pageSize
-      };
+      //GetAllItemsViewModel vm = new GetAllItemsViewModel
+      //{
+      //  Items = items.Select(x => new GetAllItemsViewModel.ItemViewModel
+      //  {
+      //    ItemID = x.ItemID,
+      //    Name = x.Name,
+      //    Description = x.Description,
+      //    Quantity = x.Quantity
+      //  }).ToList(),
+      //  NextPage = nextPage,
+      //  Page = page,
+      //  PageSize = pageSize
+      //};
 
-      return Ok(vm);
+      return Ok(new GetAllItemsViewModel
+      {
+        Items = items.Select(ConvertToViewModel).ToList(),
+        Page = page,
+        NextPage = nextPage,
+        PageSize = pageSize
+      });
     }
 
     [HttpGet("inventories")]
@@ -369,7 +375,7 @@ namespace Accounting.Controllers
           }).ToList(),
         }).ToList(),
         NextPage = nextPageNumber,
-        CurrentPage = page
+        Page = page
       };
 
       return Ok(vm);
@@ -379,7 +385,7 @@ namespace Accounting.Controllers
 
 namespace Accounting.Models.Item
 {
-  public class ItemsAndAssembliesViewModel : PaginatedViewModel
+  public class GetAllItemsViewModel : PaginatedViewModel
   {
     public List<ItemViewModel>? Items { get; set; }
 

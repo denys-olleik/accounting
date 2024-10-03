@@ -3,7 +3,7 @@
   public class InventoriesViewModel
   {
     public List<ItemViewModel>? Items { get; set; }
-    public int? CurrentPage { get; set; }
+    public int? Page { get; set; }
     public int? NextPage { get; set; }
 
     public class ItemViewModel

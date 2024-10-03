@@ -280,7 +280,7 @@
           .then(response => response.json())
           .then(data => {
             this.invoices = data.invoices;
-            if (data.currentPage > 0) {
+            if (data.page > 0) {
               this.page = data.currentPage;
             }
             if (data.nextPage > 0) {

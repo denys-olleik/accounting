@@ -158,7 +158,7 @@
         .then(response => response.json())
         .then(data => {
           this.accounts = this.addSelectedAccountID(data.accounts);
-          this.page = data.currentPage;
+          this.page = data.page;
           this.nextPage = data.nextPage;
         });
     },

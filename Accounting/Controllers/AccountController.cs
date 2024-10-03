@@ -228,7 +228,7 @@ namespace Accounting.Controllers
       return Ok(new GetAllAccountsViewModel
       {
         Accounts = accounts.Select(ConvertToViewModel).ToList(),
-        CurrentPage = page,
+        Page = page,
         NextPage = nextPage
       });
     }
@@ -381,7 +381,7 @@ namespace Accounting.Models.Account
   public class GetAllAccountsViewModel
   {
     public List<AccountViewModel>? Accounts { get; set; }
-    public int? CurrentPage { get; set; }
+    public int? Page { get; set; }
     public int? NextPage { get; set; }
   }
 

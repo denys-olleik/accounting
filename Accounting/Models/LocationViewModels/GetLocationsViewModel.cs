@@ -3,7 +3,7 @@
   public class GetLocationsViewModel
   {
     public List<LocationViewModel>? Locations { get; set; }
-    public int? CurrentPage { get; set; }
+    public int? Page { get; set; }
     public int? NextPage { get; set; }
 
     public class LocationViewModel

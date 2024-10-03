@@ -110,7 +110,7 @@ namespace Accounting.Controllers
           Received = i.Received,
           Status = i.Status,
         }).ToList(),
-        CurrentPage = page,
+        Page = page,
         NextPage = nextPageNumber,
       };
 

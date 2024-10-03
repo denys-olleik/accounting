@@ -121,7 +121,7 @@
           .then(response => response.json())
           .then(data => {
             this.businessEntities = data.businessEntities;
-            this.page = data.currentPage;
+            this.page = data.page;
             this.nextPage = data.nextPage;
           });
       },
