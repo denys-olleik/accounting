@@ -212,7 +212,7 @@ namespace Accounting.Controllers
 
     [HttpGet("all-accounts")]
     public async Task<IActionResult> GetAccounts(
-      bool includeChildren,
+      bool includeDescendants,
       bool includeJournalEntriesCount,
       int page = 1,
       int pageSize = 10)
@@ -222,8 +222,8 @@ namespace Accounting.Controllers
           page, 
           pageSize,
           GetOrganizationId(), 
-          includeChildren, 
-          includeJournalEntriesCount);
+          includeJournalEntriesCount,
+          includeDescendants);
 
       return Ok(new GetAccountsViewModel
       {
