@@ -300,6 +300,37 @@ namespace Accounting.Controllers
           includeDescendants,
           GetOrganizationId());
 
+      ItemViewModel ConvertToViewModel(Item item)
+      {
+        var viewModel = new ItemViewModel
+        {
+          ItemID = item.ItemID,
+          Name = item.Name,
+          Description = item.Description,
+          Quantity = item.Quantity,
+          UnitTypeId = item.UnitTypeId,
+          ItemType = item.ItemType,
+          InventoryMethod = item.InventoryMethod,
+          RevenueAccountId = item.RevenueAccountId,
+          AssetsAccountId = item.AssetsAccountId,
+          ParentItemId = item.ParentItemId,
+          Created = item.Created,
+          CreatedById = item.CreatedById,
+          OrganizationId = item.OrganizationId,
+          Children = new List<ItemViewModel>()
+        };
+
+        if (item.Children != null)
+        {
+          foreach (var child in item.Children)
+          {
+            viewModel.Children.Add(ConvertToViewModel(child));
+          }
+        }
+
+        return viewModel;
+      }
+
       return Ok(new GetAllItemsViewModel
       {
         Items = items.Select(ConvertToViewModel).ToList(),
@@ -307,11 +338,6 @@ namespace Accounting.Controllers
         NextPage = nextPage,
         PageSize = pageSize
       });
-    }
-
-    private ItemViewModel ConvertToViewModel(Item item)
-    {
-      throw new NotImplementedException();
     }
 
     [HttpGet("inventories")]
@@ -392,6 +418,7 @@ namespace Accounting.Models.Item
     public DateTimeOffset Created { get; set; }
     public int CreatedById { get; set; }
     public int OrganizationId { get; set; }
+    public List<ItemViewModel>? Children { get; internal set; }
   }
 
   public class AssembliesPaginatedViewModel : PaginatedViewModel

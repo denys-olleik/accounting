@@ -258,8 +258,8 @@ namespace Accounting.Controllers
       {
         Accounts = accounts.Select(ConvertToViewModel).ToList(),
         Page = page,
+        NextPage = nextPage,
         PageSize = pageSize,
-        NextPage = nextPage
       });
     }
 
