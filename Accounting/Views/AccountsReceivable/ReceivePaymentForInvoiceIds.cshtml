@@ -61,13 +61,13 @@
                 : (Model.Invoices[i].BusinessEntity?.CompanyName + (Model.Invoices[i].BusinessEntity?.FirstName != null || Model.Invoices[i].BusinessEntity?.LastName != null ? " (" + Model.Invoices[i].BusinessEntity?.FirstName + " " + Model.Invoices[i].BusinessEntity?.LastName + ")" : ""))
                 )
           </td>
-          <td class="text-align-right padding-right-20px font-Roboto-Mono">$@Model.Invoices[i].Total!.Value.ToString("F2")</td>
+          <td class="text-align-right padding-right-20px font-Roboto-Mono">@Model.Invoices[i].Total!.Value.ToString("F2")</td>
           <td class="text-align-right padding-right-20px font-Roboto-Mono">@Model.Invoices[i].Received?.ToString("F2")</td>
           <td class="text-align-right">
             <input type="hidden" name="Invoices[@i].InvoiceId" value="@Model.Invoices[i].InvoiceId" />
             <input type="number" name="Invoices[@i].AmountToReceive"
                    value="@Model.Invoices[i].AmountToReceive"
-                   placeholder="$0.00"
+                   placeholder="0.00"
                    class="font-size-16px text-align-right width-100 font-Roboto-Mono"
                    step="0.01" min="0" />
           </td>
@@ -98,7 +98,7 @@
                         <input type="hidden" name="Invoices[@i].InvoiceLines[@j].AssetsAccountId" value="@Model.Invoices[i].InvoiceLines[j].AssetsAccountId" />
                         <input type="number" name="Invoices[@i].InvoiceLines[@j].AmountToReceive"
                                value="@Model.Invoices[i].InvoiceLines[j].AmountToReceive"
-                               placeholder="$0.00"
+                               placeholder="0.00"
                                class="font-size-16px text-align-right width-100 font-Roboto-Mono"
                                step="0.01" min="0">
                       </td>
