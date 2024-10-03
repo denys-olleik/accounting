@@ -411,7 +411,6 @@ namespace Accounting.Models.Item
     public int? UnitTypeId { get; set; }
     public string? ItemType { get; set; }
     public string? InventoryMethod { get; set; }
-    public string? Price { get; set; }
     public int? RevenueAccountId { get; set; }
     public int? AssetsAccountId { get; set; }
     public int? ParentItemId { get; set; }

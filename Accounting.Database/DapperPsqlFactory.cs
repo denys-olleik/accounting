@@ -2724,12 +2724,12 @@ namespace Accounting.Database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Item>($"""
-                SELECT * 
-                FROM "Item"
-                WHERE "OrganizationId" = @OrganizationId AND "ParentItemId" IS NULL
-                ORDER BY "Name"
-                LIMIT @PageSize OFFSET @Offset
-                """, new { PageSize = pageSize, Offset = pageSize * (page - 1), OrganizationId = organizationId });
+            SELECT *, ROW_NUMBER() OVER (ORDER BY "ItemID") AS "RowNumber"
+            FROM "Item"
+            WHERE "OrganizationId" = @OrganizationId AND "ParentItemId" IS NULL
+            ORDER BY "Name"
+            LIMIT @PageSize OFFSET @Offset
+            """, new { PageSize = pageSize, Offset = pageSize * (page - 1), OrganizationId = organizationId });
         }
 
         if (includeDescendants)
