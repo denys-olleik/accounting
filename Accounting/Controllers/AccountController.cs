@@ -211,7 +211,7 @@ namespace Accounting.Controllers
     }
 
     [HttpGet("get-all-accounts")]
-    public async Task<IActionResult> GetAccounts(
+    public async Task<IActionResult> GetAllAccounts(
       bool includeDescendants,
       bool includeJournalEntriesCount,
       int page = 1,
