@@ -20,7 +20,7 @@ namespace Accounting.Service
     public async Task<(List<Item> Items, int? NextPageNumber)> GetAllAsync(
       int page, 
       int pageSize, 
-      bool includeChildren,
+      bool includeDescendants,
       int organizationId)
     {
       FactoryManager factoryManager = new FactoryManager();
@@ -28,7 +28,7 @@ namespace Accounting.Service
         .GetAllAsync(
           page, 
           pageSize,
-          includeChildren,
+          includeDescendants,
           organizationId);
     }
 

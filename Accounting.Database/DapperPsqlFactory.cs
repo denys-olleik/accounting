@@ -2708,7 +2708,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<(List<Item> Items, int? NextPageNumber)> GetAllAsync(int page, int pageSize, bool includeChildren, int organizationId)
+      public async Task<(List<Item> Items, int? NextPageNumber)> GetAllAsync(int page, int pageSize, bool includeDescendants, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
@@ -2720,45 +2720,50 @@ namespace Accounting.Database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Item>($"""
-            SELECT * FROM (
-                SELECT *,
-                       ROW_NUMBER() OVER (ORDER BY "ItemID" DESC) AS RowNumber
+                SELECT * 
                 FROM "Item"
-                WHERE "OrganizationId" = @OrganizationId
-            ) AS NumberedItems
-            WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
-            """, p);
+                WHERE "OrganizationId" = @OrganizationId AND "ParentItemId" IS NULL
+                ORDER BY "Name"
+                LIMIT @PageSize OFFSET @Offset
+                """, new { PageSize = pageSize, Offset = pageSize * (page - 1), OrganizationId = organizationId });
+        }
 
-          if (includeChildren)
+        if (includeDescendants)
+        {
+          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
           {
+            var allItems = await con.QueryAsync<Item>($"""
+              SELECT * 
+              FROM "Item"
+              WHERE "OrganizationId" = @OrganizationId
+              """, p);
+
+            void PopulateChildrenRecursively(List<Item> children)
+            {
+              foreach (var child in children)
+              {
+                child.Children = allItems.Where(x => x.ParentItemId == child.ItemID).OrderBy(x => x.Name).ToList();
+                if (child.Children.Any())
+                {
+                  PopulateChildrenRecursively(child.Children);
+                }
+              }
+            }
+
             foreach (var item in result)
             {
-              DynamicParameters p2 = new DynamicParameters();
-              p2.Add("@ItemId", item.ItemID);
-              p2.Add("@OrganizationId", organizationId);
-
-              var children = await con.QueryAsync<Item>("""
-                SELECT * 
-                FROM "Item" 
-                WHERE "ParentItemId" = @ItemId 
-                AND "OrganizationId" = @OrganizationId
-                """, p2);
-
-              item.Children = children.ToList();
+              item.Children = allItems.Where(x => x.ParentItemId == item.ItemID).OrderBy(x => x.Name).ToList();
+              if (item.Children.Any())
+              {
+                PopulateChildrenRecursively(item.Children);
+              }
             }
           }
         }
 
-        var resultList = result.ToList();
-        int? nextPageNumber = null;
+        bool hasNextPage = result.Count() == pageSize;
 
-        if (resultList.Count > pageSize)
-        {
-          resultList.RemoveAt(resultList.Count - 1);
-          nextPageNumber = page + 1;
-        }
-
-        return (resultList, nextPageNumber);
+        return (result.ToList(), hasNextPage ? page + 1 : (int?)null);
       }
 
       public async Task<Item?> GetAsync(int itemId, int organizationId)

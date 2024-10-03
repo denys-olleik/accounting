@@ -34,8 +34,8 @@ namespace Accounting.Controllers
       (List<Item> items, int? nextPageNumber) = 
         await _itemService.GetAllAsync(
           page, 
-          pageSize, 
-          false, 
+          pageSize,
+          includeDescendants, 
           GetOrganizationId());
 
       ItemsAndAssembliesViewModel vm = new ItemsAndAssembliesViewModel
