@@ -165,7 +165,7 @@
                   <td>
                     <payment-action :payment="payment" :is-expanded="payment.paymentID === expandedPaymentId" @@expand="handlePaymentExpand(payment.paymentID)"></payment-action>
                   </td>
-                  <td class="text-align-right">${{ payment.amount }}</td>
+                  <td class="text-align-right">{{ payment.amount }}</td>
                 </tr>
               </tbody>
             </table>
