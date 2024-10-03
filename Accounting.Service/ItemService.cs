@@ -19,17 +19,17 @@ namespace Accounting.Service
 
     public async Task<(List<Item> Items, int? NextPageNumber)> GetAllAsync(
       int page, 
-      int pageSize, 
-      bool includeDescendants,
-      int organizationId)
+      int pageSize,
+      int organizationId,
+      bool includeDescendants)
     {
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetItemManager()
         .GetAllAsync(
           page, 
           pageSize,
-          includeDescendants,
-          organizationId);
+          organizationId,
+          includeDescendants);
     }
 
     public async Task<List<Item>> GetAllAsync(int organizationId)

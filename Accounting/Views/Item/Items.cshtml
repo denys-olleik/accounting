@@ -114,7 +114,7 @@
     },
     methods: {
       fetchItems() {
-        fetch(`/api/inv/get-all-items?page=${this.page}&pageSize=${this.pageSize}`)
+        fetch(`/api/inv/get-all-items?page=${this.page}&pageSize=${this.pageSize}&includeDescendants=true`)
           .then(response => response.json())
           .then(data => {
             this.items = this.addSelectedItemID(data.items);

@@ -2708,7 +2708,11 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<(List<Item> items, int? nextPage)> GetAllAsync(int page, int pageSize, bool includeDescendants, int organizationId)
+      public async Task<(List<Item> items, int? nextPage)> GetAllAsync(
+        int page, 
+        int pageSize,
+        int organizationId,
+        bool includeDescendants)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);

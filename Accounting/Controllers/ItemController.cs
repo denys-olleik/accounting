@@ -297,8 +297,8 @@ namespace Accounting.Controllers
         await _itemService.GetAllAsync(
           page,
           pageSize,
-          includeDescendants,
-          GetOrganizationId());
+          GetOrganizationId(),
+          includeDescendants);
 
       ItemViewModel ConvertToViewModel(Item item)
       {
@@ -348,8 +348,8 @@ namespace Accounting.Controllers
       var (items, nextPageNumber) = await _itemService.GetAllAsync(
         page,
         pageSize,
-        true,
-        GetOrganizationId());
+        GetOrganizationId(),
+        true);
 
       foreach (var item in items)
       {
