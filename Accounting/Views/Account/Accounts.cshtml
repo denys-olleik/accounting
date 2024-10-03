@@ -154,7 +154,7 @@
       },
     },
     mounted() {
-      fetch(`/api/a/all-accounts?page=${this.page}&pageSize=${this.pageSize}&includeChildren=true&includeJournalEntriesCount=true`)
+      fetch(`/api/a/all-accounts?page=${this.page}&pageSize=${this.pageSize}&includeDescendants=true&includeJournalEntriesCount=true`)
         .then(response => response.json())
         .then(data => {
           this.accounts = this.addSelectedAccountID(data.accounts);
