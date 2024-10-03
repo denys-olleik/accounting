@@ -11,7 +11,7 @@ namespace Accounting.Service
       return await factoryManager.GetItemManager().CreateAsync(item);
     }
 
-    public async Task<List<Item>> GetAllAsync(int organizationId)
+    public async Task<List<Item>> GetAllAsync(int page, int pageSize, int organizationId, int includeChildren)
     {
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetItemManager().GetAllAsync(organizationId);
@@ -30,6 +30,12 @@ namespace Accounting.Service
           pageSize,
           includeChildren,
           organizationId);
+    }
+
+    public async Task<List<Item>> GetAllAsync(int organizationId)
+    {
+      FactoryManager factoryManager = new FactoryManager ();
+      return await factoryManager.GetItemManager().GetAllAsync(organizationId);
     }
 
     public async Task<Item> GetAsync(int itemId, int organizationId)

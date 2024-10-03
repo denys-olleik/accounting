@@ -1,4 +1,5 @@
-﻿using Accounting.CustomAttributes;
+﻿using Accounting.Business;
+using Accounting.CustomAttributes;
 using Accounting.Models.ItemViewModels;
 using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace Accounting.Controllers
       int page = 1, 
       int pageSize = 2)
     {
-      var (items, nextPageNumber) = 
+      (List<Item> items, int? nextPageNumber) = 
         await _itemService.GetAllAsync(
           page, 
           pageSize, 

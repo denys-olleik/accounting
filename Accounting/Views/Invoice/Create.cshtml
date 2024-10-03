@@ -537,7 +537,7 @@
       'attachments': Attachments,
     },
     data() {
-      return { // TODO: Make Raw usage is appropriate
+      return {
         customers: @Html.Raw(Json.Serialize(Model!.Customers).ToString() ?? "[]"),
         selectedCustomer: @Html.Raw(Json.Serialize(Model.SelectedCustomer).ToString() ?? "null"),
         selectedBillingAddress: @Html.Raw(Json.Serialize(Model.SelectedBillingAddress).ToString() ?? "null"),

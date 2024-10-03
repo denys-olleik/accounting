@@ -217,7 +217,7 @@ namespace Accounting.Controllers
       int page = 1,
       int pageSize = 10)
     {
-      (List<Account> Accounts, int? NextPageNumber)   
+      (List<Account> accounts, int? nextPageNumber)   
         = await _accountService.GetAllAsync(
           page, 
           pageSize,
@@ -227,9 +227,9 @@ namespace Accounting.Controllers
 
       return Ok(new GetAccountsViewModel
       {
-        Accounts = Accounts.Select(ConvertToViewModel).ToList(),
+        Accounts = accounts.Select(ConvertToViewModel).ToList(),
         CurrentPage = page,
-        NextPage = NextPageNumber
+        NextPage = nextPageNumber
       });
     }
 
