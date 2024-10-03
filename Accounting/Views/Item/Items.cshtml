@@ -57,6 +57,11 @@
       </div>
       <div>{{ item.price }}</div>
     </div>
+    <div v-if="item.children && item.children.length" class="margin-left-25px">
+      <template v-for="childItem in item.children" :key="childItem.itemID">
+        <item :item="childItem" @@item-clicked="handleItemClick"></item>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -135,10 +140,14 @@
           this.selectedItemID = itemID;
         }
 
-        this.items = this.items.map(item => ({ ...item, selectedItemID: this.selectedItemID }));
+        this.items = this.items.map(item => this.resetSelectedItemID(item, this.selectedItemID));
       },
       addSelectedItemID(items) {
-        return items.map(item => ({ ...item, selectedItemID: null }));
+        return items.map(item => this.resetSelectedItemID(item));
+      },
+      resetSelectedItemID(item, selectedID = null) {
+        const children = item.children ? item.children.map(child => this.resetSelectedItemID(child, selectedID)) : [];
+        return { ...item, children, selectedItemID: selectedID };
       },
     },
     mounted() {
