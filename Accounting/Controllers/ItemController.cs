@@ -83,7 +83,7 @@ namespace Accounting.Controllers
           return NotFound();
 
         model.ParentItemId = parentItemId;
-        model.ParentItem = new CreateItemViewModel.ItemViewModel
+        model.ParentItem = new ItemViewModel
         {
           ItemID = parentItem.ItemID,
           Name = parentItem.Name
@@ -142,7 +142,7 @@ namespace Accounting.Controllers
             return NotFound();
 
           model.ParentItemId = parentItem.ItemID;
-          model.ParentItem = new CreateItemViewModel.ItemViewModel
+          model.ParentItem = new ItemViewModel
           {
             ItemID = parentItem.ItemID,
             Name = parentItem.Name
@@ -300,20 +300,6 @@ namespace Accounting.Controllers
           includeDescendants,
           GetOrganizationId());
 
-      //GetAllItemsViewModel vm = new GetAllItemsViewModel
-      //{
-      //  Items = items.Select(x => new GetAllItemsViewModel.ItemViewModel
-      //  {
-      //    ItemID = x.ItemID,
-      //    Name = x.Name,
-      //    Description = x.Description,
-      //    Quantity = x.Quantity
-      //  }).ToList(),
-      //  NextPage = nextPage,
-      //  Page = page,
-      //  PageSize = pageSize
-      //};
-
       return Ok(new GetAllItemsViewModel
       {
         Items = items.Select(ConvertToViewModel).ToList(),
@@ -321,6 +307,11 @@ namespace Accounting.Controllers
         NextPage = nextPage,
         PageSize = pageSize
       });
+    }
+
+    private ItemViewModel ConvertToViewModel(Item item)
+    {
+      throw new NotImplementedException();
     }
 
     [HttpGet("inventories")]
@@ -391,6 +382,21 @@ namespace Accounting.Models.Item
     public string? Name { get; set; }
     public string? Description { get; set; }
     public decimal Quantity { get; set; }
+    public int? UnitTypeId { get; set; }
+    public string? ItemType { get; set; }
+    public string? InventoryMethod { get; set; }
+    public string? Price { get; set; }
+    public int? RevenueAccountId { get; set; }
+    public int? AssetsAccountId { get; set; }
+    public int? ParentItemId { get; set; }
+    public DateTimeOffset Created { get; set; }
+    public int CreatedById { get; set; }
+    public int OrganizationId { get; set; }
+  }
+
+  public class AssembliesPaginatedViewModel : PaginatedViewModel
+  {
+
   }
 
   public class GetAllItemsViewModel : PaginatedViewModel

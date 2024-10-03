@@ -2,7 +2,7 @@
 using Accounting.Models.Account;
 using Accounting.Models.AddressViewModels;
 using Accounting.Models.BusinessEntityViewModels;
-using Accounting.Models.ItemViewModels;
+using Accounting.Models.Item;
 using Accounting.Models.PaymentTermViewModels;
 using FluentValidation.Results;
 

@@ -1,4 +1,6 @@
-﻿using FluentValidation.Results;
+﻿using Accounting.Models.Account;
+using Accounting.Models.Item;
+using FluentValidation.Results;
 
 namespace Accounting.Models.ItemViewModels
 {
@@ -41,12 +43,6 @@ namespace Accounting.Models.ItemViewModels
       public int AccountID { get; set; }
       public string? Name { get; set; }
       public string? Type { get; set; }
-    }
-
-    public class ItemViewModel
-    {
-      public int ItemID { get; set; }
-      public string? Name { get; set; }
     }
   }
 }

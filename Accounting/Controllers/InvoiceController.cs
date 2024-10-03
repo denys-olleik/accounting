@@ -5,7 +5,7 @@ using Accounting.Models.Account;
 using Accounting.Models.AddressViewModels;
 using Accounting.Models.BusinessEntityViewModels;
 using Accounting.Models.InvoiceViewModels;
-using Accounting.Models.ItemViewModels;
+using Accounting.Models.Item;
 using Accounting.Models.PaymentTermViewModels;
 using Accounting.Service;
 using Accounting.Validators;
@@ -677,7 +677,7 @@ namespace Accounting.Controllers
 
       return productsAndServices.Select(x => new ItemViewModel()
       {
-        ID = x.ItemID,
+        ItemID = x.ItemID,
         Name = x.Name,
         Description = x.Description,
         RevenueAccountId = x.RevenueAccountId,
