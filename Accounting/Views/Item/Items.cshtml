@@ -11,7 +11,62 @@
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-<div id="app">
+<template id="item-template">
+  <div class="background-color-antiquewhite">
+    <div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
+      <div class="display-flex flex-1">
+        <a href="#" @@click.prevent="handleItemClick(item.itemID)">
+          {{ item.name }}
+        </a>
+        <span>&nbsp;</span>
+        <div v-if="item.selectedItemID === item.itemID" class="display-flex flex-direction-column">
+          <div class="display-flex margin-bottom-2px">
+            <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+              <div class="flex-1"></div>
+              <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+              <div class="flex-1"></div>
+            </div>
+            <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+              <div class="flex-1"></div>
+              <a class="font-size-16px font-Roboto color-white text-decoration-none"
+                 :href="`/item/update/${item.itemID}`">Update</a>
+              <div class="flex-1"></div>
+            </div>
+          </div>
+          <div class="display-flex">
+            <div class="display-flex flex-direction-column background-color-darkcyan padding-left-5px padding-right-5px">
+              <div class="flex-1"></div>
+              <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">information:</a>
+              <div class="flex-1"></div>
+            </div>
+            <div class="display-flex flex-direction-column background-color-darkcyan padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
+              <div class="flex-1"></div>
+              <a class="font-size-16px font-Roboto color-white text-decoration-none">
+                {{ item.quantity }} in stock
+              </a>
+              <div class="flex-1"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>{{ item.price }}</div>
+    </div>
+  </div>
+</template>
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div>
+    <a asp-action="Create" asp-controller="Item" class="font-Roboto font-size-20px text-decoration-none color-darkslategray">Create Product or Service</a>
+  </div>
+</div>
+
+<div id="app" class="display-flex flex-direction-column font-Roboto-Mono">
+  <div class="margin-bottom-5px">
+    <template v-for="item in items" :key="item.itemID">
+      <item :item="item" @@item-clicked="onItemClicked"></item>
+    </template>
+  </div>
+
   <div class="margin-bottom-5px display-flex font-Roboto font-size-20px background-color-antiquewhite">
     <div>
       <a :href="`/item/items?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-darkslategray text-decoration-none">prev</a>
@@ -26,10 +81,26 @@
 <script>
   const { createApp } = Vue;
 
+  const Item = {
+    name: 'item',
+    template: '#item-template',
+    props: ['item'],
+    methods: {
+      handleItemClick(itemID) {
+        console.log(itemID);
+        this.$emit('item-clicked', itemID);
+      },
+    }
+  };
+
   const app = createApp({
+    components: {
+      'item': Item
+    },
     data() {
       return {
         items: [],
+        selectedItemID: null,
         page: @Model.Page,
         pageSize: @Model.PageSize,
         nextPage: null,
@@ -40,7 +111,7 @@
         fetch(`/api/inv/items?page=${this.page}&pageSize=${this.pageSize}`)
           .then(response => response.json())
           .then(data => {
-            this.items = data.items;
+            this.items = this.addSelectedItemID(data.items);
             if (data.currentPage > 0) {
               this.page = data.currentPage;
             }
@@ -48,6 +119,20 @@
               this.nextPage = data.nextPage;
             }
           });
+      },
+      onItemClicked(itemID) {
+        console.log('Item clicked:', itemID);
+
+        if (this.selectedItemID === itemID) {
+          this.selectedItemID = null;
+        } else {
+          this.selectedItemID = itemID;
+        }
+
+        this.items = this.items.map(item => ({ ...item, selectedItemID: this.selectedItemID }));
+      },
+      addSelectedItemID(items) {
+        return items.map(item => ({ ...item, selectedItemID: null }));
       },
     },
     mounted() {
