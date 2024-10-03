@@ -29,6 +29,10 @@ namespace Accounting.Business
     public int JournalEntryCount { get; set; }
     public List<Account>? Children { get; set; }
 
+    #region Extra properties
+    public int? RowNumber { get; set; }
+    #endregion
+
     public int Identifiable => this.AccountID;
 
     public static class AccountTypeConstants
