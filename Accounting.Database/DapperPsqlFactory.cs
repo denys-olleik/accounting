@@ -532,8 +532,11 @@ namespace Accounting.Database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Account>($"""
-            SELECT * 
+            SELECT *, ROW_NUMBER() OVER (ORDER BY "AccountID") AS "RowNumber"
             FROM "Account"
+            WHERE "OrganizationId" = @OrganizationId AND "ParentAccountId" IS NULL
+            ORDER BY "Name"
+            LIMIT @PageSize OFFSET @Offset
             """, new { PageSize = pageSize, Offset = pageSize * (page - 1), OrganizationId = organizationId });
         }
 
