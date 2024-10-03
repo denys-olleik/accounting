@@ -210,7 +210,7 @@ namespace Accounting.Controllers
       return Ok(Account.AccountTypeConstants.All);
     }
 
-    [HttpGet("all-accounts")]
+    [HttpGet("get-all-accounts")]
     public async Task<IActionResult> GetAccounts(
       bool includeDescendants,
       bool includeJournalEntriesCount,
