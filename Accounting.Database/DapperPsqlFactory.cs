@@ -524,7 +524,7 @@ namespace Accounting.Database
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
-        p.Add("@PageSize", pageSize);
+        p.Add("@PageSize", pageSize + 1);
         p.Add("@OrganizationId", organizationId);
 
         IEnumerable<Account> result;
@@ -537,8 +537,17 @@ namespace Accounting.Database
             WHERE "OrganizationId" = @OrganizationId AND "ParentAccountId" IS NULL
             ORDER BY "Name"
             LIMIT @PageSize OFFSET @Offset
-            """, new { PageSize = pageSize, Offset = pageSize * (page - 1), OrganizationId = organizationId });
+            """, new { PageSize = pageSize + 1, Offset = pageSize * (page - 1), OrganizationId = organizationId });
         }
+
+        var hasMoreRecords = result.Count() > pageSize;
+
+        if (hasMoreRecords)
+        {
+          result = result.Take(pageSize);
+        }
+
+        int? nextPage = hasMoreRecords ? page + 1 : null;
 
         if (includeDescendants)
         {
@@ -629,9 +638,7 @@ namespace Accounting.Database
           }
         }
 
-        bool hasNextPage = result.Count() == pageSize;
-
-        return (result.ToList(), hasNextPage ? page + 1 : (int?)null);
+        return (result.ToList(), nextPage);
       }
 
       private void PopulateChildrenRecursively(List<Account> children, IEnumerable<Account> allAccounts)
@@ -2709,14 +2716,14 @@ namespace Accounting.Database
       }
 
       public async Task<(List<Item> items, int? nextPage)> GetAllAsync(
-        int page, 
+        int page,
         int pageSize,
         int organizationId,
         bool includeDescendants)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
-        p.Add("@PageSize", pageSize);
+        p.Add("@PageSize", pageSize + 1); // Fetch one extra record
         p.Add("@OrganizationId", organizationId);
 
         IEnumerable<Item> result;
@@ -2729,8 +2736,17 @@ namespace Accounting.Database
             WHERE "OrganizationId" = @OrganizationId AND "ParentItemId" IS NULL
             ORDER BY "Name"
             LIMIT @PageSize OFFSET @Offset
-            """, new { PageSize = pageSize, Offset = pageSize * (page - 1), OrganizationId = organizationId });
+            """, new { PageSize = pageSize + 1, Offset = pageSize * (page - 1), OrganizationId = organizationId });
         }
+
+        var hasMoreRecords = result.Count() > pageSize;
+
+        if (hasMoreRecords)
+        {
+          result = result.Take(pageSize);
+        }
+
+        int? nextPage = hasMoreRecords ? page + 1 : null;
 
         if (includeDescendants)
         {
@@ -2765,9 +2781,7 @@ namespace Accounting.Database
           }
         }
 
-        bool hasNextPage = result.Count() == pageSize;
-
-        return (result.ToList(), hasNextPage ? page + 1 : (int?)null);
+        return (result.ToList(), nextPage);
       }
 
       public async Task<Item?> GetAsync(int itemId, int organizationId)
