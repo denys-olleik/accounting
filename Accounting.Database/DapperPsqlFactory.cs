@@ -2792,7 +2792,7 @@ namespace Accounting.Database
                 FROM "Inventory" i
                 INNER JOIN "Item" it ON i."ItemId" = it."ItemID"
                 INNER JOIN "Location" l ON i."LocationId" = l."LocationID"
-                WHERE i."ItemID" = @ItemId
+                WHERE i."ItemId" = @ItemId
                 AND i."OrganizationId" = @OrganizationId
                 """,
                 (inventory, inventoryItem, location) =>
