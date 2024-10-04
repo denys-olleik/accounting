@@ -1,5 +1,58 @@
-﻿using Accounting.Business;
-using Accounting.Common;
+﻿//CREATE TABLE "Item"
+//(
+//	"ItemID" SERIAL PRIMARY KEY NOT NULL,
+//	"Name" VARCHAR(100) NOT NULL,
+//	"Description" VARCHAR(1000) NULL,
+//	"Quantity" DECIMAL(18,2) NULL,
+//	"UnitTypeId" INT NULL,
+//	"ItemType" VARCHAR(100) NOT NULL CHECK ("ItemType" IN ('product', 'service')),
+//	"InventoryMethod" VARCHAR(100) NOT NULL CHECK ("InventoryMethod" IN ('fifo', 'lifo', 'any', 'specific')) DEFAULT 'fifo',
+//	"RevenueAccountId" INT NULL,
+//	"AssetsAccountId" INT NULL,
+//	"ParentItemId" INT NULL,
+//	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+//	"CreatedById" INT NOT NULL,
+//	"OrganizationId" INT NOT NULL,
+//  FOREIGN KEY ("UnitTypeId") REFERENCES "UnitType"("UnitTypeID"),
+//  FOREIGN KEY ("RevenueAccountId") REFERENCES "Account"("AccountID"),
+//  FOREIGN KEY ("AssetsAccountId") REFERENCES "Account"("AccountID"),
+//  FOREIGN KEY ("ParentItemId") REFERENCES "Item"("ItemID"),
+//  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+//  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+//);
+
+//CREATE TABLE "Location"
+//(
+//	"LocationID" SERIAL PRIMARY KEY NOT NULL,
+//	"Name" VARCHAR(100) NOT NULL,
+//	"Description" VARCHAR(1000) NULL,
+//	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+//	"ParentLocationId" INT NULL,
+//	"CreatedById" INT NOT NULL,
+//	"OrganizationId" INT NOT NULL,
+//  FOREIGN KEY ("ParentLocationId") REFERENCES "Location"("LocationID"),
+//  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+//  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+//);
+
+//CREATE TABLE "Inventory"
+//(
+//	"InventoryID" SERIAL PRIMARY KEY NOT NULL,
+//	"ItemId" INT NOT NULL,
+//	"LocationId" INT NOT NULL,
+//	"Quantity" DECIMAL(18,2) NOT NULL,
+//	"SalePrice" DECIMAL(18,2) NULL,
+//	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+//	"CreatedById" INT NOT NULL,
+//	"OrganizationId" INT NOT NULL,
+//  FOREIGN KEY ("ItemId") REFERENCES "Item"("ItemID"),
+//  FOREIGN KEY ("LocationId") REFERENCES "Location"("LocationID"),
+//  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+//  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
+//  UNIQUE ("ItemId", "LocationId")
+//);
+
+using Accounting.Business;
 using Accounting.CustomAttributes;
 using Accounting.Models.Item;
 using Accounting.Models.ItemViewModels;
@@ -272,7 +325,8 @@ namespace Accounting.Controllers
           Created = item.Created,
           CreatedById = item.CreatedById,
           OrganizationId = item.OrganizationId,
-          Children = new List<ItemViewModel>()
+          Children = new List<ItemViewModel>(),
+          Inventories = new List<Inventory>()
         };
 
         if (item.Children != null)
@@ -374,7 +428,23 @@ namespace Accounting.Models.Item
     public int CreatedById { get; set; }
     public int OrganizationId { get; set; }
     public List<ItemViewModel>? Children { get; internal set; }
-    public List<Inventory>? Inventories { get; set; }
+    public List<InventoryViewModel>? Inventories { get; set; }
+  }
+
+  public class InventoryViewModel
+  {
+    public int InventoryID { get; set; }
+    public int ItemId { get; set; }
+    public int LocationId { get; set; }
+    public LocationViewModel? Location { get; set; }
+    public decimal Quantity { get; set; }
+    public decimal? SalePrice { get; set; }
+  }
+
+  public class LocationViewModel
+  {
+    public int LocationID { get; set; }
+    public string? Name { get; set; }
   }
 
   public class ItemsPaginatedViewModel : PaginatedViewModel

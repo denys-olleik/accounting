@@ -2783,28 +2783,38 @@ namespace Accounting.Database
             }
           }
 
-          if (includeInventories)
+          async Task LoadInventoriesAsync(NpgsqlConnection con, Item item, int organizationId)
           {
-            foreach (var item in result)
-            {
-              var inventories = await con.QueryAsync<Inventory, Item, Location, Inventory>($"""
-                SELECT i.*, it.*, l.*
-                FROM "Inventory" i
-                INNER JOIN "Item" it ON i."ItemId" = it."ItemID"
-                INNER JOIN "Location" l ON i."LocationId" = l."LocationID"
-                WHERE i."ItemId" = @ItemId
-                AND i."OrganizationId" = @OrganizationId
-                """,
+            var inventories = await con.QueryAsync<Inventory, Item, Location, Inventory>($"""
+              SELECT i.*, it.*, l.*
+              FROM "Inventory" i
+              INNER JOIN "Item" it ON i."ItemId" = it."ItemID"
+              INNER JOIN "Location" l ON i."LocationId" = l."LocationID"
+              WHERE i."ItemId" = @ItemId
+              AND i."OrganizationId" = @OrganizationId
+              """,
                 (inventory, inventoryItem, location) =>
                 {
-                  //inventory.Item = inventoryItem;
                   inventory.Location = location;
                   return inventory;
                 },
                 new { ItemId = item.ItemID, OrganizationId = organizationId },
                 splitOn: "ItemID,LocationID");
 
-              item.Inventories = inventories.ToList();
+            item.Inventories = inventories.ToList();
+
+            // Recursively load inventories for children
+            foreach (var child in item.Children)
+            {
+              await LoadInventoriesAsync(con, child, organizationId);
+            }
+          }
+
+          if (includeInventories)
+          {
+            foreach (var item in result)
+            {
+              await LoadInventoriesAsync(con, item, organizationId);
             }
           }
         }
