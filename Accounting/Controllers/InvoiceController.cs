@@ -246,7 +246,7 @@ namespace Accounting.Controllers
       {
         Journal debitGlEntry = await _journalService.CreateAsync(new Journal()
         {
-          AccountId = invoiceLine.AssetsAccountId,
+          AccountId = invoiceLine.AssetsAccountId!.Value,
           Debit = invoiceLine.Price * invoiceLine.Quantity,
           Credit = null,
           CreatedById = GetUserId(),
@@ -255,7 +255,7 @@ namespace Accounting.Controllers
 
         Journal creditGlEntry = await _journalService.CreateAsync(new Journal()
         {
-          AccountId = invoiceLine.RevenueAccountId,
+          AccountId = invoiceLine.RevenueAccountId!.Value,
           Debit = null,
           Credit = invoiceLine.Price * invoiceLine.Quantity,
           CreatedById = GetUserId(),
@@ -292,7 +292,7 @@ namespace Accounting.Controllers
       {
         Journal debitGlEntry = await _journalService.CreateAsync(new Journal()
         {
-          AccountId = line.AssetsAccountId,
+          AccountId = line.AssetsAccountId!.Value,
           Debit = line.Price * line.Quantity,
           Credit = null,
           CreatedById = GetUserId(),
@@ -310,7 +310,7 @@ namespace Accounting.Controllers
 
         Journal creditGlEntry = await _journalService.CreateAsync(new Journal()
         {
-          AccountId = line.RevenueAccountId,
+          AccountId = line.RevenueAccountId!.Value,
           Debit = null,
           Credit = line.Price * line.Quantity,
           CreatedById = GetUserId(),

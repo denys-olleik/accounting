@@ -130,7 +130,7 @@ namespace Accounting.Service
         {
           Journal debitGlEntry = await _journalService.CreateAsync(new Journal()
           {
-            AccountId = invoiceLine.AssetsAccountId,
+            AccountId = invoiceLine.AssetsAccountId!.Value,
             Debit = invoiceLine.Price * invoiceLine.Quantity,
             Credit = null,
             CreatedById = userId,
@@ -139,7 +139,7 @@ namespace Accounting.Service
 
           Journal creditGlEntry = await _journalService.CreateAsync(new Journal()
           {
-            AccountId = invoiceLine.RevenueAccountId,
+            AccountId = invoiceLine.RevenueAccountId!.Value,
             Debit = null,
             Credit = invoiceLine.Price * invoiceLine.Quantity,
             CreatedById = userId,

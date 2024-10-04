@@ -17,8 +17,8 @@ namespace Accounting.Business
 
     public int InvoiceId { get; set; }
     public DateTime Created { get; set; }
-    public int RevenueAccountId { get; set; }
-    public int AssetsAccountId { get; set; }
+    public int? RevenueAccountId { get; set; }
+    public int? AssetsAccountId { get; set; }
     public int CreatedById { get; set; }
     public int OrganizationId { get; set; }
 

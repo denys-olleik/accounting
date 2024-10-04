@@ -232,8 +232,8 @@ namespace Accounting.Controllers
           Quantity = il.Quantity,
           Price = il.Price,
           //AmountToReceive = il.Quantity * il.Price,
-          RevenueAccountId = il.RevenueAccountId,
-          AssetsAccountId = il.AssetsAccountId
+          RevenueAccountId = il.RevenueAccountId!.Value,
+          AssetsAccountId = il.AssetsAccountId!.Value
         }).ToList(),
         BusinessEntity = new BusinessEntityViewModel
         {
