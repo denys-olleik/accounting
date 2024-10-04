@@ -331,6 +331,11 @@ namespace Accounting.Controllers
             InventoryID = x.InventoryID,
             ItemId = x.ItemId,
             LocationId = x.LocationId,
+            Location = new LocationViewModel
+            {
+              LocationID = x.Location!.LocationID,
+              Name = x.Location.Name
+            },
             Quantity = x.Quantity,
             SalePrice = x.SalePrice
           }).ToList()

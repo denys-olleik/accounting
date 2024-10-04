@@ -68,8 +68,11 @@
                   </tr>
                 </thead>
                 <tbody>
+                  <tr v-if="item.inventories.length === 0">
+                    <td colspan="2" class="text-align-center">empty</td>
+                  </tr>
                   <tr v-for="inventory in item.inventories" :key="inventory.inventoryID">
-                    <td class="padding-right-20px">{{ inventory.inventoryID }}</td>
+                    <td class="padding-right-20px">{{ inventory.location.name }}</td>
                     <td class="text-align-right">{{ inventory.quantity }}</td>
                   </tr>
                 </tbody>
@@ -95,20 +98,24 @@
 </div>
 
 <div id="app" class="display-flex flex-direction-column font-Roboto-Mono">
-  <div class="margin-bottom-5px">
-    <template v-for="item in items" :key="item.itemID">
-      <item :item="item" @@item-clicked="onItemClicked"></item>
-    </template>
-  </div>
 
   <div class="margin-bottom-5px display-flex font-Roboto font-size-20px background-color-antiquewhite">
     <div>
       <a :href="`/item/items?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-darkslategray text-decoration-none">prev</a>
     </div>
-    <div class="flex-1"></div>
+    <div class="flex-1 text-align-center">
+      <input type="text">
+    </div>
     <div>
       <a :href="`/item/items?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-darkslategray text-decoration-none">next</a>
     </div>
+  </div>
+
+  
+  <div class="margin-bottom-5px">
+    <template v-for="item in items" :key="item.itemID">
+      <item :item="item" @@item-clicked="onItemClicked"></item>
+    </template>
   </div>
 </div>
 
