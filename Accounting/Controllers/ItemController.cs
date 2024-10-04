@@ -326,7 +326,14 @@ namespace Accounting.Controllers
           CreatedById = item.CreatedById,
           OrganizationId = item.OrganizationId,
           Children = new List<ItemViewModel>(),
-          Inventories = new List<Inventory>()
+          Inventories = item.Inventories?.Select(x => new InventoryViewModel
+          {
+            InventoryID = x.InventoryID,
+            ItemId = x.ItemId,
+            LocationId = x.LocationId,
+            Quantity = x.Quantity,
+            SalePrice = x.SalePrice
+          }).ToList()
         };
 
         if (item.Children != null)
@@ -437,7 +444,7 @@ namespace Accounting.Models.Item
     public int ItemId { get; set; }
     public int LocationId { get; set; }
     public LocationViewModel? Location { get; set; }
-    public decimal Quantity { get; set; }
+    public decimal? Quantity { get; set; }
     public decimal? SalePrice { get; set; }
   }
 
