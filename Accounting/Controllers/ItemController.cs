@@ -137,7 +137,7 @@ namespace Accounting.Controllers
         }
 
         List<Account> accounts
-        = await _accountService.GetAllAsync(AccountTypeConstants.Revenue, GetOrganizationId());
+          = await _accountService.GetAllAsync(AccountTypeConstants.Revenue, GetOrganizationId());
         accounts.AddRange(
           await _accountService.GetAllAsync(AccountTypeConstants.Assets, GetOrganizationId()));
 
@@ -176,6 +176,7 @@ namespace Accounting.Controllers
       {
         Name = model.Name,
         Description = model.Description,
+        Quantity = model.Quantity,
         RevenueAccountId = model.SelectedRevenueAccountId,
         AssetsAccountId = model.SelectedAssetsAccountId,
         ItemType = model.SelectedItemType,
@@ -216,7 +217,7 @@ namespace Accounting.Controllers
         scope.Complete();
       }
 
-      return RedirectToAction("ProductsAndServices");
+      return RedirectToAction("Items");
     }
   }
 

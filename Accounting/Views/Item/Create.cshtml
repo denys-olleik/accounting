@@ -56,6 +56,11 @@
   </div>
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="Quantity" class="background-color-antiquewhite">Quantity</label>
+    <input asp-for="Quantity" type="number" step="0.01" class="font-size-20px" />
+  </div>
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
     <label class="background-color-antiquewhite">Item Type</label>
     <item-type-selector :item-types="itemTypes"></item-type-selector>
   </div>

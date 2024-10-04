@@ -43,7 +43,8 @@ namespace Accounting.Validators
       When(x => x.SelectedLocationId.HasValue, () =>
       {
         RuleFor(x => x.Quantity)
-            .GreaterThan(0).WithMessage("Quantity is required and must be greater than zero when location is selected.");
+        .GreaterThan(0).WithMessage("Quantity is required and must be greater than zero when location is selected.")
+        .PrecisionScale(18, 2, true).WithMessage("Quantity must have a maximum of 18 digits in total, with up to 2 decimal places.");
       });
     }
 
