@@ -26,6 +26,29 @@ namespace Accounting.Business
 
     public int? RowNumber { get; set; }
 
+    public static class ItemHierarchyTypes
+    {
+      public const string Assembly = "assembly"; // item without ancestors but which has descendants.
+      public const string Component = "component"; // item with ancestor and descendants.
+      public const string Part = "part"; // any item without descendants.
+
+      private static readonly List<string> _all = new List<string>();
+
+      static ItemHierarchyTypes()
+      {
+        var fields = typeof(ItemHierarchyTypes).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
+        foreach (var field in fields)
+        {
+          if (field.FieldType == typeof(string) && field.GetValue(null) is string value)
+          {
+            _all.Add(value);
+          }
+        }
+      }
+
+      public static IReadOnlyList<string> All => _all.AsReadOnly();
+    }
+
     public static class InventoryMethods
     {
       public const string FIFO = "fifo";
