@@ -210,42 +210,7 @@ namespace Accounting.Controllers
             OrganizationId = GetOrganizationId()
           });
 
-          if (model.InitialCost > 0)
-          {
-            Guid transactonGuid = GuidExtensions.CreateSecureGuid();
 
-            Account debitInventoryAccount = await _accountService.GetByAccountNameAsync("inventory", GetOrganizationId());
-
-            throw new NotImplementedException("I have no idea if beyond this line is accurate at this time.");
-            //Account creditInventoryOpeningBalanceAccount = await _accountService.GetByAccountNameAsync("inventory-opening-balance", GetOrganizationId());
-
-            Journal debitEntry = await _journalService.CreateAsync(new Journal
-            {
-              AccountId = debitInventoryAccount.AccountID,
-              Debit = model.InitialCost,
-              Credit = null,
-              CreatedById = GetUserId(),
-              OrganizationId = GetOrganizationId(),
-            });
-
-            Journal creditEntry = await _journalService.CreateAsync(new Journal
-            {
-              //AccountId = creditInventoryOpeningBalanceAccount.AccountID,
-              Debit = null,
-              Credit = model.InitialCost,
-              CreatedById = GetUserId(),
-              OrganizationId = GetOrganizationId(),
-            });
-
-            //await _journalInventoryAdjustmentService.CreateAsync(new JournalInventoryAdjustment
-            //{
-            //  InventoryAdjustmentId = debitEntry.JournalID,
-            //  JournalId = creditEntry.JournalID,
-            //  TransactionGuid = transactonGuid,
-            //  CreatedById = GetUserId(),
-            //  OrganizationId = GetOrganizationId()
-            //});
-          }
         }
 
         scope.Complete();
