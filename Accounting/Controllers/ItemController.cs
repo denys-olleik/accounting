@@ -434,7 +434,7 @@ namespace Accounting.Models.Item
     public DateTimeOffset Created { get; set; }
     public int CreatedById { get; set; }
     public int OrganizationId { get; set; }
-    public List<ItemViewModel>? Children { get; internal set; }
+    public List<ItemViewModel>? Children { get; set; }
     public List<InventoryViewModel>? Inventories { get; set; }
   }
 

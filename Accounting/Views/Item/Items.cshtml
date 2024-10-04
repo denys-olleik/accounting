@@ -19,7 +19,7 @@
           {{ item.name }}
         </a>
         <span>&nbsp;</span>
-        <div v-if="item.selectedItemID === item.itemID" class="display-flex flex-direction-column">
+        <div v-if="item.selectedItemID === item.itemID" class="display-flex flex-direction-column flex-1">
           <div class="display-flex margin-bottom-2px">
             <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
               <div class="flex-1"></div>
@@ -59,12 +59,21 @@
               <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">inventories:</a>
               <div class="flex-1"></div>
             </div>
-            <div class="display-flex flex-direction-column background-color-crimson padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
-              <div class="flex-1"></div>
-              <a class="font-size-16px font-Roboto color-white text-decoration-none">
-                {{ item.quantity }} in stock
-              </a>
-              <div class="flex-1"></div>
+            <div class="flex-1 display-flex flex-direction-column background-color-crimson padding-right-5px padding-left-5px border-radius-5px margin-left-2px margin-right-2px">
+              <table class="border-collapse width-100 background-color-crimson font-Roboto-Mono color-white">
+                <thead class="border-bottom-1px-solid-white">
+                  <tr>
+                    <th class="text-align-left padding-right-20px">Location</th>
+                    <th class="text-align-right">Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="inventory in item.inventories" :key="inventory.inventoryID">
+                    <td class="padding-right-20px">{{ inventory.inventoryID }}</td>
+                    <td class="text-align-right">{{ inventory.quantity }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
