@@ -109,10 +109,10 @@
         this.$emit('item-clicked', itemID);
       },
       itemHierarchyType(item) {
-        if (!item.ParentItemId && item.children && item.children.length) {
-          return 'assembly';
-        } else if (item.ParentItemId && item.children && item.children.length) {
+        if (item.parentItemId && item.children && item.children.length) {
           return 'component';
+        } else if (!item.parentItemId && item.children && item.children.length) {
+          return 'assembly';
         } else {
           return 'part';
         }
