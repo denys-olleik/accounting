@@ -8,6 +8,7 @@ namespace Accounting.Models.ItemViewModels
   {
     public string? Name { get; set; }
     public string? Description { get; set; }
+    public decimal Quantity { get; set; }
     public int? ParentItemId { get; set; }
     public ItemViewModel? ParentItem { get; set; }
     public int? SelectedAssetsAccountId { get; set; }
@@ -15,8 +16,7 @@ namespace Accounting.Models.ItemViewModels
 
     #region Inventory
     public decimal SalePrice { get; set; }
-    public decimal InitialCost { get; set; }
-    public decimal Quantity { get; set; }
+    public decimal InventoryQuantity { get; set; }
 
     public List<string> AvailableItemTypes { get; set; } = new List<string>();
     public string? SelectedItemType { get; set; }

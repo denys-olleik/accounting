@@ -51,7 +51,6 @@
            maxlength="100" />
   </div>
   <div class="display-flex flex-direction-column margin-bottom-5px">
-
     <label asp-for="Description" class="background-color-antiquewhite"></label>
     <textarea asp-for="Description" class="font-size-20px" rows="6"></textarea>
   </div>
@@ -95,8 +94,8 @@
       <div class="display-flex flex-direction-column">
         <div class="display-flex margin-bottom-5px">
           <div class="display-flex flex-1 flex-direction-column">
-            <label for="Quantity" class="background-color-antiquewhite">Quantity</label>
-            <input asp-for="Quantity" type="number" class="width-100 font-size-20px" v-model="quantity" />
+            <label for="InventoryQuantity" class="background-color-antiquewhite">Inventory Quantity</label>
+            <input asp-for="InventoryQuantity" type="number" class="width-100 font-size-20px" v-model="inventoryQuantity" />
           </div>
           <div class="width-5px"></div>
           <div class="display-flex flex-1 flex-direction-column">
@@ -183,7 +182,7 @@
         itemTypes: @Html.Raw(Json.Serialize(Model.AvailableItemTypes)),
         selectedItemType: '@Model.SelectedItemType' || '',
         selectedLocationId: '@Model.SelectedLocationId?.ToString()' || '',
-        quantity: 0,
+        inventoryQuantity: 0,
         salePrice: 0.0,
         parentItemId: @Html.Raw(Model.ParentItemId.HasValue ? Model.ParentItemId.Value.ToString() : "null"),
       }
@@ -191,7 +190,7 @@
     watch: {
       selectedLocationId(newVal) {
         if (newVal === '') {
-          this.quantity = 0;
+          this.inventoryQuantity = 0;
           this.salePrice = 0.0;
         }
       }
