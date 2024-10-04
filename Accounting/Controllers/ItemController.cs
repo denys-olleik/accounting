@@ -61,7 +61,7 @@ namespace Accounting.Controllers
       int page = 1, 
       int pageSize = 2)
     {
-      var vm = new AssembliesPaginatedViewModel
+      var vm = new ItemsPaginatedViewModel
       {
         Page = page,
         PageSize = pageSize
@@ -420,7 +420,7 @@ namespace Accounting.Models.Item
     public List<ItemViewModel>? Children { get; internal set; }
   }
 
-  public class AssembliesPaginatedViewModel : PaginatedViewModel
+  public class ItemsPaginatedViewModel : PaginatedViewModel
   {
 
   }
