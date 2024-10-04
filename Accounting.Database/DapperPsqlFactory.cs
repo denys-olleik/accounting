@@ -2750,9 +2750,10 @@ namespace Accounting.Database
 
         int? nextPage = hasMoreRecords ? page + 1 : null;
 
-        if (includeDescendants)
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+          if (includeDescendants)
           {
             var allItems = await con.QueryAsync<Item>($"""
               SELECT * 
@@ -2779,6 +2780,31 @@ namespace Accounting.Database
               {
                 PopulateChildrenRecursively(item.Children);
               }
+            }
+          }
+
+          if (includeInventories)
+          {
+            foreach (var item in result)
+            {
+              var inventories = await con.QueryAsync<Inventory, Item, Location, Inventory>($"""
+                SELECT i.*, it.*, l.*
+                FROM "Inventory" i
+                INNER JOIN "Item" it ON i."ItemId" = it."ItemID"
+                INNER JOIN "Location" l ON i."LocationId" = l."LocationID"
+                WHERE i."ItemID" = @ItemId
+                AND i."OrganizationId" = @OrganizationId
+                """,
+                (inventory, inventoryItem, location) =>
+                {
+                  //inventory.Item = inventoryItem;
+                  inventory.Location = location;
+                  return inventory;
+                },
+                new { ItemId = item.ItemID, OrganizationId = organizationId },
+                splitOn: "ItemID,LocationID");
+
+              item.Inventories = inventories.ToList();
             }
           }
         }

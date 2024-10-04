@@ -304,7 +304,8 @@ namespace Accounting.Controllers
         page,
         pageSize,
         GetOrganizationId(),
-        true);
+        true,
+        false);
 
       foreach (var item in items)
       {
