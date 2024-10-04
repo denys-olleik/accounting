@@ -43,19 +43,6 @@ namespace Accounting.Controllers
     }
 
     [HttpGet]
-    [Route("products-and-services")]
-    public async Task<IActionResult> ProductsAndServices(int page = 1, int pageSize = 10)
-    {
-      var vm = new ProductsAndServicesPaginatedViewModel
-      {
-        Page = page,
-        PageSize = pageSize
-      };
-
-      return View(vm);
-    }
-
-    [HttpGet]
     [Route("items")]
     public IActionResult Items(
       int page = 1, 

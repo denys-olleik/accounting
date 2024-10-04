@@ -146,21 +146,6 @@ namespace Accounting.Controllers
       return model;
     }
 
-    //private async Task<List<AccountViewModel>> GetFilteredAccountsAsync(string[] accountNames)
-    //{
-    //  var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
-
-    //  return accountService.Accounts
-    //      .Where(x => accountNames.Contains(x.Name))
-    //      .Select(x => new AccountViewModel()
-    //      {
-    //        AccountID = x.AccountID,
-    //        Name = x.Name,
-    //        Type = x.Type,
-    //      })
-    //      .ToList();
-    //}
-
     private async Task<ValidationResult> ValidateCreateInvoiceModel(CreateInvoiceViewModel model)
     {
       var validator = new CreateInvoiceViewModelValidator(GetOrganizationId());
@@ -172,8 +157,6 @@ namespace Accounting.Controllers
 
     private async Task<CreateInvoiceViewModel> InitializeErrorCreateInvoiceViewModel(CreateInvoiceViewModel model, ValidationResult validationResult)
     {
-      //var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
-
       model.Customers = await GetAllCustomersWithAddresses();
       model.PaymentTerms = await GetAllPaymentTerms();
       model.InvoiceStatuses = Invoice.InvoiceStatusConstants.All.ToList();
@@ -239,8 +222,6 @@ namespace Accounting.Controllers
       }
 
       Guid transactionGuid = GuidExtensions.CreateSecureGuid();
-
-      //var accountService = await AccountServiceSingleton.InstanceAsync(GetOrganizationId());
 
       foreach (var invoiceLine in model.InvoiceLines!)
       {
@@ -550,7 +531,6 @@ namespace Accounting.Controllers
     public async Task<IActionResult> Void(int id)
     {
       Invoice invoice = await _invoiceService.GetAsync(id, GetOrganizationId());
-      //List<InvoicePayment> invoicePayments = await _invoicePaymentService.GetAllAsync(invoice.InvoiceID, GetOrganizationId());
 
 
       if (invoice == null)
