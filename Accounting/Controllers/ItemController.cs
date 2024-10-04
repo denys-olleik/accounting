@@ -25,9 +25,9 @@ namespace Accounting.Controllers
     private readonly JournalService _journalService;
 
     public ItemController(
-      AccountService accountService, 
-      LocationService locationService, 
-      InventoryService inventoryService, 
+      AccountService accountService,
+      LocationService locationService,
+      InventoryService inventoryService,
       ItemService itemService,
       InventoryAdjustmentService inventoryAdjustmentService,
       JournalInventoryAdjustmentService journalInventoryAdjustmentService,
@@ -45,7 +45,7 @@ namespace Accounting.Controllers
     [HttpGet]
     [Route("items")]
     public IActionResult Items(
-      int page = 1, 
+      int page = 1,
       int pageSize = 2)
     {
       var vm = new ItemsPaginatedViewModel
@@ -243,6 +243,7 @@ namespace Accounting.Controllers
     [HttpGet("get-all-items")]
     public async Task<IActionResult> GetAllItems(
       bool includeDescendants,
+      bool includeInventories,
       int page = 1,
       int pageSize = 2)
     {
@@ -251,7 +252,8 @@ namespace Accounting.Controllers
           page,
           pageSize,
           GetOrganizationId(),
-          includeDescendants);
+          includeDescendants,
+          includeInventories);
 
       ItemViewModel ConvertToViewModel(Item item)
       {
@@ -371,6 +373,7 @@ namespace Accounting.Models.Item
     public int CreatedById { get; set; }
     public int OrganizationId { get; set; }
     public List<ItemViewModel>? Children { get; internal set; }
+    public List<Inventory>? Inventories { get; set; }
   }
 
   public class ItemsPaginatedViewModel : PaginatedViewModel

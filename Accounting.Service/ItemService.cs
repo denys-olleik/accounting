@@ -21,7 +21,8 @@ namespace Accounting.Service
       int page, 
       int pageSize,
       int organizationId,
-      bool includeDescendants)
+      bool includeDescendants,
+      bool includeInventories)
     {
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetItemManager()
@@ -29,7 +30,8 @@ namespace Accounting.Service
           page, 
           pageSize,
           organizationId,
-          includeDescendants);
+          includeDescendants,
+          includeInventories);
     }
 
     public async Task<List<Item>> GetAllAsync(int organizationId)

@@ -2720,7 +2720,8 @@ namespace Accounting.Database
         int page,
         int pageSize,
         int organizationId,
-        bool includeDescendants)
+        bool includeDescendants,
+        bool includeInventories)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
