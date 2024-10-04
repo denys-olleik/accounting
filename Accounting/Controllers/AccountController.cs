@@ -29,7 +29,7 @@ namespace Accounting.Controllers
     [HttpGet]
     public IActionResult Accounts(
       int page = 1, 
-      int pageSize = 5)
+      int pageSize = 2)
     {
       var vm = new AccountsPaginatedViewModel
       {
