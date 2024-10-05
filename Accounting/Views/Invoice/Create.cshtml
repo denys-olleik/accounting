@@ -20,8 +20,9 @@
            @@keydown="handleKeyDown"
            @@keydown.left="onLeftArrowPress"
            class="font-size-20px margin-bottom-2px"
+           :disabled="!!selectedCustomer"
            autofocus />
-    <div v-if="filteredCustomers.length > 0"
+    <div v-if="filteredCustomers.length > 0 && !selectedCustomer"
          class="background-color-black color-white padding-5px max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono box-shadow">
       <div v-for="(customer, index) in filteredCustomers"
            :key="customer.id"
@@ -400,15 +401,17 @@
         selectedIndex: -1,
       };
     },
+    watch: {
+      selectedCustomer: {
+        immediate: true,
+        handler: 'updateSearchQuery'
+      },
+    },
     mounted() {
       document.addEventListener('click', this.clickOutside);
-      this.updateSearchQuery();
     },
     beforeDestroy() {
       document.removeEventListener('click', this.clickOutside);
-    },
-    watch: {
-      selectedCustomer: 'updateSearchQuery',
     },
     methods: {
       clickOutside(event) {
@@ -418,6 +421,8 @@
         }
       },
       filterCustomers() {
+        if (this.selectedCustomer) return; // Don't filter if a customer is selected
+
         if (this.searchQuery.trim() === '') {
           this.filteredCustomers = [];
           this.selectedIndex = -1;
@@ -438,12 +443,11 @@
         this.$emit('update:selected-customer', customer);
         this.filteredCustomers = [];
         this.selectedIndex = -1;
-
-        this.searchQuery = [customer.firstName, customer.lastName, customer.companyName]
-          .filter(value => value !== null && value !== undefined)
-          .join(' ');
+        this.updateSearchQuery();
       },
       handleKeyDown(event) {
+        if (this.selectedCustomer) return; // Don't handle key events if a customer is selected
+
         if (this.filteredCustomers.length === 0) return;
 
         if (event.key === 'ArrowDown') {
