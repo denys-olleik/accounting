@@ -14,10 +14,20 @@
 <template id="customer-selection-template">
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label for="customerSearch" class="background-color-antiquewhite">Customer search</label>
-    <input id="customerSearch" v-model="searchQuery" @@input="filterCustomers" @@keydown.left="onLeftArrowPress" class="font-size-20px" autofocus />
+    <input id="customerSearch"
+           v-model="searchQuery"
+           @@input="filterCustomers"
+           @@keydown="handleKeyDown"
+           @@keydown.left="onLeftArrowPress"
+           class="font-size-20px"
+           autofocus />
     <div v-if="filteredCustomers.length > 0"
-         class="background-color-black color-white padding-5px max-height-250px overflow-auto">
-      <div v-for="customer in filteredCustomers" :key="customer.id" @@click="selectCustomer(customer)">
+         class="background-color-black color-white padding-5px max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono box-shadow">
+      <div v-for="(customer, index) in filteredCustomers"
+           :key="customer.id"
+           @@click="selectCustomer(customer)"
+           class="dropdown-item font-size-16px">
+        <span v-if="index === selectedIndex" class="blinking-cursor">█</span>
         {{ customer.firstName }} {{ customer.lastName }} {{ customer.companyName }}
       </div>
     </div>
@@ -384,6 +394,7 @@
       return {
         searchQuery: '',
         filteredCustomers: [],
+        selectedIndex: -1,
       };
     },
     mounted() {
@@ -396,11 +407,13 @@
       clickOutside(event) {
         if (!this.$el.contains(event.target)) {
           this.filteredCustomers = [];
+          this.selectedIndex = -1;
         }
       },
       filterCustomers() {
         if (this.searchQuery.trim() === '') {
           this.filteredCustomers = [];
+          this.selectedIndex = -1;
           return;
         }
         this.filteredCustomers = this.customers.filter(customer => {
@@ -412,14 +425,35 @@
 
           return combinedString.includes(this.searchQuery.toLowerCase());
         });
+        this.selectedIndex = this.filteredCustomers.length > 0 ? 0 : -1;
       },
       selectCustomer(customer) {
         this.$emit('update:selected-customer', customer);
         this.filteredCustomers = [];
+        this.selectedIndex = -1;
 
         this.searchQuery = [customer.firstName, customer.lastName, customer.companyName]
           .filter(value => value !== null && value !== undefined)
           .join(' ');
+      },
+      handleKeyDown(event) {
+        if (this.filteredCustomers.length === 0) return;
+
+        if (event.key === 'ArrowDown') {
+          this.selectedIndex = (this.selectedIndex + 1) % this.filteredCustomers.length;
+          event.preventDefault();
+        } else if (event.key === 'ArrowUp') {
+          this.selectedIndex = (this.selectedIndex - 1 + this.filteredCustomers.length) % this.filteredCustomers.length;
+          event.preventDefault();
+        } else if (event.key === 'Enter') {
+          event.preventDefault();
+          if (this.selectedIndex !== -1) {
+            this.selectCustomer(this.filteredCustomers[this.selectedIndex]);
+          }
+        } else if (event.key === 'Escape') {
+          this.filteredCustomers = [];
+          this.selectedIndex = -1;
+        }
       },
       onLeftArrowPress() {
         if (this.searchQuery.trim() === '') {
