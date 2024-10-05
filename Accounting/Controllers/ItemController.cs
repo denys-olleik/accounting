@@ -210,7 +210,17 @@ namespace Accounting.Controllers
             OrganizationId = GetOrganizationId()
           });
 
+          decimal total = model.Quantity * model.PurchasedFor;
+          await _journalService.CreateAsync(new Journal()
+          {
+            //AccountId = model.selectedInventoryAssetAccountId,
+            //Debit = total,
+            //Credit = null,
+            //CreatedById = GetUserId(),
+            //OrganizationId = GetOrganizationId()
+          });
 
+          //await _journalInventoryAdjustmentService.CreateAsync(new JournalInventoryAdjustment)
         }
 
         scope.Complete();

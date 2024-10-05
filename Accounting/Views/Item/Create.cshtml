@@ -126,7 +126,7 @@
   </div>
 
   <div class="margin-bottom-5px background-color-antiquewhite">
-    <label>Revenue Accounts</label>
+    <label>Revenue account to increase (credit)</label>
     <div class="display-flex flex-direction-column">
       <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Revenue')"
                         :key="account.accountID"
@@ -137,7 +137,7 @@
   </div>
 
   <div class="margin-bottom-5px background-color-antiquewhite">
-    <label>Assets Accounts</label>
+    <label>Assets accounts to increase (debit)</label>
     <div class="display-flex flex-direction-column">
       <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Assets')"
                         :key="account.accountID"
