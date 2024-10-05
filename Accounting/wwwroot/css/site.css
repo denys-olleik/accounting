@@ -262,6 +262,10 @@ td.fitwidth, th.fitwidth {
   border: 5px dashed white;
 }
 
+.border-1px-solid-white {
+  border: 1px solid white;
+}
+
 .border-1px-solid-red {
   border: 1px solid red;
 }
