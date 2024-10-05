@@ -227,6 +227,7 @@ CREATE TABLE "Item"
 	"Name" VARCHAR(100) NOT NULL,
 	"Description" VARCHAR(1000) NULL,
 	"Quantity" DECIMAL(18,2) NULL,
+	"SellFor" DECIMAL(18,2) NULL,
 	"UnitTypeId" INT NULL,
 	"ItemType" VARCHAR(100) NOT NULL CHECK ("ItemType" IN ('product', 'service')),
 	"InventoryMethod" VARCHAR(100) NOT NULL CHECK ("InventoryMethod" IN ('fifo', 'lifo', 'any', 'specific')) DEFAULT 'fifo',

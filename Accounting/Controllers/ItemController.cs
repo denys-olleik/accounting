@@ -154,6 +154,7 @@ namespace Accounting.Controllers
         Name = model.Name,
         Description = model.Description,
         Quantity = model.Quantity,
+        SellFor = model.SellFor,
         RevenueAccountId = model.SelectedRevenueAccountId,
         AssetsAccountId = model.SelectedAssetsAccountId,
         ItemType = model.SelectedItemType,

@@ -2660,6 +2660,7 @@ namespace Accounting.Database
         p.Add("@Name", entity.Name);
         p.Add("@Description", entity.Description);
         p.Add("@Quantity", entity.Quantity);
+        p.Add("@SellFor", entity.SellFor);
         p.Add("@InventoryMethod", entity.InventoryMethod);
         p.Add("@ItemType", entity.ItemType);
         p.Add("@CreatedById", entity.CreatedById);
@@ -2673,8 +2674,8 @@ namespace Accounting.Database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Item>("""
-            INSERT INTO "Item" ("Name", "Description", "Quantity", "InventoryMethod", "ItemType", "RevenueAccountId", "AssetsAccountId", "CreatedById", "OrganizationId", "ParentItemId")
-            VALUES (@Name, @Description, @Quantity, @InventoryMethod, @ItemType, @RevenueAccountId, @AssetsAccountId, @CreatedById, @OrganizationId, @ParentItemId)
+            INSERT INTO "Item" ("Name", "Description", "Quantity", "SellFor", "InventoryMethod", "ItemType", "RevenueAccountId", "AssetsAccountId", "CreatedById", "OrganizationId", "ParentItemId")
+            VALUES (@Name, @Description, @Quantity, @SellFor, @InventoryMethod, @ItemType, @RevenueAccountId, @AssetsAccountId, @CreatedById, @OrganizationId, @ParentItemId)
             RETURNING *;
             """, p);
         }
