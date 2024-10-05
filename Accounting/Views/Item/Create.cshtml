@@ -20,7 +20,11 @@
 </template>
 
 <template id="account-template">
-  <a href="#" @@click.prevent="selectAccount(account.accountID)">
+  <a href="#" @@click.prevent="selectAccount(account.accountID)"
+     :class="{
+       'background-color-blue color-white':
+         account.accountID === $parent.selectedRevenueAccountId || account.accountID === $parent.selectedAssetsAccountId
+     }">
     <div>{{ account.name }}</div>
   </a>
 </template>
