@@ -1,6 +1,6 @@
 ﻿const ProductsAndServicesSearch = {
   name: 'ProductsAndServicesSearch',
-  props: ['productsOrServices'],
+  props: ['productsOrServices', 'selectedCustomer'],
   data() {
     return {
       searchQuery: '',
@@ -37,14 +37,23 @@
     },
     resetSelectedIndex() {
       this.selectedIndex = 0;
+    },
+    focusInput() {
+      this.$refs.searchInput.focus();
     }
   },
   watch: {
-    searchQuery: 'resetSelectedIndex'
+    searchQuery: 'resetSelectedIndex',
+    selectedCustomer(newValue) {
+      if (newValue) {
+        this.$nextTick(this.focusInput);
+      }
+    }
   },
   template: `
     <div class="color-white max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono">
       <input type="text"
+             ref="searchInput"
              class="font-size-20px width-100"
              placeholder="Search products and services"
              v-model="searchQuery"

@@ -218,7 +218,7 @@
       <div class="display-flex" v-if="selectedCustomer">
         {{ selectedCustomer.website }}
       </div>
-    </div>  
+    </div>
     <div class="width-5px"></div>
     <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
       <invoice-detail :invoice-date="invoiceDate"
@@ -247,8 +247,8 @@
     </div>
   </div>
 
-  <products-and-services-search class=""
-                                :products-or-services="productsOrServices"
+  <products-and-services-search :products-or-services="productsOrServices"
+                                :selected-customer="selectedCustomer"
                                 @@product-or-service-selected="handleProductOrServiceSelected">
   </products-and-services-search>
 
