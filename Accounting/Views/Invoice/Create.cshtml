@@ -28,8 +28,8 @@
       <div v-for="(customer, index) in filteredCustomers"
            :key="customer.id"
            @@click="selectCustomer(customer)"
-           class="dropdown-item font-size-16px">
-        <span v-if="index === selectedIndex" class="blinking-cursor">█</span>
+           class="font-size-16px">
+        <span v-if="index === selectedIndex" class="blinking-cursor margin-right-10px">█</span>
         <business-entity-name-display :business-entity="customer"></business-entity-name-display>
       </div>
     </div>

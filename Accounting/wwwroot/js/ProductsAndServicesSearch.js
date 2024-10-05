@@ -54,10 +54,10 @@
       <div v-if="searchQuery" class="background-color-black padding-5px">
         <div v-for="(productOrService, index) in filteredProductsOrServices"
              :key="productOrService.id"
-             class="dropdown-item font-size-16px"
+             class="font-size-16px"
              @click="selectProductOrService(productOrService)">
-          <span v-if="index === selectedIndex" class="blinking-cursor">█</span>
-          {{ productOrService.name }}
+          <span v-if="index === selectedIndex" class="blinking-cursor margin-right-10px">█</span>
+          <span>{{ productOrService.name }}</span>
         </div>
       </div>
     </div>
