@@ -32,7 +32,7 @@
       </div>
     </div>
     <div class="display-flex text-align-center">
-      <a href="#" class="width-100 color-white border-1px-solid-white">clear</a>
+      <a href="#" class="width-100 color-white border-1px-solid-white" @@click.prevent="clearSelection">clear</a>
     </div>
   </div>
 </template>
@@ -402,9 +402,13 @@
     },
     mounted() {
       document.addEventListener('click', this.clickOutside);
+      this.updateSearchQuery();
     },
     beforeDestroy() {
       document.removeEventListener('click', this.clickOutside);
+    },
+    watch: {
+      selectedCustomer: 'updateSearchQuery',
     },
     methods: {
       clickOutside(event) {
@@ -461,6 +465,21 @@
       onLeftArrowPress() {
         if (this.searchQuery.trim() === '') {
           window.history.back();
+        }
+      },
+      clearSelection() {
+        this.$emit('update:selected-customer', null);
+        this.searchQuery = '';
+        this.filteredCustomers = [];
+        this.selectedIndex = -1;
+      },
+      updateSearchQuery() {
+        if (this.selectedCustomer) {
+          this.searchQuery = [this.selectedCustomer.firstName, this.selectedCustomer.lastName, this.selectedCustomer.companyName]
+            .filter(value => value !== null && value !== undefined)
+            .join(' ');
+        } else {
+          this.searchQuery = '';
         }
       },
     },
@@ -592,8 +611,14 @@
     },
     watch: {
       selectedCustomer(newCustomer) {
-        this.selectedBillingAddress = newCustomer.addresses[0];
-        this.selectedShippingAddress = newCustomer.addresses[0];
+        if (newCustomer) {
+          this.selectedBillingAddress = newCustomer.addresses[0] || null;
+          this.selectedShippingAddress = newCustomer.addresses[0] || null;
+        } else {
+          // Clear addresses when customer is cleared
+          this.selectedBillingAddress = null;
+          this.selectedShippingAddress = null;
+        }
       },
       invoiceDate: 'calculateDueDate',
       selectedPaymentTerm: 'calculateDueDate',
@@ -663,6 +688,11 @@
       },
       updateSelectedCustomer(newCustomer) {
         this.selectedCustomer = newCustomer;
+        if (!newCustomer) {
+          // Clear addresses when customer is cleared
+          this.selectedBillingAddress = null;
+          this.selectedShippingAddress = null;
+        }
       },
       removeInvoiceLine(invoiceLine) {
         const index = this.invoiceLines.indexOf(invoiceLine);
