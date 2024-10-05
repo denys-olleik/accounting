@@ -1,4 +1,4 @@
-﻿using Accounting.Models.ItemViewModels;
+﻿using Accounting.Models.Item;
 using Accounting.Service;
 using FluentValidation;
 
