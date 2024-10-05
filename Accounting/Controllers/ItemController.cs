@@ -77,9 +77,11 @@ namespace Accounting.Controllers
       }
 
       List<Account> accounts
-        = await _accountService.GetAllAsync(AccountTypeConstants.Revenue, GetOrganizationId());
+          = await _accountService.GetAllAsync(AccountTypeConstants.Revenue, GetOrganizationId());
       accounts.AddRange(
-        await _accountService.GetAllAsync(AccountTypeConstants.Assets, GetOrganizationId()));
+          await _accountService.GetAllAsync(AccountTypeConstants.Assets, GetOrganizationId()));
+      accounts.AddRange(
+          await _accountService.GetAllAsync(AccountTypeConstants.Equity, GetOrganizationId()));
 
       model.Accounts = new List<CreateItemViewModel.AccountViewModel>();
       model.AvailableInventoryMethods = Item.InventoryMethods.All.ToList();

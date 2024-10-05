@@ -13,6 +13,7 @@ namespace Accounting.Models.ItemViewModels
     public ItemViewModel? ParentItem { get; set; }
     public int? SelectedAssetsAccountId { get; set; }
     public int? SelectedRevenueAccountId { get; set; }
+    public int? SelectedEquityAccountId { get; set; }
 
     public decimal AssetValueEach { get; set; }
     public decimal AssetValueTotal { get; set; }

@@ -104,20 +104,17 @@
         <div class="display-flex margin-bottom-5px">
           <div class="display-flex flex-1 flex-direction-column">
             <label for="InventoryQuantity" class="background-color-antiquewhite">Inventory Quantity</label>
-            <input asp-for="InventoryQuantity" type="number" class="width-100 font-size-20px" v-model="inventoryQuantity" />
+            <input asp-for="InventoryQuantity" type="number" class="font-size-20px" v-model="inventoryQuantity" />
             <label for="AssetValueEach" class="background-color-antiquewhite">Asset value each</label>
-            <input asp-for="AssetValueEach" type="number" class="width-100 font-size-20px" v-model="assetValueEach" />
+            <input asp-for="AssetValueEach" type="number" class="font-size-20px" v-model="assetValueEach" />
             <label for="AssetValueTotal" class="background-color-antiquewhite">Asset value total</label>
-            <input asp-for="AssetValueTotal" type="number" class="width-100 font-size-20px" v-model="assetValueTotal" />
+            <input asp-for="AssetValueTotal" type="number" class="font-size-20px" v-model="assetValueTotal" />
           </div>
           <div class="width-5px"></div>
-          <div class="display-flex">
+          <div class="display-flex flex-1">
             <div>
-              <div class="display-flex flex-1 flex-direction-column">
-                <label for="PurchasedFor" class="background-color-antiquewhite">Purchased For</label>
-                <input asp-for="PurchasedFor" type="number" step="0.01" class="width-100 font-size-20px" v-model="purchasedFor" />
-              </div>
-              </div>
+              
+            </div>
             <div class="width-5px"></div>
             <div class="display-flex flex-1 flex-direction-column">
               <label for="SellFor" class="background-color-antiquewhite">Sell For</label>
@@ -130,12 +127,12 @@
   </div>
 
   <div class="margin-bottom-5px background-color-antiquewhite">
-    <label>Revenue account to increase (credit)</label>
+    <label>Equity account to increase (credit)</label>
     <div class="display-flex flex-direction-column">
-      <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Revenue')"
-                        :key="account.accountID"
-                        :account="account"
-                        @@select-account="updateSelectedAccountId">
+      <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Equity')"
+               :key="account.accountID"
+               :account="account"
+               @@select-account="updateSelectedAccountId">
       </account>
     </div>
   </div>
@@ -144,9 +141,9 @@
     <label>Assets accounts to increase (debit)</label>
     <div class="display-flex flex-direction-column">
       <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Assets')"
-                        :key="account.accountID"
-                        :account="account"
-                        @@select-account="updateSelectedAccountId">
+               :key="account.accountID"
+               :account="account"
+               @@select-account="updateSelectedAccountId">
       </account>
     </div>
   </div>
@@ -205,8 +202,9 @@
     data() {
       return {
         accounts: @Html.Raw(Json.Serialize(Model!.Accounts)),
-        selectedRevenueAccountId: @Html.Raw(Model.SelectedRevenueAccountId.HasValue ? Model.SelectedRevenueAccountId.Value.ToString() : "null"),
         selectedAssetsAccountId: @Html.Raw(Model.SelectedAssetsAccountId.HasValue ? Model.SelectedAssetsAccountId.Value.ToString() : "null"),
+        selectedRevenueAccountId: @Html.Raw(Model.SelectedRevenueAccountId.HasValue ? Model.SelectedRevenueAccountId.Value.ToString() : "null"),
+        selectedEquityAccountId: @Html.Raw(Model.SelectedEquityAccountId.HasValue ? Model.SelectedEquityAccountId.Value.ToString() : "null"),
         itemTypes: @Html.Raw(Json.Serialize(Model.AvailableItemTypes)),
         selectedItemType: '@Model.SelectedItemType' || '',
         selectedLocationId: '@Model.SelectedLocationId?.ToString()' || '',
@@ -247,5 +245,5 @@
 
 @if (Context.RequestServices.GetService<IWebHostEnvironment>()!.IsDevelopment())
 {
-  
+
 }
