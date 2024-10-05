@@ -210,8 +210,10 @@
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
     <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
-
-    </div>
+      <div class="display-flex" v-if="selectedCustomer">
+        {{ selectedCustomer.firstName }} {{ selectedCustomer.lastName }} {{ selectedCustomer.companyName }}
+      </div>
+    </div>  
     <div class="width-5px"></div>
     <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
       <invoice-detail :invoice-date="invoiceDate"
