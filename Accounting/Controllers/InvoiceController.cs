@@ -662,6 +662,8 @@ namespace Accounting.Controllers
         Description = x.Description,
         RevenueAccountId = x.RevenueAccountId,
         AssetsAccountId = x.AssetsAccountId,
+        Quantity = x.Quantity,
+        SellFor = x.SellFor,
       }).ToList();
     }
 
