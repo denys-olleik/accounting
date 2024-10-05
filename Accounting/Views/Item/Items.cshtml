@@ -14,11 +14,10 @@
 <template id="item-template">
   <div class="background-color-antiquewhite">
     <div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
-      <div class="display-flex flex-1">
+      <div class="display-flex flex-direction-column flex-1 margin-right-2px margin-left-2px">
         <a href="#" @@click.prevent="handleItemClick(item.itemID)">
           {{ item.name }}
         </a>
-        <span>&nbsp;</span>
         <div v-if="item.selectedItemID === item.itemID" class="display-flex flex-direction-column flex-1">
           <div class="display-flex margin-bottom-2px">
             <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
@@ -59,7 +58,7 @@
               <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">inventories:</a>
               <div class="flex-1"></div>
             </div>
-            <div class="flex-1 display-flex flex-direction-column background-color-crimson padding-right-5px padding-left-5px border-radius-5px margin-left-2px margin-right-2px">
+            <div class="flex-1 display-flex flex-direction-column background-color-crimson padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
               <table class="border-collapse width-100 background-color-crimson font-Roboto-Mono color-white">
                 <thead class="border-bottom-1px-solid-white">
                   <tr>
@@ -104,12 +103,13 @@
       <a :href="`/item/items?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-darkslategray text-decoration-none">prev</a>
     </div>
     <div class="flex-1 text-align-center">
-      <input type="text">
+      <input type="text" v-model="pageSize" class="text-align-center" @@change="onPageSizeChange">
     </div>
     <div>
       <a :href="`/item/items?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-darkslategray text-decoration-none">next</a>
     </div>
   </div>
+
 
   
   <div class="margin-bottom-5px">
@@ -152,7 +152,7 @@
         items: [],
         selectedItemID: null,
         page: @Model.Page,
-        pageSize: @Model.PageSize,
+        pageSize: @Model.PageSize, // Initialize with the server value
         nextPage: null,
       }
     },
@@ -172,13 +172,11 @@
       },
       onItemClicked(itemID) {
         console.log('Item clicked:', itemID);
-
         if (this.selectedItemID === itemID) {
           this.selectedItemID = null;
         } else {
           this.selectedItemID = itemID;
         }
-
         this.items = this.items.map(item => this.resetSelectedItemID(item, this.selectedItemID));
       },
       addSelectedItemID(items) {
@@ -188,6 +186,9 @@
         const children = item.children ? item.children.map(child => this.resetSelectedItemID(child, selectedID)) : [];
         return { ...item, children, selectedItemID: selectedID };
       },
+      onPageSizeChange() {
+        this.fetchItems();
+      }
     },
     mounted() {
       this.fetchItems();
