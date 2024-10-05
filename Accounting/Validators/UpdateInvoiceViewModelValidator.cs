@@ -33,7 +33,7 @@ namespace Accounting.Validators
           var currentLastUpdated = await _invoiceService.GetLastUpdatedAsync(model.ID, organizationId);
           return currentLastUpdated.RoundToSeconds() == lastUpdated.RoundToSeconds();
         })
-        .WithMessage("The invoice has been updated since you last loaded it. Please refresh and try again.");
+        .WithMessage("The invoice has been updated since you last loaded it. Refresh and try again.");
     }
   }
 }

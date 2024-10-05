@@ -15,7 +15,7 @@ namespace Accounting.Validators
 
       RuleFor(x => x.SelectedCustomerId)
           .NotNull()
-          .WithMessage("Please select a customer.")
+          .WithMessage("Select a customer.")
           .DependentRules(() =>
           {
             RuleFor(x => x.SelectedCustomerId)
@@ -23,7 +23,7 @@ namespace Accounting.Validators
                       .WithMessage("Selected customer does not exist.");
 
             RuleFor(x => x.SelectedBillingAddress).NotNull()
-                      .WithMessage("Please select billing address.");
+                      .WithMessage("Select billing address.");
           });
 
       RuleFor(x => x.InvoiceLines)
