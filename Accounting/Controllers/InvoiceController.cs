@@ -150,8 +150,6 @@ namespace Accounting.Controllers
     {
       var validator = new CreateInvoiceViewModelValidator(GetOrganizationId());
 
-
-
       return await validator.ValidateAsync(model);
     }
 

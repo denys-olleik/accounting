@@ -30,11 +30,19 @@ namespace Accounting.Validators
         .NotEmpty()
         .WithMessage("Invoice Lines cannot be empty.")
         .DependentRules(() =>
-          {
-            RuleFor(x => x.InvoiceLines)
-                .MustAsync(async (invoiceLines, cancellationToken) => await BeValidInvoiceLineListAsync(invoiceLines))
-                .WithMessage("One or more invoice lines are invalid.");
-          });
+        {
+          RuleFor(x => x.InvoiceLines)
+              .MustAsync(async (invoiceLines, cancellationToken) => await BeValidInvoiceLineListAsync(invoiceLines))
+              .WithMessage("One or more invoice lines are invalid.");
+
+          RuleForEach(x => x.InvoiceLines)
+              .ChildRules(invoiceLine =>
+              {
+                invoiceLine.RuleFor(line => line.Quantity)
+                    .GreaterThan(0)
+                    .WithMessage("Quantity must be greater than 0 for all invoice lines.");
+              });
+        });
 
       RuleFor(x => x.SelectedPaymentTerm)
           .NotNull()
