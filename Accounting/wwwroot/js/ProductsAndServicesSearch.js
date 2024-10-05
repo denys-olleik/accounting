@@ -43,7 +43,7 @@
     searchQuery: 'resetSelectedIndex'
   },
   template: `
-    <div class="color-white max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono box-shadow">
+    <div class="color-white max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono">
       <input type="text"
              class="font-size-20px width-100"
              placeholder="Search products and services"

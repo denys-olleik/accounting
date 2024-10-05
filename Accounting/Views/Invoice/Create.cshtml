@@ -203,7 +203,8 @@
 <partial name="_AttachmentsVueTemplate" />
 
 <form id="app" asp-action="Create" asp-controller="Invoice" method="post"
-      class="display-flex flex-direction-column margin-bottom-5px">
+      class="display-flex flex-direction-column margin-bottom-5px"
+      autocomplete="off">
 
   <customer-selection :customers="customers"
                       :selected-customer="selectedCustomer"
