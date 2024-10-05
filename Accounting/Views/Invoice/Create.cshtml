@@ -30,7 +30,7 @@
            @@click="selectCustomer(customer)"
            class="dropdown-item font-size-16px">
         <span v-if="index === selectedIndex" class="blinking-cursor">█</span>
-        {{ customer.firstName }} {{ customer.lastName }} {{ customer.companyName }}
+        <business-entity-name-display :business-entity="customer"></business-entity-name-display>
       </div>
     </div>
     <div v-if="selectedCustomer" class="display-flex text-align-center">
@@ -402,6 +402,9 @@
   const CustomerSelection = {
     name: 'CustomerSelection',
     template: '#customer-selection-template',
+    components: {
+      'business-entity-name-display': BusinessEntityNameDisplay
+    },
     props: ['customers', 'selectedCustomer'],
     data() {
       return {
