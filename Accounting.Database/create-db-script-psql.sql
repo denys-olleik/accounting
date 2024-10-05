@@ -279,8 +279,8 @@ CREATE TABLE "InventoryAdjustment"
 (
 	"InventoryAdjustmentID" SERIAL PRIMARY KEY NOT NULL,
 	"ItemId" INT NOT NULL,
-	"ToLocationId" INT NULL,
 	"FromLocationId" INT NULL,
+	"ToLocationId" INT NULL,
 	"Quantity" DECIMAL(18,2) NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
