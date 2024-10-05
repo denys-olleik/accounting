@@ -9,6 +9,7 @@ namespace Accounting.Models.ItemViewModels
     public string? Name { get; set; }
     public string? Description { get; set; }
     public decimal Quantity { get; set; }
+    public decimal SellFor { get; set; }
     public int? ParentItemId { get; set; }
     public ItemViewModel? ParentItem { get; set; }
     public int? SelectedAssetsAccountId { get; set; }
@@ -19,7 +20,6 @@ namespace Accounting.Models.ItemViewModels
     public decimal AssetValueTotal { get; set; }
 
     #region Inventory
-    public decimal SellFor { get; set; }
     public decimal PurchasedFor { get; set; }
     public decimal InventoryQuantity { get; set; }
 

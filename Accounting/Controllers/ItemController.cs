@@ -191,40 +191,6 @@ namespace Accounting.Controllers
       {
         item = await _itemService.CreateAsync(item);
 
-        if (model.SelectedLocationId > 0)
-        {
-          await _inventoryService.CreateAsync(new Inventory
-          {
-            ItemId = item.ItemID,
-            LocationId = model.SelectedLocationId.Value,
-            Quantity = model.Quantity,
-            SellFor = model.SellFor,
-            CreatedById = GetUserId(),
-            OrganizationId = GetOrganizationId()
-          });
-
-          await _inventoryAdjustmentService.CreateAsync(new InventoryAdjustment
-          {
-            ItemId = item.ItemID,
-            ToLocationId = model.SelectedLocationId.Value,
-            Quantity = model.Quantity,
-            CreatedById = GetUserId(),
-            OrganizationId = GetOrganizationId()
-          });
-
-          decimal total = model.Quantity * model.PurchasedFor;
-          await _journalService.CreateAsync(new Journal()
-          {
-            //AccountId = model.selectedInventoryAssetAccountId,
-            //Debit = total,
-            //Credit = null,
-            //CreatedById = GetUserId(),
-            //OrganizationId = GetOrganizationId()
-          });
-
-          //await _journalInventoryAdjustmentService.CreateAsync(new JournalInventoryAdjustment)
-        }
-
         scope.Complete();
       }
 

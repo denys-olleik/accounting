@@ -64,6 +64,11 @@
     <input asp-for="Quantity" type="number" step="0.01" class="font-size-20px" />
   </div>
 
+  <div class="display-flex flex-1 flex-direction-column margin-bottom-5px">
+    <label for="SellFor" class="background-color-antiquewhite">Sell For</label>
+    <input asp-for="SellFor" type="number" step="0.01" class="width-100 font-size-20px" v-model="sellFor" />
+  </div>
+
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label class="background-color-antiquewhite">Item Type</label>
     <item-type-selector :item-types="itemTypes"></item-type-selector>
@@ -87,49 +92,10 @@
     </select>
   </div>
 
-  <div class="display-flex flex-direction-column background-color-antiquewhite margin-bottom-5px">
-    <label class="background-color-antiquewhite text-align-center font-size-20px">Inventory</label>
-    <div class="margin-10px">
-      <div class="display-flex flex-direction-column margin-bottom-5px">
-        <label for="LocationId" class="background-color-antiquewhite">Location</label>
-        <select asp-for="SelectedLocationId" v-model="selectedLocationId" class="font-size-20px width-100">
-          <option value="">Select Location</option>
-          @foreach (var location in Model.Locations)
-          {
-            <option value="@location.LocationID">@location.Name</option>
-          }
-        </select>
-      </div>
-      <div class="display-flex flex-direction-column">
-        <div class="display-flex margin-bottom-5px">
-          <div class="display-flex flex-1 flex-direction-column">
-            <label for="InventoryQuantity" class="background-color-antiquewhite">Inventory Quantity</label>
-            <input asp-for="InventoryQuantity" type="number" class="font-size-20px" v-model="inventoryQuantity" />
-            <label for="AssetValueEach" class="background-color-antiquewhite">Asset value each</label>
-            <input asp-for="AssetValueEach" type="number" class="font-size-20px" v-model="assetValueEach" />
-            <label for="AssetValueTotal" class="background-color-antiquewhite">Asset value total</label>
-            <input asp-for="AssetValueTotal" type="number" class="font-size-20px" v-model="assetValueTotal" />
-          </div>
-          <div class="width-5px"></div>
-          <div class="display-flex flex-1">
-            <div>
-              
-            </div>
-            <div class="width-5px"></div>
-            <div class="display-flex flex-1 flex-direction-column">
-              <label for="SellFor" class="background-color-antiquewhite">Sell For</label>
-              <input asp-for="SellFor" type="number" step="0.01" class="width-100 font-size-20px" v-model="sellFor" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="margin-bottom-5px background-color-antiquewhite">
-    <label>Equity account to increase (credit)</label>
+    <label>Increase (credit) this revenue account during revenue recognition for this item.</label>
     <div class="display-flex flex-direction-column">
-      <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Equity')"
+      <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Revenue')"
                :key="account.accountID"
                :account="account"
                @@select-account="updateSelectedAccountId">
@@ -138,7 +104,7 @@
   </div>
 
   <div class="margin-bottom-5px background-color-antiquewhite">
-    <label>Assets accounts to increase (debit)</label>
+    <label>Increase (debit) this asset account, usually accounts-receivable, check-in-transit, cash, etc.</label>
     <div class="display-flex flex-direction-column">
       <account v-for="account in accounts.filter(account => account.type === '@Accounting.Business.Account.AccountTypeConstants.Assets')"
                :key="account.accountID"
@@ -204,7 +170,6 @@
         accounts: @Html.Raw(Json.Serialize(Model!.Accounts)),
         selectedAssetsAccountId: @Html.Raw(Model.SelectedAssetsAccountId.HasValue ? Model.SelectedAssetsAccountId.Value.ToString() : "null"),
         selectedRevenueAccountId: @Html.Raw(Model.SelectedRevenueAccountId.HasValue ? Model.SelectedRevenueAccountId.Value.ToString() : "null"),
-        selectedEquityAccountId: @Html.Raw(Model.SelectedEquityAccountId.HasValue ? Model.SelectedEquityAccountId.Value.ToString() : "null"),
         itemTypes: @Html.Raw(Json.Serialize(Model.AvailableItemTypes)),
         selectedItemType: '@Model.SelectedItemType' || '',
         selectedLocationId: '@Model.SelectedLocationId?.ToString()' || '',
@@ -242,8 +207,3 @@
 
   app.mount('#app');
 </script>
-
-@if (Context.RequestServices.GetService<IWebHostEnvironment>()!.IsDevelopment())
-{
-
-}
