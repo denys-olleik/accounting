@@ -31,7 +31,7 @@
         {{ customer.firstName }} {{ customer.lastName }} {{ customer.companyName }}
       </div>
     </div>
-    <div class="display-flex text-align-center">
+    <div v-if="selectedCustomer" class="display-flex text-align-center">
       <a href="#" class="width-100 color-white border-1px-solid-white" @@click.prevent="clearSelection">clear</a>
     </div>
   </div>
