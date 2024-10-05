@@ -138,12 +138,13 @@
     props: ['account'],
     methods: {
       selectAccount(accountID) {
+        const accountType = this.account.type;
         const isAlreadySelected = this.$parent.selectedRevenueAccountId === accountID ||
           this.$parent.selectedAssetsAccountId === accountID;
         if (isAlreadySelected) {
-          this.$emit('select-account', null);
+          this.$emit('select-account', null, accountType);
         } else {
-          this.$emit('select-account', accountID);
+          this.$emit('select-account', accountID, accountType);
         }
       }
     }
@@ -177,10 +178,13 @@
       }
     },
     methods: {
-      updateSelectedAccountId(accountId) {
+      updateSelectedAccountId(accountId, accountType) {
         if (accountId === null) {
-          this.selectedRevenueAccountId = null;
-          this.selectedAssetsAccountId = null;
+          if (accountType === '@Accounting.Business.Account.AccountTypeConstants.Revenue') {
+            this.selectedRevenueAccountId = null;
+          } else if (accountType === '@Accounting.Business.Account.AccountTypeConstants.Assets') {
+            this.selectedAssetsAccountId = null;
+          }
         } else {
           const account = this.accounts.find(a => a.accountID === accountId);
 
