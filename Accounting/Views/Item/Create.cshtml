@@ -105,6 +105,10 @@
           <div class="display-flex flex-1 flex-direction-column">
             <label for="InventoryQuantity" class="background-color-antiquewhite">Inventory Quantity</label>
             <input asp-for="InventoryQuantity" type="number" class="width-100 font-size-20px" v-model="inventoryQuantity" />
+            <label for="AssetValueEach" class="background-color-antiquewhite">Asset value each</label>
+            <input asp-for="AssetValueEach" type="number" class="width-100 font-size-20px" v-model="assetValueEach" />
+            <label for="AssetValueTotal" class="background-color-antiquewhite">Asset value total</label>
+            <input asp-for="AssetValueTotal" type="number" class="width-100 font-size-20px" v-model="assetValueTotal" />
           </div>
           <div class="width-5px"></div>
           <div class="display-flex">
@@ -113,7 +117,7 @@
                 <label for="PurchasedFor" class="background-color-antiquewhite">Purchased For</label>
                 <input asp-for="PurchasedFor" type="number" step="0.01" class="width-100 font-size-20px" v-model="purchasedFor" />
               </div>
-            </div>
+              </div>
             <div class="width-5px"></div>
             <div class="display-flex flex-1 flex-direction-column">
               <label for="SellFor" class="background-color-antiquewhite">Sell For</label>
@@ -171,7 +175,13 @@
     props: ['account'],
     methods: {
       selectAccount(accountID) {
-        this.$emit('select-account', accountID);
+        const isAlreadySelected = this.$parent.selectedRevenueAccountId === accountID ||
+          this.$parent.selectedAssetsAccountId === accountID;
+        if (isAlreadySelected) {
+          this.$emit('select-account', null);
+        } else {
+          this.$emit('select-account', accountID);
+        }
       }
     }
   };
@@ -216,12 +226,17 @@
     },
     methods: {
       updateSelectedAccountId(accountId) {
-        const account = this.accounts.find(a => a.accountID === accountId);
+        if (accountId === null) {
+          this.selectedRevenueAccountId = null;
+          this.selectedAssetsAccountId = null;
+        } else {
+          const account = this.accounts.find(a => a.accountID === accountId);
 
-        if (account.type === '@Accounting.Business.Account.AccountTypeConstants.Revenue') {
-          this.selectedRevenueAccountId = accountId;
-        } else if (account.type === '@Accounting.Business.Account.AccountTypeConstants.Assets') {
-          this.selectedAssetsAccountId = accountId;
+          if (account.type === '@Accounting.Business.Account.AccountTypeConstants.Revenue') {
+            this.selectedRevenueAccountId = this.selectedRevenueAccountId === accountId ? null : accountId;
+          } else if (account.type === '@Accounting.Business.Account.AccountTypeConstants.Assets') {
+            this.selectedAssetsAccountId = this.selectedAssetsAccountId === accountId ? null : accountId;
+          }
         }
       }
     },

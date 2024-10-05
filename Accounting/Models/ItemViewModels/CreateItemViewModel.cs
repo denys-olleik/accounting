@@ -14,6 +14,9 @@ namespace Accounting.Models.ItemViewModels
     public int? SelectedAssetsAccountId { get; set; }
     public int? SelectedRevenueAccountId { get; set; }
 
+    public decimal AssetValueEach { get; set; }
+    public decimal AssetValueTotal { get; set; }
+
     #region Inventory
     public decimal SellFor { get; set; }
     public decimal PurchasedFor { get; set; }
