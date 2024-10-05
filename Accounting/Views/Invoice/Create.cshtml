@@ -213,6 +213,9 @@
       <div class="display-flex" v-if="selectedCustomer">
         <business-entity-name-display :business-entity="selectedCustomer"></business-entity-name-display>
       </div>
+      <div class="display-flex" v-if="selectedCustomer">
+        {{ selectedCustomer.website }}
+      </div>
     </div>  
     <div class="width-5px"></div>
     <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">

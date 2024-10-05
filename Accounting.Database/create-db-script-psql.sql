@@ -155,6 +155,7 @@ CREATE TABLE "BusinessEntity"
 	"FirstName" VARCHAR(100) NULL,
 	"LastName" VARCHAR(100) NULL,
 	"CompanyName" VARCHAR(200) NULL,
+	"Website" VARCHAR(100) NULL,
 	"PaymentTermId" INT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
@@ -668,12 +669,12 @@ INSERT INTO "Account" ("Name", "Type", "CreatedById", "OrganizationId") VALUES (
 INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "OrganizationId", "CreatedById") VALUES ('Net 30', 30, 1, 1);
 INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "OrganizationId", "CreatedById") VALUES ('Net 60', 60, 1, 1);
 
-INSERT INTO "BusinessEntity" ("CustomerType", "BusinessEntityTypesCsv", "FirstName", "LastName", "CompanyName", "PaymentTermId", "CreatedById", "OrganizationId")
+INSERT INTO "BusinessEntity" ("CustomerType", "BusinessEntityTypesCsv", "FirstName", "LastName", "CompanyName", "Website", "PaymentTermId", "CreatedById", "OrganizationId")
 VALUES
-('individual', 'customer', 'John', 'Smith', NULL, 1, 1, 1),
-('individual', 'customer', 'Jane', 'Doe', NULL, 1, 1, 1),
-('company', 'customer', NULL, NULL, 'Acme Inc.', 1, 1, 1),
-('company', 'customer', NULL, NULL, 'Globex Corp.', 1, 1, 1);
+('individual', 'customer', 'John', 'Smith', NULL, 'www.john-smith.com', 1, 1, 1),
+('individual', 'customer', 'Jane', 'Doe', NULL, 'www.jane-doe.com', 1, 1, 1),
+('company', 'customer', NULL, NULL, 'Acme Inc.', 'www.acmeinc.com', 1, 1, 1),
+('company', 'customer', NULL, NULL, 'Globex Corp.', 'www.globex.com', 1, 1, 1);
 
 insert into "Address" ("ExtraAboveAddress", "AddressLine1", "City", "StateProvince", "PostalCode", "Country", "BusinessEntityId", "CreatedById", "OrganizationId")
 values

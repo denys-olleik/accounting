@@ -618,6 +618,7 @@ namespace Accounting.Controllers
         FirstName = c.FirstName,
         LastName = c.LastName,
         CompanyName = c.CompanyName,
+        Website = c.Website,
         CustomerType = c.CustomerType,
         PaymentTermId = c.PaymentTermId,
         CreatedById = c.CreatedById,
