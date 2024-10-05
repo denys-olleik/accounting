@@ -1,58 +1,4 @@
-﻿//CREATE TABLE "Item"
-//(
-//	"ItemID" SERIAL PRIMARY KEY NOT NULL,
-//	"Name" VARCHAR(100) NOT NULL,
-//	"Description" VARCHAR(1000) NULL,
-//	"Quantity" DECIMAL(18,2) NULL,
-//	"UnitTypeId" INT NULL,
-//	"ItemType" VARCHAR(100) NOT NULL CHECK ("ItemType" IN ('product', 'service')),
-//	"InventoryMethod" VARCHAR(100) NOT NULL CHECK ("InventoryMethod" IN ('fifo', 'lifo', 'any', 'specific')) DEFAULT 'fifo',
-//	"RevenueAccountId" INT NULL,
-//	"AssetsAccountId" INT NULL,
-//	"ParentItemId" INT NULL,
-//	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-//	"CreatedById" INT NOT NULL,
-//	"OrganizationId" INT NOT NULL,
-//  FOREIGN KEY ("UnitTypeId") REFERENCES "UnitType"("UnitTypeID"),
-//  FOREIGN KEY ("RevenueAccountId") REFERENCES "Account"("AccountID"),
-//  FOREIGN KEY ("AssetsAccountId") REFERENCES "Account"("AccountID"),
-//  FOREIGN KEY ("ParentItemId") REFERENCES "Item"("ItemID"),
-//  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-//  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
-//);
-
-//CREATE TABLE "Location"
-//(
-//	"LocationID" SERIAL PRIMARY KEY NOT NULL,
-//	"Name" VARCHAR(100) NOT NULL,
-//	"Description" VARCHAR(1000) NULL,
-//	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-//	"ParentLocationId" INT NULL,
-//	"CreatedById" INT NOT NULL,
-//	"OrganizationId" INT NOT NULL,
-//  FOREIGN KEY ("ParentLocationId") REFERENCES "Location"("LocationID"),
-//  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-//  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
-//);
-
-//CREATE TABLE "Inventory"
-//(
-//	"InventoryID" SERIAL PRIMARY KEY NOT NULL,
-//	"ItemId" INT NOT NULL,
-//	"LocationId" INT NOT NULL,
-//	"Quantity" DECIMAL(18,2) NOT NULL,
-//	"SalePrice" DECIMAL(18,2) NULL,
-//	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-//	"CreatedById" INT NOT NULL,
-//	"OrganizationId" INT NOT NULL,
-//  FOREIGN KEY ("ItemId") REFERENCES "Item"("ItemID"),
-//  FOREIGN KEY ("LocationId") REFERENCES "Location"("LocationID"),
-//  FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-//  FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
-//  UNIQUE ("ItemId", "LocationId")
-//);
-
-using Accounting.Business;
+﻿using Accounting.Business;
 using Accounting.CustomAttributes;
 using Accounting.Models.Item;
 using Accounting.Models.ItemViewModels;
@@ -250,7 +196,7 @@ namespace Accounting.Controllers
             ItemId = item.ItemID,
             LocationId = model.SelectedLocationId.Value,
             Quantity = model.Quantity,
-            SalePrice = model.SalePrice,
+            SellFor = model.SellFor,
             CreatedById = GetUserId(),
             OrganizationId = GetOrganizationId()
           });
@@ -337,7 +283,7 @@ namespace Accounting.Controllers
               Name = x.Location.Name
             },
             Quantity = x.Quantity,
-            SalePrice = x.SalePrice
+            SellFor = x.SellFor
           }).ToList()
         };
 
@@ -404,7 +350,7 @@ namespace Accounting.Controllers
               Name = y.Location.Name
             },
             Quantity = y.Quantity,
-            SalePrice = y.SalePrice
+            SellFor = y.SellFor
           }).ToList(),
           Children = x.Children?.Select(y => new InventoriesViewModel.ItemViewModel
           {
@@ -450,7 +396,7 @@ namespace Accounting.Models.Item
     public int LocationId { get; set; }
     public LocationViewModel? Location { get; set; }
     public decimal? Quantity { get; set; }
-    public decimal? SalePrice { get; set; }
+    public decimal? SellFor { get; set; }
   }
 
   public class LocationViewModel

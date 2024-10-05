@@ -10,7 +10,7 @@ namespace Accounting.Business
     public int LocationId { get; set; }
     public Location? Location { get; set; }
     public decimal? Quantity { get; set; }
-    public decimal? SalePrice { get; set; }
+    public decimal? SellFor { get; set; }
     public DateTime Created { get; set; }
     public int CreatedById { get; set; }
     public int OrganizationId { get; set; }

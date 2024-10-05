@@ -107,9 +107,18 @@
             <input asp-for="InventoryQuantity" type="number" class="width-100 font-size-20px" v-model="inventoryQuantity" />
           </div>
           <div class="width-5px"></div>
-          <div class="display-flex flex-1 flex-direction-column">
-            <label for="SalePrice" class="background-color-antiquewhite">Revenue/Sale Price</label>
-            <input asp-for="SalePrice" type="number" step="0.01" class="width-100 font-size-20px" v-model="salePrice" />
+          <div class="display-flex">
+            <div>
+              <div class="display-flex flex-1 flex-direction-column">
+                <label for="PurchasedFor" class="background-color-antiquewhite">Purchased For</label>
+                <input asp-for="PurchasedFor" type="number" step="0.01" class="width-100 font-size-20px" v-model="purchasedFor" />
+              </div>
+            </div>
+            <div class="width-5px"></div>
+            <div class="display-flex flex-1 flex-direction-column">
+              <label for="SellFor" class="background-color-antiquewhite">Sell For</label>
+              <input asp-for="SellFor" type="number" step="0.01" class="width-100 font-size-20px" v-model="sellFor" />
+            </div>
           </div>
         </div>
       </div>
@@ -192,7 +201,8 @@
         selectedItemType: '@Model.SelectedItemType' || '',
         selectedLocationId: '@Model.SelectedLocationId?.ToString()' || '',
         inventoryQuantity: 0,
-        salePrice: 0.0,
+        sellFor: 0.0,
+        purchasedFor: 0.0,
         parentItemId: @Html.Raw(Model.ParentItemId.HasValue ? Model.ParentItemId.Value.ToString() : "null"),
       }
     },
@@ -200,7 +210,7 @@
       selectedLocationId(newVal) {
         if (newVal === '') {
           this.inventoryQuantity = 0;
-          this.salePrice = 0.0;
+          this.sellfor = 0.0;
         }
       }
     },

@@ -16,7 +16,7 @@ namespace Accounting.Validators
           .NotEmpty().WithMessage("Name is required.")
           .MaximumLength(100).WithMessage("Name cannot be more than 100 characters.");
 
-      When(x => x.SalePrice > 0, () =>
+      When(x => x.SellFor > 0, () =>
       {
         RuleFor(x => x.SelectedRevenueAccountId)
             .NotEmpty().WithMessage("Revenue account is required.")

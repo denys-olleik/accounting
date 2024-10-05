@@ -15,7 +15,8 @@ namespace Accounting.Models.ItemViewModels
     public int? SelectedRevenueAccountId { get; set; }
 
     #region Inventory
-    public decimal SalePrice { get; set; }
+    public decimal SellFor { get; set; }
+    public decimal PurchasedFor { get; set; }
     public decimal InventoryQuantity { get; set; }
 
     public List<string> AvailableItemTypes { get; set; } = new List<string>();

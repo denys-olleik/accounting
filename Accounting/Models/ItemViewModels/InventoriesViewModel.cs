@@ -23,7 +23,7 @@
       public int LocationId { get; set; }
       public LocationViewModel? Location { get; set; }
       public decimal? Quantity { get; set; }
-      public decimal? SalePrice { get; set; }
+      public decimal? SellFor { get; set; }
     }
 
     public class LocationViewModel
