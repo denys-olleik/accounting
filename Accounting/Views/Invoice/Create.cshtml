@@ -211,7 +211,7 @@
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
     <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
       <div class="display-flex" v-if="selectedCustomer">
-        {{ selectedCustomer.firstName }} {{ selectedCustomer.lastName }} {{ selectedCustomer.companyName }}
+        <business-entity-name-display :business-entity="selectedCustomer"></business-entity-name-display>
       </div>
     </div>  
     <div class="width-5px"></div>
@@ -317,6 +317,7 @@
 }
 
 <script src="~/js/ProductsAndServicesSearch.js" asp-append-version="true"></script>
+<script src="~/js/BusinessEntityNameDisplay.js" asp-append-version="true"></script>
 
 <script>
   const { createApp } = Vue;
@@ -598,6 +599,7 @@
       'addresses-and-selected-address': AddressesAndSelectedAddress,
       'products-and-services-search': ProductsAndServicesSearch,
       'attachments': Attachments,
+      'business-entity-name-display': BusinessEntityNameDisplay,
     },
     data() {
       return {
