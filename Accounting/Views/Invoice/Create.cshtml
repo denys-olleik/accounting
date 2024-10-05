@@ -15,6 +15,7 @@
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label for="customerSearch" class="background-color-antiquewhite">Customer search</label>
     <input id="customerSearch"
+           ref="customerSearchInput"
            v-model="searchQuery"
            @@input="filterCustomers"
            @@keydown="handleKeyDown"
@@ -483,6 +484,9 @@
         this.searchQuery = '';
         this.filteredCustomers = [];
         this.selectedIndex = -1;
+        this.$nextTick(() => {
+          this.$refs.customerSearchInput.focus();
+        });
       },
       updateSearchQuery() {
         if (this.selectedCustomer) {

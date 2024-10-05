@@ -44,13 +44,9 @@ namespace Accounting.Validators
               });
         });
 
-      RuleFor(x => x.SelectedPaymentTerm)
-          .NotNull()
-          .WithMessage("Payment Term is required.");
-
       RuleFor(x => x.DueDate)
           .NotNull()
-          .WithMessage("Due Date is required.");
+          .WithMessage("'Due Date' is required. Select payment terms.");
     }
 
     private async Task<bool> CustomerExists(int? entityId, CancellationToken token)
