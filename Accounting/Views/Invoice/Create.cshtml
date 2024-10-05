@@ -641,7 +641,8 @@
           id: -1 * Math.floor(Math.random() * 2147483648),
           title: productOrService.name,
           description: productOrService.description,
-          price: productOrService.price,
+          price: productOrService.sellFor,
+          quantity: productOrService.quantity,
           revenueAccountId: productOrService.revenueAccountId,
           assetsAccountId: productOrService.assetsAccountId,
         });
