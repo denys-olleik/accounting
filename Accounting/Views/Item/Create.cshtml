@@ -172,19 +172,8 @@
         selectedRevenueAccountId: @Html.Raw(Model.SelectedRevenueAccountId.HasValue ? Model.SelectedRevenueAccountId.Value.ToString() : "null"),
         itemTypes: @Html.Raw(Json.Serialize(Model.AvailableItemTypes)),
         selectedItemType: '@Model.SelectedItemType' || '',
-        selectedLocationId: '@Model.SelectedLocationId?.ToString()' || '',
-        inventoryQuantity: 0,
         sellFor: 0.0,
-        purchasedFor: 0.0,
         parentItemId: @Html.Raw(Model.ParentItemId.HasValue ? Model.ParentItemId.Value.ToString() : "null"),
-      }
-    },
-    watch: {
-      selectedLocationId(newVal) {
-        if (newVal === '') {
-          this.inventoryQuantity = 0;
-          this.sellfor = 0.0;
-        }
       }
     },
     methods: {

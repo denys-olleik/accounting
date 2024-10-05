@@ -86,18 +86,6 @@ namespace Accounting.Controllers
       model.Accounts = new List<CreateItemViewModel.AccountViewModel>();
       model.AvailableInventoryMethods = Item.InventoryMethods.All.ToList();
       model.AvailableItemTypes = Item.ItemTypes.All.ToList();
-      model.Locations = new List<CreateItemViewModel.LocationViewModel>();
-
-      List<Location> locations = await _locationService.GetAllAsync(GetOrganizationId());
-
-      foreach (var location in locations)
-      {
-        model.Locations.Add(new CreateItemViewModel.LocationViewModel
-        {
-          LocationID = location.LocationID,
-          Name = location.Name
-        });
-      }
 
       foreach (Account account in accounts)
       {
@@ -144,19 +132,7 @@ namespace Accounting.Controllers
 
         model.Accounts = new List<CreateItemViewModel.AccountViewModel>();
         model.AvailableInventoryMethods = Item.InventoryMethods.All.ToList();
-        model.AvailableItemTypes = Item.ItemTypes.All.ToList();
-        model.Locations = new List<CreateItemViewModel.LocationViewModel>();
-
-        List<Location> locations = await _locationService.GetAllAsync(GetOrganizationId());
-
-        foreach (var location in locations)
-        {
-          model.Locations.Add(new CreateItemViewModel.LocationViewModel
-          {
-            LocationID = location.LocationID,
-            Name = location.Name
-          });
-        }
+        model.AvailableItemTypes = Item.ItemTypes.All.ToList();        
 
         foreach (Account account in accounts)
         {

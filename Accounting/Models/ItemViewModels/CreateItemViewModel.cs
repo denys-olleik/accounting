@@ -14,21 +14,9 @@ namespace Accounting.Models.ItemViewModels
     public ItemViewModel? ParentItem { get; set; }
     public int? SelectedAssetsAccountId { get; set; }
     public int? SelectedRevenueAccountId { get; set; }
-    public int? SelectedEquityAccountId { get; set; }
-
-    public decimal AssetValueEach { get; set; }
-    public decimal AssetValueTotal { get; set; }
-
-    #region Inventory
-    public decimal PurchasedFor { get; set; }
-    public decimal InventoryQuantity { get; set; }
 
     public List<string> AvailableItemTypes { get; set; } = new List<string>();
     public string? SelectedItemType { get; set; }
-
-    public List<LocationViewModel>? Locations { get; set; }
-    public int? SelectedLocationId { get; set; }
-    #endregion
 
     public List<AccountViewModel>? Accounts { get; set; }
     public List<string> AvailableInventoryMethods { get; set; } = new List<string>();
