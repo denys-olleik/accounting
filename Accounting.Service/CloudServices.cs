@@ -1,6 +1,6 @@
 ﻿using Accounting.Business;
-using Accounting.Common;
 using DigitalOcean.API;
+using DigitalOcean.API.Models.Responses;
 
 namespace Accounting.Service
 {
@@ -29,21 +29,15 @@ namespace Accounting.Service
         Secret? cloudSecret = await _secretService.GetByTypeAsync(Secret.SecretTypeConstants.Cloud, _organizationId);
         var client = new DigitalOceanClient(cloudSecret!.Value);
 
-        //var (publicKey, privateKey) = SshKeyGenerator.GenerateKeyPair();
-
-        //var key = await client.Keys.Create(new DigitalOcean.API.Models.Requests.Key
-        //{
-        //  Name = tenant.Name + " Key",
-        //  PublicKey = publicKey
-        //});
-
+        Key key = await client.Keys.Create(new DigitalOcean.API.Models.Requests.Key());
+        
         var dropletRequest = new DigitalOcean.API.Models.Requests.Droplet()
         {
           Name = "example.com",
           Region = "nyc",
           Size = "s-1vcpu-512mb-10gb",
           Image = "ubuntu-24-04-x64",
-          //SshKeys = new List<object> { key.Fingerprint }
+          SshKeys = new List<object> { key.Fingerprint }
         };
 
         var createdDroplet = await client.Droplets.Create(dropletRequest);
