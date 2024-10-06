@@ -1,8 +1,7 @@
 ﻿using Accounting.Business;
 using DigitalOcean.API;
-using DigitalOcean.API.Exceptions;
-using DigitalOcean.API.Models.Responses;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Accounting.Service
 {
@@ -28,76 +27,62 @@ namespace Accounting.Service
 
       public async Task CreateDropletAsync(Tenant tenant)
       {
-        Secret? cloudSecret = await _secretService.GetByTypeAsync(Secret.SecretTypeConstants.Cloud, _organizationId);
-        if (cloudSecret == null)
+        using (var rsa = new RSACryptoServiceProvider(2048))
         {
-          throw new InvalidOperationException("Cloud secret not found");
-        }
-        var client = new DigitalOceanClient(cloudSecret.Value);
+          Secret? cloudSecret = await _secretService.GetByTypeAsync(Secret.SecretTypeConstants.Cloud, _organizationId);
+          if (cloudSecret == null)
+          {
+            throw new InvalidOperationException("Cloud secret not found");
+          }
+          var client = new DigitalOceanClient(cloudSecret.Value);
 
-        // Generate a new SSH key pair
-        var sshKey = GenerateSSHKeyPair();
+          var publicKey = ConvertToOpenSshFormat(rsa);
+          var privateKey = rsa.ToXmlString(true);
 
-        // Create the SSH key on DigitalOcean
-        var keyRequest = new DigitalOcean.API.Models.Requests.Key
-        {
-            Name = $"Key for {tenant.Name}",
-            PublicKey = sshKey.PublicKey
-        };
+          var sshKeyRequest = new DigitalOcean.API.Models.Requests.Key
+          {
+            Name = "My SSH Public Key",
+            PublicKey = publicKey
+          };
 
-        Key key;
-        try
-        {
-            key = await client.Keys.Create(keyRequest);
-            Console.WriteLine($"SSH key created successfully. ID: {key.Id}, Fingerprint: {key.Fingerprint}");
-        }
-        catch (ApiException ex)
-        {
-            Console.WriteLine($"Error creating SSH key: {ex.Message}");
-            throw;
-        }
+          DigitalOcean.API.Models.Responses.Key sshKeyResponse;
 
-        var dropletRequest = new DigitalOcean.API.Models.Requests.Droplet()
-        {
-          Name = "example.com",
-          Region = "nyc",
-          Size = "s-1vcpu-512mb-10gb",
-          Image = "ubuntu-24-04-x64",
-          SshKeys = new List<object> { key.Fingerprint }
-        };
+          sshKeyResponse = await client.Keys.Create(sshKeyRequest);
 
-        try
-        {
-          var createdDroplet = await client.Droplets.Create(dropletRequest);
-          Console.WriteLine($"Droplet created successfully. ID: {createdDroplet.Id}");
-        }
-        catch (ApiException ex)
-        {
-          Console.WriteLine($"Error creating droplet: {ex.Message}");
-          throw;
+          var dropletRequest = new DigitalOcean.API.Models.Requests.Droplet()
+          {
+            Name = "example.com",
+            Region = "nyc",
+            Size = "s-1vcpu-512mb-10gb",
+            Image = "ubuntu-24-04-x64",
+            SshKeys = new List<object> { sshKeyResponse.Fingerprint }
+          };
+
+          var dropletResponse = await client.Droplets.Create(dropletRequest);
         }
       }
 
-      // Add this method to generate an SSH key pair
-      private (string PublicKey, string PrivateKey) GenerateSSHKeyPair()
+      private static string ConvertToOpenSshFormat(RSACryptoServiceProvider rsa)
       {
-          using (var rsa = new RSACryptoServiceProvider(2048))
+        var keyParams = rsa.ExportParameters(false);
+
+        using (var ms = new MemoryStream())
+        {
+          using (var writer = new BinaryWriter(ms))
           {
-              var publicKeyBytes = rsa.ExportRSAPublicKey();
-              var privateKeyBytes = rsa.ExportRSAPrivateKey();
+            writer.Write(BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(7)));
+            writer.Write(Encoding.ASCII.GetBytes("ssh-rsa"));
 
-              // Convert to Base64
-              var publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
-              var privateKeyBase64 = Convert.ToBase64String(privateKeyBytes);
+            writer.Write(BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(keyParams.Exponent.Length)));
+            writer.Write(keyParams.Exponent);
 
-              // Format the public key in the expected SSH format
-              var publicKeySSH = $"ssh-rsa {publicKeyBase64} generated-key";
-
-              return (
-                  PublicKey: publicKeySSH,
-                  PrivateKey: privateKeyBase64
-              );
+            writer.Write(BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(keyParams.Modulus.Length)));
+            writer.Write(keyParams.Modulus);
           }
+
+          var publicKey = Convert.ToBase64String(ms.ToArray());
+          return $"ssh-rsa {publicKey} generated-key";
+        }
       }
     }
   }
