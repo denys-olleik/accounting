@@ -72,6 +72,6 @@ namespace Accounting.Controllers
       // Implement further logic as needed
       // Example: Redirect to success page
       throw new NotImplementedException();
-    }
+    }    
   }
 }
