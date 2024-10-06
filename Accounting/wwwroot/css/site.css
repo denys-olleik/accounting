@@ -102,6 +102,10 @@ td.fitwidth, th.fitwidth {
   background-color: black;
 }
 
+.background-color-cornflowerblue {
+  background-color: cornflowerblue;
+}
+
 .background-color-lightcyan {
   background-color: lightcyan;
 }
@@ -501,6 +505,10 @@ td.fitwidth, th.fitwidth {
 .margin-sides-1px {
   margin-left: 1px;
   margin-right: 1px;
+}
+
+.margin-1px-2px-2px-2px {
+  margin: 1px 2px 2px 2px;
 }
 
 .margin-top-0px {

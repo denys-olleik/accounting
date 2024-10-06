@@ -14,21 +14,21 @@ namespace Accounting.Validators
       _organizationId = organizationId;
 
       RuleFor(x => x.SelectedCustomerId)
-          .NotNull()
-          .WithMessage("Select a customer.")
-          .DependentRules(() =>
-          {
-            RuleFor(x => x.SelectedCustomerId)
-                      .MustAsync(CustomerExists)
-                      .WithMessage("Selected customer does not exist.");
+        .NotNull()
+        .WithMessage("Select a customer.")
+        .DependentRules(() =>
+        {
+          RuleFor(x => x.SelectedCustomerId)
+            .MustAsync(CustomerExists)
+            .WithMessage("Selected customer does not exist.");
 
-            RuleFor(x => x.SelectedBillingAddress).NotNull()
-                      .WithMessage("Select billing address.");
-          });
+          RuleFor(x => x.SelectedBillingAddress).NotNull()
+            .WithMessage("Select billing address.");
+        });
 
       RuleFor(x => x.InvoiceLines)
         .NotEmpty()
-        .WithMessage("Invoice Lines cannot be empty.")
+        .WithMessage("'Invoice lines' cannot be empty.")
         .DependentRules(() =>
         {
           RuleFor(x => x.InvoiceLines)
@@ -40,13 +40,13 @@ namespace Accounting.Validators
               {
                 invoiceLine.RuleFor(line => line.Quantity)
                     .GreaterThan(0)
-                    .WithMessage("Quantity must be greater than 0 for all invoice lines.");
+                    .WithMessage("'Quantity' must be greater than 0 for all invoice lines.");
               });
         });
 
       RuleFor(x => x.DueDate)
           .NotNull()
-          .WithMessage("'Due Date' is required. Select payment terms.");
+          .WithMessage("'Due date' is required. Select payment terms.");
     }
 
     private async Task<bool> CustomerExists(int? entityId, CancellationToken token)

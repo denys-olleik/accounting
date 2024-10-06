@@ -34,7 +34,7 @@
       </div>
     </div>
     <div v-if="selectedCustomer" class="display-flex text-align-center">
-      <a href="#" class="width-100 color-white border-1px-solid-white" @@click.prevent="clearSelection">clear</a>
+      <a href="#" class="width-100 color-white border-1px-solid-white background-color-cornflowerblue" @@click.prevent="clearSelection">clear</a>
     </div>
   </div>
 </template>
@@ -212,10 +212,10 @@
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
     <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
-      <div class="display-flex" v-if="selectedCustomer">
+      <div class="display-flex margin-1px-2px-2px-2px" v-if="selectedCustomer">
         <business-entity-name-display :business-entity="selectedCustomer"></business-entity-name-display>
       </div>
-      <div class="display-flex" v-if="selectedCustomer">
+      <div class="display-flex margin-1px-2px-2px-2px" v-if="selectedCustomer">
         {{ selectedCustomer.website }}
       </div>
     </div>
@@ -372,6 +372,7 @@
     mounted() {
       this.$nextTick(() => {
         this.$refs.quantityInput.focus();
+        this.$refs.quantityInput.select();
       });
     },
     methods: {
