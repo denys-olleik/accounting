@@ -421,8 +421,7 @@ CREATE TABLE "InvoiceAttachment"
 	"InvoiceAttachmentID" SERIAL PRIMARY KEY NOT NULL,
 	"InvoiceId" INT NULL,
 	"PrintOrder" INT NULL,
-	"FileName" VARCHAR(255) NOT NULL, -- TODO: Should possibly be removed.
-	"StoredFileName" VARCHAR(255) NOT NULL,
+	"OriginalFileName" VARCHAR(255) NOT NULL,
 	"FilePath" VARCHAR(1000) NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,

@@ -74,7 +74,6 @@ ConfigurationSingleton.Instance.AdminPsql = builder.Configuration["ConnectionStr
 ConfigurationSingleton.Instance.InvitationExpirationMinutes = Convert.ToInt32(builder.Configuration["InvitationExpirationMinutes"]);
 ConfigurationSingleton.Instance.SendgridKey = builder.Configuration["SendgridKey"];
 ConfigurationSingleton.Instance.NoReplyEmailAddress = builder.Configuration["NoReplyEmailAddress"];
-ConfigurationSingleton.Instance.AttachmentsPath = builder.Configuration["AttachmentsPath"];
 ConfigurationSingleton.Instance.TempPath = builder.Configuration["TempPath"];
 ConfigurationSingleton.Instance.PermPath = builder.Configuration["PermPath"];
 

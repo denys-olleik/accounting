@@ -196,7 +196,7 @@ namespace Accounting.Controllers
       foreach (var invoiceAttachment in invoiceAttachments)
       {
         await _invoiceAttachmentService.UpdateInvoiceIdAsync(invoiceAttachment.InvoiceAttachmentID, invoice.InvoiceID, GetOrganizationId());
-        await _invoiceAttachmentService.MoveAndUpdateInvoiceAttachmentPathAsync(invoiceAttachment, ConfigurationSingleton.Instance.AttachmentsPath, GetOrganizationId());
+        await _invoiceAttachmentService.MoveAndUpdateInvoiceAttachmentPathAsync(invoiceAttachment, ConfigurationSingleton.Instance.PermPath, GetOrganizationId());
 
         await MoveFileFromTempToPermDirectory(invoiceAttachment);
       }
@@ -310,7 +310,7 @@ namespace Accounting.Controllers
     private async Task MoveFileFromTempToPermDirectory(InvoiceAttachment invoiceAttachment)
     {
       string tempFilePath = Path.Combine(ConfigurationSingleton.Instance.TempPath, invoiceAttachment.StoredFileName);
-      string permFilePath = Path.Combine(ConfigurationSingleton.Instance.AttachmentsPath, invoiceAttachment.StoredFileName);
+      string permFilePath = Path.Combine(ConfigurationSingleton.Instance.PermPath, invoiceAttachment.StoredFileName);
 
       if (System.IO.File.Exists(tempFilePath))
       {
