@@ -173,20 +173,6 @@ namespace Accounting.Controllers
 
       return RedirectToAction("Items");
     }
-
-    //[HttpGet]
-    //[Route("update/{itemId}")]
-    //public async Task<ActionResult> Update(UpdateItemViewModel model)
-    //{
-      
-    //}
-
-    //[HttpPost]
-    //[Route("update/{itemId}")]
-    //public async Task<ActionResult> Update(UpdateItemViewModel model)
-    //{
-      
-    //}
   }
 
   [AuthorizeWithOrganizationId]

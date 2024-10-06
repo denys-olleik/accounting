@@ -4,7 +4,6 @@ using Accounting.CustomAttributes;
 using Accounting.Models.Account;
 using Accounting.Models.AccountsReceivableViewModels;
 using Accounting.Models.BusinessEntityViewModels;
-using Accounting.Models.InvoiceViewModels;
 using Accounting.Models.PaymentViewModels;
 using Accounting.Service;
 using Accounting.Validators;
@@ -174,10 +173,10 @@ namespace Accounting.Controllers
     }
 
     private ReceivePaymentForInvoiceIdsViewModel RebuildInvalidModel(
-        ReceivePaymentForInvoiceIdsViewModel model,
-        List<Invoice> latestInvoices,
-        List<Account> debitAccounts,
-        ValidationResult validationResult)
+      ReceivePaymentForInvoiceIdsViewModel model,
+      List<Invoice> latestInvoices,
+      List<Account> debitAccounts,
+      ValidationResult validationResult)
     {
       var updatedModel = CreateReceivePaymentForInvoiceIdsViewModel(latestInvoices, debitAccounts);
       updatedModel.ValidationResult = validationResult;
