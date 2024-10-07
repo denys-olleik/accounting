@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Accounting.Models.TenantViewModels;
-using Accounting.Validators;
 using Accounting.Service;
 using FluentValidation.Results;
 using System.Transactions;
