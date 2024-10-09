@@ -67,7 +67,7 @@ namespace Accounting.Service
           tenant.VmHostname = droplet.Name;
           tenant.SshPublic = keygen.ToRfcPublicKey(tenant.Name);
           tenant.SshPrivate = keygen.ToPrivateKey();
-          await _tenantService.UpdateAsync(tenant);
+          //await _tenantService.UpdateAsync(tenant);
         }
       }
 
