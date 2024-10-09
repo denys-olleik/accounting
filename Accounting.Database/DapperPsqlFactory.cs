@@ -5324,7 +5324,6 @@ namespace Accounting.Database
         p.Add("@Name", entity.Name);
         p.Add("@Email", entity.Email);
         p.Add("@Ipv4", entity.Ipv4);
-        p.Add("@VmHostname", entity.VmHostname);
         p.Add("@SshPublic", entity.SshPublic);
         p.Add("@CreatedById", entity.CreatedById);
 
@@ -5333,8 +5332,8 @@ namespace Accounting.Database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Tenant>("""
-            INSERT INTO "Tenant" ("Name", "Email", "Ipv4", "VmHostname", "SshPublic", "CreatedById") 
-            VALUES (@Name, @Email, @Ipv4, @VmHostname, @SshPublic, @CreatedById)
+            INSERT INTO "Tenant" ("Name", "Email", "Ipv4", "SshPublic", "CreatedById") 
+            VALUES (@Name, @Email, @Ipv4, @SshPublic, @CreatedById)
             RETURNING *;
             """, p);
         }
@@ -5388,7 +5387,6 @@ namespace Accounting.Database
         p.Add("@Name", tenant.Name);
         p.Add("@Email", tenant.Email);
         p.Add("@Ipv4", tenant.Ipv4);
-        p.Add("@VmHostname", tenant.VmHostname);
         p.Add("@SshPublic", tenant.SshPublic);
         p.Add("@SshPrivate", tenant.SshPrivate);
 
@@ -5401,7 +5399,6 @@ namespace Accounting.Database
             SET "Name" = @Name,
             "Email" = @Email, 
             "Ipv4" = @Ipv4, 
-            "VmHostname" = @VmHostname, 
             "SshPublic" = @SshPublic, 
             "SshPrivate" = @SshPrivate
             WHERE "TenantID" = @TenantID

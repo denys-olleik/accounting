@@ -57,7 +57,6 @@ CREATE TABLE "Tenant"
 	"Name" VARCHAR(100) NULL,
 	"Email" VARCHAR(100) NOT NULL,
 	"Ipv4" VARCHAR(15) NULL,
-	"VmHostname" VARCHAR(255) NULL,
 	"SshPublic" TEXT NULL,
 	"SshPrivate" TEXT NULL,
 	"CreatedById" INT NOT NULL,
