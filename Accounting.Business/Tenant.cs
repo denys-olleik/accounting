@@ -14,5 +14,7 @@ namespace Accounting.Business
     public DateTime Created { get; set; }
 
     public int Identifiable => this.TenantID;
+
+    public string SshPrivate { get; set; }
   }
 }

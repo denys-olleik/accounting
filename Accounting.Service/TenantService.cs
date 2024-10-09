@@ -16,5 +16,11 @@ namespace Accounting.Service
       FactoryManager manager = new FactoryManager();
       return await manager.GetTenantManager().ExistsAsync(email);
     }
+
+    public async Task UpdateAsync(Tenant tenant)
+    {
+      FactoryManager manager = new FactoryManager();
+      await manager.GetTenantManager().UpdateAsync(tenant);
+    }
   }
 }

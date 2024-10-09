@@ -64,16 +64,10 @@ namespace Accounting.Controllers
 
         await _cloudServices.GetDigitalOceanService(_secretService, _tenantService, GetOrganizationId()).CreateDropletAsync(tenant);
 
-        // Implement further logic as needed
-        // Example: scope.Complete();
-        throw new NotImplementedException();
-
         scope.Complete();
       }
 
-      // Implement further logic as needed
-      // Example: Redirect to success page
-      throw new NotImplementedException();
+      return RedirectToAction("Tenants");
     }
   }
 }

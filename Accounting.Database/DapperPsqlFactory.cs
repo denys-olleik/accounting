@@ -4,6 +4,8 @@ using Accounting.Common;
 using Accounting.Database.Interfaces;
 using Npgsql;
 using System.Data;
+using Renci.SshNet.Security;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Accounting.Database
 {
@@ -5377,6 +5379,37 @@ namespace Accounting.Database
       public int Update(Tenant entity)
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<Tenant> UpdateAsync(Tenant tenant)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantID", tenant.TenantID);
+        p.Add("@Name", tenant.Name);
+        p.Add("@Email", tenant.Email);
+        p.Add("@Ipv4", tenant.Ipv4);
+        p.Add("@VmHostname", tenant.VmHostname);
+        p.Add("@SshPublic", tenant.SshPublic);
+        p.Add("@SshPrivate", tenant.SshPrivate);
+
+        IEnumerable<Tenant> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Tenant>("""
+            UPDATE "Tenant" 
+            SET "Name" = @Name,
+            "Email" = @Email, 
+            "Ipv4" = @Ipv4, 
+            "VmHostname" = @VmHostname, 
+            "SshPublic" = @SshPublic, 
+            "SshPrivate" = @SshPrivate
+            WHERE "TenantID" = @TenantID
+            RETURNING *;
+            """, p);
+        }
+
+        return result.Single();
       }
     }
 

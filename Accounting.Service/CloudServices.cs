@@ -1,11 +1,7 @@
 ﻿using Accounting.Business;
 using DigitalOcean.API;
-using Org.BouncyCastle.OpenSsl;
-using Org.BouncyCastle.Security;
 using Renci.SshNet;
-using System.Security.Cryptography;
 using System.Text;
-
 namespace Accounting.Service
 {
   public class CloudServices
@@ -30,107 +26,86 @@ namespace Accounting.Service
 
       public async Task CreateDropletAsync(Tenant tenant)
       {
-        using (var rsa = new RSACryptoServiceProvider(2048))
+        Secret? cloudSecret = await _secretService.GetByTypeAsync(Secret.SecretTypeConstants.Cloud, _organizationId);
+        if (cloudSecret == null)
         {
-          Secret? cloudSecret = await _secretService.GetByTypeAsync(Secret.SecretTypeConstants.Cloud, _organizationId);
-          if (cloudSecret == null)
-          {
-            throw new InvalidOperationException("Cloud secret not found");
-          }
-          var client = new DigitalOceanClient(cloudSecret.Value);
+          throw new InvalidOperationException("Cloud secret not found");
+        }
+        var client = new DigitalOceanClient(cloudSecret.Value);
 
-          // Convert public key to OpenSSH format
-          string publicKey = ConvertToOpenSshFormat(rsa);
+        var keygen = new SshKeyGenerator.SshKeyGenerator(2048);
 
-          // Convert private key to PEM format
-          string privateKey = ConvertToPem(rsa);
+        var sshKeyRequest = new DigitalOcean.API.Models.Requests.Key
+        {
+          Name = tenant.Name,
+          PublicKey = keygen.ToRfcPublicKey(tenant.Name)
+        };
 
-          var sshKeyRequest = new DigitalOcean.API.Models.Requests.Key
-          {
-            Name = tenant.Name,
-            PublicKey = publicKey
-          };
+        var sshKeyResponse = await client.Keys.Create(sshKeyRequest);
 
-          var sshKeyResponse = await client.Keys.Create(sshKeyRequest);
+        var dropletRequest = new DigitalOcean.API.Models.Requests.Droplet()
+        {
+          Name = tenant.Name,
+          Region = "nyc",
+          Size = "s-1vcpu-512mb-10gb",
+          Image = "ubuntu-24-04-x64",
+          SshKeys = new List<object> { sshKeyResponse.Fingerprint }
+        };
 
-          var dropletRequest = new DigitalOcean.API.Models.Requests.Droplet()
-          {
-            Name = tenant.Name,
-            Region = "nyc",
-            Size = "s-1vcpu-512mb-10gb",
-            Image = "ubuntu-24-04-x64",
-            SshKeys = new List<object> { sshKeyResponse.Fingerprint }
-          };
+        var dropletResponse = await client.Droplets.Create(dropletRequest);
 
-          var dropletResponse = await client.Droplets.Create(dropletRequest);
+        await Task.Delay(120000);
 
-          await Task.Delay(TimeSpan.FromSeconds(120));
+        var droplet = await client.Droplets.Get(dropletResponse.Id);
+        string ipAddress = droplet.Networks.V4.First(n => n.Type == "public").IpAddress;
 
-          var droplet = await client.Droplets.Get(dropletResponse.Id);
+        bool success = TestSshConnectionAsync(ipAddress, keygen.ToPrivateKey(), "root");
 
-          if (droplet.Status == "active")
-          {
-            string ipAddress = droplet.Networks.V4.First(x => x.Type == "public").IpAddress;
-
-            bool success = await TestSshConnectionAsync(ipAddress, privateKey);
-          }
+        if (success)
+        {
+          tenant.Ipv4 = ipAddress;
+          tenant.VmHostname = droplet.Name;
+          tenant.SshPublic = keygen.ToRfcPublicKey(tenant.Name);
+          tenant.SshPrivate = keygen.ToPrivateKey();
+          await _tenantService.UpdateAsync(tenant);
         }
       }
 
-      private string ConvertToOpenSshFormat(RSACryptoServiceProvider rsa)
+      private bool TestSshConnectionAsync(string ipAddress, string privateKey, string username = "root")
       {
-        var keyParams = rsa.ExportParameters(false);
+        bool success = false;
 
-        using (var ms = new MemoryStream())
+        try
         {
-          using (var writer = new BinaryWriter(ms))
-          {
-            writer.Write(BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(7)));
-            writer.Write(Encoding.ASCII.GetBytes("ssh-rsa"));
-
-            writer.Write(BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(keyParams.Exponent.Length)));
-            writer.Write(keyParams.Exponent);
-
-            writer.Write(BitConverter.GetBytes(System.Net.IPAddress.HostToNetworkOrder(keyParams.Modulus.Length)));
-            writer.Write(keyParams.Modulus);
-          }
-
-          var publicKey = Convert.ToBase64String(ms.ToArray());
-          return $"ssh-rsa {publicKey} generated-key";
-        }
-      }
-
-      private string ConvertToPem(RSACryptoServiceProvider rsa)
-      {
-        var rsaParameters = rsa.ExportParameters(true);
-        var keyPair = DotNetUtilities.GetRsaKeyPair(rsaParameters);
-
-        using (var sw = new StringWriter())
-        {
-          var pemWriter = new PemWriter(sw);
-          pemWriter.WriteObject(keyPair.Private);
-          pemWriter.Writer.Flush();
-          return sw.ToString();
-        }
-      }
-
-      private async Task<bool> TestSshConnectionAsync(string ipAddress, string privateKey)
-      {
-        using (var key = new PrivateKeyFile(new MemoryStream(Encoding.ASCII.GetBytes(privateKey))))
-        {
-          var connectionInfo = new ConnectionInfo(ipAddress, "root", new PrivateKeyAuthenticationMethod("root", key));
-
-          using (var client = new SshClient(connectionInfo))
+          using (var privateKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(privateKey)))
+          using (var client = new SshClient(ipAddress, username, new PrivateKeyFile(privateKeyStream)))
           {
             client.Connect();
-
-            var command = client.RunCommand("echo 'Hello, world!'");
-
+            if (client.IsConnected)
+            {
+              var result = client.RunCommand("echo 'The quick brown fox jumped over the lazy dog!'");
+              if (result.Result.Contains("The quick brown fox jumped over the lazy dog!"))
+              {
+                success = true;
+              }
+              else
+              {
+                Console.WriteLine("Failed to establish SSH connection.");
+              }
+            }
+            else
+            {
+              Console.WriteLine("Failed to establish SSH connection.");
+            }
             client.Disconnect();
-
-            return command.Result.Trim() == "Hello, world!";
           }
         }
+        catch (Exception ex)
+        {
+          Console.WriteLine($"An error occurred while testing SSH connection: {ex.Message}");
+        }
+
+        return success;
       }
     }
   }
