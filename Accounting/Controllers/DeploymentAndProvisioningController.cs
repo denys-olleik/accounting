@@ -31,7 +31,7 @@ namespace Accounting.Controllers
 
     [Route("provision-tenant")]
     [HttpGet]
-    public async Task<IActionResult> ProvisionTenant()
+    public IActionResult ProvisionTenant()
     {
       return View();
     }

@@ -56,7 +56,7 @@ namespace Accounting.Service
 
         //await Task.Delay(120000);
 
-        var droplet = await client.Droplets.Get(dropletResponse.Id);
+        //var droplet = await client.Droplets.Get(dropletResponse.Id);
         //string ipAddress = droplet.Networks.V4.First(n => n.Type == "public").IpAddress;
 
         //bool success = TestSshConnectionAsync(ipAddress, keygen.ToPrivateKey(), "root");
@@ -64,7 +64,7 @@ namespace Accounting.Service
         //tenant.Ipv4 = ipAddress;
         tenant.SshPublic = keygen.ToRfcPublicKey(tenant.Name);
         tenant.SshPrivate = keygen.ToPrivateKey();
-        //await _tenantService.UpdateAsync(tenant);
+        await _tenantService.UpdateAsync(tenant);
       }
     }
 
@@ -105,5 +105,4 @@ namespace Accounting.Service
       return success;
     }
   }
-}
 }
