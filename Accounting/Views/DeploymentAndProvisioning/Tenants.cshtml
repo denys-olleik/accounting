@@ -22,20 +22,33 @@
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
       <tr>
         <th></th>
-        <th class="text-align-left">
-          <input type="text" v-model="fullyQualifiedDomainNameFilter" @@input="filterFullyQualifiedDomainName" placeholder="FullyQualifiedDomainName" class="font-size-16px width-100"/>
+        <th>
+          <input type="text" v-model="fullyQualifiedDomainNameFilter" @@input="filterFullyQualifiedDomainName" placeholder="FullyQualifiedDomainName" class="font-size-16px width-100" />
         </th>
       </tr>
       <tr>
-        <th class="text-align-left width-1px padding-right-20px">#</th>
-        <th class="text-align-left width-1px padding-right-20px">Fully Qualified Domain Name</th>
-        <th class="text-align-left width-1px padding-right-20px">Email</th>
-        <th class="text-align-left width-1px padding-right-20px">Droplet Id</th>
-        <th class="text-align-left width-1px padding-right-20px">IPV4</th>
-        <th class="text-align-left width-1px padding-right-20px">SSHPublic</th>
-        <th class="text-align-left width-1px padding-right-20px">SSHPrivate</th>
+        <th>#</th>
+        <th>Fully Qualified Domain Name</th>
+        <th>Email</th>
+        <th>Droplet Id</th>
+        <th>IPV4</th>
+        <th>SSHPublic</th>
+        <th>SSHPrivate</th>
       </tr>
     </thead>
+    <tbody>
+      <template v-for="tenant in tenants" :key="tenant.id">"
+        <tr>
+          <td>{{ tenant.id }}</td>
+          <td>{{ tenant.fullyQualifiedDomainName }}</td>
+          <td>{{ tenant.email }}</td>
+          <td>{{ tenant.dropletId }}</td>
+          <td>{{ tenant.ipv4 }}</td>
+          <td>{{ tenant.sshPublic }}</td>
+          <td>{{ tenant.sshPrivate }}</td>
+        </tr>
+      </template>
+    </tbody>
   </table>
 </div>
 
