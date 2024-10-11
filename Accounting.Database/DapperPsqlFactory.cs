@@ -2728,7 +2728,7 @@ namespace Accounting.Database
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
-        p.Add("@PageSize", pageSize + 1); // Fetch one extra record
+        p.Add("@PageSize", pageSize + 1);
         p.Add("@OrganizationId", organizationId);
 
         IEnumerable<Item> result;
@@ -5374,6 +5374,41 @@ namespace Accounting.Database
       public IEnumerable<Tenant> GetAll()
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
+  int page,
+  int pageSize,
+  int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Page", page);
+        p.Add("@PageSize", pageSize + 1);
+        p.Add("@OrganizationId", organizationId);
+
+        IEnumerable<Tenant> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Tenant>($"""
+            SELECT *
+            FROM "Tenant"
+            WHERE "OrganizationId" = @OrganizationId
+            ORDER BY "Name"
+            LIMIT @PageSize OFFSET @Offset
+            """, new { PageSize = pageSize + 1, Offset = pageSize * (page - 1), OrganizationId = organizationId });
+        }
+
+        var hasMoreRecords = result.Count() > pageSize;
+
+        if (hasMoreRecords)
+        {
+          result = result.Take(pageSize);
+        }
+
+        int? nextPage = hasMoreRecords ? page + 1 : null;
+
+        return (result.ToList(), nextPage);
       }
 
       public int Update(Tenant entity)

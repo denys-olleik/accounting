@@ -5,9 +5,11 @@ using System.Transactions;
 using Accounting.Business;
 using FluentValidation;
 using Accounting.Models.Tenant;
+using Accounting.CustomAttributes;
 
 namespace Accounting.Controllers
 {
+  [AuthorizeWithOrganizationId]
   [Route("tenant")]
   public class TenantController : BaseController
   {
@@ -77,6 +79,52 @@ namespace Accounting.Controllers
       return RedirectToAction("Tenants");
     }
   }
+
+  [AuthorizeWithOrganizationId]
+  [Route("api/tenant")]
+  public class TenantApiController : BaseController
+  {
+    private readonly TenantService _tenantService;
+
+    public TenantApiController(TenantService tenantService)
+    {
+      _tenantService = tenantService;
+    }
+
+    [HttpGet("get-all-tenants")]
+    public async Task<IActionResult> GetAllTenants(
+      int page = 1,
+      int pageSize = 2)
+    {
+      (List<Tenant> tenants, int? nextPage) =
+        await _tenantService.GetAllAsync(
+          page,
+          pageSize,
+          GetOrganizationId());
+
+      return Ok(new GetAllTenantsViewModel
+      {
+        Tenants = tenants.Select(ConvertToViewModel).ToList(),
+        Page = page,
+        NextPage = nextPage,
+        PageSize = pageSize
+      });
+    }
+
+    private TenantViewModel ConvertToViewModel(Tenant tenant)
+    {
+      return new TenantViewModel
+      {
+        TenantId = tenant.TenantID,
+        FullyQualifiedDomainName = tenant.FullyQualifiedDomainName,
+        Email = tenant.Email,
+        Ipv4 = tenant.Ipv4,
+        SshPublic = tenant.SshPublic,
+        SshPrivate = tenant.SshPrivate,
+        Created = tenant.Created
+      };
+    }
+  }
 }
 
 namespace Accounting.Models.Tenant
@@ -110,13 +158,13 @@ namespace Accounting.Models.Tenant
             .WithMessage("Invalid email format.")
             .DependentRules(() =>
             {
-              RuleFor(x => x.Email)
-                .MustAsync(async (email, cancellation) =>
-                {
-                  return !await _tenantService.ExistsAsync(email!);
-                })
-                .WithMessage("A tenant with this email already exists.");
-            });
+          RuleFor(x => x.Email)
+            .MustAsync(async (email, cancellation) =>
+            {
+              return !await _tenantService.ExistsAsync(email!);
+            })
+            .WithMessage("A tenant with this email already exists.");
+        });
         });
 
       RuleFor(x => x)
@@ -140,5 +188,21 @@ namespace Accounting.Models.Tenant
   public class TenantsPaginatedViewModel : PaginatedViewModel
   {
 
+  }
+
+  public class TenantViewModel
+  {
+    public int TenantId { get; set; }
+    public string? FullyQualifiedDomainName { get; set; }
+    public string? Email { get; set; }
+    public string? Ipv4 { get; set; }
+    public string? SshPublic { get; set; }
+    public string? SshPrivate { get; set; }
+    public DateTime Created { get; set; }
+  }
+
+  public class GetAllTenantsViewModel : PaginatedViewModel
+  {
+    public List<TenantViewModel>? Tenants { get; set; }
   }
 }

@@ -17,6 +17,15 @@ namespace Accounting.Service
       return await manager.GetTenantManager().ExistsAsync(email);
     }
 
+    public async Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
+      int page, 
+      int pageSize, 
+      int organizationId)
+    {
+      FactoryManager manager = new FactoryManager();
+      return await manager.GetTenantManager().GetAllAsync(page, pageSize, organizationId);
+    }
+
     public async Task UpdateDropletIdAsync(int tenantId, long dropletId, int organizationId)
     {
       FactoryManager manager = new FactoryManager();
