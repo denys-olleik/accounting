@@ -8,14 +8,14 @@ using Accounting.Models.Tenant;
 
 namespace Accounting.Controllers
 {
-  [Route("dnp")]
-  public class DeploymentAndProvisioningController : BaseController
+  [Route("tenant")]
+  public class TenantController : BaseController
   {
     private readonly TenantService _tenantService;
     private readonly CloudServices _cloudServices;
     private readonly SecretService _secretService;
 
-    public DeploymentAndProvisioningController(TenantService tenantService, CloudServices cloudServices, SecretService secretService)
+    public TenantController(TenantService tenantService, CloudServices cloudServices, SecretService secretService)
     {
       _tenantService = tenantService;
       _cloudServices = cloudServices;
