@@ -5321,7 +5321,7 @@ namespace Accounting.Database
       public async Task<Tenant> CreateAsync(Tenant entity)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@Name", entity.Name);
+        p.Add("@FullyQualifiedDomainName", entity.FullyQualifiedDomainName);
         p.Add("@Email", entity.Email);
         p.Add("@Ipv4", entity.Ipv4);
         p.Add("@SshPublic", entity.SshPublic);
@@ -5332,8 +5332,8 @@ namespace Accounting.Database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Tenant>("""
-            INSERT INTO "Tenant" ("Name", "Email", "Ipv4", "SshPublic", "CreatedById") 
-            VALUES (@Name, @Email, @Ipv4, @SshPublic, @CreatedById)
+            INSERT INTO "Tenant" ("FullyQualifiedDomainName", "Email", "Ipv4", "SshPublic", "CreatedById") 
+            VALUES (@FullyQualifiedDomainName, @Email, @Ipv4, @SshPublic, @CreatedById)
             RETURNING *;
             """, p);
         }
@@ -5384,7 +5384,7 @@ namespace Accounting.Database
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@TenantID", tenant.TenantID);
-        p.Add("@Name", tenant.Name);
+        p.Add("@FullyQualifiedDomainName", tenant.FullyQualifiedDomainName);
         p.Add("@Email", tenant.Email);
         p.Add("@Ipv4", tenant.Ipv4);
         p.Add("@SshPublic", tenant.SshPublic);
@@ -5396,7 +5396,7 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<Tenant>("""
             UPDATE "Tenant" 
-            SET "Name" = @Name,
+            SET "FullyQualifiedDomainName" = @FullyQualifiedDomainName,
             "Email" = @Email, 
             "Ipv4" = @Ipv4, 
             "SshPublic" = @SshPublic, 

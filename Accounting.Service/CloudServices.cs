@@ -37,18 +37,18 @@ namespace Accounting.Service
 
         var sshKeyRequest = new DigitalOcean.API.Models.Requests.Key
         {
-          Name = tenant.Name,
-          PublicKey = keygen.ToRfcPublicKey(tenant.Name)
+          Name = tenant.FullyQualifiedDomainName,
+          PublicKey = keygen.ToRfcPublicKey(tenant.FullyQualifiedDomainName)
         };
 
         var sshKeyResponse = await client.Keys.Create(sshKeyRequest);
 
         var dropletRequest = new DigitalOcean.API.Models.Requests.Droplet()
         {
-          Name = tenant.Name,
+          Name = tenant.FullyQualifiedDomainName,
           Region = "nyc",
           Size = "s-1vcpu-512mb-10gb",
-          Image = "ubuntu-24-04-x64",
+          Image = "ubuntu-22-04-x64",
           SshKeys = new List<object> { sshKeyResponse.Fingerprint }
         };
 
@@ -62,7 +62,7 @@ namespace Accounting.Service
         //bool success = TestSshConnectionAsync(ipAddress, keygen.ToPrivateKey(), "root");
 
         //tenant.Ipv4 = ipAddress;
-        tenant.SshPublic = keygen.ToRfcPublicKey(tenant.Name);
+        tenant.SshPublic = keygen.ToRfcPublicKey(tenant.FullyQualifiedDomainName);
         tenant.SshPrivate = keygen.ToPrivateKey();
         await _tenantService.UpdateAsync(tenant);
       }

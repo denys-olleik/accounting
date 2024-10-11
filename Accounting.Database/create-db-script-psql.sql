@@ -54,7 +54,7 @@ CREATE TABLE "Cloud"
 CREATE TABLE "Tenant"
 (
 	"TenantID" SERIAL PRIMARY KEY NOT NULL,
-	"Name" VARCHAR(100) NULL,
+	"FullyQualifiedDomainName" VARCHAR(100) NULL, -- accounting.example.com
 	"Email" VARCHAR(100) NOT NULL,
 	"Ipv4" VARCHAR(15) NULL,
 	"SshPublic" TEXT NULL,
