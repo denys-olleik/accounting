@@ -5323,6 +5323,7 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@FullyQualifiedDomainName", entity.FullyQualifiedDomainName);
         p.Add("@Email", entity.Email);
+        p.Add("@DropletId", entity.DropletId);
         p.Add("@Ipv4", entity.Ipv4);
         p.Add("@SshPublic", entity.SshPublic);
         p.Add("@CreatedById", entity.CreatedById);
@@ -5332,8 +5333,8 @@ namespace Accounting.Database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Tenant>("""
-            INSERT INTO "Tenant" ("FullyQualifiedDomainName", "Email", "Ipv4", "SshPublic", "CreatedById") 
-            VALUES (@FullyQualifiedDomainName, @Email, @Ipv4, @SshPublic, @CreatedById)
+            INSERT INTO "Tenant" ("FullyQualifiedDomainName", "Email", "DropletId", "Ipv4", "SshPublic", "CreatedById") 
+            VALUES (@FullyQualifiedDomainName, @Email, @DropletId, @Ipv4, @SshPublic, @CreatedById)
             RETURNING *;
             """, p);
         }
