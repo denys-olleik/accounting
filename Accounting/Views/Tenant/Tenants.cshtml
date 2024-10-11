@@ -22,30 +22,30 @@
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
       <tr>
         <th></th>
-        <th>
+        <th class="text-align-left">
           <input type="text" v-model="fullyQualifiedDomainNameFilter" @@input="filterFullyQualifiedDomainName" placeholder="FullyQualifiedDomainName" class="font-size-16px width-100" />
         </th>
       </tr>
       <tr>
-        <th>#</th>
-        <th>Fully Qualified Domain Name</th>
-        <th>Email</th>
-        <th>Droplet Id</th>
-        <th>IPV4</th>
-        <th>SSHPublic</th>
-        <th>SSHPrivate</th>
+        <th class="text-align-left width-1px padding-right-20px">#</th>
+        <th class="text-align-left padding-right-20px white-space-nowrap">Fully Qualified Domain Name</th>
+        <th class="text-align-left padding-right-20px">Email</th>
+        <th class="text-align-left width-1px padding-right-20px white-space-nowrap">Droplet Id</th>
+        <th class="text-align-left width-1px padding-right-20px">IPV4</th>
+        <th class="text-align-left width-1px padding-right-20px white-space-nowrap">SSH Public</th>
+        <th class="text-align-left width-1px white-space-nowrap">SSH Private</th>
       </tr>
     </thead>
-    <tbody>
-      <template v-for="tenant in tenants" :key="tenant.id">"
+    <tbody class="font-Roboto-Mono">
+      <template v-for="tenant in tenants" :key="tenant.id">
         <tr>
-          <td>{{ tenant.id }}</td>
-          <td>{{ tenant.fullyQualifiedDomainName }}</td>
-          <td>{{ tenant.email }}</td>
-          <td>{{ tenant.dropletId }}</td>
-          <td>{{ tenant.ipv4 }}</td>
-          <td>{{ tenant.sshPublic }}</td>
-          <td>{{ tenant.sshPrivate }}</td>
+          <td class="padding-right-20px">{{ tenant.id }}</td>
+          <td class="padding-right-20px">{{ tenant.fullyQualifiedDomainName }}</td>
+          <td class="padding-right-20px">{{ tenant.email }}</td>
+          <td class="padding-right-20px">{{ tenant.dropletId }}</td>
+          <td class="padding-right-20px">{{ tenant.ipv4 }}</td>
+          <td class="padding-right-20px">{{ tenant.sshPublic }}</td>
+          <td class="white-space-nowrap">{{ tenant.sshPrivate }}</td>
         </tr>
       </template>
     </tbody>
@@ -66,16 +66,16 @@
       };
     },
     methods: {
-      async fetchTenants() {
+      fetchTenants() {
         const response
-          = await fetch(`/api/DeploymentAndProvisioning/Tenants?page=${this.page}&pageSize=${this.pageSize}`);
-        const data = await response.json();
+          = fetch(`/api/DeploymentAndProvisioning/Tenants?page=${this.page}&pageSize=${this.pageSize}`);
+        const data = response.json();
         this.tenants = data.tenants;
         this.nextPage = data.nextPage;
       },
     },
     mounted() {
-      fetchTenants();
+      this.fetchTenants();
     }
   });
 
