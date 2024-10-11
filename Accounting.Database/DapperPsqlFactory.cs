@@ -5381,17 +5381,17 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateDropletIdAsync(long dropletId, int organizationId)
+      public async Task<int> UpdateDropletIdAsync(int tenantId, long dropletId, int organizationId)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateSshPrivateAsync(string sshPrivate, int organizationId)
+      public async Task<int> UpdateSshPrivateAsync(int tenantId, string sshPrivate, int organizationId)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateSshPublicAsync(string sshPublic, int organizationId)
+      public async Task<int> UpdateSshPublicAsync(int tenantId, string sshPublic, int organizationId)
       {
         throw new NotImplementedException();
       }

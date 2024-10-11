@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Accounting.Models.TenantViewModels;
 using Accounting.Service;
 using FluentValidation.Results;
 using System.Transactions;
@@ -24,9 +23,17 @@ namespace Accounting.Controllers
     }
 
     [Route("tenants")]
-    public IActionResult Tenants()
+    public IActionResult Tenants(
+      int page = 1,
+      int pageSize = 2)
     {
-      return View();
+      var vm = new TenantsPaginatedViewModel()
+      {
+        Page = page,
+        PageSize = pageSize,
+      };
+
+      return View(vm);
     }
 
     [Route("provision-tenant")]
@@ -72,7 +79,7 @@ namespace Accounting.Controllers
   }
 }
 
-namespace Accounting.Models.TenantViewModels
+namespace Accounting.Models.Tenant
 {
   public class ProvisionTenantViewModel
   {
@@ -82,10 +89,7 @@ namespace Accounting.Models.TenantViewModels
 
     public ValidationResult? ValidationResult { get; set; }
   }
-}
 
-namespace Accounting.Models.Tenant
-{
   public class ProvisionTenantViewModelValidator : AbstractValidator<ProvisionTenantViewModel>
   {
     private readonly TenantService _tenantService;
@@ -128,5 +132,13 @@ namespace Accounting.Models.Tenant
 
       return emailSecret != null && cloudSecret != null;
     }
+  }
+}
+
+namespace Accounting.Models.Tenant
+{
+  public class TenantsPaginatedViewModel : PaginatedViewModel
+  {
+
   }
 }
