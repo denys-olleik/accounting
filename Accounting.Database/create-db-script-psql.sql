@@ -56,7 +56,7 @@ CREATE TABLE "Tenant"
 	"TenantID" SERIAL PRIMARY KEY NOT NULL,
 	"FullyQualifiedDomainName" VARCHAR(100) NULL, -- accounting.example.com
 	"Email" VARCHAR(100) NOT NULL,
-	"DropletId" INT NULL,
+	"DropletId" BIGINT NULL,
 	"Ipv4" VARCHAR(15) NULL,
 	"SshPublic" TEXT NULL,
 	"SshPrivate" TEXT NULL,

@@ -62,9 +62,11 @@ namespace Accounting.Service
         //bool success = TestSshConnectionAsync(ipAddress, keygen.ToPrivateKey(), "root");
 
         //tenant.Ipv4 = ipAddress;
-        tenant.SshPublic = keygen.ToRfcPublicKey(tenant.FullyQualifiedDomainName);
-        tenant.SshPrivate = keygen.ToPrivateKey();
-        await _tenantService.UpdateAsync(tenant);
+        await _tenantService.UpdateDropletIdAsync(dropletResponse.Id, _organizationId);
+        await _tenantService.UpdateSshPublicAsync(keygen.ToRfcPublicKey(tenant.FullyQualifiedDomainName), _organizationId);
+        await _tenantService.UpdateSshPrivateAsync(keygen.ToPrivateKey(), _organizationId);
+        //tenant.SshPrivate = keygen.ToPrivateKey();
+        //await _tenantService.UpdateAsync(tenant);
       }
     }
 

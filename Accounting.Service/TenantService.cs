@@ -17,10 +17,22 @@ namespace Accounting.Service
       return await manager.GetTenantManager().ExistsAsync(email);
     }
 
-    public async Task UpdateAsync(Tenant tenant)
+    public async Task UpdateDropletIdAsync(long dropletId, int organizationId)
     {
       FactoryManager manager = new FactoryManager();
-      await manager.GetTenantManager().UpdateAsync(tenant);
+      await manager.GetTenantManager().UpdateDropletIdAsync(dropletId, organizationId);
+    }
+
+    public async Task UpdateSshPrivateAsync(string sshPrivate, int organizationId)
+    {
+      FactoryManager manager = new FactoryManager();
+      await manager.GetTenantManager().UpdateSshPrivateAsync(sshPrivate, organizationId);
+    }
+
+    public async Task UpdateSshPublicAsync(string SshPublic, int organizationId)
+    {
+      FactoryManager manager = new FactoryManager();
+      await manager.GetTenantManager().UpdateSshPublicAsync(SshPublic, organizationId);
     }
   }
 }

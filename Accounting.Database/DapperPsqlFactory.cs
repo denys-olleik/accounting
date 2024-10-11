@@ -5381,33 +5381,19 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<Tenant> UpdateAsync(Tenant tenant)
+      public async Task<int> UpdateDropletIdAsync(long dropletId, int organizationId)
       {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@TenantID", tenant.TenantID);
-        p.Add("@FullyQualifiedDomainName", tenant.FullyQualifiedDomainName);
-        p.Add("@Email", tenant.Email);
-        p.Add("@Ipv4", tenant.Ipv4);
-        p.Add("@SshPublic", tenant.SshPublic);
-        p.Add("@SshPrivate", tenant.SshPrivate);
+        throw new NotImplementedException();
+      }
 
-        IEnumerable<Tenant> result;
+      public async Task<int> UpdateSshPrivateAsync(string sshPrivate, int organizationId)
+      {
+        throw new NotImplementedException();
+      }
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-        {
-          result = await con.QueryAsync<Tenant>("""
-            UPDATE "Tenant" 
-            SET "FullyQualifiedDomainName" = @FullyQualifiedDomainName,
-            "Email" = @Email, 
-            "Ipv4" = @Ipv4, 
-            "SshPublic" = @SshPublic, 
-            "SshPrivate" = @SshPrivate
-            WHERE "TenantID" = @TenantID
-            RETURNING *;
-            """, p);
-        }
-
-        return result.Single();
+      public async Task<int> UpdateSshPublicAsync(string sshPublic, int organizationId)
+      {
+        throw new NotImplementedException();
       }
     }
 
