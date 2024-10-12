@@ -160,13 +160,13 @@ namespace Accounting.Models.Tenant
             .WithMessage("Invalid email format.")
             .DependentRules(() =>
             {
-          RuleFor(x => x.Email)
-            .MustAsync(async (email, cancellation) =>
-            {
-              return !await _tenantService.ExistsAsync(email!);
-            })
-            .WithMessage("A tenant with this email already exists.");
-        });
+              RuleFor(x => x.Email)
+                .MustAsync(async (email, cancellation) =>
+                {
+                  return !await _tenantService.ExistsAsync(email!);
+                })
+                .WithMessage("A tenant with this email already exists.");
+            });
         });
 
       RuleFor(x => x)

@@ -4,8 +4,6 @@ using Accounting.Common;
 using Accounting.Database.Interfaces;
 using Npgsql;
 using System.Data;
-using Renci.SshNet.Security;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Accounting.Database
 {
@@ -5327,14 +5325,15 @@ namespace Accounting.Database
         p.Add("@Ipv4", entity.Ipv4);
         p.Add("@SshPublic", entity.SshPublic);
         p.Add("@CreatedById", entity.CreatedById);
+        p.Add("@OrganizationId", entity.OrganizationId);
 
         IEnumerable<Tenant> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Tenant>("""
-            INSERT INTO "Tenant" ("FullyQualifiedDomainName", "Email", "DropletId", "Ipv4", "SshPublic", "CreatedById") 
-            VALUES (@FullyQualifiedDomainName, @Email, @DropletId, @Ipv4, @SshPublic, @CreatedById)
+            INSERT INTO "Tenant" ("FullyQualifiedDomainName", "Email", "DropletId", "Ipv4", "SshPublic", "CreatedById", "OrganizationId")
+            VALUES (@FullyQualifiedDomainName, @Email, @DropletId, @Ipv4, @SshPublic, @CreatedById, @OrganizationId)
             RETURNING *;
             """, p);
         }
@@ -5347,10 +5346,11 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<bool> ExistsAsync(string email)
+      public async Task<bool> ExistsAsync(string email, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
+        p.Add("@OrganizationId", organizationId);
 
         IEnumerable<Tenant> result;
 
@@ -5360,6 +5360,7 @@ namespace Accounting.Database
             SELECT * 
             FROM "Tenant" 
             WHERE "Email" = @Email
+            AND "OrganizationId" = @OrganizationId
             """, p);
         }
 
@@ -5394,7 +5395,7 @@ namespace Accounting.Database
             SELECT *
             FROM "Tenant"
             WHERE "OrganizationId" = @OrganizationId
-            ORDER BY "Name"
+            ORDER BY "FullyQualifiedDomainName"
             LIMIT @PageSize OFFSET @Offset
             """, new { PageSize = pageSize + 1, Offset = pageSize * (page - 1), OrganizationId = organizationId });
         }

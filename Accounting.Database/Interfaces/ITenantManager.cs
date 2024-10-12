@@ -4,7 +4,7 @@ namespace Accounting.Database.Interfaces
 {
   public interface ITenantManager : IGenericRepository<Tenant, int>
   {
-    Task<bool> ExistsAsync(string email);
+    Task<bool> ExistsAsync(string email, int organizationId);
     Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
       int page, 
       int pageSize, 

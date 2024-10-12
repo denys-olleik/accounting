@@ -11,10 +11,10 @@ namespace Accounting.Service
       return await manager.GetTenantManager().CreateAsync(tenant);
     }
 
-    public async Task<bool> ExistsAsync(string email)
+    public async Task<bool> ExistsAsync(string email, int organizationId)
     {
       FactoryManager manager = new FactoryManager();
-      return await manager.GetTenantManager().ExistsAsync(email);
+      return await manager.GetTenantManager().ExistsAsync(email, organizationId);
     }
 
     public async Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(

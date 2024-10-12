@@ -61,6 +61,7 @@ CREATE TABLE "Tenant"
 	"SshPublic" TEXT NULL,
 	"SshPrivate" TEXT NULL,
 	"CreatedById" INT NOT NULL,
+	"OrganizationId" INT NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
