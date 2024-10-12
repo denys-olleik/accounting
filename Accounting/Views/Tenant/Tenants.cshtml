@@ -63,15 +63,24 @@
         page: @Model.Page,
         pageSize: @Model.PageSize,
         nextPage: null,
+        fullyQualifiedDomainNameFilter: ''
       };
     },
     methods: {
       fetchTenants() {
-        const response
-          = fetch(`/api/tenant/get-all-tenants?page=${this.page}&pageSize=${this.pageSize}`);
-        const data = response.json();
-        this.tenants = data.tenants;
-        this.nextPage = data.nextPage;
+        fetch(`/api/tenant/get-all-tenants?page=${this.page}&pageSize=${this.pageSize}`)
+          .then(response => response.json())
+          .then(data => {
+            this.tenants = data.tenants;
+            this.nextPage = data.nextPage;
+          })
+          .catch(error => {
+            console.error('Error fetching tenants:', error);
+          });
+      },
+      filterFullyQualifiedDomainName() {
+        // Implement your filtering logic here
+        this.tenants = this.tenants.filter(tenant => tenant.domainName.includes(this.fullyQualifiedDomainNameFilter));
       },
     },
     mounted() {
