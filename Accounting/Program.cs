@@ -25,7 +25,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.SlidingExpiration = true;
     options.EventsType = typeof(CustomCookieAuthenticationEventsHandler);
-    options.LoginPath = new PathString("/a/login");
+    options.LoginPath = new PathString("/user-account/login");
 
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
   });

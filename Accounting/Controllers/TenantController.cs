@@ -6,6 +6,7 @@ using Accounting.Business;
 using FluentValidation;
 using Accounting.Models.Tenant;
 using Accounting.CustomAttributes;
+using Accounting.Validators.Tenant;
 
 namespace Accounting.Controllers
 {
@@ -17,7 +18,10 @@ namespace Accounting.Controllers
     private readonly CloudServices _cloudServices;
     private readonly SecretService _secretService;
 
-    public TenantController(TenantService tenantService, CloudServices cloudServices, SecretService secretService)
+    public TenantController(
+      TenantService tenantService, 
+      CloudServices cloudServices, 
+      SecretService secretService)
     {
       _tenantService = tenantService;
       _cloudServices = cloudServices;
@@ -25,6 +29,7 @@ namespace Accounting.Controllers
     }
 
     [Route("tenants")]
+    [HttpGet]
     public IActionResult Tenants(
       int page = 1,
       int pageSize = 2)
@@ -47,11 +52,13 @@ namespace Accounting.Controllers
 
     [Route("provision-tenant")]
     [HttpPost]
-    public async Task<IActionResult> ProvisionTenant(ProvisionTenantViewModel model)
+    public async Task<IActionResult> ProvisionTenant(
+      ProvisionTenantViewModel model)
     {
       model.OrganizationId = GetOrganizationId();
 
-      ProvisionTenantViewModelValidator validator = new ProvisionTenantViewModelValidator(_tenantService, _secretService);
+      ProvisionTenantViewModelValidator validator 
+        = new ProvisionTenantViewModelValidator(_tenantService, _secretService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -71,7 +78,10 @@ namespace Accounting.Controllers
           CreatedById = GetUserId(),
         });
 
-        await _cloudServices.GetDigitalOceanService(_secretService, _tenantService, GetOrganizationId()).CreateDropletAsync(tenant);
+        await _cloudServices.GetDigitalOceanService(
+          _secretService, 
+          _tenantService, 
+          GetOrganizationId()).CreateDropletAsync(tenant);
 
         scope.Complete();
       }
@@ -129,23 +139,17 @@ namespace Accounting.Controllers
   }
 }
 
-namespace Accounting.Models.Tenant
+namespace Accounting.Validators.Tenant
 {
-  public class ProvisionTenantViewModel
-  {
-    public string? Email { get; set; }
-    public string? Name { get; set; }
-    public int OrganizationId { get; set; }
-
-    public ValidationResult? ValidationResult { get; set; }
-  }
-
-  public class ProvisionTenantViewModelValidator : AbstractValidator<ProvisionTenantViewModel>
+  public class ProvisionTenantViewModelValidator 
+    : AbstractValidator<ProvisionTenantViewModel>
   {
     private readonly TenantService _tenantService;
     private readonly SecretService _secretService;
 
-    public ProvisionTenantViewModelValidator(TenantService tenantService, SecretService secretService)
+    public ProvisionTenantViewModelValidator(
+      TenantService tenantService, 
+      SecretService secretService)
     {
       _tenantService = tenantService;
       _secretService = secretService;
@@ -160,12 +164,12 @@ namespace Accounting.Models.Tenant
             .WithMessage("Invalid email format.")
             .DependentRules(() =>
             {
-              RuleFor(x => x.Email)
-                .MustAsync(async (email, cancellation) =>
+              RuleFor(x => x)
+                .MustAsync(async (model, cancellation) =>
                 {
-                  return !await _tenantService.ExistsAsync(email!);
+                  return !await _tenantService.ExistsAsync(model.Email!, model.OrganizationId);
                 })
-                .WithMessage("A tenant with this email already exists.");
+                .WithMessage("A tenant with this email already exists for the specified organization.");
             });
         });
 
@@ -177,8 +181,12 @@ namespace Accounting.Models.Tenant
 
     private async Task<bool> HasRequiredSecretsAsync(int organizationId)
     {
-      var emailSecret = await _secretService.GetByTypeAsync(Secret.SecretTypeConstants.Email, organizationId);
-      var cloudSecret = await _secretService.GetByTypeAsync(Secret.SecretTypeConstants.Cloud, organizationId);
+      var emailSecret = await _secretService.GetByTypeAsync(
+        Secret.SecretTypeConstants.Email, 
+        organizationId);
+      var cloudSecret = await _secretService.GetByTypeAsync(
+        Secret.SecretTypeConstants.Cloud, 
+        organizationId);
 
       return emailSecret != null && cloudSecret != null;
     }
@@ -187,6 +195,15 @@ namespace Accounting.Models.Tenant
 
 namespace Accounting.Models.Tenant
 {
+  public class ProvisionTenantViewModel
+  {
+    public string? Email { get; set; }
+    public string? Name { get; set; }
+    public int OrganizationId { get; set; }
+
+    public ValidationResult? ValidationResult { get; set; }
+  }
+
   public class TenantsPaginatedViewModel : PaginatedViewModel
   {
 

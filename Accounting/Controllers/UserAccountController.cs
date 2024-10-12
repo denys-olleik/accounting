@@ -15,7 +15,7 @@ using static Accounting.Business.Claim;
 namespace Accounting.Controllers
 {
   [Authorize]
-  [Route("ua")]
+  [Route("user-account")]
   public class UserAccountController : BaseController
   {
     private readonly OrganizationService _organizationService;

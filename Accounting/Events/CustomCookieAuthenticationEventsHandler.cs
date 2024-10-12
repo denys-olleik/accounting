@@ -24,7 +24,7 @@ namespace Accounting.Events
       User user;
 
       if (organizationId > 0)
-      { // TODO: Certify that userOrganization.User is not null, it probably can be.
+      {
         var userOrganization = await userOrganizationService.GetAsync(userId, organizationId);
         user = userOrganization.User!;
       }
