@@ -5377,9 +5377,9 @@ namespace Accounting.Database
       }
 
       public async Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
-  int page,
-  int pageSize,
-  int organizationId)
+        int page,
+        int pageSize,
+        int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);

@@ -68,7 +68,7 @@
     methods: {
       fetchTenants() {
         const response
-          = fetch(`/api/DeploymentAndProvisioning/Tenants?page=${this.page}&pageSize=${this.pageSize}`);
+          = fetch(`/api/tenant/get-all-tenants?page=${this.page}&pageSize=${this.pageSize}`);
         const data = response.json();
         this.tenants = data.tenants;
         this.nextPage = data.nextPage;

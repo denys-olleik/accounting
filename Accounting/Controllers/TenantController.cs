@@ -93,8 +93,8 @@ namespace Accounting.Controllers
 
     [HttpGet("get-all-tenants")]
     public async Task<IActionResult> GetAllTenants(
-      int page = 1,
-      int pageSize = 2)
+  int page = 1,
+  int pageSize = 2)
     {
       (List<Tenant> tenants, int? nextPage) =
         await _tenantService.GetAllAsync(
@@ -102,27 +102,29 @@ namespace Accounting.Controllers
           pageSize,
           GetOrganizationId());
 
-      return Ok(new GetAllTenantsViewModel
+      TenantViewModel ConvertToViewModel(Tenant tenant)
+      {
+        return new TenantViewModel
+        {
+          TenantId = tenant.TenantID,
+          FullyQualifiedDomainName = tenant.FullyQualifiedDomainName,
+          Email = tenant.Email,
+          Ipv4 = tenant.Ipv4,
+          SshPublic = tenant.SshPublic,
+          SshPrivate = tenant.SshPrivate,
+          Created = tenant.Created
+        };
+      }
+
+      var viewModel = new GetAllTenantsViewModel
       {
         Tenants = tenants.Select(ConvertToViewModel).ToList(),
         Page = page,
         NextPage = nextPage,
         PageSize = pageSize
-      });
-    }
-
-    private TenantViewModel ConvertToViewModel(Tenant tenant)
-    {
-      return new TenantViewModel
-      {
-        TenantId = tenant.TenantID,
-        FullyQualifiedDomainName = tenant.FullyQualifiedDomainName,
-        Email = tenant.Email,
-        Ipv4 = tenant.Ipv4,
-        SshPublic = tenant.SshPublic,
-        SshPrivate = tenant.SshPrivate,
-        Created = tenant.Created
       };
+
+      return Ok(viewModel);
     }
   }
 }
