@@ -48,7 +48,7 @@ namespace Accounting.Service
           Name = tenant.FullyQualifiedDomainName,
           Region = "nyc",
           Size = "s-1vcpu-512mb-10gb",
-          Image = "ubuntu-22-04-x64",
+          Image = "ubuntu-24-04-x64",
           SshKeys = new List<object> { sshKeyResponse.Fingerprint }
         };
 

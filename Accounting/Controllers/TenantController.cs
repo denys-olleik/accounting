@@ -76,6 +76,7 @@ namespace Accounting.Controllers
           Email = model.Email,
           FullyQualifiedDomainName = model.Name,
           CreatedById = GetUserId(),
+          OrganizationId = GetOrganizationId()
         });
 
         await _cloudServices.GetDigitalOceanService(

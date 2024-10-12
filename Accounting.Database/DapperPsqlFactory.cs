@@ -5419,17 +5419,68 @@ namespace Accounting.Database
 
       public async Task<int> UpdateDropletIdAsync(int tenantId, long dropletId, int organizationId)
       {
-        throw new NotImplementedException();
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantID", tenantId);
+        p.Add("@DropletId", dropletId);
+        p.Add("@OrganizationId", organizationId);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            UPDATE "Tenant" 
+            SET "DropletId" = @DropletId
+            WHERE "TenantID" = @TenantID
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return rowsAffected;
       }
 
       public async Task<int> UpdateSshPrivateAsync(int tenantId, string sshPrivate, int organizationId)
       {
-        throw new NotImplementedException();
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantID", tenantId);
+        p.Add("@SshPrivate", sshPrivate);
+        p.Add("@OrganizationId", organizationId);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            UPDATE "Tenant" 
+            SET "SshPrivate" = @SshPrivate
+            WHERE "TenantID" = @TenantID
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return rowsAffected;
       }
 
       public async Task<int> UpdateSshPublicAsync(int tenantId, string sshPublic, int organizationId)
       {
-        throw new NotImplementedException();
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantID", tenantId);
+        p.Add("@SshPublic", sshPublic);
+        p.Add("@OrganizationId", organizationId);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            UPDATE "Tenant" 
+            SET "SshPublic" = @SshPublic
+            WHERE "TenantID" = @TenantID
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return rowsAffected;
       }
     }
 
@@ -5440,27 +5491,6 @@ namespace Accounting.Database
 
     public class SecretManager : ISecretManager
     {
-      //CREATE TABLE "Secret"
-      //(
-      //	"SecretID" SERIAL PRIMARY KEY NOT NULL,
-      //	"Key" VARCHAR(100) NOT NULL UNIQUE,
-      //	"Master" BOOLEAN DEFAULT FALSE,
-      //	"Value" TEXT NOT NULL,
-      //	"Type" VARCHAR(20) CHECK("Type" IN ('email', 'sms', 'cloud')) NULL,
-      //	"Purpose" VARCHAR(100) NULL,
-      //	"Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-      //	"CreatedById" INT NOT NULL,
-      //	"OrganizationId" INT NOT NULL,
-      //	FOREIGN KEY("CreatedById") REFERENCES "User"("UserID"),
-      //	FOREIGN KEY("OrganizationId") REFERENCES "Organization"("OrganizationID")
-      //);
-
-      //CREATE UNIQUE INDEX unique_master_per_organization
-      //ON "Secret" ("OrganizationId")
-      //WHERE "Master" = TRUE;
-
-      //CREATE UNIQUE INDEX unique_type_per_organization
-      //ON "Secret" ("OrganizationId", "Type");
       public Secret Create(Secret entity)
       {
         throw new NotImplementedException();
