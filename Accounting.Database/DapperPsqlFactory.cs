@@ -4778,22 +4778,31 @@ namespace Accounting.Database
 
       public async Task<DatabaseThing> CreateDatabase(int tenantId)
       {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@TenantId", tenantId);
+        string databaseName = $"_tenant_{tenantId}";
 
-        IEnumerable<DatabaseThing> result;
+        string sqlCommand = $$"""
+          CREATE DATABASE {{databaseName}}
+          WITH
+              OWNER = postgres
+              TEMPLATE = template0
+              ENCODING = 'UTF8'
+              LC_COLLATE = 'en_US.utf8'
+              LC_CTYPE = 'en_US.utf8'
+              CONNECTION LIMIT = -1;
+          """;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<DatabaseThing>("""
-
-            """, p);
+          await con.OpenAsync();
+          using (var cmd = new NpgsqlCommand(sqlCommand, con))
+          {
+            await cmd.ExecuteNonQueryAsync();
+          }
         }
 
-        throw new NotImplementedException();
-
-        return result.Single();
+        return new DatabaseThing();
       }
+
 
       public int Delete(int id)
       {
