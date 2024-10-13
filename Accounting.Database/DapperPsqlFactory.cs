@@ -4776,6 +4776,11 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public Task<string> CreateDatabase(string name)
+      {
+        throw new NotImplementedException();
+      }
+
       public int Delete(int id)
       {
         throw new NotImplementedException();
