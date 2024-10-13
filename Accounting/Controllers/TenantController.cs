@@ -78,6 +78,8 @@ namespace Accounting.Controllers
 
           tenant = await _tenantService.CreateAsync(new Tenant()
           {
+            Shared = model.Shared,
+            FullyQualifiedDomainName = model.FullyQualifiedDomainName,
             Email = model.Email,
             CreatedById = GetUserId(),
             OrganizationId = GetOrganizationId()
