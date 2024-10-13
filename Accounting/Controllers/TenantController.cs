@@ -47,7 +47,10 @@ namespace Accounting.Controllers
     [HttpGet]
     public IActionResult ProvisionTenant()
     {
-      return View();
+      ProvisionTenantViewModel model = new ProvisionTenantViewModel();
+      model.Shared = true;
+
+      return View(model);
     }
 
     [Route("provision-tenant")]
