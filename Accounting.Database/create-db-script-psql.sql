@@ -54,6 +54,7 @@ CREATE TABLE "Cloud"
 CREATE TABLE "Tenant"
 (
 	"TenantID" SERIAL PRIMARY KEY NOT NULL,
+	"Shared" BOOLEAN NOT NULL DEFAULT TRUE,
 	"FullyQualifiedDomainName" VARCHAR(100) NULL, -- accounting.example.com
 	"Email" VARCHAR(100) NOT NULL,
 	"DropletId" BIGINT NULL,

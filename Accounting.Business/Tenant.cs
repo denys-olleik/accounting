@@ -5,6 +5,7 @@ namespace Accounting.Business
   public class Tenant : IIdentifiable<int>
   {
     public int TenantID { get; set; }
+    public bool Shared { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
     public string? Email { get; set; }
     public long? DropletId { get; set; }
