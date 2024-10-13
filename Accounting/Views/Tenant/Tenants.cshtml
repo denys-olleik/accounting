@@ -48,8 +48,8 @@
           <td class="padding-right-20px">{{ tenant.email }}</td>
           <td class="padding-right-20px">{{ tenant.dropletId }}</td>
           <td class="padding-right-20px">{{ tenant.ipv4 }}</td>
-          <td class="padding-right-20px">{{ tenant.sshPublic }}</td>
-          <td class="white-space-nowrap">{{ tenant.sshPrivate }}</td>
+          <td class="padding-right-20px">{{ tenant.sshPublic ? 'yes' : 'no' }}</td>
+          <td class="white-space-nowrap">{{ tenant.sshPrivate ? 'yes' : 'no' }}</td>
         </tr>
       </template>
     </tbody>
