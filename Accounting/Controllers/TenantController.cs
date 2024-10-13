@@ -93,6 +93,7 @@ namespace Accounting.Controllers
 
   [AuthorizeWithOrganizationId]
   [Route("api/tenant")]
+  [ApiController]
   public class TenantApiController : BaseController
   {
     private readonly TenantService _tenantService;
@@ -104,8 +105,8 @@ namespace Accounting.Controllers
 
     [HttpGet("get-all-tenants")]
     public async Task<IActionResult> GetAllTenants(
-  int page = 1,
-  int pageSize = 2)
+      int page = 1,
+      int pageSize = 2)
     {
       (List<Tenant> tenants, int? nextPage) =
         await _tenantService.GetAllAsync(
@@ -121,8 +122,8 @@ namespace Accounting.Controllers
           FullyQualifiedDomainName = tenant.FullyQualifiedDomainName,
           Email = tenant.Email,
           Ipv4 = tenant.Ipv4,
-          SshPublic = tenant.SshPublic,
-          SshPrivate = tenant.SshPrivate,
+          SshPublic = !string.IsNullOrEmpty(tenant.SshPublic),
+          SshPrivate = !string.IsNullOrEmpty(tenant.SshPrivate),
           Created = tenant.Created
         };
       }
@@ -216,8 +217,8 @@ namespace Accounting.Models.Tenant
     public string? FullyQualifiedDomainName { get; set; }
     public string? Email { get; set; }
     public string? Ipv4 { get; set; }
-    public string? SshPublic { get; set; }
-    public string? SshPrivate { get; set; }
+    public bool SshPublic { get; set; }
+    public bool SshPrivate { get; set; }
     public DateTime Created { get; set; }
   }
 
