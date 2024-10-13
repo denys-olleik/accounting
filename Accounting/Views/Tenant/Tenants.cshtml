@@ -23,9 +23,11 @@
       <tr>
         <th></th>
         <th class="text-align-left">
-          <input type="text" v-model="fullyQualifiedDomainNameFilter" @@input="filterFullyQualifiedDomainName" placeholder="FullyQualifiedDomainName" class="font-size-16px width-100" />
+          <input type="text" v-model="fullyQualifiedDomainNameFilter" @@input="filterFullyQualifiedDomainName" placeholder="Name filter" class="font-size-16px width-100" />
         </th>
-        <th></th>
+        <th>
+          <input type="text" v-model="emailFilter" @@input="filterEmail" placeholder="Email filter" class="font-size-16px width-100" />
+        </th>
         <th></th>
         <th></th>
         <th colspan="2" class="text-align-center padding-right-20px">SSH</th>
@@ -67,7 +69,8 @@
         page: @Model.Page,
         pageSize: @Model.PageSize,
         nextPage: null,
-        fullyQualifiedDomainNameFilter: ''
+        fullyQualifiedDomainNameFilter: '',
+        emailFilter: ''
       };
     },
     methods: {
@@ -86,6 +89,10 @@
         // Implement your filtering logic here
         this.tenants = this.tenants.filter(tenant => tenant.domainName.includes(this.fullyQualifiedDomainNameFilter));
       },
+      filterEmail() {
+        // Implement your filtering logic here
+        this.tenants = this.tenants.filter(tenant => tenant.email.includes(this.emailFilter));
+      }
     },
     mounted() {
       this.fetchTenants();
