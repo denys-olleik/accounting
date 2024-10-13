@@ -74,7 +74,7 @@ namespace Accounting.Controllers
         tenant = await _tenantService.CreateAsync(new Tenant()
         {
           Email = model.Email,
-          FullyQualifiedDomainName = model.Name,
+          FullyQualifiedDomainName = model.FullyQualifiedDomainName,
           CreatedById = GetUserId(),
           OrganizationId = GetOrganizationId()
         });
@@ -118,7 +118,7 @@ namespace Accounting.Controllers
       {
         return new TenantViewModel
         {
-          TenantId = tenant.TenantID,
+          TenantID = tenant.TenantID,
           FullyQualifiedDomainName = tenant.FullyQualifiedDomainName,
           Email = tenant.Email,
           DropletId = tenant.DropletId,
@@ -201,7 +201,7 @@ namespace Accounting.Models.Tenant
   public class ProvisionTenantViewModel
   {
     public string? Email { get; set; }
-    public string? Name { get; set; }
+    public string? FullyQualifiedDomainName { get; set; }
     public int OrganizationId { get; set; }
 
     public ValidationResult? ValidationResult { get; set; }
@@ -214,7 +214,7 @@ namespace Accounting.Models.Tenant
 
   public class TenantViewModel
   {
-    public int TenantId { get; set; }
+    public int TenantID { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
     public string? Email { get; set; }
     public long? DropletId { get; set; }
