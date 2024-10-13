@@ -148,7 +148,7 @@ namespace Accounting.Controllers
 namespace Accounting.Validators.Tenant
 {
   public class ProvisionTenantViewModelValidator
-    : AbstractValidator<ProvisionTenantViewModel>
+  : AbstractValidator<ProvisionTenantViewModel>
   {
     private readonly TenantService _tenantService;
     private readonly SecretService _secretService;
@@ -183,6 +183,11 @@ namespace Accounting.Validators.Tenant
         .MustAsync(async (model, cancellation) =>
             await HasRequiredSecretsAsync(model.OrganizationId))
         .WithMessage("Both 'email' and 'cloud' secret keys are required to provision a tenant.");
+
+      RuleFor(x => x.FullyQualifiedDomainName)
+        .NotEmpty()
+        .When(x => !x.Shared)
+        .WithMessage("'Fully Qualified Domain Name' is required when 'Shared' is not selected.");
     }
 
     private async Task<bool> HasRequiredSecretsAsync(int organizationId)
@@ -193,7 +198,6 @@ namespace Accounting.Validators.Tenant
       var cloudSecret = await _secretService.GetByTypeAsync(
         Secret.SecretTypeConstants.Cloud,
         organizationId);
-
       return emailSecret != null && cloudSecret != null;
     }
   }
