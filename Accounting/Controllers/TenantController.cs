@@ -19,8 +19,8 @@ namespace Accounting.Controllers
     private readonly SecretService _secretService;
 
     public TenantController(
-      TenantService tenantService, 
-      CloudServices cloudServices, 
+      TenantService tenantService,
+      CloudServices cloudServices,
       SecretService secretService)
     {
       _tenantService = tenantService;
@@ -57,7 +57,7 @@ namespace Accounting.Controllers
     {
       model.OrganizationId = GetOrganizationId();
 
-      ProvisionTenantViewModelValidator validator 
+      ProvisionTenantViewModelValidator validator
         = new ProvisionTenantViewModelValidator(_tenantService, _secretService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
@@ -80,8 +80,8 @@ namespace Accounting.Controllers
         });
 
         await _cloudServices.GetDigitalOceanService(
-          _secretService, 
-          _tenantService, 
+          _secretService,
+          _tenantService,
           GetOrganizationId()).CreateDropletAsync(tenant);
 
         scope.Complete();
@@ -121,6 +121,7 @@ namespace Accounting.Controllers
           TenantId = tenant.TenantID,
           FullyQualifiedDomainName = tenant.FullyQualifiedDomainName,
           Email = tenant.Email,
+          DropletId = tenant.DropletId,
           Ipv4 = tenant.Ipv4,
           SshPublic = !string.IsNullOrEmpty(tenant.SshPublic),
           SshPrivate = !string.IsNullOrEmpty(tenant.SshPrivate),
@@ -143,14 +144,14 @@ namespace Accounting.Controllers
 
 namespace Accounting.Validators.Tenant
 {
-  public class ProvisionTenantViewModelValidator 
+  public class ProvisionTenantViewModelValidator
     : AbstractValidator<ProvisionTenantViewModel>
   {
     private readonly TenantService _tenantService;
     private readonly SecretService _secretService;
 
     public ProvisionTenantViewModelValidator(
-      TenantService tenantService, 
+      TenantService tenantService,
       SecretService secretService)
     {
       _tenantService = tenantService;
@@ -184,10 +185,10 @@ namespace Accounting.Validators.Tenant
     private async Task<bool> HasRequiredSecretsAsync(int organizationId)
     {
       var emailSecret = await _secretService.GetByTypeAsync(
-        Secret.SecretTypeConstants.Email, 
+        Secret.SecretTypeConstants.Email,
         organizationId);
       var cloudSecret = await _secretService.GetByTypeAsync(
-        Secret.SecretTypeConstants.Cloud, 
+        Secret.SecretTypeConstants.Cloud,
         organizationId);
 
       return emailSecret != null && cloudSecret != null;
@@ -216,6 +217,7 @@ namespace Accounting.Models.Tenant
     public int TenantId { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
     public string? Email { get; set; }
+    public long? DropletId { get; set; }
     public string? Ipv4 { get; set; }
     public bool SshPublic { get; set; }
     public bool SshPrivate { get; set; }
