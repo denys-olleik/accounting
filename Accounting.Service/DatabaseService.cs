@@ -11,10 +11,10 @@ namespace Accounting.Service
       await factoryManager.GetDatabaseManager().ResetDatabaseAsync();
     }
 
-    public async Task<string> CreateDatabase(string name)
+    public async Task<DatabaseThing> CreateDatabaseAsync(int tenantId)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetDatabaseManager().CreateDatabase(name);
+      return await factoryManager.GetDatabaseManager().CreateDatabase(tenantId);
     }
   }
 }

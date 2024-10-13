@@ -4776,9 +4776,23 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public Task<string> CreateDatabase(string name)
+      public async Task<DatabaseThing> CreateDatabase(int tenantId)
       {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantId", tenantId);
+
+        IEnumerable<DatabaseThing> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<DatabaseThing>("""
+
+            """, p);
+        }
+
         throw new NotImplementedException();
+
+        return result.Single();
       }
 
       public int Delete(int id)

@@ -17,15 +17,18 @@ namespace Accounting.Controllers
     private readonly TenantService _tenantService;
     private readonly CloudServices _cloudServices;
     private readonly SecretService _secretService;
+    private readonly DatabaseService _databaseService;
 
     public TenantController(
       TenantService tenantService,
       CloudServices cloudServices,
-      SecretService secretService)
+      SecretService secretService,
+      DatabaseService databaseService)
     {
       _tenantService = tenantService;
       _cloudServices = cloudServices;
       _secretService = secretService;
+      _databaseService = databaseService;
     }
 
     [Route("tenants")]
@@ -84,6 +87,8 @@ namespace Accounting.Controllers
             CreatedById = GetUserId(),
             OrganizationId = GetOrganizationId()
           });
+
+          DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.TenantID);
 
           scope.Complete();
         }
