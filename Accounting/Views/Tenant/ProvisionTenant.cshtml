@@ -15,8 +15,8 @@
       class="display-flex flex-direction-column margin-bottom-5px">
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label for="Email" class="font-Roboto font-size-20px background-color-antiquewhite">Email</label>
-    <input type="email" id="Email" name="Email" class="font-size-20px" required />
+    <label asp-for="Email" class="font-Roboto font-size-20px background-color-antiquewhite"></label>
+    <input asp-for="Email" class="font-size-20px" required />
   </div>
 
   <div class="display-flex flex-direction-column margin-bottom-5px background-color-white">
@@ -27,8 +27,8 @@
   </div>
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label for="FullyQualifiedDomainName" class="font-Roboto font-size-20px background-color-antiquewhite">Fully qualified domain name (accounting.example.com). *</label>
-    <input type="text" id="FullyQualifiedDomainName" name="FullyQualifiedDomainName" class="font-size-20px" />
+    <label asp-for="FullyQualifiedDomainName" class="font-Roboto font-size-20px background-color-antiquewhite">Fully qualified domain name (accounting.example.com). *</label>
+    <input type="text" asp-for="FullyQualifiedDomainName" class="font-size-20px" />
     <div class="background-color-antiquewhite">
       * required if not shared
     </div>

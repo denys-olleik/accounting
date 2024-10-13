@@ -70,24 +70,43 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      if (model.Shared)
       {
-        Tenant tenant;
-
-        tenant = await _tenantService.CreateAsync(new Tenant()
+        using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
-          Email = model.Email,
-          FullyQualifiedDomainName = model.FullyQualifiedDomainName,
-          CreatedById = GetUserId(),
-          OrganizationId = GetOrganizationId()
-        });
+          Tenant tenant;
 
-        await _cloudServices.GetDigitalOceanService(
-          _secretService,
-          _tenantService,
-          GetOrganizationId()).CreateDropletAsync(tenant);
+          tenant = await _tenantService.CreateAsync(new Tenant()
+          {
+            Email = model.Email,
+            CreatedById = GetUserId(),
+            OrganizationId = GetOrganizationId()
+          });
 
-        scope.Complete();
+          scope.Complete();
+        }
+      }
+      else
+      {
+        using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+        {
+          Tenant tenant;
+
+          tenant = await _tenantService.CreateAsync(new Tenant()
+          {
+            Email = model.Email,
+            FullyQualifiedDomainName = model.FullyQualifiedDomainName,
+            CreatedById = GetUserId(),
+            OrganizationId = GetOrganizationId()
+          });
+
+          await _cloudServices.GetDigitalOceanService(
+            _secretService,
+            _tenantService,
+            GetOrganizationId()).CreateDropletAsync(tenant);
+
+          scope.Complete();
+        }
       }
 
       return RedirectToAction("Tenants");
