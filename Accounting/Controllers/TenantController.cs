@@ -174,57 +174,67 @@ namespace Accounting.Controllers
 namespace Accounting.Validators.Tenant
 {
   public class ProvisionTenantViewModelValidator
-  : AbstractValidator<ProvisionTenantViewModel>
+    : AbstractValidator<ProvisionTenantViewModel>
   {
     private readonly TenantService _tenantService;
     private readonly SecretService _secretService;
 
     public ProvisionTenantViewModelValidator(
-      TenantService tenantService,
-      SecretService secretService)
+        TenantService tenantService,
+        SecretService secretService)
     {
       _tenantService = tenantService;
       _secretService = secretService;
 
       RuleFor(x => x.Email)
-        .NotEmpty()
-        .WithMessage("Email is required.")
-        .DependentRules(() =>
-        {
-          RuleFor(x => x.Email)
-            .EmailAddress()
-            .WithMessage("Invalid email format.")
-            .DependentRules(() =>
-            {
-              RuleFor(x => x)
-                .MustAsync(async (model, cancellation) =>
-                {
-                  return !await _tenantService.ExistsAsync(model.Email!, model.OrganizationId);
-                })
-                .WithMessage("A tenant with this email already exists for the specified organization.");
-            });
-        });
+          .NotEmpty()
+          .WithMessage("Email is required.")
+          .DependentRules(() =>
+          {
+            RuleFor(x => x.Email)
+                  .EmailAddress()
+                  .WithMessage("Invalid email format.")
+                  .DependentRules(() =>
+                  {
+                    RuleFor(x => x)
+                          .MustAsync(async (model, cancellation) =>
+                          {
+                            return !await _tenantService.ExistsAsync(model.Email!, model.OrganizationId);
+                          })
+                          .WithMessage("A tenant with this email already exists for the specified organization.");
+                  });
+          });
 
       RuleFor(x => x)
-        .MustAsync(async (model, cancellation) =>
-            await HasRequiredSecretsAsync(model.OrganizationId))
-        .WithMessage("Both 'email' and 'cloud' secret keys are required to provision a tenant.");
+          .MustAsync(async (model, cancellation) =>
+              await HasRequiredSecretsAsync(model.OrganizationId, model.Shared))
+          .WithMessage("The required secret keys are not available for provisioning a tenant.");
 
       RuleFor(x => x.FullyQualifiedDomainName)
-        .NotEmpty()
-        .When(x => !x.Shared)
-        .WithMessage("'Fully Qualified Domain Name' is required when 'Shared' is not selected.");
+          .NotEmpty()
+          .When(x => !x.Shared)
+          .WithMessage("'Fully Qualified Domain Name' is required when 'Shared' is not selected.");
     }
 
-    private async Task<bool> HasRequiredSecretsAsync(int organizationId)
+    private async Task<bool> HasRequiredSecretsAsync(int organizationId, bool isShared)
     {
       var emailSecret = await _secretService.GetByTypeAsync(
-        Secret.SecretTypeConstants.Email,
-        organizationId);
-      var cloudSecret = await _secretService.GetByTypeAsync(
-        Secret.SecretTypeConstants.Cloud,
-        organizationId);
-      return emailSecret != null && cloudSecret != null;
+          Secret.SecretTypeConstants.Email,
+          organizationId);
+
+      if (isShared)
+      {
+        // Only email secret is required if Shared is true
+        return emailSecret != null;
+      }
+      else
+      {
+        // Both email and cloud secrets are required if Shared is false
+        var cloudSecret = await _secretService.GetByTypeAsync(
+            Secret.SecretTypeConstants.Cloud,
+            organizationId);
+        return emailSecret != null && cloudSecret != null;
+      }
     }
   }
 }

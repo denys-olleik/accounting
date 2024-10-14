@@ -17,21 +17,31 @@
   </div>
 </div>
 
+<template id="tenant-action-template">
+  <div class="display-flex padding-top-bottom-2px">
+    <div class="display-flex flex-1">
+      <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ tenant.email }}</a>
+      <span v-if="isExpanded" class="display-flex">
+        <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+          <div class="flex-1"></div>
+          <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/tenant/delete/' + tenant.id" class="font-size-16px font-Roboto color-white text-decoration-none">
+            delete
+          </a>
+          <div class="flex-1"></div>
+        </div>
+      </span>
+    </div>
+  </div>
+</template>
+
 <div id="app">
   <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
-      <tr>
-        <th></th>
-        <th class="text-align-left">
-          <input type="text" v-model="fullyQualifiedDomainNameFilter" @@input="filterFullyQualifiedDomainName" placeholder="Name filter" class="font-size-16px width-100" />
-        </th>
-        <th>
-          <input type="text" v-model="emailFilter" @@input="filterEmail" placeholder="Email filter" class="font-size-16px width-100" />
-        </th>
-        <th></th>
-        <th></th>
-        <th colspan="2" class="text-align-center padding-right-20px">SSH</th>
-      </tr>
       <tr>
         <th class="text-align-left width-1px padding-right-20px">#</th>
         <th class="text-align-left width-1px padding-right-20px white-space-nowrap">URL</th>
@@ -47,7 +57,9 @@
         <tr>
           <td class="padding-right-20px">{{ tenant.id }}</td>
           <td class="padding-right-20px">{{ tenant.fullyQualifiedDomainName }}</td>
-          <td class="padding-right-20px">{{ tenant.email }}</td>
+          <td class="padding-right-20px">
+            <tenant-action :tenant="tenant" :is-expanded="tenant.id === expandedTenantId" @@expand="handleTenantExpand(tenant.id)"></tenant-action>
+          </td>
           <td class="padding-right-20px">{{ tenant.dropletId }}</td>
           <td class="padding-right-20px">{{ tenant.ipv4 }}</td>
           <td class="padding-right-20px">{{ tenant.sshPublic ? 'yes' : 'no' }}</td>
@@ -61,11 +73,25 @@
 <script>
   const { createApp } = Vue;
 
+  const TenantAction = {
+    name: 'TenantAction',
+    props: ['tenant', 'isExpanded'],
+    template: '#tenant-action-template',
+    methods: {
+      toggleAction() {
+        this.$emit('expand');
+      }
+    }
+  };
+
   const app = createApp({
+    components: {
+      'tenant-action': TenantAction,
+    },
     data() {
       return {
         tenants: [],
-        selectedTenantID: null,
+        expandedTenantId: null,
         page: @Model.Page,
         pageSize: @Model.PageSize,
         nextPage: null,
@@ -86,10 +112,13 @@
           });
       },
       filterFullyQualifiedDomainName() {
-        this.tenants = this.tenants.filter(tenant => tenant.domainName.includes(this.fullyQualifiedDomainNameFilter));
+        this.tenants = this.tenants.filter(tenant => tenant.fullyQualifiedDomainName.includes(this.fullyQualifiedDomainNameFilter));
       },
       filterEmail() {
         this.tenants = this.tenants.filter(tenant => tenant.email.includes(this.emailFilter));
+      },
+      handleTenantExpand(id) {
+        this.expandedTenantId = this.expandedTenantId === id ? null : id;
       }
     },
     mounted() {
