@@ -5455,6 +5455,28 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<int> UpdateSharedDatabaseName(int tenantID, string? sharedDatabaseName, int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantID", tenantID);
+        p.Add("@SharedDatabaseName", sharedDatabaseName);
+        p.Add("@OrganizationId", organizationId);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            UPDATE "Tenant" 
+            SET "SharedDatabaseName" = @SharedDatabaseName
+            WHERE "TenantID" = @TenantID
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return rowsAffected;
+      }
+
       public async Task<int> UpdateDropletIdAsync(int tenantId, long dropletId, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();

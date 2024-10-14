@@ -9,6 +9,10 @@ namespace Accounting.Database.Interfaces
       int page, 
       int pageSize, 
       int organizationId);
+    Task<int> UpdateSharedDatabaseName(
+      int tenantID, 
+      string? sharedDatabaseName, 
+      int organizationId);
     Task<int> UpdateDropletIdAsync(
       int tenantId, 
       long dropletId, 

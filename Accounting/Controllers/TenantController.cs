@@ -75,23 +75,23 @@ namespace Accounting.Controllers
 
       if (model.Shared)
       {
+        Tenant tenant;
+
         using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
-          Tenant tenant;
-
           tenant = await _tenantService.CreateAsync(new Tenant()
           {
-            Shared = model.Shared,
             FullyQualifiedDomainName = model.FullyQualifiedDomainName,
             Email = model.Email,
             CreatedById = GetUserId(),
             OrganizationId = GetOrganizationId()
           });
 
-          DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.TenantID);
-
           scope.Complete();
         }
+
+        DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.TenantID);
+        await _tenantService.UpdateSharedDatabaseName(tenant.TenantID, database.Name, GetOrganizationId());
       }
       else
       {
@@ -235,6 +235,7 @@ namespace Accounting.Models.Tenant
   {
     public string? Email { get; set; }
     public bool Shared { get; set; }
+    public string? SharedDatabaseName { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
     public int OrganizationId { get; set; }
 

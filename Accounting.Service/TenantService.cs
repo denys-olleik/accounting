@@ -26,6 +26,12 @@ namespace Accounting.Service
       return await manager.GetTenantManager().GetAllAsync(page, pageSize, organizationId);
     }
 
+    public async Task UpdateSharedDatabaseName(int tenantID, string? sharedDatabaseName, int organizationId)
+    {
+      FactoryManager manager = new FactoryManager();
+      await manager.GetTenantManager().UpdateSharedDatabaseName(tenantID, sharedDatabaseName, organizationId);
+    }
+
     public async Task UpdateDropletIdAsync(int tenantId, long dropletId, int organizationId)
     {
       FactoryManager manager = new FactoryManager();
