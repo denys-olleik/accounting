@@ -2,9 +2,8 @@
 
 namespace Accounting.Business
 {
-  public class DatabaseThing : IIdentifiable<int>
+  public class DatabaseThing : IIdentifiable<string>
   {
-    public int DatabaseID { get; set; }
     public string? Name { get; set; }
     public string? Owner { get; set; }
     public string? Encoding { get; set; }
@@ -12,6 +11,6 @@ namespace Accounting.Business
     public string? Ctype { get; set; }
     public int ConnectionLimit { get; set; }
 
-    public int Identifiable => this.DatabaseID;
+    public string Identifiable => this.Name!;
   }
 }

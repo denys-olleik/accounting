@@ -4766,50 +4766,60 @@ namespace Accounting.Database
 
     public class DatabaseManager : IDatabaseManager
     {
-      public Business.DatabaseThing Create(Business.DatabaseThing entity)
+      public DatabaseThing Create(DatabaseThing entity)
       {
         throw new NotImplementedException();
       }
 
-      public Task<Business.DatabaseThing> CreateAsync(Business.DatabaseThing entity)
+      public Task<DatabaseThing> CreateAsync(DatabaseThing entity)
       {
         throw new NotImplementedException();
       }
 
       public async Task<DatabaseThing> CreateDatabase(int tenantId)
       {
-        string databaseName = $"_tenant_{tenantId}";
+        string databaseName = $"tenant_{tenantId}";
 
-        string sqlCommand = $$"""
-          CREATE DATABASE {{databaseName}}
-          WITH
-              OWNER = postgres
-              TEMPLATE = template0
-              ENCODING = 'UTF8'
-              LC_COLLATE = 'en_US.utf8'
-              LC_CTYPE = 'en_US.utf8'
-              CONNECTION LIMIT = -1;
-          """;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.AdminPsql))
+        using (var con = new NpgsqlConnection(ConfigurationSingleton.Instance.AdminPsql))
         {
-          await con.OpenAsync();
-          using (var cmd = new NpgsqlCommand(sqlCommand, con))
-          {
-            await cmd.ExecuteNonQueryAsync();
-          }
-        }
+          await con.ExecuteAsync($$"""
+            CREATE DATABASE {{databaseName}}
+            WITH
+                OWNER = postgres
+                TEMPLATE = template0
+                ENCODING = 'UTF8'
+                LC_COLLATE = 'en_US.utf8'
+                LC_CTYPE = 'en_US.utf8'
+                CONNECTION LIMIT = -1;
+            """);
 
-        return new DatabaseThing();
+          string getDatabaseInfoCommand = $$"""
+            SELECT
+                datname AS Name,
+                datdba::regrole::text AS Owner,
+                pg_encoding_to_char(encoding) AS Encoding,
+                datcollate AS Collation,
+                datctype AS Ctype,
+                datconnlimit AS ConnectionLimit
+            FROM
+                pg_database
+            WHERE
+                datname = '{{databaseName}}';
+            """;
+
+          DatabaseThing databaseThing = await con.QuerySingleAsync<DatabaseThing>(getDatabaseInfoCommand);
+
+          return databaseThing;
+        }
       }
 
 
-      public int Delete(int id)
+      public int Delete(string databaseName)
       {
         throw new NotImplementedException();
       }
 
-      public Business.DatabaseThing Get(int id)
+      public DatabaseThing Get(string databaseName)
       {
         throw new NotImplementedException();
       }
