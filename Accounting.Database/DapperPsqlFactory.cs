@@ -4791,7 +4791,7 @@ namespace Accounting.Database
               CONNECTION LIMIT = -1;
           """;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.AdminPsql))
         {
           await con.OpenAsync();
           using (var cmd = new NpgsqlCommand(sqlCommand, con))
