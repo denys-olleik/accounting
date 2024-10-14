@@ -86,11 +86,9 @@
           });
       },
       filterFullyQualifiedDomainName() {
-        // Implement your filtering logic here
         this.tenants = this.tenants.filter(tenant => tenant.domainName.includes(this.fullyQualifiedDomainNameFilter));
       },
       filterEmail() {
-        // Implement your filtering logic here
         this.tenants = this.tenants.filter(tenant => tenant.email.includes(this.emailFilter));
       }
     },
