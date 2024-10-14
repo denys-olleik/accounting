@@ -67,6 +67,7 @@ builder.Services.AddTransient<JournalInventoryAdjustmentService>();
 builder.Services.AddTransient<TenantService>();
 builder.Services.AddTransient<SecretService>();
 builder.Services.AddTransient<CloudServices>();
+builder.Services.AddTransient<DatabaseService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 ConfigurationSingleton.Instance.ConnectionStringPsql = builder.Configuration["ConnectionStrings:Psql"];
