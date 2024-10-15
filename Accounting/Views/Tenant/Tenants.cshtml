@@ -44,25 +44,32 @@
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
       <tr>
         <th></th>
+        <th></th>
+        <th></th>
+        <th colspan="4" class="background-color-lightblue">
+          Local database on shared infrastructure
+        </th>
+      </tr>
+      <tr>
+        <th></th>
         <th class="text-align-left">
           <input type="text" v-model="urlFilter" @@input="filterURL" placeholder="URL" class="font-size-16px width-100" />
         </th>
         <th class="text-align-left">
           <input type="text" v-model="emailFilter" @@input="filterEmail" placeholder="Email" class="font-size-16px width-100" />
         </th>
-        <th class="text-align-left"></th>
-        <th class="text-align-left"></th>
-        <th class="text-align-left"></th>
-        <th class="text-align-left"></th>
+        <th class="text-align-center" colspan="4">
+          or
+        </th>
       </tr>
       <tr>
         <th class="text-align-left width-1px padding-right-20px">#</th>
         <th class="text-align-left width-1px padding-right-20px white-space-nowrap">URL</th>
         <th class="text-align-left padding-right-20px">Email</th>
-        <th class="text-align-left width-1px padding-right-20px white-space-nowrap">Droplet ID</th>
-        <th class="text-align-left width-1px padding-right-20px">IP</th>
-        <th class="text-align-left width-1px padding-right-20px">Public</th>
-        <th class="text-align-left width-1px white-space-nowrap">Private</th>
+        <th class="text-align-left width-1px padding-right-20px white-space-nowrap background-color-lightpink">Droplet ID</th>
+        <th class="text-align-left width-1px padding-right-20px background-color-lightpink">IP</th>
+        <th class="text-align-left width-1px padding-right-20px background-color-lightpink">Public</th>
+        <th class="text-align-left width-1px white-space-nowrap background-color-lightpink">Private</th>
       </tr>
     </thead>
     <tbody class="font-Roboto-Mono">

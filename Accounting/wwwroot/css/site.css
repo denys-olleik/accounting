@@ -210,6 +210,10 @@ td.fitwidth, th.fitwidth {
   background-color: lightblue;
 }
 
+.background-color-lightpink {
+  background-color: lightpink;
+}
+
 .background-color-rgb255-0-0-50 {
   background-color: rgba(255, 0, 0, 0.5);
 }
