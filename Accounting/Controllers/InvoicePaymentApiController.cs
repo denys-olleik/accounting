@@ -57,7 +57,7 @@ namespace Accounting.Controllers
           RowNumber = x.RowNumber,
           Invoice = new InvoiceViewModel
           {
-            ID = x.Invoice!.InvoiceID,
+            InvoiceID = x.Invoice!.InvoiceID,
             InvoiceNumber = x.Invoice.InvoiceNumber,
             BusinessEntity = new BusinessEntityViewModel
             {
@@ -112,7 +112,7 @@ namespace Accounting.Controllers
           RowNumber = x.RowNumber,
           Invoice = new InvoiceViewModel
           {
-            ID = x.Invoice!.InvoiceID,
+            InvoiceID = x.Invoice!.InvoiceID,
             InvoiceNumber = x.Invoice.InvoiceNumber,
             BusinessEntity = new BusinessEntityViewModel
             {

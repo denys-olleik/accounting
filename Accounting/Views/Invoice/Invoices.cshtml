@@ -64,7 +64,7 @@
             padding-left-5px
             margin-left-2px">
           <div class="flex-1"></div>
-          <a :href="'/i/update/' + invoice.id" class="font-size-16px font-Roboto color-white text-decoration-none">
+          <a :href="'/i/update/' + invoice.invoiceID" class="font-size-16px font-Roboto color-white text-decoration-none">
             update
           </a>
           <div class="flex-1"></div>
@@ -76,7 +76,7 @@
             padding-left-5px
             margin-left-2px">
           <div class="flex-1"></div>
-          <a :href="'/r/view-invoice/' + invoice.id" class="font-size-16px font-Roboto color-white text-decoration-none">
+          <a :href="'/r/view-invoice/' + invoice.invoiceID" class="font-size-16px font-Roboto color-white text-decoration-none">
             view
           </a>
           <div class="flex-1"></div>
@@ -88,7 +88,7 @@
             padding-left-5px
             margin-left-2px">
           <div class="flex-1"></div>
-          <a :href="'/i/void/' + invoice.id" class="font-size-16px font-Roboto color-white text-decoration-none">
+          <a :href="'/i/void/' + invoice.invoiceID" class="font-size-16px font-Roboto color-white text-decoration-none">
             void
           </a>
           <div class="flex-1"></div>
@@ -131,14 +131,14 @@
       </tr>
     </thead>
     <tbody class="font-Roboto-Mono">
-      <template v-for="invoice in invoices" :key="invoice.id">
+      <template v-for="invoice in invoices" :key="invoice.invoiceID">
         <tr>
           <td class="padding-right-20px">
-            <input type="checkbox" v-model="selectedInvoices" :value="invoice.id">
+            <input type="checkbox" v-model="selectedInvoices" :value="invoice.invoiceID">
           </td>
           <td class="padding-right-20px">{{invoice.rowNumber}}</td>
           <td class="padding-right-20px">
-            <invoice-action :invoice="invoice" :is-expanded="invoice.id === expandedInvoiceId" @@expand="handleInvoiceExpand(invoice.id)"></invoice-action>
+            <invoice-action :invoice="invoice" :is-expanded="invoice.invoiceID === expandedInvoiceId" @@expand="handleInvoiceExpand(invoice.invoiceID)"></invoice-action>
           </td>
           <td class="padding-right-20px">
             <business-entity-name-display :business-entity="invoice.businessEntity"></business-entity-name-display>
@@ -147,7 +147,7 @@
           <td class="text-align-right padding-right-20px">{{invoice.received}}</td>
           <td class="text-align-right white-space-nowrap">{{invoice.status}}</td>
         </tr>
-        <tr v-if="invoice.id === expandedInvoiceId && invoice.payments && invoice.payments.length > 0">
+        <tr v-if="invoice.invoiceID === expandedInvoiceId && invoice.payments && invoice.payments.length > 0">
           <td colspan="2"></td>
           <td colspan="5">
             <table class="width-100">

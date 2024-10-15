@@ -4,7 +4,7 @@ namespace Accounting.Models.InvoiceViewModels
 {
   public class InvoiceViewModel
   {
-    public int ID { get; set; }
+    public int InvoiceID { get; set; }
     public string? InvoiceNumber { get; set; }
     public BusinessEntityViewModel? BusinessEntity { get; set; }
     public string? Status { get; set; }

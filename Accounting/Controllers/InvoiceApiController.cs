@@ -80,7 +80,7 @@ namespace Accounting.Controllers
       {
         Invoices = invoices.Select(i => new InvoiceViewModel
         {
-          ID = i.InvoiceID,
+          InvoiceID = i.InvoiceID,
           RowNumber = i.RowNumber,
           InvoiceNumber = i.InvoiceNumber,
           BusinessEntity = new BusinessEntityViewModel
@@ -156,7 +156,7 @@ namespace Accounting.Controllers
       {
         Invoices = invoices.Select(i => new InvoiceViewModel
         {
-          ID = i.InvoiceID,
+          InvoiceID = i.InvoiceID,
           RowNumber = i.RowNumber,
           InvoiceNumber = i.InvoiceNumber,
           BusinessEntity = new BusinessEntityViewModel
