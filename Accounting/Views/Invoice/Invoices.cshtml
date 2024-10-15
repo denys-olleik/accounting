@@ -111,7 +111,7 @@
         <th></th>
         <th></th>
         <th class="text-align-left">
-          <input type="text" v-model="invoiceNumbersFilter" @@input="filterInvoice" placeholder="Invoice" class="font-size-16px width-100" />
+          <input type="text" v-model="invoicesFilter" @@input="filterInvoice" placeholder="Invoice" class="font-size-16px width-100" />
         </th>
         <th class="text-align-left">
           <input type="text" v-model="companyFilter" @@input="filterCompany" placeholder="Customer" class="font-size-16px width-100" />
@@ -227,22 +227,22 @@
     data() {
       return {
         invoices: [],
-        page: @Model.Page,
-        pageSize: @Model.PageSize,
-        nextPage: null,
+        selectedInvoices: [],
         statuses: '@string.Join(",", Accounting.Business.Invoice.InvoiceStatusConstants.All)',
-        availablePaymentStuses: '@string.Join(",", Accounting.Business.Invoice.InvoiceStatusConstants.All)',
+        paymentStatuses: '@string.Join(",", Accounting.Business.Invoice.InvoiceStatusConstants.All)',
         expandedInvoiceId: null,
         expandedPaymentId: null,
-        selectedInvoices: [],
-        invoiceNumbersFilter: '',
+        invoicesFilter: '',
         companyFilter: '',
-        selectedStatus: ''
+        statusFilter: '',
+        page: @Model.Page,
+        pageSize: @Model.PageSize,
+        nextPage: null
       };
     },
     computed: {
       isFiltered() {
-        return !!this.invoiceNumbersFilter || !!this.companyFilter;
+        return !!this.invoicesFilter || !!this.companyFilter;
       }
     },
     methods: {
@@ -253,13 +253,13 @@
       
         const queryParams = [];
       
-        if (this.selectedStatus !== '') {
-          queryParams.push(`inStatus=${this.selectedStatus}`);
+        if (this.statusFilter !== '') {
+          queryParams.push(`inStatus=${this.statusFilter}`);
         }
       
         if (this.isFiltered) {
-          if (this.invoiceNumbersFilter) {
-            queryParams.push(`invoiceNumbers=${this.invoiceNumbersFilter}`);
+          if (this.invoicesFilter) {
+            queryParams.push(`invoiceNumbers=${this.invoicesFilter}`);
           }
           if (this.companyFilter) {
             queryParams.push(`company=${this.companyFilter}`);
@@ -283,7 +283,7 @@
           });
       },
       filterInvoice() {
-        this.fetchInvoices(!!this.invoiceNumbersFilter);
+        this.fetchInvoices(!!this.invoicesFilter);
       },
       filterCompany() {
         this.fetchInvoices(!!this.companyFilter);
