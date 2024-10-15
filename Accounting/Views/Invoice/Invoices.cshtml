@@ -237,6 +237,7 @@
         selectedInvoices: [],
         invoiceNumbersFilter: '',
         companyFilter: '',
+        inStatus: ''
       };
     },
     computed: {
@@ -247,18 +248,28 @@
     methods: {
       fetchInvoices() {
         let apiUrl = this.isFiltered ?
-          `/api/i/get-invoices-filtered?Status=${this.inStatus}`
-          : `/api/i/get-invoices?page=${this.page}&pageSize=${this.pageSize}&status=${this.inStatus}`;
-
+          `/api/i/get-invoices-filtered` :
+          `/api/i/get-invoices?page=${this.page}&pageSize=${this.pageSize}`;
+      
+        const queryParams = [];
+      
+        if (this.inStatus !== '') {
+          queryParams.push(`inStatus=${this.inStatus}`);
+        }
+      
         if (this.isFiltered) {
           if (this.invoiceNumbersFilter) {
-            apiUrl += `&invoiceNumbers=${this.invoiceNumbersFilter}`;
+            queryParams.push(`invoiceNumbers=${this.invoiceNumbersFilter}`);
           }
           if (this.companyFilter) {
-            apiUrl += `&company=${this.companyFilter}`;
+            queryParams.push(`company=${this.companyFilter}`);
           }
         }
-
+      
+        if (queryParams.length > 0) {
+          apiUrl += `?${queryParams.join('&')}`;
+        }
+      
         fetch(apiUrl)
           .then(response => response.json())
           .then(data => {
