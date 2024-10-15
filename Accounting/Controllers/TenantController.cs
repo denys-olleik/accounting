@@ -246,7 +246,6 @@ namespace Accounting.Models.Tenant
   {
     public string? Email { get; set; }
     public bool Shared { get; set; }
-    public string? SharedDatabaseName { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
     public int OrganizationId { get; set; }
 
