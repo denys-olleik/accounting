@@ -105,6 +105,7 @@
       return {
         tenants: [],
         expandedTenantId: null,
+        urlFilter: '',
         emailFilter: '',
         page: @Model.Page,
         pageSize: @Model.PageSize,
@@ -123,7 +124,7 @@
             console.error('Error fetching tenants:', error);
           });
       },
-      filterUrl() {
+      filterURL() {
       },
       filterEmail() {
       },
