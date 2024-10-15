@@ -93,7 +93,20 @@
       </template>
     </tbody>
   </table>
+
+  <div class="margin-bottom-5px display-flex font-Roboto font-size-20px background-color-antiquewhite">
+    <div>
+      <a :href="`/tenant/tenants?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-darkslategray text-decoration-none">prev</a>
+    </div>
+    <div class="flex-1 text-align-center">
+
+    </div>
+    <div>
+      <a :href="`/tenant/tenants?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-darkslategray text-decoration-none">next</a>
+    </div>
+  </div>
 </div>
+
 
 <script>
   const { createApp } = Vue;
