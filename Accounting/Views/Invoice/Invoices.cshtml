@@ -230,14 +230,14 @@
         page: @Model.Page,
         pageSize: @Model.PageSize,
         nextPage: null,
-        status: '@string.Join(",", Accounting.Business.Invoice.InvoiceStatusConstants.All)',
+        statuses: '@string.Join(",", Accounting.Business.Invoice.InvoiceStatusConstants.All)',
         availablePaymentStuses: '@string.Join(",", Accounting.Business.Invoice.InvoiceStatusConstants.All)',
         expandedInvoiceId: null,
         expandedPaymentId: null,
         selectedInvoices: [],
         invoiceNumbersFilter: '',
         companyFilter: '',
-        inStatus: ''
+        selectedStatus: ''
       };
     },
     computed: {
@@ -253,8 +253,8 @@
       
         const queryParams = [];
       
-        if (this.inStatus !== '') {
-          queryParams.push(`inStatus=${this.inStatus}`);
+        if (this.selectedStatus !== '') {
+          queryParams.push(`inStatus=${this.selectedStatus}`);
         }
       
         if (this.isFiltered) {
