@@ -275,7 +275,7 @@
           .then(data => {
             this.invoices = data.invoices;
             if (data.page > 0) {
-              this.page = data.currentPage;
+              this.page = data.page;
             }
             if (data.nextPage > 0) {
               this.nextPage = data.nextPage;
