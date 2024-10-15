@@ -16,6 +16,10 @@ namespace Accounting.Business
     public int? OrganizationId { get; set; }
     public DateTime Created { get; set; }
 
+    #region Extra properties
+    public int? RowNumber { get; set; }
+    #endregion
+
     public int Identifiable => this.TenantID;
   }
 }

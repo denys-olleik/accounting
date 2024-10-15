@@ -5422,32 +5422,34 @@ namespace Accounting.Database
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
-        p.Add("@PageSize", pageSize + 1);
+        p.Add("@PageSize", pageSize);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<Tenant> result;
+        IEnumerable<Tenant> paginatedResult;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<Tenant>($"""
-            SELECT *
-            FROM "Tenant"
-            WHERE "OrganizationId" = @OrganizationId
-            ORDER BY "FullyQualifiedDomainName"
-            LIMIT @PageSize OFFSET @Offset
-            """, new { PageSize = pageSize + 1, Offset = pageSize * (page - 1), OrganizationId = organizationId });
+          paginatedResult = await con.QueryAsync<Tenant>($"""
+            SELECT * FROM (
+                SELECT *,
+                       ROW_NUMBER() OVER (ORDER BY "TenantID" DESC) AS RowNumber
+                FROM "Tenant"
+                WHERE "OrganizationId" = @OrganizationId
+            ) AS NumberedTenants
+            WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
+            """, p);
         }
 
-        var hasMoreRecords = result.Count() > pageSize;
+        var result = paginatedResult.ToList();
+        int? nextPage = null;
 
-        if (hasMoreRecords)
+        if (result.Count > pageSize)
         {
-          result = result.Take(pageSize);
+          result.RemoveAt(result.Count - 1);
+          nextPage = page + 1;
         }
 
-        int? nextPage = hasMoreRecords ? page + 1 : null;
-
-        return (result.ToList(), nextPage);
+        return (result, nextPage);
       }
 
       public int Update(Tenant entity)

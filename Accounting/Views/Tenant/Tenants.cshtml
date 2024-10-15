@@ -75,7 +75,7 @@
     <tbody class="font-Roboto-Mono">
       <template v-for="tenant in tenants" :key="tenant.tenantID">
         <tr>
-          <td class="padding-right-20px">{{ tenant.tenantID }}</td>
+          <td class="padding-right-20px">{{ tenant.rowNumber }}</td>
           <td class="padding-right-20px">{{ tenant.fullyQualifiedDomainName }}</td>
           <td class="padding-right-20px">
             <tenant-action :tenant="tenant" :is-expanded="tenant.tenantID === expandedTenantId" @@expand="handleTenantExpand(tenant.tenantID)"></tenant-action>

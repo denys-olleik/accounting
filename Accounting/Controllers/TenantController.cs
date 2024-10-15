@@ -148,6 +148,7 @@ namespace Accounting.Controllers
         return new TenantViewModel
         {
           TenantID = tenant.TenantID,
+          RowNumber = tenant.RowNumber,
           SharedDatabaseName = tenant.SharedDatabaseName,
           FullyQualifiedDomainName = tenant.FullyQualifiedDomainName,
           Email = tenant.Email,
@@ -268,6 +269,10 @@ namespace Accounting.Models.Tenant
     public bool SshPublic { get; set; }
     public bool SshPrivate { get; set; }
     public DateTime Created { get; set; }
+
+    #region Extra properties
+    public int? RowNumber { get; set; }
+    #endregion
   }
 
   public class GetAllTenantsViewModel : PaginatedViewModel
