@@ -245,23 +245,6 @@
       }
     },
     methods: {
-      syncSelectedInvoices() {
-        const checkedCheckboxes = document.querySelectorAll('input[type="checkbox"][v-model="selectedInvoices"]:checked');
-        this.selectedInvoices = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
-      },
-      filterInvoice() {
-        this.fetchInvoices(!!this.invoiceNumbersFilter);
-      },
-      filterCompany() {
-        this.fetchInvoices(!!this.companyFilter);
-      },
-      submitForm() {
-        if (this.selectedInvoices.length === 0) {
-          alert('Select at least one invoice.');
-          return;
-        }
-        this.$refs.form.submit();
-      },
       fetchInvoices() {
         let apiUrl = this.isFiltered ?
           `/api/i/get-invoices-filtered?Status=${this.inStatus}`
@@ -288,12 +271,29 @@
             }
           });
       },
+      filterInvoice() {
+        this.fetchInvoices(!!this.invoiceNumbersFilter);
+      },
+      filterCompany() {
+        this.fetchInvoices(!!this.companyFilter);
+      },
+      submitForm() {
+        if (this.selectedInvoices.length === 0) {
+          alert('Select at least one invoice.');
+          return;
+        }
+        this.$refs.form.submit();
+      },
       handleInvoiceExpand(id) {
         this.expandedInvoiceId = this.expandedInvoiceId === id ? null : id;
       },
       handlePaymentExpand(id) {
         this.expandedPaymentId = this.expandedPaymentId === id ? null : id;
-      }
+      },
+      syncSelectedInvoices() {
+        const checkedCheckboxes = document.querySelectorAll('input[type="checkbox"][v-model="selectedInvoices"]:checked');
+        this.selectedInvoices = Array.from(checkedCheckboxes).map(checkbox => checkbox.value);
+      },
     },
     mounted() {
       this.fetchInvoices();
