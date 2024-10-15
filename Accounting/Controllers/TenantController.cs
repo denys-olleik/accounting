@@ -148,6 +148,7 @@ namespace Accounting.Controllers
         return new TenantViewModel
         {
           TenantID = tenant.TenantID,
+          SharedDatabaseName = tenant.SharedDatabaseName,
           FullyQualifiedDomainName = tenant.FullyQualifiedDomainName,
           Email = tenant.Email,
           DropletId = tenant.DropletId,
@@ -260,6 +261,7 @@ namespace Accounting.Models.Tenant
   public class TenantViewModel
   {
     public int TenantID { get; set; }
+    public string? SharedDatabaseName { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
     public string? Email { get; set; }
     public long? DropletId { get; set; }
