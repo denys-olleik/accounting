@@ -124,11 +124,9 @@
             console.error('Error fetching tenants:', error);
           });
       },
-      filterFullyQualifiedDomainName() {
-        this.tenants = this.tenants.filter(tenant => tenant.fullyQualifiedDomainName.includes(this.fullyQualifiedDomainNameFilter));
+      filterUrl() {
       },
       filterEmail() {
-        this.tenants = this.tenants.filter(tenant => tenant.email.includes(this.emailFilter));
       },
       handleTenantExpand(id) {
         this.expandedTenantId = this.expandedTenantId === id ? null : id;
