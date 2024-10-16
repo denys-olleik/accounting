@@ -56,7 +56,10 @@
         {
           @*<a asp-action="Login" asp-controller="Account" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Pay Invoice</a>*@
           @*<a asp-action="Careers" asp-controller="Home" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Careers</a>*@
-          <a asp-action="TenantLogin" asp-controller="Tenant" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Client Log In</a>
+          @if (ConfigurationSingleton.Instance.TenantManagement)
+          {
+            <a asp-action="TenantLogin" asp-controller="Tenant" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Client Log In</a>
+          }
           <a asp-action="Login" asp-controller="UserAccount" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none">Log In</a>
         }
       </div>
