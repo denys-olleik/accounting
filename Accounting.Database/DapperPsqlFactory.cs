@@ -5744,6 +5744,63 @@ namespace Accounting.Database
       }
     }
 
+    public IApplicationSettingManager GetApplicationSettingManager()
+    {
+      return new ApplicationSettingManager();
+    }
+
+    public class ApplicationSettingManager : IApplicationSettingManager
+    {
+      public ApplicationSetting Create(ApplicationSetting entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Task<ApplicationSetting> CreateAsync(ApplicationSetting entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Delete(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public ApplicationSetting Get(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public IEnumerable<ApplicationSetting> GetAll()
+      {
+        throw new NotImplementedException();
+      }
+
+      public async Task<ApplicationSetting?> GetAsync(string key)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Key", key);
+
+        IEnumerable<ApplicationSetting> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<ApplicationSetting>("""
+            SELECT * 
+            FROM "ApplicationSetting" 
+            WHERE "Key" = @Key
+            """, p);
+        }
+
+        return result.SingleOrDefault();
+      }
+
+      public int Update(ApplicationSetting entity)
+      {
+        throw new NotImplementedException();
+      }
+    }
+
     public ILocationManager GetLocationManager()
     {
       return new LocationManager();

@@ -1,4 +1,15 @@
-﻿CREATE TABLE "Organization"
+﻿CREATE TABLE "ApplicationSetting"
+(
+	"ApplicationSettingID" SERIAL PRIMARY KEY NOT NULL,
+	"Key" VARCHAR(100) NOT NULL UNIQUE,
+	"Value" VARCHAR(100) NOT NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+);
+
+INSERT INTO "ApplicationSetting" ("Key", "Value") VALUES 
+('tenant-management', 'false');
+
+CREATE TABLE "Organization"
 (
   "OrganizationID" SERIAL PRIMARY KEY,
   "Name" VARCHAR(100) NOT NULL,

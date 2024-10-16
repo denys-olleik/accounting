@@ -190,5 +190,10 @@ namespace Accounting.Database
     {
       return databaseFactoryDefinition.GetSecretManager();
     }
+
+    public IApplicationSettingManager GetApplicationSettingManager()
+    {
+      return databaseFactoryDefinition.GetApplicationSettingManager();
+    }
   }
 }

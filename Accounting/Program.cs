@@ -1,3 +1,4 @@
+using Accounting.Business;
 using Accounting.Common;
 using Accounting.Events;
 using Accounting.Filters;
@@ -77,6 +78,14 @@ ConfigurationSingleton.Instance.SendgridKey = builder.Configuration["SendgridKey
 ConfigurationSingleton.Instance.NoReplyEmailAddress = builder.Configuration["NoReplyEmailAddress"];
 ConfigurationSingleton.Instance.TempPath = builder.Configuration["TempPath"];
 ConfigurationSingleton.Instance.PermPath = builder.Configuration["PermPath"];
+
+ApplicationSettingsService applicationSettingsService = new ApplicationSettingsService();
+var tenantManagement = await applicationSettingsService.GetAsync(ApplicationSetting.ApplicationSettingsConstants.TenantManagement);
+
+if (tenantManagement != null)
+{
+  ConfigurationSingleton.Instance.TenantManagement = Convert.ToBoolean(tenantManagement.Value);
+}
 
 var app = builder.Build();
 

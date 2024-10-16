@@ -40,5 +40,6 @@ namespace Accounting.Database
     IZIPCodeManager GetZIPCodeManager();
     ITenantManager GetTenantManager();
     ISecretManager GetSecretManager();
+    IApplicationSettingManager GetApplicationSettingManager();
   }
 }

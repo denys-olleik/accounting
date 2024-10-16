@@ -45,7 +45,11 @@ namespace Accounting.Business
 
       static InvoiceStatusConstants()
       {
-        var fields = typeof(InvoiceStatusConstants).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
+        var fields = typeof(InvoiceStatusConstants)
+          .GetFields(
+          BindingFlags.Public 
+          | BindingFlags.Static 
+          | BindingFlags.DeclaredOnly);
         foreach (var field in fields)
         {
           if (field.FieldType == typeof(string) && field.GetValue(null) is string value)

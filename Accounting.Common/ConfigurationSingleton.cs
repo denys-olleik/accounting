@@ -16,7 +16,9 @@
     public string? TempPath { get; set; }
     public string? PermPath { get; set; }
     public string? ConnectionStringPsql { get; set; }
-    
+    public bool TenantManagement { get; set; }
+
+
     private ConfigurationSingleton()
     {
 
