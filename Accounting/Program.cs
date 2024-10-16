@@ -84,7 +84,8 @@ var tenantManagement = await applicationSettingsService.GetAsync(ApplicationSett
 
 if (tenantManagement != null)
 {
-  ConfigurationSingleton.Instance.TenantManagement = Convert.ToBoolean(tenantManagement.Value);
+  ConfigurationSingleton.Instance.TenantManagement 
+    = Convert.ToBoolean(tenantManagement.Value);
 }
 
 var app = builder.Build();
