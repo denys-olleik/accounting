@@ -3,7 +3,7 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class ApplicationSettingsService
+  public class ApplicationSettingService
   {
     public async Task<ApplicationSetting> GetAsync(string key)
     {

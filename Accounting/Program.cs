@@ -99,8 +99,12 @@ if (app.Environment.IsDevelopment())
 }
 #endregion
 
-// Database initialization is complete, proceed with further initialization
-await InitializeApplicationSettingsAsync();
+#region LoadTenantManagementConfiguration see Appsettings.json."TenantManagement"
+ConfigurationSingleton.Instance.TenantManagement
+  = Convert.ToBoolean(builder.Configuration["TenantManagement"]);
+if (!ConfigurationSingleton.Instance.TenantManagement)
+  await IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsTrueThere();
+#endregion
 
 if (!app.Environment.IsDevelopment())
 {
@@ -124,9 +128,9 @@ app.MapControllerRoute(
 
 app.Run();
 
-async Task InitializeApplicationSettingsAsync()
+async Task IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsTrueThere()
 {
-  ApplicationSettingsService applicationSettingsService = new ApplicationSettingsService();
+  ApplicationSettingService applicationSettingsService = new ApplicationSettingService();
   var tenantManagement = await applicationSettingsService.GetAsync(ApplicationSetting.ApplicationSettingsConstants.TenantManagement);
 
   if (tenantManagement != null)
