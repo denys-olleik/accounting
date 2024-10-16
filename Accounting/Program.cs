@@ -79,25 +79,11 @@ ConfigurationSingleton.Instance.NoReplyEmailAddress = builder.Configuration["NoR
 ConfigurationSingleton.Instance.TempPath = builder.Configuration["TempPath"];
 ConfigurationSingleton.Instance.PermPath = builder.Configuration["PermPath"];
 
-ApplicationSettingsService applicationSettingsService = new ApplicationSettingsService();
-var tenantManagement = await applicationSettingsService.GetAsync(ApplicationSetting.ApplicationSettingsConstants.TenantManagement);
-
-if (tenantManagement != null)
-{
-  ConfigurationSingleton.Instance.TenantManagement 
-    = Convert.ToBoolean(tenantManagement.Value);
-}
-
 var app = builder.Build();
-
-//await new ZIPCodeService().UpdateNewZIPCodeLocations();
-
-//app.UseMiddleware<RequestLoggingMiddleware>();
 
 #region reset-database
 if (app.Environment.IsDevelopment())
 {
-  // Add code here to read the database-reset.json
   var databaseResetConfigPath = Path.Combine(app.Environment.ContentRootPath, "database-reset.json");
   var databaseResetConfig = JsonConvert.DeserializeObject<DatabaseResetConfig>(System.IO.File.ReadAllText(databaseResetConfigPath));
 
@@ -112,6 +98,9 @@ if (app.Environment.IsDevelopment())
   }
 }
 #endregion
+
+// Database initialization is complete, proceed with further initialization
+await InitializeApplicationSettingsAsync();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -134,3 +123,15 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+async Task InitializeApplicationSettingsAsync()
+{
+  ApplicationSettingsService applicationSettingsService = new ApplicationSettingsService();
+  var tenantManagement = await applicationSettingsService.GetAsync(ApplicationSetting.ApplicationSettingsConstants.TenantManagement);
+
+  if (tenantManagement != null)
+  {
+    ConfigurationSingleton.Instance.TenantManagement
+        = Convert.ToBoolean(tenantManagement.Value);
+  }
+}
