@@ -134,6 +134,8 @@ namespace Accounting.Controllers
     public async Task<IActionResult> TenantLogin(
       TenantLoginViewModel model)
     {
+      TenantLoginViewModelValidator validator = new TenantLoginViewModelValidator();
+
       throw new NotImplementedException();
     }
   }
@@ -193,6 +195,35 @@ namespace Accounting.Controllers
 
 namespace Accounting.Validators.Tenant
 {
+  public class TenantLoginViewModelValidator
+    : AbstractValidator<TenantLoginViewModel>
+  {
+    public TenantLoginViewModelValidator()
+    {
+      RuleFor(x => x.Email)
+        .NotEmpty()
+        .WithMessage("Email is required.")
+        .DependentRules(() =>
+        {
+          RuleFor(x => x.Password)
+            .NotEmpty()
+            .WithMessage("Password is required.")
+            .DependentRules(() =>
+            {
+              RuleFor(x => x.Email)
+                .MustAsync(async (email, cancellation) => await CheckEmailInDatabaseAsync(email))
+                .WithMessage("Email verification failed.");
+            });
+        });
+    }
+
+    private async Task<bool> CheckEmailInDatabaseAsync(string? email)
+    {
+      throw new NotImplementedException();
+    }
+  }
+
+
   public class ProvisionTenantViewModelValidator
     : AbstractValidator<ProvisionTenantViewModel>
   {
