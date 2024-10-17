@@ -7,6 +7,7 @@ using FluentValidation;
 using Accounting.Models.Tenant;
 using Accounting.CustomAttributes;
 using Accounting.Validators.Tenant;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Accounting.Controllers
 {
@@ -117,6 +118,14 @@ namespace Accounting.Controllers
       }
 
       return RedirectToAction("Tenants");
+    }
+
+    [AllowAnonymous]
+    [Route("login")]
+    [HttpGet]
+    public async Task<IActionResult> TenantLogin()
+    {
+      throw new NotImplementedException();
     }
   }
 
