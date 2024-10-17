@@ -123,7 +123,16 @@ namespace Accounting.Controllers
     [AllowAnonymous]
     [Route("tenant-login")]
     [HttpGet]
-    public async Task<IActionResult> TenantLogin()
+    public IActionResult TenantLogin()
+    {
+      return View();
+    }
+
+    [AllowAnonymous]
+    [Route("tenant-login")]
+    [HttpPost]
+    public async Task<IActionResult> TenantLogin(
+      TenantLoginViewModel model)
     {
       throw new NotImplementedException();
     }
