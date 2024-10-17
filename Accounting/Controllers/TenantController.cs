@@ -121,7 +121,7 @@ namespace Accounting.Controllers
     }
 
     [AllowAnonymous]
-    [Route("login")]
+    [Route("tenant-login")]
     [HttpGet]
     public async Task<IActionResult> TenantLogin()
     {
@@ -252,6 +252,14 @@ namespace Accounting.Validators.Tenant
 
 namespace Accounting.Models.Tenant
 {
+  public class TenantLoginViewModel
+  {
+    public string? Email { get; set; }
+    public string? Password { get; set; }
+
+    public ValidationResult? ValidationResult { get; set; }
+  }
+
   public class ProvisionTenantViewModel
   {
     public string? Email { get; set; }

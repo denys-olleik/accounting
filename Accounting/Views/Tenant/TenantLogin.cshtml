@@ -1,0 +1,33 @@
+﻿@model Accounting.Models.Tenant.TenantLoginViewModel
+
+@{
+  ViewData["Title"] = "Tenant Log In - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Tenant Log In";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="TenantLogin" asp-controller="Tenant" method="post" class="display-flex flex-direction-column">
+  <div class="display-flex flex-direction-column">
+    <label asp-for="Email" class="background-color-antiquewhite"></label>
+    <input asp-for="Email" class="margin-bottom-5px font-size-20px font-Roboto-Mono" />
+  </div>
+  <div class="display-flex flex-direction-column">
+    <label asp-for="Password" class="background-color-antiquewhite"></label>
+    <input asp-for="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" />
+  </div>
+
+  <button type="submit" class="full-width-regular-button">Next</button>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+}
