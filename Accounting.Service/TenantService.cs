@@ -19,11 +19,10 @@ namespace Accounting.Service
 
     public async Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
       int page, 
-      int pageSize, 
-      int organizationId)
+      int pageSize)
     {
       FactoryManager manager = new FactoryManager();
-      return await manager.GetTenantManager().GetAllAsync(page, pageSize, organizationId);
+      return await manager.GetTenantManager().GetAllAsync(page, pageSize);
     }
 
     public async Task UpdateSharedDatabaseName(int tenantID, string? sharedDatabaseName, int organizationId)

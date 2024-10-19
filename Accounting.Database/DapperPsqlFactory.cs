@@ -4776,7 +4776,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<DatabaseThing> CreateDatabase(int tenantId)
+      public async Task<DatabaseThing> CreateDatabase(string tenantId)
       {
         string databaseName = $"tenant_{tenantId}";
 
@@ -5363,19 +5363,23 @@ namespace Accounting.Database
         p.Add("@Ipv4", entity.Ipv4);
         p.Add("@SshPublic", entity.SshPublic);
         p.Add("@CreatedById", entity.CreatedById);
-        p.Add("@OrganizationId", entity.OrganizationId);
-
         IEnumerable<Tenant> result;
-
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Tenant>("""
-            INSERT INTO "Tenant" ("FullyQualifiedDomainName", "Email", "DropletId", "Ipv4", "SshPublic", "CreatedById", "OrganizationId")
-            VALUES (@FullyQualifiedDomainName, @Email, @DropletId, @Ipv4, @SshPublic, @CreatedById, @OrganizationId)
+            INSERT INTO "Tenant" ("PublicId", "FullyQualifiedDomainName", "Email", "DropletId", "Ipv4", "SshPublic", "CreatedById")
+            VALUES (
+              substr(md5(random()::text), 1, 10), -- Random alphanumeric string
+              @FullyQualifiedDomainName, 
+              @Email, 
+              @DropletId, 
+              @Ipv4, 
+              @SshPublic, 
+              @CreatedById,
+            )
             RETURNING *;
             """, p);
         }
-
         return result.Single();
       }
 
@@ -5417,13 +5421,11 @@ namespace Accounting.Database
 
       public async Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
         int page,
-        int pageSize,
-        int organizationId)
+        int pageSize)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Page", page);
         p.Add("@PageSize", pageSize);
-        p.Add("@OrganizationId", organizationId);
 
         IEnumerable<Tenant> paginatedResult;
 
@@ -5434,7 +5436,6 @@ namespace Accounting.Database
                 SELECT *,
                        ROW_NUMBER() OVER (ORDER BY "TenantID" DESC) AS RowNumber
                 FROM "Tenant"
-                WHERE "OrganizationId" = @OrganizationId
             ) AS NumberedTenants
             WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
             """, p);

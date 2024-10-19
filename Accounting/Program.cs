@@ -21,15 +21,15 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-  .AddCookie(options =>
-  {
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-    options.SlidingExpiration = true;
-    options.EventsType = typeof(CustomCookieAuthenticationEventsHandler);
-    options.LoginPath = new PathString("/user-account/login");
+    .AddCookie(options =>
+    {
+      options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+      options.SlidingExpiration = true;
+      options.EventsType = typeof(CustomCookieAuthenticationEventsHandler);
+      options.LoginPath = new PathString("/user-account/login");
 
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-  });
+      options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    });
 
 builder.Services.AddScoped<CustomCookieAuthenticationEventsHandler>();
 
@@ -101,7 +101,7 @@ if (app.Environment.IsDevelopment())
 
 #region LoadTenantManagementConfiguration see Appsettings.json."TenantManagement"
 ConfigurationSingleton.Instance.TenantManagement
-  = Convert.ToBoolean(builder.Configuration["TenantManagement"]);
+    = Convert.ToBoolean(builder.Configuration["TenantManagement"]);
 if (!ConfigurationSingleton.Instance.TenantManagement)
   await IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsTrueThere();
 #endregion

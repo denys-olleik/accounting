@@ -65,6 +65,7 @@ CREATE TABLE "Cloud"
 CREATE TABLE "Tenant"
 (
 	"TenantID" SERIAL PRIMARY KEY NOT NULL,
+	"PublicId" VARCHAR(10) NOT NULL UNIQUE,
 	"SharedDatabaseName" VARCHAR(100) NULL,
 	"FullyQualifiedDomainName" VARCHAR(100) NULL, -- accounting.example.com
 	"Email" VARCHAR(100) NOT NULL,
@@ -73,7 +74,6 @@ CREATE TABLE "Tenant"
 	"SshPublic" TEXT NULL,
 	"SshPrivate" TEXT NULL,
 	"CreatedById" INT NOT NULL,
-	"OrganizationId" INT NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 

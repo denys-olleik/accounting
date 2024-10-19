@@ -5,6 +5,7 @@ namespace Accounting.Business
   public class Tenant : IIdentifiable<int>
   {
     public int TenantID { get; set; }
+    public string? PublicId { get; set; }
     public string? SharedDatabaseName { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
     public string? Email { get; set; }
@@ -13,7 +14,6 @@ namespace Accounting.Business
     public string? SshPublic { get; set; }
     public string? SshPrivate { get; set; }
     public int? CreatedById { get; set; }
-    public int? OrganizationId { get; set; }
     public DateTime Created { get; set; }
 
     #region Extra properties

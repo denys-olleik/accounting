@@ -85,13 +85,12 @@ namespace Accounting.Controllers
             FullyQualifiedDomainName = model.FullyQualifiedDomainName,
             Email = model.Email,
             CreatedById = GetUserId(),
-            OrganizationId = GetOrganizationId()
           });
 
           scope.Complete();
         }
 
-        DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.TenantID);
+        DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.PublicId);
         await _tenantService.UpdateSharedDatabaseName(tenant.TenantID, database.Name, GetOrganizationId());
       }
       else
@@ -105,7 +104,6 @@ namespace Accounting.Controllers
             Email = model.Email,
             FullyQualifiedDomainName = model.FullyQualifiedDomainName,
             CreatedById = GetUserId(),
-            OrganizationId = GetOrganizationId()
           });
 
           await _cloudServices.GetDigitalOceanService(
@@ -121,20 +119,45 @@ namespace Accounting.Controllers
     }
 
     [AllowAnonymous]
-    [Route("tenant-login")]
+    [Route("choose-tenant-organization")]
     [HttpGet]
-    public IActionResult TenantLogin()
+    public IActionResult ChooseTenantOrganization()
     {
       return View();
     }
 
     [AllowAnonymous]
-    [Route("tenant-login")]
+    [Route("choose-tenant-organization")]
+    [HttpPost]
+    public async Task<IActionResult> ChooseTenantOrganization(
+      ChooseTenantOrganizationViewModel model)
+    {
+      throw new NotImplementedException();
+    }
+
+
+    [AllowAnonymous]
+    [Route("{tenant}/{organization}tenant-login")]
+    [HttpGet]
+    public IActionResult TenantLogin(string tenant, string organization)
+    {
+      return View();
+    }
+
+    [AllowAnonymous]
+    [Route("{tenant}/{organization}tenant-login")]
     [HttpPost]
     public async Task<IActionResult> TenantLogin(
-      TenantLoginViewModel model)
+      TenantLoginViewModel model, string tenant, string organization)
     {
       TenantLoginViewModelValidator validator = new TenantLoginViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
 
       throw new NotImplementedException();
     }
@@ -160,8 +183,7 @@ namespace Accounting.Controllers
       (List<Tenant> tenants, int? nextPage) =
         await _tenantService.GetAllAsync(
           page,
-          pageSize,
-          GetOrganizationId());
+          pageSize);
 
       TenantViewModel ConvertToViewModel(Tenant tenant)
       {
@@ -207,22 +229,10 @@ namespace Accounting.Validators.Tenant
         {
           RuleFor(x => x.Password)
             .NotEmpty()
-            .WithMessage("Password is required.")
-            .DependentRules(() =>
-            {
-              RuleFor(x => x.Email)
-                .MustAsync(async (email, cancellation) => await CheckEmailInDatabaseAsync(email))
-                .WithMessage("Email verification failed.");
-            });
+            .WithMessage("Password is required.");
         });
     }
-
-    private async Task<bool> CheckEmailInDatabaseAsync(string? email)
-    {
-      throw new NotImplementedException();
-    }
   }
-
 
   public class ProvisionTenantViewModelValidator
     : AbstractValidator<ProvisionTenantViewModel>
@@ -292,10 +302,20 @@ namespace Accounting.Validators.Tenant
 
 namespace Accounting.Models.Tenant
 {
+  public class ChooseTenantOrganizationViewModel
+  {
+    public string? OrganizationPublicId { get; set; }
+    public string? TenantPublicId { get; set; }
+
+    public ValidationResult? ValidationResult { get; set; }
+  }
+
   public class TenantLoginViewModel
   {
     public string? Email { get; set; }
     public string? Password { get; set; }
+    public string? OrganizationPublicId { get; set; }
+    public string? TenantPublicId { get; set; }
 
     public ValidationResult? ValidationResult { get; set; }
   }

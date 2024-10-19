@@ -7,8 +7,7 @@ namespace Accounting.Database.Interfaces
     Task<bool> ExistsAsync(string email, int organizationId);
     Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
       int page, 
-      int pageSize, 
-      int organizationId);
+      int pageSize);
     Task<int> UpdateSharedDatabaseName(
       int tenantID, 
       string? sharedDatabaseName, 

@@ -54,25 +54,28 @@ namespace Accounting.Controllers
       UserService userService = new UserService();
       User user = await userService.GetByEmailAsync(model.Email);
 
-      if (user != null && !string.IsNullOrEmpty(user.Password) && PasswordStorage.VerifyPassword(model.Password, user.Password))
+      if (
+        user != null
+        && !string.IsNullOrEmpty(user.Password)
+        && PasswordStorage.VerifyPassword(model.Password, user.Password))
       {
         ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-            claimsPrincipal,
-            new AuthenticationProperties()
-            {
-              IsPersistent = true
-            });
+          claimsPrincipal,
+          new AuthenticationProperties()
+          {
+            IsPersistent = true
+          });
 
         return RedirectToAction("ChooseOrganization", "UserAccount");
       }
       else
       {
         model.ValidationResult = new ValidationResult(new List<ValidationFailure>()
-                {
-                    new ValidationFailure("Email", "'Email' or 'password' is incorrect.")
-                });
+          {
+            new ValidationFailure("Email", "'Email' or 'password' is incorrect.")
+          });
         return View(model);
       }
     }
