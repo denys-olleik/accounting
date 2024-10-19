@@ -117,50 +117,6 @@ namespace Accounting.Controllers
 
       return RedirectToAction("Tenants");
     }
-
-    [AllowAnonymous]
-    [Route("choose-tenant-organization")]
-    [HttpGet]
-    public IActionResult ChooseTenantOrganization()
-    {
-      return View();
-    }
-
-    [AllowAnonymous]
-    [Route("choose-tenant-organization")]
-    [HttpPost]
-    public async Task<IActionResult> ChooseTenantOrganization(
-      ChooseTenantOrganizationViewModel model)
-    {
-      throw new NotImplementedException();
-    }
-
-
-    [AllowAnonymous]
-    [Route("{tenant}/{organization}tenant-login")]
-    [HttpGet]
-    public IActionResult TenantLogin(string tenant, string organization)
-    {
-      return View();
-    }
-
-    [AllowAnonymous]
-    [Route("{tenant}/{organization}tenant-login")]
-    [HttpPost]
-    public async Task<IActionResult> TenantLogin(
-      TenantLoginViewModel model, string tenant, string organization)
-    {
-      TenantLoginViewModelValidator validator = new TenantLoginViewModelValidator();
-      ValidationResult validationResult = await validator.ValidateAsync(model);
-
-      if (!validationResult.IsValid)
-      {
-        model.ValidationResult = validationResult;
-        return View(model);
-      }
-
-      throw new NotImplementedException();
-    }
   }
 
   [AuthorizeWithOrganizationId]
