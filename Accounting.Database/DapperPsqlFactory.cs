@@ -4310,18 +4310,18 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
 
-        IEnumerable<User> result;
+        List<User> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<User>("""
+          result = (await con.QueryAsync<User>("""
             SELECT * 
             FROM "User" 
             WHERE "Email" = @Email
-            """, p);
+            """, p)).ToList();
         }
 
-        if (!result.Any() && searchTenants)
+        if (searchTenants)
         {
           List<string> sharedDatabaseNames = new List<string>();
 
@@ -4344,7 +4344,7 @@ namespace Accounting.Database
 
               using (NpgsqlConnection con = new NpgsqlConnection(tennantConnectionString))
               {
-                var results = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+                var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
                   SELECT uo.*, u.*, o.*
                   FROM "UserOrganization" uo
                   INNER JOIN "User" u ON uo."UserId" = u."UserID"
@@ -4358,6 +4358,14 @@ namespace Accounting.Database
                     return userOrg;
                   }, p, splitOn: "UserID,OrganizationID"
                 );
+
+                foreach (UserOrganization userOrganization in userOrganizations)
+                {
+                  if (userOrganization.User != null)
+                  {
+                    result.Add(userOrganization.User);
+                  }
+                }
               }
             }
           }
