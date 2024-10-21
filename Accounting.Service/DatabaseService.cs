@@ -17,6 +17,12 @@ namespace Accounting.Service
       return await factoryManager.GetDatabaseManager().CreateDatabase(tenantId);
     }
 
+    public async Task RunSQLScript(string script, string databaseName)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      await factoryManager.GetDatabaseManager().RunSQLScript(script, databaseName);
+    }
+
     public async Task DeleteTenantDatabases()
     {
       FactoryManager factoryManager = new FactoryManager();

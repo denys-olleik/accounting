@@ -4926,6 +4926,23 @@ namespace Accounting.Database
         }
       }
 
+      public async Task RunSQLScript(string script, string databaseName)
+      {
+        var connectionString = ConfigurationSingleton.Instance.AdminPsql;
+
+        var builder = new NpgsqlConnectionStringBuilder(connectionString);
+
+        builder.Database = databaseName;
+
+        var updatedConnectionString = builder.ToString();
+
+        using (NpgsqlConnection con = new NpgsqlConnection(updatedConnectionString))
+        {
+          await con.ExecuteAsync(script);
+        }
+      }
+
+
       public int Update(Business.DatabaseThing entity)
       {
         throw new NotImplementedException();

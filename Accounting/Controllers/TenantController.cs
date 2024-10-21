@@ -90,7 +90,11 @@ namespace Accounting.Controllers
           scope.Complete();
         }
 
+        string createSchemaScriptPath = Path.Combine(AppContext.BaseDirectory, "create-db-script-psql.sql");
+        string createSchemaScript = System.IO.File.ReadAllText(createSchemaScriptPath);
+
         DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.PublicId);
+        await _databaseService.RunSQLScript(createSchemaScript, database.Name);
         await _tenantService.UpdateSharedDatabaseName(tenant.TenantID, database.Name);
       }
       else
