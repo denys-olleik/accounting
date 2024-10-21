@@ -22,7 +22,10 @@ namespace Accounting.Controllers
     private readonly UserOrganizationService _userOrganizationService;
     private readonly UserService _userService;
 
-    public UserAccountController(OrganizationService organizationService, UserOrganizationService userOrganizationService, UserService userService)
+    public UserAccountController(
+      OrganizationService organizationService, 
+      UserOrganizationService userOrganizationService, 
+      UserService userService)
     {
       _organizationService = organizationService;
       _userOrganizationService = userOrganizationService;
@@ -52,7 +55,7 @@ namespace Accounting.Controllers
       }
 
       UserService userService = new UserService();
-      User user = await userService.GetByEmailAsync(model.Email);
+      User user = await userService.GetAsync(model.Email, true);
 
       if (
         user != null

@@ -11,7 +11,7 @@ namespace Accounting.Database.Interfaces
     {
         Task<List<User>> GetAllAsync(int organizationId);
         Task<User> GetAsync(int userId);
-        Task<User> GetByEmailAsync(string email);
+        Task<User> GetAsync(string email, bool searchTenants);
         Task<int> UpdatePasswordAsync(int userId, string passwordHash);
     }
 }

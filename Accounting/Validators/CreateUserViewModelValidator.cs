@@ -19,7 +19,7 @@ namespace Accounting.Validators
     private async Task<bool> UserDoesNotExistAsync(string email, CancellationToken token)
     {
       UserService userService = new UserService();
-      User user = await userService.GetByEmailAsync(email);
+      User user = await userService.GetAsync(email, false);
       return user == null;
     }
   }

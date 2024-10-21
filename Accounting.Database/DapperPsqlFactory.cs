@@ -4305,7 +4305,7 @@ namespace Accounting.Database
         return result.SingleOrDefault()!;
       }
 
-      public async Task<User> GetByEmailAsync(string email)
+      public async Task<User> GetAsync(string email, bool searchTenants)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
@@ -4319,6 +4319,48 @@ namespace Accounting.Database
             FROM "User" 
             WHERE "Email" = @Email
             """, p);
+        }
+
+        if (!result.Any() && searchTenants)
+        {
+          List<string> sharedDatabaseNames = new List<string>();
+
+          TenantManager tenantManager = new TenantManager();
+          List<Tenant> tenants = await tenantManager.GetAllAsync();
+
+          if (tenants.Any())
+          {
+            foreach (Tenant tenant in tenants)
+            {
+              if (!string.IsNullOrEmpty(tenant.SharedDatabaseName))
+                sharedDatabaseNames.Add(tenant.SharedDatabaseName);
+            }
+
+            foreach (string sharedDatabaseName in sharedDatabaseNames)
+            {
+              var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+              builder.Database = sharedDatabaseName;
+              string tennantConnectionString = builder.ConnectionString;
+
+              using (NpgsqlConnection con = new NpgsqlConnection(tennantConnectionString))
+              {
+                var results = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+                  SELECT uo.*, u.*, o.*
+                  FROM "UserOrganization" uo
+                  INNER JOIN "User" u ON uo."UserId" = u."UserID"
+                  INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+                  WHERE u."Email" = @Email
+                  """,
+                    (userOrg, user, org) =>
+                  {
+                    userOrg.User = user;
+                    userOrg.Organization = org;
+                    return userOrg;
+                  }, p, splitOn: "UserID,OrganizationID"
+                );
+              }
+            }
+          }
         }
 
         return result.SingleOrDefault();
@@ -5544,6 +5586,63 @@ namespace Accounting.Database
         }
 
         return rowsAffected;
+      }
+
+      //public async Task<User> FirstInAnyTenantAsync(string email)
+      //{
+      //  DynamicParameters p = new DynamicParameters();
+      //  p.Add("@Email", email);
+
+      //  IEnumerable<User> result;
+
+      //  using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+      //  {
+      //    result = await con.QueryAsync<User>("""
+      //      SELECT * 
+      //      FROM "User" 
+      //      WHERE "Email" = @Email
+      //      """, p);
+      //  }
+        
+      //  if (!result.Any())
+      //  {
+      //    List<string> sharedDatabaseNames = new List<string>();
+
+      //    List<Tenant> tenants = await GetAllAsync();
+
+      //    if (tenants.Any())
+      //    {
+      //      foreach (Tenant tenant in tenants)
+      //      {
+      //        if (!string.IsNullOrEmpty(tenant.SharedDatabaseName))
+      //          sharedDatabaseNames.Add(tenant.SharedDatabaseName);
+      //      }
+
+      //      foreach (string sharedDatabaseName in sharedDatabaseNames)
+      //      {
+      //        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+      //        builder.Database = sharedDatabaseName;
+      //        string connectionString = builder.ConnectionString;
+      //      }
+      //    }
+      //  }
+
+      //  throw new NotImplementedException();
+      //}
+
+      public async Task<List<Tenant>> GetAllAsync()
+      {
+        IEnumerable<Tenant> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Tenant>("""
+            SELECT * 
+            FROM "Tenant"
+            """);
+        }
+
+        return result.ToList();
       }
     }
 
