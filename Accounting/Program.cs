@@ -100,6 +100,10 @@ if (app.Environment.IsDevelopment())
   if (databaseResetConfig.DeleteTenantDatabases)
   {
     await databaseManager.DeleteTenantDatabases();
+
+    // Set deleteTenantDatabases to false and update the file
+    databaseResetConfig.DeleteTenantDatabases = false;
+    System.IO.File.WriteAllText(databaseResetConfigPath, JsonConvert.SerializeObject(databaseResetConfig, Formatting.Indented));
   }
 }
 #endregion
