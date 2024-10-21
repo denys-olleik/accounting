@@ -91,7 +91,7 @@ namespace Accounting.Controllers
         }
 
         DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.PublicId);
-        await _tenantService.UpdateSharedDatabaseName(tenant.TenantID, database.Name, GetOrganizationId());
+        await _tenantService.UpdateSharedDatabaseName(tenant.TenantID, database.Name);
       }
       else
       {
@@ -204,33 +204,33 @@ namespace Accounting.Validators.Tenant
       _secretService = secretService;
 
       RuleFor(x => x.Email)
-          .NotEmpty()
-          .WithMessage("Email is required.")
-          .DependentRules(() =>
-          {
-            RuleFor(x => x.Email)
-                  .EmailAddress()
-                  .WithMessage("Invalid email format.")
-                  .DependentRules(() =>
-                  {
-                    RuleFor(x => x)
-                          .MustAsync(async (model, cancellation) =>
-                          {
-                            return !await _tenantService.ExistsAsync(model.Email!, model.OrganizationId);
-                          })
-                          .WithMessage("A tenant with this email already exists for the specified organization.");
-                  });
-          });
+        .NotEmpty()
+        .WithMessage("Email is required.")
+        .DependentRules(() =>
+        {
+          RuleFor(x => x.Email)
+            .EmailAddress()
+            .WithMessage("Invalid email format.")
+            .DependentRules(() =>
+            {
+              RuleFor(x => x)
+                .MustAsync(async (model, cancellation) =>
+                {
+                  return !await _tenantService.ExistsAsync(model.Email!);
+                })
+                .WithMessage("A tenant with this email already exists for the specified organization.");
+            });
+        });
 
       RuleFor(x => x)
-          .MustAsync(async (model, cancellation) =>
-              await HasRequiredSecretsAsync(model.OrganizationId, model.Shared))
-          .WithMessage("The required secret keys are not available for provisioning a tenant.");
+        .MustAsync(async (model, cancellation) =>
+            await HasRequiredSecretsAsync(model.OrganizationId, model.Shared))
+        .WithMessage("The required secret keys are not available for provisioning a tenant.");
 
       RuleFor(x => x.FullyQualifiedDomainName)
-          .NotEmpty()
-          .When(x => !x.Shared)
-          .WithMessage("'Fully Qualified Domain Name' is required when 'Shared' is not selected.");
+        .NotEmpty()
+        .When(x => !x.Shared)
+        .WithMessage("'Fully Qualified Domain Name' is required when 'Shared' is not selected.");
     }
 
     private async Task<bool> HasRequiredSecretsAsync(int organizationId, bool isShared)

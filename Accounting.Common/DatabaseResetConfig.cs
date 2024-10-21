@@ -2,6 +2,7 @@
 {
   public class DatabaseResetConfig
   {
-        public bool Reset { get; set; }
-    }
+    public bool Reset { get; set; }
+    public bool DeleteTenantDatabases { get; set; }
+  }
 }

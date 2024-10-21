@@ -16,5 +16,11 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetDatabaseManager().CreateDatabase(tenantId);
     }
+
+    public async Task DeleteTenantDatabases()
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      await factoryManager.GetDatabaseManager().DeleteTenantDatabases();
+    }
   }
 }

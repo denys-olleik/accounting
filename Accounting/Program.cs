@@ -87,14 +87,19 @@ if (app.Environment.IsDevelopment())
   var databaseResetConfigPath = Path.Combine(app.Environment.ContentRootPath, "database-reset.json");
   var databaseResetConfig = JsonConvert.DeserializeObject<DatabaseResetConfig>(System.IO.File.ReadAllText(databaseResetConfigPath));
 
+  DatabaseService databaseManager = new DatabaseService();
   if (databaseResetConfig!.Reset)
   {
-    DatabaseService databaseManager = new DatabaseService();
     await databaseManager.ResetDatabase();
 
     // Set reset to false and update the file
     databaseResetConfig.Reset = false;
     System.IO.File.WriteAllText(databaseResetConfigPath, JsonConvert.SerializeObject(databaseResetConfig, Formatting.Indented));
+  }
+
+  if (databaseResetConfig.DeleteTenantDatabases)
+  {
+    await databaseManager.DeleteTenantDatabases();
   }
 }
 #endregion

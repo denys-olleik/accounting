@@ -1,3 +1,4 @@
 {
-  "Reset": false
+  "Reset": false,
+  "DeleteTenantDatabases": false
 }

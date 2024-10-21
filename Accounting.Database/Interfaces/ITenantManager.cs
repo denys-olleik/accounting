@@ -4,25 +4,21 @@ namespace Accounting.Database.Interfaces
 {
   public interface ITenantManager : IGenericRepository<Tenant, int>
   {
-    Task<bool> ExistsAsync(string email, int organizationId);
+    Task<bool> ExistsAsync(string email);
     Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
       int page, 
       int pageSize);
     Task<int> UpdateSharedDatabaseName(
       int tenantID, 
-      string? sharedDatabaseName, 
-      int organizationId);
+      string? sharedDatabaseName);
     Task<int> UpdateDropletIdAsync(
       int tenantId, 
-      long dropletId, 
-      int organizationId);
+      long dropletId);
     Task<int> UpdateSshPrivateAsync(
       int tenantId, 
-      string sshPrivate, 
-      int organizationId);
+      string sshPrivate);
     Task<int> UpdateSshPublicAsync(
       int tenantId, 
-      string sshPublic, 
-      int organizationId);
+      string sshPublic);
   }
 }

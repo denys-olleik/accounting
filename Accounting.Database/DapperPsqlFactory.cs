@@ -4861,6 +4861,31 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task DeleteTenantDatabases()
+      {
+        IEnumerable<Tenant> tenants;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          tenants = await con.QueryAsync<Tenant>("""
+            SELECT * 
+            FROM "Tenant";
+            """);
+        }
+
+        foreach (Tenant tenant in tenants)
+        {
+          string databaseName = tenant.SharedDatabaseName!;
+
+          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.AdminPsql))
+          {
+            await con.ExecuteAsync($$"""
+              DROP DATABASE IF EXISTS {{databaseName}};
+              """);
+          }
+        }
+      }
+
       public DatabaseThing Get(string databaseName)
       {
         throw new NotImplementedException();
@@ -5417,7 +5442,7 @@ namespace Accounting.Database
               @DropletId, 
               @Ipv4, 
               @SshPublic, 
-              @CreatedById,
+              @CreatedById
             )
             RETURNING *;
             """, p);
@@ -5430,11 +5455,10 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<bool> ExistsAsync(string email, int organizationId)
+      public async Task<bool> ExistsAsync(string email)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
-        p.Add("@OrganizationId", organizationId);
 
         IEnumerable<Tenant> result;
 
@@ -5444,7 +5468,6 @@ namespace Accounting.Database
             SELECT * 
             FROM "Tenant" 
             WHERE "Email" = @Email
-            AND "OrganizationId" = @OrganizationId
             """, p);
         }
 
@@ -5500,12 +5523,11 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateSharedDatabaseName(int tenantID, string? sharedDatabaseName, int organizationId)
+      public async Task<int> UpdateSharedDatabaseName(int tenantID, string? sharedDatabaseName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@TenantID", tenantID);
         p.Add("@SharedDatabaseName", sharedDatabaseName);
-        p.Add("@OrganizationId", organizationId);
 
         int rowsAffected;
 
@@ -5515,19 +5537,17 @@ namespace Accounting.Database
             UPDATE "Tenant" 
             SET "SharedDatabaseName" = @SharedDatabaseName
             WHERE "TenantID" = @TenantID
-            AND "OrganizationId" = @OrganizationId
             """, p);
         }
 
         return rowsAffected;
       }
 
-      public async Task<int> UpdateDropletIdAsync(int tenantId, long dropletId, int organizationId)
+      public async Task<int> UpdateDropletIdAsync(int tenantId, long dropletId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@TenantID", tenantId);
         p.Add("@DropletId", dropletId);
-        p.Add("@OrganizationId", organizationId);
 
         int rowsAffected;
 
@@ -5537,19 +5557,17 @@ namespace Accounting.Database
             UPDATE "Tenant" 
             SET "DropletId" = @DropletId
             WHERE "TenantID" = @TenantID
-            AND "OrganizationId" = @OrganizationId
             """, p);
         }
 
         return rowsAffected;
       }
 
-      public async Task<int> UpdateSshPrivateAsync(int tenantId, string sshPrivate, int organizationId)
+      public async Task<int> UpdateSshPrivateAsync(int tenantId, string sshPrivate)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@TenantID", tenantId);
         p.Add("@SshPrivate", sshPrivate);
-        p.Add("@OrganizationId", organizationId);
 
         int rowsAffected;
 
@@ -5559,7 +5577,6 @@ namespace Accounting.Database
             UPDATE "Tenant" 
             SET "SshPrivate" = @SshPrivate
             WHERE "TenantID" = @TenantID
-            AND "OrganizationId" = @OrganizationId
             """, p);
         }
 
@@ -5643,6 +5660,11 @@ namespace Accounting.Database
         }
 
         return result.ToList();
+      }
+
+      public Task<int> UpdateSshPublicAsync(int tenantId, string sshPublic)
+      {
+        throw new NotImplementedException();
       }
     }
 
