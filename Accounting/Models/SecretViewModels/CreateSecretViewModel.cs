@@ -48,7 +48,7 @@ namespace Accounting.Models.SecretViewModels
 
       RuleFor(x => x.OrganizationId)
           .GreaterThan(0)
-          .WithMessage("Organization ID must be greater than 0.");
+          .WithMessage("Request was missing organization id.");
 
       RuleFor(x => x)
         .MustAsync(KeyNotExists)

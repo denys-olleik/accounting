@@ -1,4 +1,5 @@
 ﻿using Accounting.Business;
+using Accounting.CustomAttributes;
 using Accounting.Models.SecretViewModels;
 using Accounting.Service;
 using FluentValidation.Results;
@@ -7,6 +8,7 @@ using System.Transactions;
 
 namespace Accounting.Controllers
 {
+  [AuthorizeWithOrganizationId]
   [Route("secret")]
   public class SecretController : BaseController
   {
