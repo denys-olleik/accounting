@@ -30,7 +30,7 @@ namespace Accounting.CustomAttributes
 
       if (organizationIdClaim == null || string.IsNullOrEmpty(organizationIdClaim.Value))
       {
-        context.Result = new RedirectToActionResult("ChooseOrganization", "Account", null);
+        context.Result = new RedirectToActionResult("ChooseOrganization", "UserAccount", null);
         return;
       }
     }
