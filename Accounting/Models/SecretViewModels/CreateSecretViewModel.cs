@@ -32,6 +32,7 @@ namespace Accounting.Models.SecretViewModels
 
       RuleFor(x => x.Key).NotEmpty().WithMessage("Key is required.")
                          .MaximumLength(100).WithMessage("Key cannot exceed 100 characters.");
+
       RuleFor(x => x.Value).NotEmpty().WithMessage("Value is required.");
 
       RuleFor(x => x.Type)
@@ -44,6 +45,10 @@ namespace Accounting.Models.SecretViewModels
           .WithMessage("Master keys cannot have a type.");
 
       RuleFor(x => x.Purpose).MaximumLength(100).WithMessage("Purpose cannot exceed 100 characters.");
+
+      RuleFor(x => x.OrganizationId)
+          .GreaterThan(0)
+          .WithMessage("Organization ID must be greater than 0.");
 
       RuleFor(x => x)
         .MustAsync(KeyNotExists)
