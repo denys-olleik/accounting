@@ -4904,29 +4904,14 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      //public async Task InsertSampleData()
-      //{
-      //  string sampleDataScriptPath = Path.Combine(AppContext.BaseDirectory, "sample-data.sql");
-
-      //  string sampleDataScript = System.IO.File.ReadAllText(sampleDataScriptPath);
-
-      //  using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-      //  {
-      //    await con.ExecuteAsync(sampleDataScript);
-      //  }
-      //}
-
       public async Task ResetDatabaseAsync()
       {
-        // Combine the base directory with the script name to get the full path
         string resetCreateDbScriptPath = Path.Combine(AppContext.BaseDirectory, "reset-and-create-database.sql");
         string createSchemaScriptPath = Path.Combine(AppContext.BaseDirectory, "create-db-script-psql.sql");
         
-        // Read the content of the scripts
         string resetCreateDbScript = System.IO.File.ReadAllText(resetCreateDbScriptPath);
         string createSchemaScript = System.IO.File.ReadAllText(createSchemaScriptPath);
 
-        // Execute the scripts using Npgsql and Dapper
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.AdminPsql))
         {
           await con.ExecuteAsync(resetCreateDbScript);
