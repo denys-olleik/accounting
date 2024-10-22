@@ -613,10 +613,10 @@ CREATE UNIQUE INDEX unique_type_per_organization
 ON "Secret" ("OrganizationId", "Type");
 
 INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
-VALUES ('test@example.com', 'Some', 'Dude', 'sha1:64000:18:IofuE0pk3LtysdvPabvlsENb9NJ4x7XZ:Ui8pLvVoSzlwUXVARJj8MFEL', 1);
+VALUES ('test@example.com', 'First1', 'Last1', 'sha1:64000:18:IofuE0pk3LtysdvPabvlsENb9NJ4x7XZ:Ui8pLvVoSzlwUXVARJj8MFEL', 1);
 
 INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
-VALUES ('test2@example.com', 'Some', 'Lady', 'sha1:64000:18:IofuE0pk3LtysdvPabvlsENb9NJ4x7XZ:Ui8pLvVoSzlwUXVARJj8MFEL', 1);
+VALUES ('test2@example.com', 'First2', 'Last2', 'sha1:64000:18:IofuE0pk3LtysdvPabvlsENb9NJ4x7XZ:Ui8pLvVoSzlwUXVARJj8MFEL', 1);
 
 
 INSERT INTO "Organization" (

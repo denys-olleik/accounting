@@ -4371,7 +4371,7 @@ namespace Accounting.Database
           }
         }
 
-        return result.SingleOrDefault();
+        return result.FirstOrDefault();
       }
 
       public async Task<int> UpdatePasswordAsync(int userId, string passwordHash)

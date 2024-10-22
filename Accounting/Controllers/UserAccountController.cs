@@ -54,8 +54,7 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      UserService userService = new UserService();
-      User user = await userService.GetAsync(model.Email, true);
+      User user = await _userService.GetAsync(model.Email, true);
 
       if (
         user != null
