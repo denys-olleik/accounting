@@ -5,6 +5,7 @@ using Accounting.Filters;
 using Accounting.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,7 +93,12 @@ if (app.Environment.IsDevelopment())
   {
     await databaseManager.ResetDatabase();
 
-    // Set reset to false and update the file
+    string sampleDataPath = Path.Combine(AppContext.BaseDirectory, "sample-data.sql");
+
+    string sampleDataScript = System.IO.File.ReadAllText(sampleDataPath);
+
+    await databaseManager.RunSQLScript(sampleDataScript, "Accounting");
+
     databaseResetConfig.Reset = false;
     System.IO.File.WriteAllText(databaseResetConfigPath, JsonConvert.SerializeObject(databaseResetConfig, Formatting.Indented));
   }

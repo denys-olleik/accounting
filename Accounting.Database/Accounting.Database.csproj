@@ -9,6 +9,7 @@
 	<ItemGroup>
 	  <None Remove="create-db-script-psql.sql" />
 	  <None Remove="reset-and-create-database.sql" />
+	  <None Remove="sample-data.sql" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -16,6 +17,9 @@
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	  <Content Include="create-db-script-psql.sql">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="sample-data.sql">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
