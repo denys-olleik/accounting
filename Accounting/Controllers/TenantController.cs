@@ -47,6 +47,13 @@ namespace Accounting.Controllers
       return View(vm);
     }
 
+    [Route("users/{tenantId}")]
+    [HttpGet]
+    public IActionResult TenantUsers(string tenantId)
+    {
+      return View();
+    }
+
     [Route("provision-tenant")]
     [HttpGet]
     public IActionResult ProvisionTenant()

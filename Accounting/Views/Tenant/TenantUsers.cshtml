@@ -1,0 +1,16 @@
+﻿@{
+  ViewData["Title"] = "Tenant Users - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Tenant Users";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div>
+    <a asp-action="Tenants" asp-controller="Tenant" class="font-Roboto font-size-20px text-decoration-none color-darkslategray">Tenants</a>
+  </div>
+</div>
