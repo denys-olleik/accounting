@@ -6,8 +6,7 @@ using Accounting.Business;
 using FluentValidation;
 using Accounting.Models.Tenant;
 using Accounting.CustomAttributes;
-using Accounting.Validators.Tenant;
-using Microsoft.AspNetCore.Authorization;
+using Accounting.Validators;
 
 namespace Accounting.Controllers
 {
@@ -19,17 +18,21 @@ namespace Accounting.Controllers
     private readonly CloudServices _cloudServices;
     private readonly SecretService _secretService;
     private readonly DatabaseService _databaseService;
+    private readonly UserService _userService;
+
 
     public TenantController(
       TenantService tenantService,
       CloudServices cloudServices,
       SecretService secretService,
-      DatabaseService databaseService)
+      DatabaseService databaseService,
+      UserService userService)
     {
       _tenantService = tenantService;
       _cloudServices = cloudServices;
       _secretService = secretService;
       _databaseService = databaseService;
+      _userService = userService;
     }
 
     [Route("tenants")]
@@ -128,6 +131,33 @@ namespace Accounting.Controllers
 
       return RedirectToAction("Tenants");
     }
+
+    [Route("add-user-orgnization")]
+    [HttpGet]
+    public async Task<IActionResult> AddUserOrganization()
+    {
+      return View();
+    }
+
+    [Route("add-user-orgnization")]
+    [HttpPost]
+    public async Task<IActionResult> AddUserOrganization(
+      AddUserOrganizationViewModel model)
+    {
+      AddUserOrganizationViewModelValidator validator
+        = new AddUserOrganizationViewModelValidator(_userService);
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      await _userService.AddUserAsync();
+
+      return RedirectToAction("Tenants");
+    }
   }
 
   [AuthorizeWithOrganizationId]
@@ -182,8 +212,32 @@ namespace Accounting.Controllers
   }
 }
 
-namespace Accounting.Validators.Tenant
+namespace Accounting.Validators
 {
+  public class AddUserOrganizationViewModelValidator : AbstractValidator<AddUserOrganizationViewModel>
+  {
+    private readonly UserService _userService;
+
+    public AddUserOrganizationViewModelValidator(UserService userService)
+    {
+      _userService = userService;
+
+      RuleFor(x => x.Email)
+        .Cascade(CascadeMode.Stop)
+        .NotEmpty().WithMessage("Email is required.")
+        .EmailAddress().WithMessage("Invalid email format.")
+        .DependentRules(() =>
+        {
+          RuleFor(x => x.Email)
+          .MustAsync(async (email, cancellation) =>
+            {
+              var exists = await _userService.EmailExistsAsync(email);
+              return !exists;
+            }).WithMessage("Email already exists.");
+        });
+    }
+  }
+
   public class TenantLoginViewModelValidator
     : AbstractValidator<TenantLoginViewModel>
   {
@@ -269,6 +323,17 @@ namespace Accounting.Validators.Tenant
 
 namespace Accounting.Models.Tenant
 {
+  public class AddUserOrganizationViewModel
+  {
+    public string? Email { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Password { get; set; }
+    public string? OrganizationName { get; set; }
+
+    public ValidationResult? ValidationResult { get; set; }
+  }
+
   public class ChooseTenantOrganizationViewModel
   {
     public string? OrganizationPublicId { get; set; }

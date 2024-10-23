@@ -4398,6 +4398,23 @@ namespace Accounting.Database
       {
         throw new NotImplementedException();
       }
+
+      public async Task<bool> EmailExistsAsync(string email)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          var result = await con.QueryFirstOrDefaultAsync<int>("""
+            SELECT COUNT(*) 
+            FROM "User" 
+            WHERE "Email" = @Email
+            """, p);
+
+          return result > 0;
+        }
+      }
     }
 
     public IUserOrganizationManager GetUserOrganizationManager()

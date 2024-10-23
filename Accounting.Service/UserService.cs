@@ -11,6 +11,12 @@ namespace Accounting.Service
       return await factoryManager.GetUserManager().CreateAsync(user);
     }
 
+    public async Task<bool> EmailExistsAsync(string email)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      return await factoryManager.GetUserManager().EmailExistsAsync(email);
+    }
+
     public async Task<List<User>> GetAllAsync(int organizationId)
     {
       FactoryManager factoryManager = new FactoryManager();
