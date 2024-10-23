@@ -22,11 +22,5 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager();
       await factoryManager.GetDatabaseManager().RunSQLScript(script, databaseName);
     }
-
-    public async Task DeleteTenantDatabases()
-    {
-      FactoryManager factoryManager = new FactoryManager();
-      await factoryManager.GetDatabaseManager().DeleteTenantDatabases();
-    }
   }
 }

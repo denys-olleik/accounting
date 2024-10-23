@@ -87,6 +87,47 @@ namespace Accounting.Controllers
       return RedirectToAction("Tenants");
     }
 
+    [Route("delete/{tenantId}")]
+    [HttpGet]
+    public async Task<IActionResult> Delete(string tenantId, bool deleteDatabase = false)
+    {
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      DeleteTenantViewModel model = new DeleteTenantViewModel()
+      {
+        TenantId = tenant.TenantID,
+        DeleteDatabase = deleteDatabase
+      };
+
+      return View(model);
+    }
+
+    [Route("delete/{tenantId}")]
+    [HttpPost]
+    public async Task<IActionResult> Delete(DeleteTenantViewModel model)
+    {
+      Tenant tenant = await _tenantService.GetAsync(model.TenantId);
+
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      if (model.DeleteDatabase)
+      {
+        await _databaseService.DeleteAsync(tenant.SharedDatabaseName);
+      }
+
+      await _tenantService.DeleteAsync(tenant.TenantID);
+
+      return RedirectToAction("Tenants");
+    }
+
     [Route("provision-tenant")]
     [HttpGet]
     public IActionResult ProvisionTenant()
@@ -364,6 +405,12 @@ namespace Accounting.Validators
 
 namespace Accounting.Models.Tenant
 {
+  public class DeleteTenantViewModel
+  {
+    public int TenantId { get; set; }
+    public bool DeleteDatabase { get; set; }
+  }
+
   public class TenantUsersViewModel()
   {
     public int TenantId { get; set; }
