@@ -4905,28 +4905,16 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task DeleteTenantDatabases()
+      public Task DeleteAsync(string sharedDatabaseName)
       {
-        IEnumerable<Tenant> tenants;
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@DatabaseName", sharedDatabaseName);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.AdminPsql))
         {
-          tenants = await con.QueryAsync<Tenant>("""
-            SELECT * 
-            FROM "Tenant";
-            """);
-        }
-
-        foreach (Tenant tenant in tenants)
-        {
-          string databaseName = tenant.SharedDatabaseName!;
-
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.AdminPsql))
-          {
-            await con.ExecuteAsync($$"""
-              DROP DATABASE IF EXISTS {{databaseName}};
-              """);
-          }
+          return con.ExecuteAsync($"""
+            DROP DATABASE IF EXISTS @DatabaseName;
+            """, p);
         }
       }
 
@@ -5742,6 +5730,24 @@ namespace Accounting.Database
         }
 
         return result.SingleOrDefault();
+      }
+
+      public async Task<int> DeleteAsync(int tenantID)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantID", tenantID);
+
+        int rowsModified;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          rowsModified = await con.ExecuteAsync("""
+            DELETE FROM "Tenant" 
+            WHERE "TenantID" = @TenantID
+            """, p);
+        }
+
+        return rowsModified;
       }
     }
 

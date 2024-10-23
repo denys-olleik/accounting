@@ -21,5 +21,6 @@ namespace Accounting.Database.Interfaces
       int tenantId, 
       string sshPublic);
     Task<Tenant?> GetAsync(int tenantId);
+    Task<int> DeleteAsync(int tenantID);
   }
 }

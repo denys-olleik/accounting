@@ -11,6 +11,12 @@ namespace Accounting.Service
       return await manager.GetTenantManager().CreateAsync(tenant);
     }
 
+    public async Task<int> DeleteAsync(int tenantID)
+    {
+      FactoryManager manager = new FactoryManager();
+      return await manager.GetTenantManager().DeleteAsync(tenantID);
+    }
+
     public async Task<bool> ExistsAsync(string email)
     {
       FactoryManager manager = new FactoryManager();
@@ -23,6 +29,12 @@ namespace Accounting.Service
     {
       FactoryManager manager = new FactoryManager();
       return await manager.GetTenantManager().GetAllAsync(page, pageSize);
+    }
+
+    public async Task<Tenant> GetAsync(int tenantId)
+    {
+      FactoryManager manager = new FactoryManager();
+      return await manager.GetTenantManager().GetAsync(tenantId);
     }
 
     public async Task UpdateSharedDatabaseName(int tenantID, string? sharedDatabaseName)
@@ -47,12 +59,6 @@ namespace Accounting.Service
     {
       FactoryManager manager = new FactoryManager();
       await manager.GetTenantManager().UpdateSshPublicAsync(tenantId, sshPublicKey);
-    }
-
-    public async Task<Tenant> GetAsync(int tenantId)
-    {
-      FactoryManager manager = new FactoryManager();
-      return await manager.GetTenantManager().GetAsync(tenantId);
     }
   }
 }

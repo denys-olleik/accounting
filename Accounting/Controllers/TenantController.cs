@@ -118,7 +118,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      if (model.DeleteDatabase)
+      if (model.DeleteDatabase && !string.IsNullOrEmpty(tenant.SharedDatabaseName))
       {
         await _databaseService.DeleteAsync(tenant.SharedDatabaseName);
       }
