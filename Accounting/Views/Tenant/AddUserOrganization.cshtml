@@ -1,0 +1,55 @@
+﻿@model Accounting.Models.Tenant.AddUserOrganizationViewModel
+
+@{
+  ViewData["Title"] = "Add User Organization - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Add User Organization";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="AddUserOrganization" asp-controller="Tenant" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+
+    <label asp-for="Email" class="background-color-antiquewhite"></label>
+    <input asp-for="Email"
+           class="font-size-20px"
+           maxlength="100" />
+  </div>
+
+  <div class="display-flex">
+    <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
+      <label asp-for="FirstName" class="background-color-antiquewhite"></label>
+      <input asp-for="FirstName"
+             class="font-size-20px"
+             maxlength="100" />
+    </div>
+    <div class="width-5px"></div>
+    <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
+      <label asp-for="LastName" class="background-color-antiquewhite"></label>
+      <input asp-for="LastName"
+             class="font-size-20px"
+             maxlength="100" />
+    </div>
+  </div>
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="Password" class="background-color-antiquewhite"></label>
+    <input asp-for="Password"
+           class="font-size-20px"
+           maxlength="100" />
+  </div>
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="OrganizationName" class="background-color-antiquewhite"></label>
+    <input asp-for="OrganizationName"
+           class="font-size-20px"
+           maxlength="100" />
+  </div>
+
+  <button type="submit" class="full-width-regular-button">Create</button>
+</form>
