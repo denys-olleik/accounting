@@ -41,29 +41,50 @@ namespace Accounting.Controllers
       _userOrganizationService = userOrganizationService;
     }
 
-    [Route("tenants")]
+    [Route("add-user-orgnization/{tenantId}")]
     [HttpGet]
-    public IActionResult Tenants(
-      int page = 1,
-      int pageSize = 2)
+    public async Task<IActionResult> AddUserOrganization(string tenantId)
     {
-      var vm = new TenantsPaginatedViewModel()
-      {
-        Page = page,
-        PageSize = pageSize,
-      };
-
-      return View(vm);
+      return View();
     }
 
-    [Route("users/{tenantId}")]
-    [HttpGet]
-    public IActionResult TenantUsers(string tenantId)
+    [Route("add-user-orgnization/{tenantId}")]
+    [HttpPost]
+    public async Task<IActionResult> AddUserOrganization(
+      AddUserOrganizationViewModel model, string tenantId)
     {
-      TenantUsersViewModel model = new TenantUsersViewModel();
-      model.TenantId = int.Parse(tenantId);
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
-      return View(model);
+      if (tenant == null)
+      {
+        model.ValidationResult.Errors.Add(new ValidationFailure("TenantId", "Tenant not found."));
+        return View(model);
+      }
+
+      AddUserOrganizationViewModelValidator validator
+        = new AddUserOrganizationViewModelValidator(_userService, _organizationService);
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      {
+        User user = await _userService.AddUserAsync(model.Email, model.FirstName, model.LastName, model.Password);
+        Organization organization = await _organizationService.CreateAsync(model.OrganizationName);
+        await _userOrganizationService.CreateAsync(new UserOrganization()
+        {
+          UserId = user.UserID,
+          OrganizationId = organization.OrganizationID
+        });
+
+        scope.Complete();
+      }
+
+      return RedirectToAction("Tenants");
     }
 
     [Route("provision-tenant")]
@@ -141,50 +162,29 @@ namespace Accounting.Controllers
       return RedirectToAction("Tenants");
     }
 
-    [Route("add-user-orgnization/{tenantId}")]
+    [Route("tenants")]
     [HttpGet]
-    public async Task<IActionResult> AddUserOrganization(string tenantId)
+    public IActionResult Tenants(
+      int page = 1,
+      int pageSize = 2)
     {
-      return View();
+      var vm = new TenantsPaginatedViewModel()
+      {
+        Page = page,
+        PageSize = pageSize,
+      };
+
+      return View(vm);
     }
 
-    [Route("add-user-orgnization/{tenantId}")]
-    [HttpPost]
-    public async Task<IActionResult> AddUserOrganization(
-      AddUserOrganizationViewModel model, string tenantId)
+    [Route("users/{tenantId}")]
+    [HttpGet]
+    public IActionResult TenantUsers(string tenantId)
     {
-      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+      TenantUsersViewModel model = new TenantUsersViewModel();
+      model.TenantId = int.Parse(tenantId);
 
-      if (tenant == null)
-      {
-        model.ValidationResult.Errors.Add(new ValidationFailure("TenantId", "Tenant not found."));
-        return View(model);
-      }
-
-      AddUserOrganizationViewModelValidator validator
-        = new AddUserOrganizationViewModelValidator(_userService, _organizationService);
-      ValidationResult validationResult = await validator.ValidateAsync(model);
-
-      if (!validationResult.IsValid)
-      {
-        model.ValidationResult = validationResult;
-        return View(model);
-      }
-
-      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-      {
-        User user = await _userService.AddUserAsync(model.Email, model.FirstName, model.LastName, model.Password);
-        Organization organization = await _organizationService.CreateAsync(model.OrganizationName);
-        await _userOrganizationService.CreateAsync(new UserOrganization()
-        {
-          UserId = user.UserID,
-          OrganizationId = organization.OrganizationID
-        });
-
-        scope.Complete();
-      }
-
-      return RedirectToAction("Tenants");
+      return View(model);
     }
   }
 
