@@ -24,7 +24,7 @@
         color-white
         padding-sides-25px
         font-weight-600
-        text-decoration-none
+        
         margin-bottom-2px
         max-width-768-text-align-center">
         @ConfigurationSingleton.Instance.ApplicationName @(string.IsNullOrEmpty(organizationName) ? "" : $"({organizationName})")
@@ -42,25 +42,25 @@
               font-Oswald
               color-white
               padding-sides-25px
-              text-decoration-none
+              
               margin-right-2px">Change Organization</a>
           <form id="logoutForm" asp-action="Logout" asp-controller="UserAccount" method="post"
                 class="max-width-768-flex-1 background-color-A62626 text-align-center">
             <a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();"
-               class="display-block font-Oswald color-white padding-sides-25px text-decoration-none">
+               class="display-block font-Oswald color-white padding-sides-25px ">
               Logout
             </a>
           </form>
         }
         else
         {
-          @*<a asp-action="Login" asp-controller="Account" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Pay Invoice</a>*@
-          @*<a asp-action="Careers" asp-controller="Home" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Careers</a>*@
+          @*<a asp-action="Login" asp-controller="Account" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px  margin-right-2px">Pay Invoice</a>*@
+          @*<a asp-action="Careers" asp-controller="Home" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px  margin-right-2px">Careers</a>*@
           @if (ConfigurationSingleton.Instance.TenantManagement)
           {
-            <a asp-action="TenantLogin" asp-controller="Tenant" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none margin-right-2px">Client Log In</a>
+            <a asp-action="TenantLogin" asp-controller="Tenant" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px  margin-right-2px">Client Log In</a>
           }
-          <a asp-action="Login" asp-controller="UserAccount" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px text-decoration-none">Log In</a>
+          <a asp-action="Login" asp-controller="UserAccount" class="max-width-768-flex-1 max-width-768-text-align-center background-color-A62626 font-Oswald color-white padding-sides-25px ">Log In</a>
         }
       </div>
     </nav>

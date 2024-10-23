@@ -11,6 +11,33 @@
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div>
-    <a asp-action="Tenants" asp-controller="Tenant" class="font-Roboto font-size-20px text-decoration-none color-darkslategray">Tenants</a>
+    <a asp-action="Tenants" asp-controller="Tenant" class="font-Roboto font-size-20px color-darkslategray">Tenants</a>
+  </div>
+  <div>
+    <a asp-action="AddUserOrganization" asp-controller="Tenant" class="font-Roboto font-size-20px color-darkslategray margin-left-20px">Add User Organization</a>
   </div>
 </div>
+
+<div id="app">
+
+</div>
+
+<script>
+  const { createApp } = Vue;
+
+  const app = createApp({
+    data() {
+      return {
+        tenants: [],
+        isExpanded: false
+      };
+    },
+    methods: {
+      toggleAction() {
+        this.isExpanded = !this.isExpanded;
+      }
+    }
+  });
+
+  app.mount('#app');
+</script>
