@@ -14,7 +14,12 @@
     <a asp-action="Tenants" asp-controller="Tenant" class="font-Roboto font-size-20px color-darkslategray">Tenants</a>
   </div>
   <div>
-    <a asp-action="AddUserOrganization" asp-controller="Tenant" class="font-Roboto font-size-20px color-darkslategray margin-left-20px">Add User-Organization</a>
+    <a asp-action="AddUserOrganization"
+       asp-controller="Tenant"
+       asp-route-tenantId="@Model.TenantId"
+       class="font-Roboto font-size-20px color-darkslategray margin-left-20px">
+      Add User-Organization
+    </a>
   </div>
 </div>
 

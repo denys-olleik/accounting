@@ -60,7 +60,10 @@ namespace Accounting.Controllers
     [HttpGet]
     public IActionResult TenantUsers(string tenantId)
     {
-      return View();
+      TenantUsersViewModel model = new TenantUsersViewModel();
+      model.TenantId = int.Parse(tenantId);
+
+      return View(model);
     }
 
     [Route("provision-tenant")]
@@ -361,6 +364,11 @@ namespace Accounting.Validators
 
 namespace Accounting.Models.Tenant
 {
+  public class TenantUsersViewModel()
+  {
+    public int TenantId { get; set; }
+  }
+
   public class AddUserOrganizationViewModel
   {
     public string? Email { get; set; }
