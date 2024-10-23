@@ -48,5 +48,11 @@ namespace Accounting.Service
       FactoryManager manager = new FactoryManager();
       await manager.GetTenantManager().UpdateSshPublicAsync(tenantId, sshPublicKey);
     }
+
+    public async Task<Tenant> GetAsync(int tenantId)
+    {
+      FactoryManager manager = new FactoryManager();
+      return await manager.GetTenantManager().GetAsync(tenantId);
+    }
   }
 }

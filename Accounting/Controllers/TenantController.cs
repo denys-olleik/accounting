@@ -138,18 +138,26 @@ namespace Accounting.Controllers
       return RedirectToAction("Tenants");
     }
 
-    [Route("add-user-orgnization")]
+    [Route("add-user-orgnization/{tenantId}")]
     [HttpGet]
-    public async Task<IActionResult> AddUserOrganization()
+    public async Task<IActionResult> AddUserOrganization(string tenantId)
     {
       return View();
     }
 
-    [Route("add-user-orgnization")]
+    [Route("add-user-orgnization/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> AddUserOrganization(
-      AddUserOrganizationViewModel model)
+      AddUserOrganizationViewModel model, string tenantId)
     {
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+
+      if (tenant == null)
+      {
+        model.ValidationResult.Errors.Add(new ValidationFailure("TenantId", "Tenant not found."));
+        return View(model);
+      }
+
       AddUserOrganizationViewModelValidator validator
         = new AddUserOrganizationViewModelValidator(_userService, _organizationService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
@@ -361,7 +369,7 @@ namespace Accounting.Models.Tenant
     public string? Password { get; set; }
     public string? OrganizationName { get; set; }
 
-    public ValidationResult? ValidationResult { get; set; }
+    public ValidationResult? ValidationResult { get; set; } = new ValidationResult();
   }
 
   public class ChooseTenantOrganizationViewModel
