@@ -229,10 +229,14 @@ namespace Accounting.Validators
   public class AddUserOrganizationViewModelValidator : AbstractValidator<AddUserOrganizationViewModel>
   {
     private readonly UserService _userService;
+    private readonly OrganizationService _organizationService;
 
-    public AddUserOrganizationViewModelValidator(UserService userService)
+    public AddUserOrganizationViewModelValidator(
+      UserService userService, 
+      OrganizationService organizationService)
     {
       _userService = userService;
+      _organizationService = organizationService;
 
       RuleFor(x => x.Email)
         .Cascade(CascadeMode.Stop)
@@ -242,11 +246,20 @@ namespace Accounting.Validators
         {
           RuleFor(x => x.Email)
           .MustAsync(async (email, cancellation) =>
-            {
-              var exists = await _userService.EmailExistsAsync(email);
-              return !exists;
-            }).WithMessage("Email already exists.");
+          {
+            var exists = await _userService.EmailExistsAsync(email);
+            return !exists;
+          }).WithMessage("Email already exists.");
         });
+
+      RuleFor(x => x.OrganizationName)
+        .Cascade(CascadeMode.Stop)
+        .NotEmpty().WithMessage("Organization name is required.")
+        .MustAsync(async (name, cancellation) =>
+        {
+          var exists = await _organizationService.OrganizationExistsAsync(name);
+          return !exists;
+        }).WithMessage("Organization already exists.");
     }
   }
 

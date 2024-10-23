@@ -3085,6 +3085,25 @@ namespace Accounting.Database
             """, p);
         }
       }
+
+      public async Task<bool> OrganizationExistsAsync(string name)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Name", name);
+
+        IEnumerable<Organization> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Organization>("""
+            SELECT * 
+            FROM "Organization" 
+            WHERE "Name" = @Name
+            """, p);
+        }
+
+        return result.Any();
+      }
     }
 
     public IPaymentInstructionManager GetPaymentInstructionManager()
