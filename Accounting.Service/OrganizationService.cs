@@ -5,6 +5,11 @@ namespace Accounting.Service
 {
   public class OrganizationService
   {
+    public async Task<Organization> CreateAsync(string? organizationName)
+    {
+      throw new NotImplementedException();
+    }
+
     public async Task<Organization> GetAsync(int organizationId)
     {
       FactoryManager factoryManager = new FactoryManager();

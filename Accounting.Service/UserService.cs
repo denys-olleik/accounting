@@ -5,6 +5,11 @@ namespace Accounting.Service
 {
   public class UserService
   {
+    public async Task<User> AddUserAsync(string? email, string? firstName, string? lastName, string? password)
+    {
+      throw new NotImplementedException();
+    }
+
     public async Task<User> CreateAsync(User user)
     {
       FactoryManager factoryManager = new FactoryManager();

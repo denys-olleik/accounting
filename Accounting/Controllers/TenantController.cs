@@ -19,6 +19,8 @@ namespace Accounting.Controllers
     private readonly SecretService _secretService;
     private readonly DatabaseService _databaseService;
     private readonly UserService _userService;
+    private readonly OrganizationService _organizationService;
+    private readonly UserOrganizationService _userOrganizationService;
 
 
     public TenantController(
@@ -26,13 +28,17 @@ namespace Accounting.Controllers
       CloudServices cloudServices,
       SecretService secretService,
       DatabaseService databaseService,
-      UserService userService)
+      UserService userService,
+      OrganizationService organizationService,
+      UserOrganizationService userOrganizationService)
     {
       _tenantService = tenantService;
       _cloudServices = cloudServices;
       _secretService = secretService;
       _databaseService = databaseService;
       _userService = userService;
+      _organizationService = organizationService;
+      _userOrganizationService = userOrganizationService;
     }
 
     [Route("tenants")]
@@ -145,7 +151,7 @@ namespace Accounting.Controllers
       AddUserOrganizationViewModel model)
     {
       AddUserOrganizationViewModelValidator validator
-        = new AddUserOrganizationViewModelValidator(_userService);
+        = new AddUserOrganizationViewModelValidator(_userService, _organizationService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -156,16 +162,15 @@ namespace Accounting.Controllers
 
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        await _userService.AddUserAsync(new User
+        User user = await _userService.AddUserAsync(model.Email, model.FirstName, model.LastName, model.Password);
+        Organization organization = await _organizationService.CreateAsync(model.OrganizationName);
+        await _userOrganizationService.CreateAsync(new UserOrganization()
         {
-          Email = model.Email,
-          FirstName = model.FirstName,
-          LastName = model.LastName,
-          Password = model.Password,
-        }, new Organization()
-        {
-
+          UserId = user.UserID,
+          OrganizationId = organization.OrganizationID
         });
+
+        scope.Complete();
       }
 
       return RedirectToAction("Tenants");
@@ -232,7 +237,7 @@ namespace Accounting.Validators
     private readonly OrganizationService _organizationService;
 
     public AddUserOrganizationViewModelValidator(
-      UserService userService, 
+      UserService userService,
       OrganizationService organizationService)
     {
       _userService = userService;
