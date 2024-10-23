@@ -154,7 +154,19 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      await _userService.AddUserAsync();
+      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      {
+        await _userService.AddUserAsync(new User
+        {
+          Email = model.Email,
+          FirstName = model.FirstName,
+          LastName = model.LastName,
+          Password = model.Password,
+        }, new Organization()
+        {
+
+        });
+      }
 
       return RedirectToAction("Tenants");
     }
