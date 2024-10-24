@@ -7,6 +7,7 @@ using FluentValidation;
 using Accounting.Models.Tenant;
 using Accounting.CustomAttributes;
 using Accounting.Validators;
+using Accounting.Common;
 
 namespace Accounting.Controllers
 {
@@ -73,7 +74,13 @@ namespace Accounting.Controllers
 
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        User user = await _userService.AddUserAsync(model.Email, model.FirstName, model.LastName, model.Password);
+        User user = await _userService.CreateAsync(new User()
+        {
+          Email = model.Email,
+          FirstName = model.FirstName,
+          LastName = model.LastName,
+          Password = !string.IsNullOrWhiteSpace(model.Password) ? PasswordStorage.CreateHash(model.Password) : null
+        });
         Organization organization = await _organizationService.CreateAsync(model.OrganizationName);
         await _userOrganizationService.CreateAsync(new UserOrganization()
         {
