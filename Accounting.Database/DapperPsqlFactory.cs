@@ -4,6 +4,7 @@ using Accounting.Common;
 using Accounting.Database.Interfaces;
 using Npgsql;
 using System.Data;
+using System.Text.RegularExpressions;
 
 namespace Accounting.Database
 {
@@ -4899,22 +4900,20 @@ namespace Accounting.Database
         }
       }
 
-
       public int Delete(string databaseName)
       {
         throw new NotImplementedException();
       }
 
-      public Task DeleteAsync(string sharedDatabaseName)
+      public async Task DeleteAsync(string sharedDatabaseName)
       {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@DatabaseName", sharedDatabaseName);
+        string sanitizedDbName = Regex.Replace(sharedDatabaseName, @"[^a-zA-Z0-9_]", "");
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.AdminPsql))
         {
-          return con.ExecuteAsync($"""
-            DROP DATABASE IF EXISTS @DatabaseName;
-            """, p);
+          await con.ExecuteAsync($"""
+            DROP DATABASE IF EXISTS "{sanitizedDbName}" WITH (FORCE);
+            """);
         }
       }
 

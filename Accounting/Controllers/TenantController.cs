@@ -112,7 +112,7 @@ namespace Accounting.Controllers
     public async Task<IActionResult> Delete(DeleteTenantViewModel model)
     {
       Tenant tenant = await _tenantService.GetAsync(model.TenantId);
-
+      
       if (tenant == null)
       {
         return NotFound();
