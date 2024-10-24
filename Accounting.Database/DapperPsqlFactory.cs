@@ -4341,7 +4341,7 @@ namespace Accounting.Database
             """, p)).ToList();
         }
 
-        if (searchTenants)
+        if (searchTenants && !result.Any())
         {
           List<string> sharedDatabaseNames = new List<string>();
 
