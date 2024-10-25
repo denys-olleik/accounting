@@ -309,11 +309,11 @@ namespace Accounting.Validators
         .DependentRules(() =>
         {
           RuleFor(x => x.Email)
-          .MustAsync(async (email, cancellation) =>
-          {
-            var exists = await _userService.EmailExistsAsync(email);
-            return !exists;
-          }).WithMessage("Email already exists.");
+            .MustAsync(async (email, cancellation) =>
+            {
+              var exists = await _userService.EmailExistsAsync(email);
+              return !exists;
+            }).WithMessage("Email already exists.");
         });
 
       RuleFor(x => x.OrganizationName)

@@ -4,6 +4,7 @@ namespace Accounting.Database.Interfaces
 {
   public interface IOrganizationManager : IGenericRepository<Organization, int>
   {
+    Task<Organization> CreateAsync(string organizationName);
     Task<Organization> GetAsync(int organizationId);
     Task<string?> GetPaymentInstructions(int organizationId);
     Task<bool> OrganizationExistsAsync(string name);

@@ -2879,6 +2879,22 @@ namespace Accounting.Database
 
     public class OrganizationManager : IOrganizationManager
     {
+//CREATE TABLE "Organization"
+//(
+//  "OrganizationID" SERIAL PRIMARY KEY,
+//  "Name" VARCHAR(100) NOT NULL,
+//	"Address" VARCHAR(255) NULL,
+//	"AccountsReceivableEmail" VARCHAR(100) NULL,
+//	"AccountsPayableEmail" VARCHAR(100) NULL,
+//	"AccountsReceivablePhone" VARCHAR(20) NULL,
+//	"AccountsPayablePhone" VARCHAR(20) NULL,
+//	"BaseCurrency" VARCHAR(3) NULL,
+//	"Website" VARCHAR(100) NULL,
+//  "PaymentInstructions" TEXT,
+//	"ElevatedSecurity" BOOLEAN NOT NULL DEFAULT FALSE,
+//  "Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+//);
+
       public Organization Create(Organization entity)
       {
         throw new NotImplementedException();
@@ -2887,6 +2903,25 @@ namespace Accounting.Database
       public async Task<Organization> CreateAsync(Organization entity)
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<Organization> CreateAsync(string organizationName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Name", organizationName);
+
+        IEnumerable<Organization> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Organization>("""
+            INSERT INTO "Organization" ("Name") 
+            VALUES (@Name) 
+            RETURNING *;
+            """, p);
+        }
+
+        return result.Single();
       }
 
       public int Delete(int id)
@@ -3105,6 +3140,8 @@ namespace Accounting.Database
 
         return result.Any();
       }
+
+      
     }
 
     public IPaymentInstructionManager GetPaymentInstructionManager()
@@ -4253,17 +4290,31 @@ namespace Accounting.Database
         p.Add("@Email", entity.Email);
         p.Add("@FirstName", entity.FirstName);
         p.Add("@LastName", entity.LastName);
-        p.Add("@CreatedById", entity.CreatedById);
+
+        string sql;
+        if (entity.CreatedById != 0)
+        {
+          p.Add("@CreatedById", entity.CreatedById);
+          sql = """
+            INSERT INTO "User" ("Email", "FirstName", "LastName", "CreatedById") 
+            VALUES (@Email, @FirstName, @LastName, @CreatedById)
+            RETURNING *;
+            """;
+        }
+        else
+        {
+          sql = """
+            INSERT INTO "User" ("Email", "FirstName", "LastName") 
+            VALUES (@Email, @FirstName, @LastName)
+            RETURNING *;
+            """;
+        }
 
         IEnumerable<User> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<User>("""
-            INSERT INTO "User" ("Email", "FirstName", "LastName", "CreatedById") 
-            VALUES (@Email, @FirstName, @LastName, @CreatedById)
-            RETURNING *;
-            """, p);
+          result = await con.QueryAsync<User>(sql, p);
         }
 
         return result.Single();
