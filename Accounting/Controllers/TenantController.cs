@@ -80,13 +80,16 @@ namespace Accounting.Controllers
           FirstName = model.FirstName,
           LastName = model.LastName,
           Password = !string.IsNullOrWhiteSpace(model.Password) ? PasswordStorage.CreateHash(model.Password) : null
-        });
-        Organization organization = await _organizationService.CreateAsync(model.OrganizationName);
+        }, tenant.SharedDatabaseName!); 
+
+        Organization organization = await _organizationService
+          .CreateAsync(model.OrganizationName!, tenant.SharedDatabaseName!);
+
         await _userOrganizationService.CreateAsync(new UserOrganization()
         {
           UserId = user.UserID,
           OrganizationId = organization.OrganizationID
-        });
+        }, tenant.SharedDatabaseName!);
 
         scope.Complete();
       }
@@ -305,16 +308,7 @@ namespace Accounting.Validators
       RuleFor(x => x.Email)
         .Cascade(CascadeMode.Stop)
         .NotEmpty().WithMessage("Email is required.")
-        .EmailAddress().WithMessage("Invalid email format.")
-        .DependentRules(() =>
-        {
-          RuleFor(x => x.Email)
-            .MustAsync(async (email, cancellation) =>
-            {
-              var exists = await _userService.EmailExistsAsync(email);
-              return !exists;
-            }).WithMessage("Email already exists.");
-        });
+        .EmailAddress().WithMessage("Invalid email format.");
 
       RuleFor(x => x.OrganizationName)
         .Cascade(CascadeMode.Stop)

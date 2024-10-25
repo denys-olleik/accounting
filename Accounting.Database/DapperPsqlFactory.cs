@@ -2879,22 +2879,6 @@ namespace Accounting.Database
 
     public class OrganizationManager : IOrganizationManager
     {
-//CREATE TABLE "Organization"
-//(
-//  "OrganizationID" SERIAL PRIMARY KEY,
-//  "Name" VARCHAR(100) NOT NULL,
-//	"Address" VARCHAR(255) NULL,
-//	"AccountsReceivableEmail" VARCHAR(100) NULL,
-//	"AccountsPayableEmail" VARCHAR(100) NULL,
-//	"AccountsReceivablePhone" VARCHAR(20) NULL,
-//	"AccountsPayablePhone" VARCHAR(20) NULL,
-//	"BaseCurrency" VARCHAR(3) NULL,
-//	"Website" VARCHAR(100) NULL,
-//  "PaymentInstructions" TEXT,
-//	"ElevatedSecurity" BOOLEAN NOT NULL DEFAULT FALSE,
-//  "Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
-//);
-
       public Organization Create(Organization entity)
       {
         throw new NotImplementedException();
@@ -2903,6 +2887,31 @@ namespace Accounting.Database
       public async Task<Organization> CreateAsync(Organization entity)
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<Organization> CreateAsync(string organizationName, string sharedDatabaseName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Name", organizationName);
+
+        string sql = """
+          INSERT INTO "Organization" ("Name") 
+          VALUES (@Name) 
+          RETURNING *;
+          """;
+
+        IEnumerable<Organization> result;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = sharedDatabaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        {
+          result = await con.QueryAsync<Organization>(sql, p);
+        }
+
+        return result.Single();
       }
 
       public async Task<Organization> CreateAsync(string organizationName)
@@ -3140,8 +3149,6 @@ namespace Accounting.Database
 
         return result.Any();
       }
-
-      
     }
 
     public IPaymentInstructionManager GetPaymentInstructionManager()
@@ -4284,31 +4291,46 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<User> CreateAsync(User entity)
+      public async Task<User> CreateAsync(User entity, string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", entity.Email);
         p.Add("@FirstName", entity.FirstName);
         p.Add("@LastName", entity.LastName);
 
-        string sql;
-        if (entity.CreatedById != 0)
+        string sql = """
+          INSERT INTO "User" ("Email", "FirstName", "LastName") 
+          VALUES (@Email, @FirstName, @LastName)
+          RETURNING *;
+          """;
+
+        IEnumerable<User> result;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
-          p.Add("@CreatedById", entity.CreatedById);
-          sql = """
-            INSERT INTO "User" ("Email", "FirstName", "LastName", "CreatedById") 
-            VALUES (@Email, @FirstName, @LastName, @CreatedById)
-            RETURNING *;
-            """;
+          result = await con.QueryAsync<User>(sql, p);
         }
-        else
-        {
-          sql = """
-            INSERT INTO "User" ("Email", "FirstName", "LastName") 
-            VALUES (@Email, @FirstName, @LastName)
-            RETURNING *;
-            """;
-        }
+
+        return result.Single();
+      }
+
+      public async Task<User> CreateAsync(User entity)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", entity.Email);
+        p.Add("@FirstName", entity.FirstName);
+        p.Add("@LastName", entity.LastName);
+        p.Add("@CreatedById", entity.CreatedById);
+
+        string sql = """
+          INSERT INTO "User" ("Email", "FirstName", "LastName", "CreatedById") 
+          VALUES (@Email, @FirstName, @LastName, @CreatedById)
+          RETURNING *;
+          """;
 
         IEnumerable<User> result;
 
@@ -4319,7 +4341,6 @@ namespace Accounting.Database
 
         return result.Single();
       }
-
 
       public int Delete(int id)
       {
@@ -4509,6 +4530,32 @@ namespace Accounting.Database
         IEnumerable<UserOrganization> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<UserOrganization>($"""
+            INSERT INTO "UserOrganization" ("UserId", "OrganizationId") 
+            VALUES (@UserId, @OrganizationId)
+            RETURNING *;
+            """, p);
+        }
+
+        return result.Single();
+      }
+
+      public async Task<UserOrganization> CreateAsync(
+        UserOrganization userOrganization, 
+        string databaseName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("UserId", userOrganization.UserId);
+        p.Add("OrganizationId", userOrganization.OrganizationId);
+
+        IEnumerable<UserOrganization> result;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           result = await con.QueryAsync<UserOrganization>($"""
             INSERT INTO "UserOrganization" ("UserId", "OrganizationId") 
@@ -4982,7 +5029,7 @@ namespace Accounting.Database
       {
         string resetCreateDbScriptPath = Path.Combine(AppContext.BaseDirectory, "reset-and-create-database.sql");
         string createSchemaScriptPath = Path.Combine(AppContext.BaseDirectory, "create-db-script-psql.sql");
-        
+
         string resetCreateDbScript = System.IO.File.ReadAllText(resetCreateDbScriptPath);
         string createSchemaScript = System.IO.File.ReadAllText(createSchemaScriptPath);
 
@@ -5716,7 +5763,7 @@ namespace Accounting.Database
       //      WHERE "Email" = @Email
       //      """, p);
       //  }
-        
+
       //  if (!result.Any())
       //  {
       //    List<string> sharedDatabaseNames = new List<string>();

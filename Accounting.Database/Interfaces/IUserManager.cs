@@ -14,5 +14,6 @@ namespace Accounting.Database.Interfaces
     Task<User> GetAsync(int userId);
     Task<User> GetAsync(string email, bool searchTenants);
     Task<int> UpdatePasswordAsync(int userId, string passwordHash);
+    Task<User> CreateAsync(User entity, string databaseName);
   }
 }
