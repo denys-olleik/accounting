@@ -4552,7 +4552,7 @@ namespace Accounting.Database
       }
 
       public async Task<UserOrganization> CreateAsync(
-        UserOrganization userOrganization, 
+        UserOrganization userOrganization,
         string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
@@ -4590,6 +4590,52 @@ namespace Accounting.Database
       public IEnumerable<UserOrganization> GetAll()
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<List<UserOrganization>> GetAllAsync(int tenantId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantId", tenantId);
+
+        IEnumerable<Tenant> tenants;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          tenants = await con.QueryAsync<Tenant>("""
+            SELECT * 
+            FROM "Tenant" 
+            WHERE "TenantID" = @TenantId
+            """, p);
+        }
+
+        Tenant tenant = tenants.Single();
+
+        string databaseName = tenant.SharedDatabaseName;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+        string connectionString = builder.ConnectionString;
+
+        IEnumerable<UserOrganization> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        {
+          result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+            SELECT uo.*, u.*, o.*
+            FROM "UserOrganization" uo
+            INNER JOIN "User" u ON uo."UserId" = u."UserID"
+            INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+            """, 
+            (uo, u, o)
+              =>
+            {
+              uo.User = u;
+              uo.Organization = o;
+              return uo;
+            }, splitOn: "UserID,OrganizationID");
+        }
+
+        return result.ToList();
       }
 
       public async Task<UserOrganization> GetAsync(int userId, int organizationId)

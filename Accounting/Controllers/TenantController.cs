@@ -248,10 +248,14 @@ namespace Accounting.Controllers
   public class TenantApiController : BaseController
   {
     private readonly TenantService _tenantService;
+    private readonly UserOrganizationService _userOrganizationService;
 
-    public TenantApiController(TenantService tenantService)
+    public TenantApiController(
+      TenantService tenantService,
+      UserOrganizationService userOrganizationService)
     {
       _tenantService = tenantService;
+      _userOrganizationService = userOrganizationService;
     }
 
     [HttpGet("get-all-tenants")]
@@ -290,6 +294,34 @@ namespace Accounting.Controllers
       };
 
       return Ok(viewModel);
+    }
+
+    [HttpGet("{tenantId}/user-organizations")]
+    public async Task<IActionResult> GetUserOrganizations(int tenantId)
+    {
+      List<UserOrganization> userOrganizations = await _userOrganizationService.GetAllAsync(tenantId);
+
+      GetUserOrganizationsViewModel model = new GetUserOrganizationsViewModel()
+      {
+        UserOrganizations = userOrganizations.Select(x => new GetUserOrganizationsViewModel.UserOrganization
+        {
+          UserOrganizationID = x.UserOrganizationID,
+          UserID = x.UserId,
+          User = new GetUserOrganizationsViewModel.UserViewModel
+          {
+            UserID = x.User!.UserID,
+            Email = x.User!.Email
+          },
+          OrganizationID = x.OrganizationId,
+          Organization = new GetUserOrganizationsViewModel.OrganizationViewModel
+          {
+            OrganizationID = x.Organization!.OrganizationID,
+            Name = x.Organization!.Name
+          }
+        }).ToList()
+      };
+
+      return Ok(userOrganizations);
     }
   }
 }
@@ -421,6 +453,32 @@ namespace Accounting.Validators
 
 namespace Accounting.Models.Tenant
 {
+  public class GetUserOrganizationsViewModel
+  {
+    public List<UserOrganization>? UserOrganizations { get; set; }
+
+    public class UserOrganization
+    {
+      public int UserOrganizationID { get; set; }
+      public int UserID { get; set; }
+      public UserViewModel? User { get; set; }
+      public int OrganizationID { get; set; }
+      public OrganizationViewModel? Organization { get; set; }
+    }
+
+    public class OrganizationViewModel
+    {
+      public int OrganizationID { get; set; }
+      public string? Name { get; set; }
+    }
+
+    public class UserViewModel
+    {
+      public int UserID { get; set; }
+      public string? Email { get; set; }
+    }
+  }
+
   public class DeleteTenantViewModel
   {
     public int TenantId { get; set; }

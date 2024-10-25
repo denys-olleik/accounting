@@ -11,7 +11,8 @@
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div>
-    <a asp-action="Tenants" asp-controller="Tenant" class="font-Roboto font-size-16px color-blue">Tenants</a>
+    <a asp-action="Tenants" asp-controller="Tenant"
+       class="font-Roboto font-size-16px color-blue">Tenants</a>
   </div>
   <div>
     <a asp-action="AddUserOrganization"
@@ -24,8 +25,12 @@
 </div>
 
 <div id="app">
-
 </div>
+
+@*[AuthorizeWithOrganizationId]
+  [Route("api/tenant")]
+  [ApiController]
+  public class TenantApiController : BaseController *@
 
 <script>
   const { createApp } = Vue;
@@ -33,14 +38,21 @@
   const app = createApp({
     data() {
       return {
-        tenants: [],
-        isExpanded: false
+        tenantId: @Model.TenantId,
+        userOrganizations: []
       };
     },
     methods: {
-      toggleAction() {
-        this.isExpanded = !this.isExpanded;
+      fetchUserOrganizations() {
+        fetch(`/api/tenant/${this.tenantId}/user-organizations`)
+          .then(response => response.json())
+          .then(data => {
+            this.userOrganizations = data;
+          });
       }
+    },
+    mounted(){
+      this.fetchUserOrganizations();
     }
   });
 

@@ -7,5 +7,6 @@ namespace Accounting.Database.Interfaces
     Task<UserOrganization> GetAsync(int userId, int organizationId);
     Task<List<Organization>> GetByUserIdAsync(int userId);
     Task<UserOrganization> CreateAsync(UserOrganization userOrganization, string databaseName);
+    Task<List<UserOrganization>> GetAllAsync(int tenantId);
   }
 }
