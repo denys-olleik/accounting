@@ -25,12 +25,23 @@
 </div>
 
 <div id="app">
+  <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
+  <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+    <tr>
+      <th class="text-align-left width-1px padding-right-20px">Email</th>
+      <th class="text-align-right">Organization</th>
+    </tr>
+  </thead>
+  <tbody class="font-Roboto-Mono">
+    <template v-for="(userOrg, index) in userOrganizations" :key="userOrg.userOrganizationID">
+      <tr>
+        <td class="padding-right-20px">{{ userOrg.user?.email || 'N/A' }}</td>
+        <td class="text-align-right">{{ userOrg.organization?.name || 'N/A' }}</td>
+      </tr>
+    </template>
+  </tbody>
+</table>
 </div>
-
-@*[AuthorizeWithOrganizationId]
-  [Route("api/tenant")]
-  [ApiController]
-  public class TenantApiController : BaseController *@
 
 <script>
   const { createApp } = Vue;
