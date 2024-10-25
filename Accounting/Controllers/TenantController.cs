@@ -63,7 +63,7 @@ namespace Accounting.Controllers
       }
 
       AddUserOrganizationViewModelValidator validator
-        = new AddUserOrganizationViewModelValidator(_userService, _organizationService);
+        = new AddUserOrganizationViewModelValidator(_userService, _organizationService, tenant.SharedDatabaseName);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -297,25 +297,36 @@ namespace Accounting.Validators
   {
     private readonly UserService _userService;
     private readonly OrganizationService _organizationService;
+    private readonly string _tenantDatabaseName;
 
     public AddUserOrganizationViewModelValidator(
       UserService userService,
-      OrganizationService organizationService)
+      OrganizationService organizationService,
+      string tenantDatabaseName)
     {
       _userService = userService;
       _organizationService = organizationService;
+      _tenantDatabaseName = tenantDatabaseName;
 
       RuleFor(x => x.Email)
         .Cascade(CascadeMode.Stop)
         .NotEmpty().WithMessage("Email is required.")
-        .EmailAddress().WithMessage("Invalid email format.");
+        .EmailAddress().WithMessage("Invalid email format.")
+        .DependentRules(() => {
+          RuleFor(x => x.Email)
+            .MustAsync(async (email, cancellation) =>
+            {
+              var exists = await _userService.EmailExistsAsync(email, _tenantDatabaseName);
+              return !exists;
+            }).WithMessage("User with this email already exists.");
+        });
 
       RuleFor(x => x.OrganizationName)
         .Cascade(CascadeMode.Stop)
         .NotEmpty().WithMessage("Organization name is required.")
         .MustAsync(async (name, cancellation) =>
         {
-          var exists = await _organizationService.OrganizationExistsAsync(name);
+          var exists = await _organizationService.OrganizationExistsAsync(name, _tenantDatabaseName);
           return !exists;
         }).WithMessage("Organization already exists.");
     }
@@ -366,7 +377,7 @@ namespace Accounting.Validators
                 {
                   return !await _tenantService.ExistsAsync(model.Email!);
                 })
-                .WithMessage("A tenant with this email already exists for the specified organization.");
+                .WithMessage("A tenant with this email already exists.");
             });
         });
 

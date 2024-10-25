@@ -3131,14 +3131,18 @@ namespace Accounting.Database
         }
       }
 
-      public async Task<bool> OrganizationExistsAsync(string name)
+      public async Task<bool> OrganizationExistsAsync(string name, string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Name", name);
 
         IEnumerable<Organization> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           result = await con.QueryAsync<Organization>("""
             SELECT * 
@@ -4491,21 +4495,27 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<bool> EmailExistsAsync(string email)
+      public async Task<bool> EmailExistsAsync(string email, string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        IEnumerable<User> result;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
-          var result = await con.QueryFirstOrDefaultAsync<int>("""
-            SELECT COUNT(*) 
+          result = await con.QueryAsync<User>("""
+            SELECT * 
             FROM "User" 
             WHERE "Email" = @Email
             """, p);
-
-          return result > 0;
         }
+
+        return result.Any();
       }
     }
 
