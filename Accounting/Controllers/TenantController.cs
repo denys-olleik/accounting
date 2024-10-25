@@ -46,7 +46,10 @@ namespace Accounting.Controllers
     [HttpGet]
     public async Task<IActionResult> AddUserOrganization(string tenantId)
     {
-      return View();
+      AddUserOrganizationViewModel model = new AddUserOrganizationViewModel();
+      model.TenantId = int.Parse(tenantId);
+
+      return View(model);
     }
 
     [Route("add-user-orgnization/{tenantId}")]
@@ -80,7 +83,7 @@ namespace Accounting.Controllers
           FirstName = model.FirstName,
           LastName = model.LastName,
           Password = !string.IsNullOrWhiteSpace(model.Password) ? PasswordStorage.CreateHash(model.Password) : null
-        }, tenant.SharedDatabaseName!); 
+        }, tenant.SharedDatabaseName!);
 
         Organization organization = await _organizationService
           .CreateAsync(model.OrganizationName!, tenant.SharedDatabaseName!);
@@ -122,7 +125,7 @@ namespace Accounting.Controllers
     public async Task<IActionResult> Delete(DeleteTenantViewModel model)
     {
       Tenant tenant = await _tenantService.GetAsync(model.TenantId);
-      
+
       if (tenant == null)
       {
         return NotFound();
@@ -312,7 +315,8 @@ namespace Accounting.Validators
         .Cascade(CascadeMode.Stop)
         .NotEmpty().WithMessage("Email is required.")
         .EmailAddress().WithMessage("Invalid email format.")
-        .DependentRules(() => {
+        .DependentRules(() =>
+        {
           RuleFor(x => x.Email)
             .MustAsync(async (email, cancellation) =>
             {
@@ -430,6 +434,7 @@ namespace Accounting.Models.Tenant
 
   public class AddUserOrganizationViewModel
   {
+    public int TenantId { get; set; }
     public string? Email { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }

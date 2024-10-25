@@ -11,6 +11,12 @@
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div>
+    <a asp-action="Tenants" asp-controller="Tenant" class="font-Roboto font-size-16px color-blue">Tenants</a>
+  </div>
+</div>
+
 <form asp-action="ProvisionTenant" asp-controller="Tenant" method="post"
       class="display-flex flex-direction-column margin-bottom-5px">
 
