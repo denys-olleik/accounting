@@ -66,7 +66,7 @@ namespace Accounting.Controllers
       }
 
       AddUserOrganizationViewModelValidator validator
-        = new AddUserOrganizationViewModelValidator(_userService, _organizationService, tenant.SharedDatabaseName);
+        = new AddUserOrganizationViewModelValidator(_userService, _organizationService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -330,16 +330,13 @@ namespace Accounting.Validators
   {
     private readonly UserService _userService;
     private readonly OrganizationService _organizationService;
-    private readonly string _tenantDatabaseName;
 
     public AddUserOrganizationViewModelValidator(
       UserService userService,
-      OrganizationService organizationService,
-      string tenantDatabaseName)
+      OrganizationService organizationService)
     {
       _userService = userService;
       _organizationService = organizationService;
-      _tenantDatabaseName = tenantDatabaseName;
 
       RuleFor(x => x.Email)
         .Cascade(CascadeMode.Stop)
@@ -347,22 +344,32 @@ namespace Accounting.Validators
         .EmailAddress().WithMessage("Invalid email format.")
         .DependentRules(() =>
         {
-          RuleFor(x => x.Email)
-            .MustAsync(async (email, cancellation) =>
-            {
-              var exists = await _userService.EmailExistsAsync(email, true);
-              return !exists;
-            }).WithMessage("User with this email already exists. Inherit existing credentials or use another email.");
+          When(x => !x.InheritUser, () =>
+          {
+            RuleFor(x => x.Email)
+              .MustAsync(async (email, cancellation) =>
+              {
+                var exists = await _userService.EmailExistsAsync(email, true);
+                return !exists;
+              }).WithMessage("Email already exists.");
+          });
         });
 
       RuleFor(x => x.OrganizationName)
         .Cascade(CascadeMode.Stop)
         .NotEmpty().WithMessage("Organization name is required.")
-        .MustAsync(async (name, cancellation) =>
+        .DependentRules(() =>
         {
-          var exists = await _organizationService.OrganizationExistsAsync(name, true);
-          return !exists;
-        }).WithMessage("Organization already exists. Use existing organization or use another organization.");
+          When(x => !x.InheritOrganization, () =>
+          {
+            RuleFor(x => x.OrganizationName)
+                .MustAsync(async (name, cancellation) =>
+                {
+                  var exists = await _organizationService.OrganizationExistsAsync(name, true);
+                  return !exists;
+                }).WithMessage("Organization already exists.");
+          });
+        });
     }
   }
 
@@ -492,10 +499,12 @@ namespace Accounting.Models.Tenant
   {
     public int TenantId { get; set; }
     public string? Email { get; set; }
+    public bool InheritUser { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? Password { get; set; }
     public string? OrganizationName { get; set; }
+    public bool InheritOrganization { get; set; }
 
     public ValidationResult? ValidationResult { get; set; } = new ValidationResult();
   }
