@@ -3131,11 +3131,12 @@ namespace Accounting.Database
         }
       }
 
-      public async Task<bool> OrganizationExistsAsync(string name, string checkThisDatabaseToo)
+      public async Task<bool> OrganizationExistsAsync(string name, bool checkTenantDatabases)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Name", name);
 
+        // Check main database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           if ((await con.QueryAsync<Organization>("""
@@ -3146,16 +3147,30 @@ namespace Accounting.Database
             return true;
         }
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = checkThisDatabaseToo;
-        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        // Check tenant databases if requested
+        if (checkTenantDatabases)
         {
-          return (await con.QueryAsync<Organization>("""
-            SELECT * 
-            FROM "Organization" 
-            WHERE "Name" = @Name
-            """, p)).Any();
+          TenantManager tenantManager = new TenantManager();
+          var tenants = await tenantManager.GetAllAsync();
+
+          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+
+          foreach (var tenant in tenants)
+          {
+            builder.Database = tenant.SharedDatabaseName;
+            using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+            {
+              if ((await con.QueryAsync<Organization>("""
+                    SELECT * 
+                    FROM "Organization" 
+                    WHERE "Name" = @Name
+                    """, p)).Any())
+                return true;
+            }
+          }
         }
+
+        return false;
       }
     }
 
@@ -4499,11 +4514,12 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<bool> EmailExistsAsync(string email, string checkThisDatabaseToo)
+      public async Task<bool> EmailExistsAsync(string email, bool checkTenantDatabases)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
 
+        // Check main database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           if ((await con.QueryAsync<User>("""
@@ -4514,16 +4530,30 @@ namespace Accounting.Database
             return true;
         }
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = checkThisDatabaseToo;
-        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        // Check tenant databases if requested
+        if (checkTenantDatabases)
         {
-          return (await con.QueryAsync<User>("""
-            SELECT * 
-            FROM "User" 
-            WHERE "Email" = @Email
-            """, p)).Any();
+          TenantManager tenantManager = new TenantManager();
+          var tenants = await tenantManager.GetAllAsync();
+
+          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+
+          foreach (var tenant in tenants)
+          {
+            builder.Database = tenant.SharedDatabaseName;
+            using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+            {
+              if ((await con.QueryAsync<User>("""
+                    SELECT * 
+                    FROM "User" 
+                    WHERE "Email" = @Email
+                    """, p)).Any())
+                return true;
+            }
+          }
         }
+
+        return false;
       }
     }
 
@@ -5027,7 +5057,7 @@ namespace Accounting.Database
 
       public async Task<DatabaseThing> CreateDatabase(string tenantId)
       {
-        string databaseName = $"tenant_{tenantId}";
+        string databaseName = $"{PrefixConstants.TenantDatabasePrefix}{tenantId}";
 
         using (var con = new NpgsqlConnection(ConfigurationSingleton.Instance.AdminPsql))
         {

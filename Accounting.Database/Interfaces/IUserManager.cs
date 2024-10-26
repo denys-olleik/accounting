@@ -9,7 +9,7 @@ namespace Accounting.Database.Interfaces
 {
   public interface IUserManager : IGenericRepository<User, int>
   {
-    Task<bool> EmailExistsAsync(string email, string checkThisDatabaseToo);
+    Task<bool> EmailExistsAsync(string email, bool checkTenantDatabases);
     Task<List<User>> GetAllAsync(int organizationId);
     Task<User> GetAsync(int userId);
     Task<User> GetAsync(string email, bool searchTenants);

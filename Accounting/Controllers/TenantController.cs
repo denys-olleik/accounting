@@ -350,9 +350,9 @@ namespace Accounting.Validators
           RuleFor(x => x.Email)
             .MustAsync(async (email, cancellation) =>
             {
-              var exists = await _userService.EmailExistsAsync(email, _tenantDatabaseName);
+              var exists = await _userService.EmailExistsAsync(email, true);
               return !exists;
-            }).WithMessage("User with this email already exists.");
+            }).WithMessage("User with this email already exists. Inherit existing credentials or use another email.");
         });
 
       RuleFor(x => x.OrganizationName)
@@ -360,9 +360,9 @@ namespace Accounting.Validators
         .NotEmpty().WithMessage("Organization name is required.")
         .MustAsync(async (name, cancellation) =>
         {
-          var exists = await _organizationService.OrganizationExistsAsync(name, _tenantDatabaseName);
+          var exists = await _organizationService.OrganizationExistsAsync(name, true);
           return !exists;
-        }).WithMessage("Organization already exists.");
+        }).WithMessage("Organization already exists. Use existing organization or use another organization.");
     }
   }
 
