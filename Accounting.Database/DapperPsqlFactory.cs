@@ -5628,20 +5628,18 @@ namespace Accounting.Database
         p.Add("@DropletId", entity.DropletId);
         p.Add("@Ipv4", entity.Ipv4);
         p.Add("@SshPublic", entity.SshPublic);
-        p.Add("@CreatedById", entity.CreatedById);
         IEnumerable<Tenant> result;
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
           result = await con.QueryAsync<Tenant>("""
-            INSERT INTO "Tenant" ("PublicId", "FullyQualifiedDomainName", "Email", "DropletId", "Ipv4", "SshPublic", "CreatedById")
+            INSERT INTO "Tenant" ("PublicId", "FullyQualifiedDomainName", "Email", "DropletId", "Ipv4", "SshPublic")
             VALUES (
               substr(md5(random()::text), 1, 10), -- Random alphanumeric string
               @FullyQualifiedDomainName, 
               @Email, 
               @DropletId, 
               @Ipv4, 
-              @SshPublic, 
-              @CreatedById
+              @SshPublic
             )
             RETURNING *;
             """, p);

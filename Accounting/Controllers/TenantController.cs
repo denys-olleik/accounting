@@ -178,7 +178,6 @@ namespace Accounting.Controllers
           {
             FullyQualifiedDomainName = model.FullyQualifiedDomainName,
             Email = model.Email,
-            CreatedById = GetUserId(),
           });
 
           scope.Complete();
@@ -200,8 +199,7 @@ namespace Accounting.Controllers
           tenant = await _tenantService.CreateAsync(new Tenant()
           {
             Email = model.Email,
-            FullyQualifiedDomainName = model.FullyQualifiedDomainName,
-            CreatedById = GetUserId(),
+            FullyQualifiedDomainName = model.FullyQualifiedDomainName
           });
 
           await _cloudServices.GetDigitalOceanService(
