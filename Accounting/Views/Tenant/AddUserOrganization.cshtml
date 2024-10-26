@@ -11,6 +11,8 @@
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div>
     <a asp-action="Tenants" asp-controller="Tenant" class="font-Roboto font-size-16px color-blue">Tenants</a>
@@ -21,11 +23,11 @@
   </div>
 </div>
 
-<form 
-  asp-action="AddUserOrganization" 
-  asp-controller="Tenant" 
-  method="post" 
-  class="display-flex flex-direction-column margin-bottom-5px">
+<form id="app"
+      asp-action="AddUserOrganization"
+      asp-controller="Tenant"
+      method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label asp-for="Email" class="background-color-antiquewhite"></label>
@@ -33,7 +35,7 @@
            class="font-size-20px"
            maxlength="100" />
     <span class="background-color-antiquewhite">
-      <input asp-for="InheritUser" type="checkbox" class="margin-bottom-5px" />
+      <input asp-for="InheritUser" type="checkbox" v-model="inheritUser" class="margin-bottom-5px" />
       <label asp-for="InheritUser">Inherit details of existing user.</label>
     </span>
   </div>
@@ -67,7 +69,7 @@
            class="font-size-20px"
            maxlength="100" />
     <span class="background-color-antiquewhite">
-      <input asp-for="InheritOrganization" type="checkbox" class="margin-bottom-5px" />
+      <input asp-for="InheritOrganization" type="checkbox" v-model="inheritOrganization" class="margin-bottom-5px" />
       <label asp-for="InheritOrganization">Inherit details of existing organization.</label>
     </span>
   </div>
@@ -86,3 +88,27 @@
   <div class="margin-bottom-5px">
   </div>
 }
+
+<script>
+  const { createApp } = Vue;
+
+  const app = createApp({
+    components: {
+
+    },
+    data() {
+      return {
+          inheritUser: @Html.Raw(Json.Serialize(Model.InheritUser)),
+          inheritOrganization: @Html.Raw(Json.Serialize(Model.InheritOrganization))
+      };
+    },
+    methods: {
+
+    },
+    mounted() {
+
+    }
+  });
+
+  app.mount("#app");
+</script>
