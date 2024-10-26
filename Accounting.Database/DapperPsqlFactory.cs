@@ -3131,27 +3131,31 @@ namespace Accounting.Database
         }
       }
 
-      public async Task<bool> OrganizationExistsAsync(string name, string databaseName)
+      public async Task<bool> OrganizationExistsAsync(string name, string checkThisDatabaseToo)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Name", name);
 
-        IEnumerable<Organization> result;
-
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = databaseName;
-        string connectionString = builder.ConnectionString;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<Organization>("""
+          if ((await con.QueryAsync<Organization>("""
             SELECT * 
             FROM "Organization" 
             WHERE "Name" = @Name
-            """, p);
+            """, p)).Any())
+            return true;
         }
 
-        return result.Any();
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = checkThisDatabaseToo;
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          return (await con.QueryAsync<Organization>("""
+            SELECT * 
+            FROM "Organization" 
+            WHERE "Name" = @Name
+            """, p)).Any();
+        }
       }
     }
 
@@ -4495,27 +4499,31 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<bool> EmailExistsAsync(string email, string databaseName)
+      public async Task<bool> EmailExistsAsync(string email, string checkThisDatabaseToo)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
 
-        IEnumerable<User> result;
-
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = databaseName;
-        string connectionString = builder.ConnectionString;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = await con.QueryAsync<User>("""
+          if ((await con.QueryAsync<User>("""
             SELECT * 
             FROM "User" 
             WHERE "Email" = @Email
-            """, p);
+            """, p)).Any())
+            return true;
         }
 
-        return result.Any();
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = checkThisDatabaseToo;
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          return (await con.QueryAsync<User>("""
+            SELECT * 
+            FROM "User" 
+            WHERE "Email" = @Email
+            """, p)).Any();
+        }
       }
     }
 

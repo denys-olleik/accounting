@@ -29,10 +29,10 @@ namespace Accounting.Service
       return await factoryManager.GetOrganizationManager().GetPaymentInstructions(organizationId);
     }
 
-    public async Task<bool> OrganizationExistsAsync(string name, string databaseName)
+    public async Task<bool> OrganizationExistsAsync(string name, string checkThisDatabaseToo)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetOrganizationManager().OrganizationExistsAsync(name, databaseName);
+      return await factoryManager.GetOrganizationManager().OrganizationExistsAsync(name, checkThisDatabaseToo);
     }
 
     public async Task UpdateAccountsPayableEmailAsync(int organizationId, string accountsPayableEmail)

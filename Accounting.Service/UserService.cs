@@ -22,10 +22,10 @@ namespace Accounting.Service
       return await factoryManager.GetUserManager().CreateAsync(user, sharedDatabaseName);
     }
 
-    public async Task<bool> EmailExistsAsync(string email, string databaseName)
+    public async Task<bool> EmailExistsAsync(string email, string checkThisDatabaseToo)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetUserManager().EmailExistsAsync(email, databaseName);
+      return await factoryManager.GetUserManager().EmailExistsAsync(email, checkThisDatabaseToo);
     }
 
     public async Task<List<User>> GetAllAsync(int organizationId)
