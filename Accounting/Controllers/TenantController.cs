@@ -349,8 +349,8 @@ namespace Accounting.Validators
             RuleFor(x => x.Email)
               .MustAsync(async (email, cancellation) =>
               {
-                var exists = await _userService.EmailExistsAsync(email, true);
-                return !exists;
+                var exists = await _userService.GetAsync(email!, true);
+                return exists == null;
               }).WithMessage("Email already exists.");
           });
         });

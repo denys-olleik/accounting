@@ -4425,68 +4425,56 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
 
-        List<User> result;
-
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          result = (await con.QueryAsync<User>("""
+          var user = (await con.QueryAsync<User>("""
             SELECT * 
             FROM "User" 
             WHERE "Email" = @Email
-            """, p)).ToList();
+            """, p)).FirstOrDefault();
+
+          if (user != null)
+            return user;
         }
 
-        if (searchTenants && !result.Any())
+        if (searchTenants)
         {
-          List<string> sharedDatabaseNames = new List<string>();
-
           TenantManager tenantManager = new TenantManager();
-          List<Tenant> tenants = await tenantManager.GetAllAsync();
+          var tenants = await tenantManager.GetAllAsync();
 
-          if (tenants.Any())
+          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+
+          foreach (var tenant in tenants)
           {
-            foreach (Tenant tenant in tenants)
-            {
-              if (!string.IsNullOrEmpty(tenant.SharedDatabaseName))
-                sharedDatabaseNames.Add(tenant.SharedDatabaseName);
-            }
+            if (string.IsNullOrEmpty(tenant.SharedDatabaseName))
+              continue;
 
-            foreach (string sharedDatabaseName in sharedDatabaseNames)
+            builder.Database = tenant.SharedDatabaseName;
+            using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
             {
-              var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-              builder.Database = sharedDatabaseName;
-              string tennantConnectionString = builder.ConnectionString;
-
-              using (NpgsqlConnection con = new NpgsqlConnection(tennantConnectionString))
-              {
-                var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
-                  SELECT uo.*, u.*, o.*
-                  FROM "UserOrganization" uo
-                  INNER JOIN "User" u ON uo."UserId" = u."UserID"
-                  INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
-                  WHERE u."Email" = @Email
-                  """,
-                    (userOrg, user, org) =>
+              var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+                    SELECT uo.*, u.*, o.*
+                    FROM "UserOrganization" uo
+                    INNER JOIN "User" u ON uo."UserId" = u."UserID"
+                    INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+                    WHERE u."Email" = @Email
+                    """,
+                  (userOrg, user, org) =>
                   {
                     userOrg.User = user;
                     userOrg.Organization = org;
                     return userOrg;
                   }, p, splitOn: "UserID,OrganizationID"
-                );
+              );
 
-                foreach (UserOrganization userOrganization in userOrganizations)
-                {
-                  if (userOrganization.User != null)
-                  {
-                    result.Add(userOrganization.User);
-                  }
-                }
-              }
+              var user = userOrganizations.FirstOrDefault()?.User;
+              if (user != null)
+                return user;
             }
           }
         }
 
-        return result.FirstOrDefault();
+        return null!;
       }
 
       public async Task<int> UpdatePasswordAsync(int userId, string passwordHash)
