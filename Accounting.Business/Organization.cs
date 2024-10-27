@@ -13,6 +13,7 @@ namespace Accounting.Business
     public string? AccountsPayablePhone { get; set; }
     public string? Website { get; set; }
     public string? PaymentInstructions { get; set; }
+    public int TenantId { get; set; }
     public DateTime Created { get; set; }
 
     public int Identifiable => this.OrganizationID;

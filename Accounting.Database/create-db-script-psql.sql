@@ -9,6 +9,20 @@
 INSERT INTO "ApplicationSetting" ("Key", "Value") VALUES 
 ('tenant-management', 'false');
 
+CREATE TABLE "Tenant"
+(
+	"TenantID" SERIAL PRIMARY KEY NOT NULL,
+	"PublicId" VARCHAR(10) NOT NULL UNIQUE,
+	"SharedDatabaseName" VARCHAR(100) NULL,
+	"FullyQualifiedDomainName" VARCHAR(100) NULL, -- accounting.example.com
+	"Email" VARCHAR(100) NOT NULL,
+	"DropletId" BIGINT NULL,
+	"Ipv4" VARCHAR(15) NULL,
+	"SshPublic" TEXT NULL,
+	"SshPrivate" TEXT NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+);
+
 CREATE TABLE "Organization"
 (
   "OrganizationID" SERIAL PRIMARY KEY,
@@ -22,7 +36,9 @@ CREATE TABLE "Organization"
 	"Website" VARCHAR(100) NULL,
   "PaymentInstructions" TEXT,
 	"ElevatedSecurity" BOOLEAN NOT NULL DEFAULT FALSE,
-  "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+	"TenantId" INT NULL,
+  "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+	FOREIGN KEY ("TenantId") REFERENCES "Tenant"("TenantID")
 );
 
 CREATE TABLE "User"
@@ -60,20 +76,6 @@ CREATE TABLE "Cloud"
 	"OrganizationId" INT NOT NULL,
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
-);
-
-CREATE TABLE "Tenant"
-(
-	"TenantID" SERIAL PRIMARY KEY NOT NULL,
-	"PublicId" VARCHAR(10) NOT NULL UNIQUE,
-	"SharedDatabaseName" VARCHAR(100) NULL,
-	"FullyQualifiedDomainName" VARCHAR(100) NULL, -- accounting.example.com
-	"Email" VARCHAR(100) NOT NULL,
-	"DropletId" BIGINT NULL,
-	"Ipv4" VARCHAR(15) NULL,
-	"SshPublic" TEXT NULL,
-	"SshPrivate" TEXT NULL,
-	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
 CREATE TABLE "Reconciliation"
