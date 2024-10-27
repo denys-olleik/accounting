@@ -7,6 +7,7 @@ namespace Accounting.Database.Interfaces
     Task<Organization> CreateAsync(string organizationName);
     Task<Organization> CreateAsync(string organizationName, string sharedDatabaseName);
     Task<Organization> GetAsync(int organizationId);
+    Task<Organization> GetAsync(string name, bool searchTenants);
     Task<string?> GetPaymentInstructions(int organizationId);
     Task<bool> OrganizationExistsAsync(string name, bool checkTenantDatabases);
     Task<int> UpdateAccountsPayableEmailAsync(int organizationId, string accountsPayableEmail);

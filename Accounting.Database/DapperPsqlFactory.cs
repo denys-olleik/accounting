@@ -3172,6 +3172,53 @@ namespace Accounting.Database
 
         return false;
       }
+
+      public async Task<Organization> GetAsync(string name, bool searchTenants)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Name", name);
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          var organization = (await con.QueryAsync<Organization>("""
+            SELECT * 
+            FROM "Organization" 
+            WHERE "Name" = @Name
+            """, p)).FirstOrDefault();
+
+          if (organization != null)
+            return organization;
+        }
+
+        if (searchTenants)
+        {
+          TenantManager tenantManager = new TenantManager();
+          var tenants = await tenantManager.GetAllAsync();
+
+          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+
+          foreach (var tenant in tenants)
+          {
+            if (string.IsNullOrEmpty(tenant.SharedDatabaseName))
+              continue;
+
+            builder.Database = tenant.SharedDatabaseName;
+            using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+            {
+              var organization = (await con.QueryAsync<Organization>("""
+                    SELECT * 
+                    FROM "Organization"
+                    WHERE "Name" = @Name
+                    """, p)).FirstOrDefault();
+
+              if (organization != null)
+                return organization;
+            }
+          }
+        }
+
+        return null!;
+      }
     }
 
     public IPaymentInstructionManager GetPaymentInstructionManager()

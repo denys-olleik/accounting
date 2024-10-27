@@ -23,6 +23,12 @@ namespace Accounting.Service
       return await factoryManager.GetOrganizationManager().GetAsync(organizationId);
     }
 
+    public async Task<Organization> GetAsync(string name, bool searchTenants)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      return await factoryManager.GetOrganizationManager().GetAsync(name, searchTenants);
+    }
+
     public async Task<string?> GetPaymentInstructions(int organizationId)
     {
       FactoryManager factoryManager = new FactoryManager();

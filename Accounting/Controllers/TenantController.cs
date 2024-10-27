@@ -350,7 +350,7 @@ namespace Accounting.Validators
             RuleFor(x => x.Email)
               .MustAsync(async (email, cancellation) =>
               {
-                var exists = await _userService.GetAsync(email!, true);
+                User exists = await _userService.GetAsync(email!, true);
                 return exists == null;
               }).WithMessage("Email already exists.");
           });
@@ -366,8 +366,8 @@ namespace Accounting.Validators
             RuleFor(x => x.OrganizationName)
                 .MustAsync(async (name, cancellation) =>
                 {
-                  var exists = await _organizationService.OrganizationExistsAsync(name, true);
-                  return !exists;
+                  Organization exists = await _organizationService.GetAsync(name!, true);
+                  return exists == null;
                 }).WithMessage("Organization already exists.");
           });
         });
