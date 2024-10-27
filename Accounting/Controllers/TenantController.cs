@@ -55,7 +55,8 @@ namespace Accounting.Controllers
     [Route("add-user-orgnization/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> AddUserOrganization(
-      AddUserOrganizationViewModel model, string tenantId)
+      AddUserOrganizationViewModel model, 
+      string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
