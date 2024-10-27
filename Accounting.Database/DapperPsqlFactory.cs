@@ -4501,48 +4501,6 @@ namespace Accounting.Database
       {
         throw new NotImplementedException();
       }
-
-      public async Task<bool> EmailExistsAsync(string email, bool checkTenantDatabases)
-      {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@Email", email);
-
-        // Check main database
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-        {
-          if ((await con.QueryAsync<User>("""
-            SELECT * 
-            FROM "User" 
-            WHERE "Email" = @Email
-            """, p)).Any())
-            return true;
-        }
-
-        // Check tenant databases if requested
-        if (checkTenantDatabases)
-        {
-          TenantManager tenantManager = new TenantManager();
-          var tenants = await tenantManager.GetAllAsync();
-
-          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-
-          foreach (var tenant in tenants)
-          {
-            builder.Database = tenant.SharedDatabaseName;
-            using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
-            {
-              if ((await con.QueryAsync<User>("""
-                    SELECT * 
-                    FROM "User" 
-                    WHERE "Email" = @Email
-                    """, p)).Any())
-                return true;
-            }
-          }
-        }
-
-        return false;
-      }
     }
 
     public IUserOrganizationManager GetUserOrganizationManager()
