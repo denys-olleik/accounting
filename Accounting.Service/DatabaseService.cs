@@ -23,10 +23,10 @@ namespace Accounting.Service
       await factoryManager.GetDatabaseManager().RunSQLScript(script, databaseName);
     }
 
-    public async Task DeleteAsync(string sharedDatabaseName)
+    public async Task DeleteAsync(string databaseName)
     {
       FactoryManager factoryManager = new FactoryManager();
-      await factoryManager.GetDatabaseManager().DeleteAsync(sharedDatabaseName);
+      await factoryManager.GetDatabaseManager().DeleteAsync(databaseName);
     }
   }
 }

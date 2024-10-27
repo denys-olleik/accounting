@@ -84,16 +84,16 @@ namespace Accounting.Controllers
           FirstName = model.FirstName,
           LastName = model.LastName,
           Password = !string.IsNullOrWhiteSpace(model.Password) ? PasswordStorage.CreateHash(model.Password) : null
-        }, tenant.SharedDatabaseName!);
+        }, tenant.DatabaseName!);
 
         Organization organization = await _organizationService
-          .CreateAsync(model.OrganizationName!, tenant.SharedDatabaseName!);
+          .CreateAsync(model.OrganizationName!, tenant.DatabaseName!);
 
         await _userOrganizationService.CreateAsync(new UserOrganization()
         {
           UserId = user.UserID,
           OrganizationId = organization.OrganizationID
-        }, tenant.SharedDatabaseName!);
+        }, tenant.DatabaseName!);
 
         scope.Complete();
       }
@@ -132,9 +132,9 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      if (model.DeleteDatabase && !string.IsNullOrEmpty(tenant.SharedDatabaseName))
+      if (model.DeleteDatabase && !string.IsNullOrEmpty(tenant.DatabaseName))
       {
-        await _databaseService.DeleteAsync(tenant.SharedDatabaseName);
+        await _databaseService.DeleteAsync(tenant.DatabaseName);
       }
 
       await _tenantService.DeleteAsync(tenant.TenantID);
@@ -189,7 +189,7 @@ namespace Accounting.Controllers
 
         DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.PublicId);
         await _databaseService.RunSQLScript(createSchemaScript, database.Name);
-        await _tenantService.UpdateSharedDatabaseName(tenant.TenantID, database.Name);
+        await _tenantService.UpdateDatabaseName(tenant.TenantID, database.Name);
       }
       else
       {
@@ -273,7 +273,7 @@ namespace Accounting.Controllers
         {
           TenantID = tenant.TenantID,
           RowNumber = tenant.RowNumber,
-          SharedDatabaseName = tenant.SharedDatabaseName,
+          DatabaseName = tenant.DatabaseName,
           FullyQualifiedDomainName = tenant.FullyQualifiedDomainName,
           Email = tenant.Email,
           DropletId = tenant.DropletId,
@@ -546,7 +546,7 @@ namespace Accounting.Models.Tenant
   public class TenantViewModel
   {
     public int TenantID { get; set; }
-    public string? SharedDatabaseName { get; set; }
+    public string? DatabaseName { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
     public string? Email { get; set; }
     public long? DropletId { get; set; }

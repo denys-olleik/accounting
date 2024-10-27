@@ -87,8 +87,8 @@
           <td class="padding-right-20px">
             <tenant-action :tenant="tenant" :is-expanded="tenant.tenantID === expandedTenantId" @@expand="handleTenantExpand(tenant.tenantID)"></tenant-action>
           </td>
-          <td v-if="tenant.sharedDatabaseName" class="background-color-lightblue text-align-center" colspan="4">
-            {{ tenant.sharedDatabaseName }}
+          <td v-if="tenant.databaseName" class="background-color-lightblue text-align-center" colspan="4">
+            {{ tenant.databaseName }}
           </td>
           <template v-else>
             <td class="padding-right-20px background-color-lightpink">{{ tenant.dropletId }}</td>

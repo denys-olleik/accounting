@@ -37,10 +37,10 @@ namespace Accounting.Service
       return await manager.GetTenantManager().GetAsync(tenantId);
     }
 
-    public async Task UpdateSharedDatabaseName(int tenantID, string? sharedDatabaseName)
+    public async Task UpdateDatabaseName(int tenantID, string? databaseName)
     {
       FactoryManager manager = new FactoryManager();
-      await manager.GetTenantManager().UpdateSharedDatabaseName(tenantID, sharedDatabaseName);
+      await manager.GetTenantManager().UpdateDatabaseName(tenantID, databaseName);
     }
 
     public async Task UpdateDropletIdAsync(int tenantId, long dropletId)

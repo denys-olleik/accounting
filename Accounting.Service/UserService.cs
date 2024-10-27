@@ -16,10 +16,10 @@ namespace Accounting.Service
       return await factoryManager.GetUserManager().CreateAsync(user);
     }
 
-    public async Task<User> CreateAsync(User user, string sharedDatabaseName)
+    public async Task<User> CreateAsync(User user, string databaseName)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetUserManager().CreateAsync(user, sharedDatabaseName);
+      return await factoryManager.GetUserManager().CreateAsync(user, databaseName);
     }
 
     public async Task<List<User>> GetAllAsync(int organizationId)

@@ -5,7 +5,7 @@ namespace Accounting.Database.Interfaces
   public interface IOrganizationManager : IGenericRepository<Organization, int>
   {
     Task<Organization> CreateAsync(string organizationName);
-    Task<Organization> CreateAsync(string organizationName, string sharedDatabaseName);
+    Task<Organization> CreateAsync(string organizationName, string databaseName);
     Task<Organization> GetAsync(int organizationId);
     Task<Organization> GetAsync(string name, bool searchTenants);
     Task<string?> GetPaymentInstructions(int organizationId);

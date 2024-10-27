@@ -13,7 +13,7 @@ CREATE TABLE "Tenant"
 (
 	"TenantID" SERIAL PRIMARY KEY NOT NULL,
 	"PublicId" VARCHAR(10) NOT NULL UNIQUE,
-	"SharedDatabaseName" VARCHAR(100) NULL,
+	"DatabaseName" VARCHAR(100) NULL,
 	"FullyQualifiedDomainName" VARCHAR(100) NULL, -- accounting.example.com
 	"Email" VARCHAR(100) NOT NULL,
 	"DropletId" BIGINT NULL,

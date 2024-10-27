@@ -1,4 +1,6 @@
-﻿INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
+﻿INSERT INTO "Tenant" ("PublicId", "Email", "DatabaseName") VALUES ('1', 'test@example.com', 'default');
+
+INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
 VALUES ('test@example.com', 'First1', 'Last1', 'sha1:64000:18:IofuE0pk3LtysdvPabvlsENb9NJ4x7XZ:Ui8pLvVoSzlwUXVARJj8MFEL', 1);
 
 INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
@@ -11,7 +13,8 @@ INSERT INTO "Organization" (
   "AccountsPayableEmail", 
   "AccountsReceivablePhone", 
   "AccountsPayablePhone", 
-  "Website"
+  "Website",
+  "TenantId"
 ) VALUES (
   'Farm To Market LLC', 
   '123 Greenway Blvd
@@ -21,7 +24,8 @@ Beverly Hills, CA 90210',
   'ap@farmtomarketllc.com', 
   '(555) 123-4567', 
   '(555) 765-4321', 
-  'http://www.farmtomarketllc.com'
+  'http://www.farmtomarketllc.com',
+  1
 );
 
 INSERT INTO "Organization" (

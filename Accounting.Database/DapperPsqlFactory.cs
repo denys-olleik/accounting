@@ -2889,7 +2889,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<Organization> CreateAsync(string organizationName, string sharedDatabaseName)
+      public async Task<Organization> CreateAsync(string organizationName, string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Name", organizationName);
@@ -2903,7 +2903,7 @@ namespace Accounting.Database
         IEnumerable<Organization> result;
 
         var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = sharedDatabaseName;
+        builder.Database = databaseName;
         string connectionString = builder.ConnectionString;
 
         using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
@@ -3157,7 +3157,7 @@ namespace Accounting.Database
 
           foreach (var tenant in tenants)
           {
-            builder.Database = tenant.SharedDatabaseName;
+            builder.Database = tenant.DatabaseName;
             using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
             {
               if ((await con.QueryAsync<Organization>("""
@@ -3199,10 +3199,10 @@ namespace Accounting.Database
 
           foreach (var tenant in tenants)
           {
-            if (string.IsNullOrEmpty(tenant.SharedDatabaseName))
+            if (string.IsNullOrEmpty(tenant.DatabaseName))
               continue;
 
-            builder.Database = tenant.SharedDatabaseName;
+            builder.Database = tenant.DatabaseName;
             using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
             {
               var organization = (await con.QueryAsync<Organization>("""
@@ -4493,10 +4493,10 @@ namespace Accounting.Database
 
           foreach (var tenant in tenants)
           {
-            if (string.IsNullOrEmpty(tenant.SharedDatabaseName))
+            if (string.IsNullOrEmpty(tenant.DatabaseName))
               continue;
 
-            builder.Database = tenant.SharedDatabaseName;
+            builder.Database = tenant.DatabaseName;
             using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
             {
               var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
@@ -4641,7 +4641,7 @@ namespace Accounting.Database
 
         Tenant tenant = tenants.Single();
 
-        string databaseName = tenant.SharedDatabaseName;
+        string databaseName = tenant.DatabaseName;
 
         var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
         builder.Database = databaseName;
@@ -5090,9 +5090,9 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task DeleteAsync(string sharedDatabaseName)
+      public async Task DeleteAsync(string databaseName)
       {
-        string sanitizedDbName = Regex.Replace(sharedDatabaseName, @"[^a-zA-Z0-9_]", "");
+        string sanitizedDbName = Regex.Replace(databaseName, @"[^a-zA-Z0-9_]", "");
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.AdminPsql))
         {
@@ -5751,11 +5751,11 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateSharedDatabaseName(int tenantID, string? sharedDatabaseName)
+      public async Task<int> UpdateDatabaseName(int tenantID, string? databaseName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@TenantID", tenantID);
-        p.Add("@SharedDatabaseName", sharedDatabaseName);
+        p.Add("@DatabaseName", databaseName);
 
         int rowsAffected;
 
@@ -5763,7 +5763,7 @@ namespace Accounting.Database
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "Tenant" 
-            SET "SharedDatabaseName" = @SharedDatabaseName
+            SET "DatabaseName" = @DatabaseName
             WHERE "TenantID" = @TenantID
             """, p);
         }
@@ -5832,48 +5832,6 @@ namespace Accounting.Database
 
         return rowsAffected;
       }
-
-      //public async Task<User> FirstInAnyTenantAsync(string email)
-      //{
-      //  DynamicParameters p = new DynamicParameters();
-      //  p.Add("@Email", email);
-
-      //  IEnumerable<User> result;
-
-      //  using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-      //  {
-      //    result = await con.QueryAsync<User>("""
-      //      SELECT * 
-      //      FROM "User" 
-      //      WHERE "Email" = @Email
-      //      """, p);
-      //  }
-
-      //  if (!result.Any())
-      //  {
-      //    List<string> sharedDatabaseNames = new List<string>();
-
-      //    List<Tenant> tenants = await GetAllAsync();
-
-      //    if (tenants.Any())
-      //    {
-      //      foreach (Tenant tenant in tenants)
-      //      {
-      //        if (!string.IsNullOrEmpty(tenant.SharedDatabaseName))
-      //          sharedDatabaseNames.Add(tenant.SharedDatabaseName);
-      //      }
-
-      //      foreach (string sharedDatabaseName in sharedDatabaseNames)
-      //      {
-      //        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-      //        builder.Database = sharedDatabaseName;
-      //        string connectionString = builder.ConnectionString;
-      //      }
-      //    }
-      //  }
-
-      //  throw new NotImplementedException();
-      //}
 
       public async Task<List<Tenant>> GetAllAsync()
       {

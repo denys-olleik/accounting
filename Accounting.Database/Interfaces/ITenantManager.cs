@@ -8,9 +8,9 @@ namespace Accounting.Database.Interfaces
     Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
       int page, 
       int pageSize);
-    Task<int> UpdateSharedDatabaseName(
+    Task<int> UpdateDatabaseName(
       int tenantID, 
-      string? sharedDatabaseName);
+      string? databaseName);
     Task<int> UpdateDropletIdAsync(
       int tenantId, 
       long dropletId);
