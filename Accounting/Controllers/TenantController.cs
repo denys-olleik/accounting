@@ -356,6 +356,14 @@ namespace Accounting.Validators
           });
         });
 
+      RuleFor(x => x.FirstName)
+        .NotEmpty()
+        .WithMessage("First name is required.");
+
+      RuleFor(x => x.LastName)
+        .NotEmpty()
+        .WithMessage("Last name is required.");
+
       RuleFor(x => x.OrganizationName)
         .Cascade(CascadeMode.Stop)
         .NotEmpty().WithMessage("Organization name is required.")
@@ -499,7 +507,12 @@ namespace Accounting.Models.Tenant
   public class AddUserOrganizationViewModel
   {
     public int TenantId { get; set; }
-    public string? Email { get; set; }
+    private string? _email;
+    public string? Email
+    {
+      get => _email;
+      set => _email = value?.ToLower();
+    }
     public bool InheritUser { get; set; }
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
