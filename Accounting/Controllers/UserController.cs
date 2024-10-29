@@ -16,11 +16,16 @@ namespace Accounting.Controllers
   {
     private readonly UserOrganizationService _userOrganizationService;
     private readonly UserService _userService;
+    private readonly SecretService _secretService;
 
-    public UserController(UserOrganizationService userOrganizationService, UserService userService)
+    public UserController(
+      UserOrganizationService userOrganizationService, 
+      UserService userService, 
+      SecretService secretService)
     {
       _userOrganizationService = userOrganizationService;
       _userService = userService;
+      _secretService = secretService;
     }
 
     [HttpGet]
@@ -67,7 +72,7 @@ namespace Accounting.Controllers
 
       InvitationService invitationService = new InvitationService();
 
-      EmailService emailService = new EmailService();
+      EmailService emailService = new EmailService(_secretService);
       using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
         User user = await _userService.CreateAsync(new User()

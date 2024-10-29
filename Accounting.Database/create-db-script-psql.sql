@@ -66,6 +66,16 @@ CREATE TABLE "UserOrganization"
 	UNIQUE ("UserId", "OrganizationId")
 );
 
+CREATE TABLE "LoginWithoutPassword"
+(
+	"LoginWithoutPasswordID" SERIAL PRIMARY KEY NOT NULL,
+	"Code" VARCHAR(100) NOT NULL,
+	"Email" VARCHAR(100) NOT NULL,
+	"Expires" TIMESTAMPTZ NOT NULL,
+	"Completed" TIMESTAMPTZ NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+);
+
 CREATE TABLE "Cloud"
 (
 	"CloudID" SERIAL PRIMARY KEY NOT NULL,
@@ -601,7 +611,7 @@ CREATE TABLE "Secret"
 	"Purpose" VARCHAR(100) NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
-	"OrganizationId" INT NOT NULL,
+	"OrganizationId" INT NULL,
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );

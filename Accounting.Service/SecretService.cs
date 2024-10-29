@@ -46,7 +46,7 @@ namespace Accounting.Service
         .GetAsync(id, organizationId);
     }
 
-    public async Task<Secret?> GetAsync(string key, int organizationId)
+    public async Task<Secret> GetAsync(string key, int? organizationId = null)
     {
       FactoryManager manager = new FactoryManager();
       return await manager

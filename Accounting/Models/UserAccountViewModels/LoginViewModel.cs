@@ -4,8 +4,19 @@ namespace Accounting.Models.UserAccountViewModels
 {
   public class LoginViewModel
   {
-    public string Email { get; set; }
-    public string Password { get; set; }
-    public ValidationResult ValidationResult { get; set; }
+    private string? email;
+    public string? Email
+    {
+      get
+      {
+        return email;
+      }
+      set
+      {
+        email = value?.Trim()!.ToLower()!;
+      }
+    }
+    public string? Password { get; set; }
+    public ValidationResult? ValidationResult { get; set; }
   }
 }

@@ -195,5 +195,10 @@ namespace Accounting.Database
     {
       return databaseFactoryDefinition.GetApplicationSettingManager();
     }
+
+    public ILoginWithoutPasswordManager GetLoginWithoutPasswordManager()
+    {
+      return databaseFactoryDefinition.GetLoginWithoutPasswordManager();
+    }
   }
 }

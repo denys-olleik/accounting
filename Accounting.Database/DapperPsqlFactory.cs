@@ -5,6 +5,7 @@ using Accounting.Database.Interfaces;
 using Npgsql;
 using System.Data;
 using System.Text.RegularExpressions;
+using Renci.SshNet.Security;
 
 namespace Accounting.Database
 {
@@ -6021,11 +6022,11 @@ namespace Accounting.Database
         return result.Single();
       }
 
-      public async Task<Secret?> GetAsync(string key, int organizationId)
+      public async Task<Secret> GetAsync(string key, int? organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Key", key);
-        p.Add("@OrganizationId", organizationId);
+        p.Add("@OrganizationId", organizationId, DbType.Int32);
 
         IEnumerable<Secret> result;
 
@@ -6035,7 +6036,7 @@ namespace Accounting.Database
             SELECT * 
             FROM "Secret" 
             WHERE "Key" = @Key
-            AND "OrganizationId" = @OrganizationId
+            AND (@OrganizationId IS NULL OR "OrganizationId" = @OrganizationId)
             """, p);
         }
 
@@ -6141,6 +6142,85 @@ namespace Accounting.Database
       }
 
       public int Update(ApplicationSetting entity)
+      {
+        throw new NotImplementedException();
+      }
+    }
+
+    public ILoginWithoutPasswordManager GetLoginWithoutPasswordManager()
+    {
+      return new LoginWithoutPasswordManager();
+    }
+
+    public class LoginWithoutPasswordManager : ILoginWithoutPasswordManager
+    {
+      public LoginWithoutPassword Create(LoginWithoutPassword entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Task<LoginWithoutPassword> CreateAsync(LoginWithoutPassword entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      //public class LoginWithoutPassword : IIdentifiable<int>
+      //{
+      //  public int LoginWithoutPasswordID { get; set; }
+      //  public string? Code { get; set; }
+      //  public string? Email { get; set; }
+      //  public DateTime Expires { get; set; }
+      //  public DateTime? Completed { get; set; }
+      //  public DateTime Created { get; set; }
+
+      //  public int Identifiable => this.LoginWithoutPasswordID;
+      //}
+
+      //CREATE TABLE "LoginWithoutPassword"
+      //(
+      //	"LoginWithoutPasswordID" SERIAL PRIMARY KEY NOT NULL,
+      //	"Code" VARCHAR(100) NOT NULL,
+      //	"Email" VARCHAR(100) NOT NULL,
+      //	"Expires" TIMESTAMPTZ NOT NULL,
+      //	"Completed" TIMESTAMPTZ NULL,
+      //	"Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+      //);
+
+      public async Task<LoginWithoutPassword> CreateAsync(string email)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+
+        IEnumerable<LoginWithoutPassword> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<LoginWithoutPassword>("""
+            INSERT INTO "LoginWithoutPassword" ("Code", "Email", "Expires") 
+            VALUES (substr(md5(random()::text), 1, 10), @Email, CURRENT_TIMESTAMP AT TIME ZONE 'UTC' + INTERVAL '5 minute')
+            RETURNING *;
+            """, p);
+        }
+
+        return result.Single();
+      }
+
+      public int Delete(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public LoginWithoutPassword Get(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public IEnumerable<LoginWithoutPassword> GetAll()
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Update(LoginWithoutPassword entity)
       {
         throw new NotImplementedException();
       }

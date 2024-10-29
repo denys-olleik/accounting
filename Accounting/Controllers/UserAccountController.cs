@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
+using System.Transactions;
 using static Accounting.Business.Claim;
 
 namespace Accounting.Controllers
@@ -21,15 +22,21 @@ namespace Accounting.Controllers
     private readonly OrganizationService _organizationService;
     private readonly UserOrganizationService _userOrganizationService;
     private readonly UserService _userService;
+    private readonly LoginWithoutPasswordService _loginWithoutPasswordService;
+    private readonly EmailService _emailService;
 
     public UserAccountController(
-      OrganizationService organizationService, 
-      UserOrganizationService userOrganizationService, 
-      UserService userService)
+      OrganizationService organizationService,
+      UserOrganizationService userOrganizationService,
+      UserService userService,
+      LoginWithoutPasswordService loginWithoutPasswordService,
+      EmailService emailService)
     {
       _organizationService = organizationService;
       _userOrganizationService = userOrganizationService;
       _userService = userService;
+      _loginWithoutPasswordService = loginWithoutPasswordService;
+      _emailService = emailService;
     }
 
     [AllowAnonymous]
@@ -54,11 +61,11 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      User user = await _userService.GetAsync(model.Email, true);
+      User user = await _userService.GetAsync(model.Email!, true);
 
       if (
         user != null
-        && !string.IsNullOrEmpty(user.Password)
+        && (!string.IsNullOrEmpty(user.Password) && !string.IsNullOrEmpty(model.Password))
         && PasswordStorage.VerifyPassword(model.Password, user.Password))
       {
         ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user);
@@ -71,6 +78,18 @@ namespace Accounting.Controllers
           });
 
         return RedirectToAction("ChooseOrganization", "UserAccount");
+      }
+      else if (user != null && string.IsNullOrEmpty(model.Password))
+      {
+        LoginWithoutPassword loginWithoutPassword;
+
+        using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+        {
+          loginWithoutPassword = await _loginWithoutPasswordService.CreateAsync(model.Email!);
+          await _emailService.SendLoginWithoutPasswordAsync(loginWithoutPassword);
+          scope.Complete();
+          return RedirectToAction("CompleteLoginWithoutPassword", "UserAccount", new { Email = model.Email });
+        }
       }
       else
       {

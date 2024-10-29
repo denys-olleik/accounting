@@ -41,5 +41,6 @@ namespace Accounting.Database
     ITenantManager GetTenantManager();
     ISecretManager GetSecretManager();
     IApplicationSettingManager GetApplicationSettingManager();
+    ILoginWithoutPasswordManager GetLoginWithoutPasswordManager();
   }
 }

@@ -70,12 +70,13 @@ builder.Services.AddTransient<TenantService>();
 builder.Services.AddTransient<SecretService>();
 builder.Services.AddTransient<CloudServices>();
 builder.Services.AddTransient<DatabaseService>();
+builder.Services.AddTransient<EmailService>();
+builder.Services.AddTransient<LoginWithoutPasswordService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 ConfigurationSingleton.Instance.ConnectionStringPsql = builder.Configuration["ConnectionStrings:Psql"];
 ConfigurationSingleton.Instance.AdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
 ConfigurationSingleton.Instance.InvitationExpirationMinutes = Convert.ToInt32(builder.Configuration["InvitationExpirationMinutes"]);
-ConfigurationSingleton.Instance.SendgridKey = builder.Configuration["SendgridKey"];
 ConfigurationSingleton.Instance.NoReplyEmailAddress = builder.Configuration["NoReplyEmailAddress"];
 ConfigurationSingleton.Instance.TempPath = builder.Configuration["TempPath"];
 ConfigurationSingleton.Instance.PermPath = builder.Configuration["PermPath"];
