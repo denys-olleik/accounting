@@ -1,5 +1,82 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Accounting.Models.ApplicationSettingViewModels.ApplicationSettingsViewModel
+
 @{
+  ViewData["Title"] = "Application Settings - " + ConfigurationSingleton.Instance.ApplicationName;
 }
+
+@{
+  string headerText = "Application Settings";
+}
+
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<template id="application-setting-action-template">
+  <div class="display-flex padding-top-bottom-2px">
+    <div class="display-flex flex-1">
+      <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ applicationSetting.key }}</a>
+      <span v-if="isExpanded" class="display-flex margin-left-2px">
+        <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+          <div class="flex-1"></div>
+          <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/ApplicationSetting/Update/' + applicationSetting.applicationSettingID" class="font-size-16px font-Roboto color-white text-decoration-none">update</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/application-setting/delete/' + applicationSetting.applicationSettingID" class="font-size-16px font-Roboto color-white text-decoration-none">delete</a>
+          <div class="flex-1"></div>
+        </div>
+      </span>
+    </div>
+  </div>
+</template>
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div>
+    <a asp-action="Create" asp-controller="ApplicationSetting" class="font-Roboto font-size-16px color-blue">Create Application Setting</a>
+  </div>
+</div>
+
+<div id="app" class="background-color-antiquewhite">
+  <table class="border-collapse width-100 margin-bottom-5px">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th class="text-align-left width-1px padding-right-20px">#</th>
+        <th class="text-align-left width-1px padding-right-20px white-space-nowrap">Key</th>
+        <th class="text-align-left width-1px padding-right-20px white-space-nowrap">Value</th>
+      </tr>
+    </thead>
+    <tbody class="font-Roboto-Mono">
+      <tr v-for="applicationSetting in applicationSettings" :key="applicationSetting.applicationSettingID">
+        <td class="padding-right-20px">{{ applicationSetting.applicationSettingID }}</td>
+        <td class="padding-right-20px white-space-nowrap">
+          <a href="#" @@click.prevent="toggleAction(applicationSetting)">{{ applicationSetting.key }}</a>
+        </td>
+        <td class="padding-right-20px white-space-nowrap">{{ applicationSetting.value }}</td>
+      </tr>
+  </table>
+</div>
+
+<script>
+  const { createApp } = Vue;
+
+  const app = createApp({
+    data() {
+      return {
+        applicationSettings: @Html.Raw(Json.Serialize(Model.ApplicationSettings))
+
+        }
+    },
+    methods: {
+
+    }
+  });
+
+  app.mount('#app');
+</script>

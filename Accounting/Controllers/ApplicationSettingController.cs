@@ -41,8 +41,6 @@ namespace Accounting.Models.ApplicationSettingViewModels
   public class ApplicationSettingsViewModel
   {
     public List<ApplicationSettingViewModel>? ApplicationSettings { get; set; }
-
-    
   }
 
   public class ApplicationSettingViewModel
