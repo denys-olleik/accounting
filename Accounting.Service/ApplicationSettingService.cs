@@ -5,6 +5,12 @@ namespace Accounting.Service
 {
   public class ApplicationSettingService
   {
+    public async Task<List<ApplicationSetting>> GetAllAsync()
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      return await factoryManager.GetApplicationSettingManager().GetAllAsync();
+    }
+
     public async Task<ApplicationSetting> GetAsync(string key)
     {
       FactoryManager factoryManager = new FactoryManager();

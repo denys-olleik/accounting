@@ -6122,6 +6122,21 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<List<ApplicationSetting>> GetAllAsync()
+      {
+        IEnumerable<ApplicationSetting> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<ApplicationSetting>("""
+            SELECT * 
+            FROM "ApplicationSetting"
+            """);
+        }
+
+        return result.ToList();
+      }
+
       public async Task<ApplicationSetting?> GetAsync(string key)
       {
         DynamicParameters p = new DynamicParameters();
