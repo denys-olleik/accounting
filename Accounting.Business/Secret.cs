@@ -6,7 +6,6 @@ namespace Accounting.Business
   public class Secret : IIdentifiable<int>
   {
     public int SecretID { get; set; }
-    public string? Key { get; set; }
     public bool Master { get; set; }
     public string? Value { get; set; }
     public string? Type { get; set; }

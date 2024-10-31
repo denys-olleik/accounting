@@ -604,10 +604,10 @@ CREATE EXTENSION pgcrypto;
 CREATE TABLE "Secret"
 (
 	"SecretID" SERIAL PRIMARY KEY NOT NULL,
-	"Key" VARCHAR(100) NOT NULL UNIQUE,
 	"Master" BOOLEAN DEFAULT FALSE,
 	"Value" TEXT NOT NULL,
-	"Type" VARCHAR(20) CHECK ("Type" IN ('email', 'sms', 'cloud')) NULL,
+	"ValueEncrypted" BOOLEAN NOT NULL DEFAULT FALSE,
+	"Type" VARCHAR(20) CHECK ("Type" IN ('email', 'sms', 'cloud', 'noreply', 'tenant-management')) NOT NULL UNIQUE,
 	"Purpose" VARCHAR(100) NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,

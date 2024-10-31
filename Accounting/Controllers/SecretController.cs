@@ -28,7 +28,6 @@ namespace Accounting.Controllers
       model.Secrets = secrets.Select(secret => new SecretsViewModel.SecretViewModel
       {
         SecretID = secret.SecretID,
-        Key = secret.Key,
         Master = secret.Master,
         Type = secret.Type,
         Purpose = secret.Purpose
@@ -85,7 +84,6 @@ namespace Accounting.Controllers
       DeleteSecretViewModel model = new DeleteSecretViewModel
       {
         SecretID = secret.SecretID,
-        Key = secret.Key,
         Type = secret.Type,
         Purpose = secret.Purpose
       };
