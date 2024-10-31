@@ -114,6 +114,11 @@ if (!ConfigurationSingleton.Instance.TenantManagement)
   await IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsTrueThere();
 #endregion
 
+#region LoadNoReplyEmailAddress
+ConfigurationSingleton.Instance.NoReplyEmailAddress = (await LoadNoReplyEmailAddress())?.Value
+    ?? ConfigurationSingleton.Instance.NoReplyEmailAddress;
+#endregion
+
 if (!app.Environment.IsDevelopment())
 {
   app.UseExceptionHandler("/Home/Error");
@@ -146,4 +151,11 @@ async Task IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsT
     ConfigurationSingleton.Instance.TenantManagement
         = Convert.ToBoolean(tenantManagement.Value);
   }
+}
+
+async Task<ApplicationSetting> LoadNoReplyEmailAddress()
+{
+  ApplicationSettingService applicationSettingsService = new ApplicationSettingService();
+  var noReplyEmailAddress = await applicationSettingsService.GetAsync(ApplicationSetting.ApplicationSettingsConstants.NoReplyEmailAddress);
+  return noReplyEmailAddress;
 }

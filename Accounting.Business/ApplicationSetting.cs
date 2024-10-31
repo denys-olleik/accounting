@@ -15,6 +15,7 @@ namespace Accounting.Business
     public class ApplicationSettingsConstants
     {
       public const string TenantManagement = "tenant-management";
+      public const string NoReplyEmailAddress = "noreply";
 
       private static readonly List<string> _all = new List<string>();
 

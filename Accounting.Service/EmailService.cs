@@ -29,24 +29,12 @@ namespace Accounting.Service
       var response = await client.SendEmailAsync(msg);
     }
 
-    //public class LoginWithoutPassword : IIdentifiable<int>
-    //{
-    //  public int LoginWithoutPasswordID { get; set; }
-    //  public string? Code { get; set; }
-    //  public string? Email { get; set; }
-    //  public DateTime Expires { get; set; }
-    //  public DateTime? Completed { get; set; }
-    //  public DateTime Created { get; set; }
-
-    //  public int Identifiable => this.LoginWithoutPasswordID;
-    //}
-
     public async Task SendLoginWithoutPasswordAsync(LoginWithoutPassword loginWithoutPassword)
     {
       var emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email);
       var client = new SendGridClient(emailSecret!.Value);
 
-      var from = new EmailAddress("noreply@example.com");
+      var from = new EmailAddress(ConfigurationSingleton.Instance.NoReplyEmailAddress);
       var subject = $"Login without password for {ConfigurationSingleton.Instance.ApplicationName}";
       var to = new EmailAddress(loginWithoutPassword.Email);
       var plainTextContent = $"Login code: {loginWithoutPassword.Code}";
