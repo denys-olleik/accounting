@@ -16,5 +16,11 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetApplicationSettingManager().GetAsync(key);
     }
+
+    public async Task UpsertAsync(ApplicationSetting applicationSetting)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      await factoryManager.GetApplicationSettingManager().UpsertAsync(applicationSetting);
+    }
   }
 }

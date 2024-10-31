@@ -6,5 +6,6 @@ namespace Accounting.Database.Interfaces
   {
     Task<List<ApplicationSetting>> GetAllAsync();
     Task<ApplicationSetting> GetAsync(string key);
+    Task<ApplicationSetting> UpsertAsync(ApplicationSetting applicationSetting);
   }
 }

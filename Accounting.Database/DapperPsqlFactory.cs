@@ -6102,7 +6102,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public Task<ApplicationSetting> CreateAsync(ApplicationSetting entity)
+      public async Task<ApplicationSetting> CreateAsync(ApplicationSetting entity)
       {
         throw new NotImplementedException();
       }
@@ -6159,6 +6159,28 @@ namespace Accounting.Database
       public int Update(ApplicationSetting entity)
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<ApplicationSetting> UpsertAsync(ApplicationSetting applicationSetting)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Key", applicationSetting.Key);
+        p.Add("@Value", applicationSetting.Value);
+
+        IEnumerable<ApplicationSetting> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<ApplicationSetting>("""
+            INSERT INTO "ApplicationSetting" ("Key", "Value") 
+            VALUES (@Key, @Value)
+            ON CONFLICT ("Key") DO UPDATE
+            SET "Value" = @Value
+            RETURNING *;
+            """, p);
+        }
+
+        return result.Single();
       }
     }
 
