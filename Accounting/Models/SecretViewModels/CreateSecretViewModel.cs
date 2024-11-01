@@ -30,9 +30,6 @@ namespace Accounting.Models.SecretViewModels
     {
       _secretService = secretService;
 
-      RuleFor(x => x.Key).NotEmpty().WithMessage("Key is required.")
-                         .MaximumLength(100).WithMessage("Key cannot exceed 100 characters.");
-
       RuleFor(x => x.Value).NotEmpty().WithMessage("Value is required.");
 
       RuleFor(x => x.Type)
