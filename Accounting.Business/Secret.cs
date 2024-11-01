@@ -8,6 +8,7 @@ namespace Accounting.Business
     public int SecretID { get; set; }
     public bool Master { get; set; }
     public string? Value { get; set; }
+    public bool ValueEncrypted { get; set; }
     public string? Type { get; set; }
     public string? Purpose { get; set; }
     public DateTime Created { get; set; }
@@ -24,6 +25,8 @@ namespace Accounting.Business
       public const string Email = "email";
       public const string SMS = "sms";
       public const string Cloud = "cloud";
+      public const string NoReply = "no-reply";
+      public const string TenantManagement = "tenant-management";
 
       private static readonly List<string> _all = new List<string>();
 

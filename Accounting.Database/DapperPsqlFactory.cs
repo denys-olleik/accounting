@@ -6022,10 +6022,10 @@ namespace Accounting.Database
         return result.Single();
       }
 
-      public async Task<Secret> GetAsync(string key, int? organizationId)
+      public async Task<Secret> GetAsync(string type, int? organizationId)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@Key", key);
+        p.Add("@Type", type);
         p.Add("@OrganizationId", organizationId, DbType.Int32);
 
         IEnumerable<Secret> result;
@@ -6035,7 +6035,7 @@ namespace Accounting.Database
           result = await con.QueryAsync<Secret>("""
             SELECT * 
             FROM "Secret" 
-            WHERE "Key" = @Key
+            WHERE "Type" = @Type
             AND (@OrganizationId IS NULL OR "OrganizationId" = @OrganizationId)
             """, p);
         }
@@ -6087,100 +6087,6 @@ namespace Accounting.Database
       public int Update(Secret entity)
       {
         throw new NotImplementedException();
-      }
-    }
-
-    public IApplicationSettingManager GetApplicationSettingManager()
-    {
-      return new ApplicationSettingManager();
-    }
-
-    public class ApplicationSettingManager : IApplicationSettingManager
-    {
-      public ApplicationSetting Create(ApplicationSetting entity)
-      {
-        throw new NotImplementedException();
-      }
-
-      public async Task<ApplicationSetting> CreateAsync(ApplicationSetting entity)
-      {
-        throw new NotImplementedException();
-      }
-
-      public int Delete(int id)
-      {
-        throw new NotImplementedException();
-      }
-
-      public ApplicationSetting Get(int id)
-      {
-        throw new NotImplementedException();
-      }
-
-      public IEnumerable<ApplicationSetting> GetAll()
-      {
-        throw new NotImplementedException();
-      }
-
-      public async Task<List<ApplicationSetting>> GetAllAsync()
-      {
-        IEnumerable<ApplicationSetting> result;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-        {
-          result = await con.QueryAsync<ApplicationSetting>("""
-            SELECT * 
-            FROM "ApplicationSetting"
-            """);
-        }
-
-        return result.ToList();
-      }
-
-      public async Task<ApplicationSetting?> GetAsync(string key)
-      {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@Key", key);
-
-        IEnumerable<ApplicationSetting> result;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-        {
-          result = await con.QueryAsync<ApplicationSetting>("""
-            SELECT * 
-            FROM "ApplicationSetting" 
-            WHERE "Key" = @Key
-            """, p);
-        }
-
-        return result.SingleOrDefault();
-      }
-
-      public int Update(ApplicationSetting entity)
-      {
-        throw new NotImplementedException();
-      }
-
-      public async Task<ApplicationSetting> UpsertAsync(ApplicationSetting applicationSetting)
-      {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@Key", applicationSetting.Key);
-        p.Add("@Value", applicationSetting.Value);
-
-        IEnumerable<ApplicationSetting> result;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-        {
-          result = await con.QueryAsync<ApplicationSetting>("""
-            INSERT INTO "ApplicationSetting" ("Key", "Value") 
-            VALUES (@Key, @Value)
-            ON CONFLICT ("Key") DO UPDATE
-            SET "Value" = @Value
-            RETURNING *;
-            """, p);
-        }
-
-        return result.Single();
       }
     }
 

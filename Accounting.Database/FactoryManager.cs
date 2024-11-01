@@ -191,11 +191,6 @@ namespace Accounting.Database
       return databaseFactoryDefinition.GetSecretManager();
     }
 
-    public IApplicationSettingManager GetApplicationSettingManager()
-    {
-      return databaseFactoryDefinition.GetApplicationSettingManager();
-    }
-
     public ILoginWithoutPasswordManager GetLoginWithoutPasswordManager()
     {
       return databaseFactoryDefinition.GetLoginWithoutPasswordManager();

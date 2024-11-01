@@ -5,7 +5,6 @@ using Accounting.Filters;
 using Accounting.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
-using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,7 +71,6 @@ builder.Services.AddTransient<CloudServices>();
 builder.Services.AddTransient<DatabaseService>();
 builder.Services.AddTransient<EmailService>();
 builder.Services.AddTransient<LoginWithoutPasswordService>();
-builder.Services.AddTransient<ApplicationSettingService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 ConfigurationSingleton.Instance.ConnectionStringPsql = builder.Configuration["ConnectionStrings:Psql"];
@@ -143,8 +141,8 @@ app.Run();
 
 async Task IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsTrueThere()
 {
-  ApplicationSettingService applicationSettingsService = new ApplicationSettingService();
-  var tenantManagement = await applicationSettingsService.GetAsync(ApplicationSetting.ApplicationSettingsConstants.TenantManagement);
+  SecretService secretService = new SecretService();
+  var tenantManagement = await secretService.GetAsync(Secret.SecretTypeConstants.TenantManagement);
 
   if (tenantManagement != null)
   {
@@ -153,9 +151,9 @@ async Task IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsT
   }
 }
 
-async Task<ApplicationSetting> LoadNoReplyEmailAddress()
+async Task<Secret> LoadNoReplyEmailAddress()
 {
-  ApplicationSettingService applicationSettingsService = new ApplicationSettingService();
-  var noReplyEmailAddress = await applicationSettingsService.GetAsync(ApplicationSetting.ApplicationSettingsConstants.NoReplyEmailAddress);
+  SecretService secretService = new SecretService();
+  var noReplyEmailAddress = await secretService.GetAsync(Secret.SecretTypeConstants.NoReply);
   return noReplyEmailAddress;
 }

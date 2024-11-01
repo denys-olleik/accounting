@@ -1,13 +1,13 @@
-﻿CREATE TABLE "ApplicationSetting"
-(
-	"ApplicationSettingID" SERIAL PRIMARY KEY NOT NULL,
-	"Key" VARCHAR(100) NOT NULL UNIQUE,
-	"Value" VARCHAR(100) NOT NULL,
-	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
-);
+﻿--CREATE TABLE "ApplicationSetting"
+--(
+--	"ApplicationSettingID" SERIAL PRIMARY KEY NOT NULL,
+--	"Key" VARCHAR(100) NOT NULL UNIQUE,
+--	"Value" VARCHAR(100) NOT NULL,
+--	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+--);
 
-INSERT INTO "ApplicationSetting" ("Key", "Value") VALUES 
-('tenant-management', 'false');
+--INSERT INTO "ApplicationSetting" ("Key", "Value") VALUES 
+--('tenant-management', 'false');
 
 CREATE TABLE "Tenant"
 (
@@ -607,14 +607,17 @@ CREATE TABLE "Secret"
 	"Master" BOOLEAN DEFAULT FALSE,
 	"Value" TEXT NOT NULL,
 	"ValueEncrypted" BOOLEAN NOT NULL DEFAULT FALSE,
-	"Type" VARCHAR(20) CHECK ("Type" IN ('email', 'sms', 'cloud', 'noreply', 'tenant-management')) NOT NULL UNIQUE,
+	"Type" VARCHAR(20) CHECK ("Type" IN ('email', 'sms', 'cloud', 'no-reply', 'tenant-management')) NOT NULL UNIQUE,
 	"Purpose" VARCHAR(100) NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-	"CreatedById" INT NOT NULL,
+	"CreatedById" INT NULL,
 	"OrganizationId" INT NULL,
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
+
+INSERT INTO "Secret" ("Master", "Value", "Type") VALUES
+('false', 'false', 'tenant-management');
 
 CREATE UNIQUE INDEX unique_master_per_organization
 ON "Secret" ("OrganizationId")
