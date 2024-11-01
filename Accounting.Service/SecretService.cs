@@ -6,7 +6,6 @@ namespace Accounting.Service
   public class SecretService
   {
     public async Task<Secret> CreateAsync(
-      string? key, 
       bool master,
       string? value, 
       string? type,
@@ -17,7 +16,7 @@ namespace Accounting.Service
       FactoryManager manager = new FactoryManager();
       return await manager
         .GetSecretManager()
-        .CreateAsync(key, master, value, type, purpose, organizationId, createdById);
+        .CreateAsync(master, value, type, purpose, organizationId, createdById);
     }
 
     public async Task<int> DeleteAsync(int id, int organizationId)

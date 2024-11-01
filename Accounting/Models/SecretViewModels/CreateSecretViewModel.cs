@@ -6,12 +6,10 @@ namespace Accounting.Models.SecretViewModels
 {
   public class CreateSecretViewModel
   {
-    private string? _key;
     private string? _value;
     private string? _type;
     private string? _purpose;
 
-    public string? Key { get => _key; set => _key = value?.Trim(); }
     public string? Value { get => _value; set => _value = value?.Trim(); }
     public string? Type { get => _type; set => _type = value?.Trim(); }
     public string? Purpose { get => _purpose; set => _purpose = value?.Trim(); }
@@ -62,10 +60,10 @@ namespace Accounting.Models.SecretViewModels
 
     private async Task<bool> KeyNotExists(CreateSecretViewModel model, CancellationToken cancellationToken)
     {
-      if (string.IsNullOrEmpty(model.Key))
+      if (string.IsNullOrEmpty(model.Type))
         return true;
 
-      var secret = await _secretService.GetAsync(model.Key, model.OrganizationId);
+      var secret = await _secretService.GetAsync(model.Type, model.OrganizationId);
       return secret == null;
     }
 
