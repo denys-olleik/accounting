@@ -24,19 +24,22 @@ namespace Accounting.Controllers
     private readonly UserService _userService;
     private readonly LoginWithoutPasswordService _loginWithoutPasswordService;
     private readonly EmailService _emailService;
+    private readonly SecretService _secretService;
 
     public UserAccountController(
       OrganizationService organizationService,
       UserOrganizationService userOrganizationService,
       UserService userService,
       LoginWithoutPasswordService loginWithoutPasswordService,
-      EmailService emailService)
+      EmailService emailService,
+      SecretService secretService)
     {
       _organizationService = organizationService;
       _userOrganizationService = userOrganizationService;
       _userService = userService;
       _loginWithoutPasswordService = loginWithoutPasswordService;
       _emailService = emailService;
+      _secretService = secretService;
     }
 
     [AllowAnonymous]
@@ -81,6 +84,17 @@ namespace Accounting.Controllers
       }
       else if (user != null && string.IsNullOrEmpty(model.Password))
       {
+        Secret? emailApiKeySecret = await _secretService.GetByTypeAsync(Secret.SecretTypeConstants.Email, GetOrganizationId());
+
+        if (emailApiKeySecret == null)
+        {
+          model.ValidationResult = new ValidationResult(new List<ValidationFailure>()
+          {
+            new ValidationFailure("Email", "Email service requires API key.")
+          });
+          return View(model);
+        }
+
         LoginWithoutPassword loginWithoutPassword;
 
         using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))

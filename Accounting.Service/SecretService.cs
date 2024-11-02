@@ -45,12 +45,12 @@ namespace Accounting.Service
         .GetAsync(id, organizationId);
     }
 
-    public async Task<Secret> GetAsync(string key, int? organizationId = null)
+    public async Task<Secret?> GetAsync(string type, int? organizationId = null)
     {
       FactoryManager manager = new FactoryManager();
       return await manager
         .GetSecretManager()
-        .GetAsync(key, organizationId);
+        .GetAsync(type, organizationId);
     }
 
     public async Task<Secret?> GetByTypeAsync(string type, int organizationId)
