@@ -76,7 +76,6 @@ ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["Applica
 ConfigurationSingleton.Instance.ConnectionStringPsql = builder.Configuration["ConnectionStrings:Psql"];
 ConfigurationSingleton.Instance.AdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
 ConfigurationSingleton.Instance.InvitationExpirationMinutes = Convert.ToInt32(builder.Configuration["InvitationExpirationMinutes"]);
-ConfigurationSingleton.Instance.NoReplyEmailAddress = builder.Configuration["NoReplyEmailAddress"];
 ConfigurationSingleton.Instance.TempPath = builder.Configuration["TempPath"];
 ConfigurationSingleton.Instance.PermPath = builder.Configuration["PermPath"];
 

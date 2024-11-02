@@ -85,8 +85,9 @@ namespace Accounting.Controllers
       else if (user != null && string.IsNullOrEmpty(model.Password))
       {
         Secret? emailApiKeySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, null);
+        Secret? noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, null);
 
-        if (emailApiKeySecret == null)
+        if (emailApiKeySecret == null && noReplySecret != null)
         {
           model.ValidationResult = new ValidationResult(new List<ValidationFailure>()
           {

@@ -4657,7 +4657,7 @@ namespace Accounting.Database
             FROM "UserOrganization" uo
             INNER JOIN "User" u ON uo."UserId" = u."UserID"
             INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
-            """, 
+            """,
             (uo, u, o)
               =>
             {
