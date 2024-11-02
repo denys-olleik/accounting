@@ -6021,7 +6021,7 @@ namespace Accounting.Database
         return result.Single();
       }
 
-      public async Task<Secret> GetAsync(string type, int? organizationId)
+      public async Task<Secret?> GetAsync(string type, int? organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Type", type);
@@ -6036,27 +6036,6 @@ namespace Accounting.Database
             FROM "Secret" 
             WHERE "Type" = @Type
             AND (@OrganizationId IS NULL OR "OrganizationId" = @OrganizationId)
-            """, p);
-        }
-
-        return result.SingleOrDefault();
-      }
-
-      public async Task<Secret?> GetByTypeAsync(string type, int organizationId)
-      {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@Type", type);
-        p.Add("@OrganizationId", organizationId);
-
-        IEnumerable<Secret> result;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-        {
-          result = await con.QueryAsync<Secret>("""
-            SELECT * 
-            FROM "Secret" 
-            WHERE "Type" = @Type
-            AND "OrganizationId" = @OrganizationId
             """, p);
         }
 

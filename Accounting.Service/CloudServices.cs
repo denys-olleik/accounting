@@ -26,7 +26,7 @@ namespace Accounting.Service
 
       public async Task CreateDropletAsync(Tenant tenant)
       {
-        Secret? cloudSecret = await _secretService.GetByTypeAsync(Secret.SecretTypeConstants.Cloud, _organizationId);
+        Secret? cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, _organizationId);
         if (cloudSecret == null)
         {
           throw new InvalidOperationException("Cloud secret not found");

@@ -444,7 +444,7 @@ namespace Accounting.Validators
 
     private async Task<bool> HasRequiredSecretsAsync(int organizationId, bool isShared)
     {
-      var emailSecret = await _secretService.GetByTypeAsync(
+      var emailSecret = await _secretService.GetAsync(
           Secret.SecretTypeConstants.Email,
           organizationId);
 
@@ -456,7 +456,7 @@ namespace Accounting.Validators
       else
       {
         // Both email and cloud secrets are required if Shared is false
-        var cloudSecret = await _secretService.GetByTypeAsync(
+        var cloudSecret = await _secretService.GetAsync(
             Secret.SecretTypeConstants.Cloud,
             organizationId);
         return emailSecret != null && cloudSecret != null;
