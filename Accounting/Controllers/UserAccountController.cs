@@ -87,11 +87,11 @@ namespace Accounting.Controllers
         Secret? emailApiKeySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, null);
         Secret? noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, null);
 
-        if (emailApiKeySecret == null && noReplySecret != null)
+        if (emailApiKeySecret == null || noReplySecret == null)
         {
           model.ValidationResult = new ValidationResult(new List<ValidationFailure>()
           {
-            new ValidationFailure("Email", "Email service requires API key.")
+              new ValidationFailure("Email", "Passwordless login requires an API key and 'no-reply' secrets to be set up.")
           });
           return View(model);
         }
