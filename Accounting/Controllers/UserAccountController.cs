@@ -121,9 +121,8 @@ namespace Accounting.Controllers
     [HttpGet]
     public IActionResult CompleteLoginWithoutPassword(string email)
     {
-      return View();
+      return View(email);
     }
-
 
     [HttpGet]
     [Route("choose-organization")]
