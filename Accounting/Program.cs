@@ -112,8 +112,7 @@ if (!ConfigurationSingleton.Instance.TenantManagement)
 #endregion
 
 #region LoadNoReplyEmailAddress
-ConfigurationSingleton.Instance.NoReplyEmailAddress = (await LoadNoReplyEmailAddress())?.Value
-    ?? ConfigurationSingleton.Instance.NoReplyEmailAddress;
+ConfigurationSingleton.Instance.NoReplyEmailAddress = (await LoadNoReplyEmailAddress())?.Value;
 #endregion
 
 if (!app.Environment.IsDevelopment())

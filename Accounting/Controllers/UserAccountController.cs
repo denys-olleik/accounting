@@ -116,6 +116,15 @@ namespace Accounting.Controllers
       }
     }
 
+    [AllowAnonymous]
+    [Route("complete-login-without-password/{email}")]
+    [HttpGet]
+    public IActionResult CompleteLoginWithoutPassword(string email)
+    {
+      return View();
+    }
+
+
     [HttpGet]
     [Route("choose-organization")]
     public async Task<IActionResult> ChooseOrganization()
