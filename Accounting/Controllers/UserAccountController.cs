@@ -230,15 +230,18 @@ namespace Accounting.Controllers
       return RedirectToAction("Index", "Home");
     }
 
-    private ClaimsPrincipal CreateClaimsPricipal(User user, int? organizatonId = null, string? organizationName = null)
+    private ClaimsPrincipal CreateClaimsPricipal(
+      User user, 
+      int? organizatonId = null, 
+      string? organizationName = null)
     {
       List<System.Security.Claims.Claim> claims = new List<System.Security.Claims.Claim>()
-            {
-                new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
-                new System.Security.Claims.Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()),
-                new System.Security.Claims.Claim(ClaimTypes.Email, user.Email),
-                new System.Security.Claims.Claim(CustomClaimTypeConstants.Password, user.Password)
-            };
+        {
+          new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
+          new System.Security.Claims.Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()),
+          new System.Security.Claims.Claim(ClaimTypes.Email, user.Email),
+          new System.Security.Claims.Claim(CustomClaimTypeConstants.Password, user.Password)
+        };
 
       if (organizatonId.HasValue)
       {
