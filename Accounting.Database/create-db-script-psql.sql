@@ -46,9 +46,9 @@ CREATE TABLE "UserOrganization"
 (
 	"UserOrganizationID" SERIAL PRIMARY KEY NOT NULL,
 	"UserId" INT NOT NULL,
+	"OrganizationId" INT NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NULL,
-	"OrganizationId" INT NOT NULL,
 	FOREIGN KEY ("UserId") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
