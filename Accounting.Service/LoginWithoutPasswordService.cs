@@ -10,5 +10,17 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetLoginWithoutPasswordManager().CreateAsync(email);
     }
+
+    public async Task<LoginWithoutPassword?> GetAsync(string email)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      return await factoryManager.GetLoginWithoutPasswordManager().GetAsync(email);
+    }
+
+    public async Task DeleteAsync(LoginWithoutPassword loginWithoutPassword)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      await factoryManager.GetLoginWithoutPasswordManager().DeleteAsync(loginWithoutPassword);
+    }
   }
 }

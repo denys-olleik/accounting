@@ -124,6 +124,42 @@ namespace Accounting.Controllers
       return View(email);
     }
 
+    [AllowAnonymous]
+    [Route("complete-login-without-password/{email}")]
+    [HttpPost]
+    public async Task<IActionResult> CompleteLoginWithoutPassword(CompleteLoginWithoutPasswordViewModel model, string email)
+    {
+      CompleteLoginWithoutPasswordViewModelValidator validator 
+        = new CompleteLoginWithoutPasswordViewModelValidator(_loginWithoutPasswordService);
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      LoginWithoutPassword? loginWithoutPassword = await _loginWithoutPasswordService.GetAsync(model.Email!);
+      
+      if (loginWithoutPassword == null || loginWithoutPassword.IsExpired)
+      {
+        model.ValidationResult.Errors.Add(new ValidationFailure("Code", "Invalid login code."));
+        return View(model);
+      }
+
+      User user = await _userService.GetAsync(model.Email!, true);
+      ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user);
+
+      await HttpContext.SignInAsync(
+        CookieAuthenticationDefaults.AuthenticationScheme,
+        claimsPrincipal,
+        new AuthenticationProperties() { IsPersistent = true }
+      );
+
+      await _loginWithoutPasswordService.DeleteAsync(loginWithoutPassword);
+      return RedirectToAction("ChooseOrganization", "UserAccount");
+    }
+
     [HttpGet]
     [Route("choose-organization")]
     public async Task<IActionResult> ChooseOrganization()

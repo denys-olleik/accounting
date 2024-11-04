@@ -6085,28 +6085,6 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      //public class LoginWithoutPassword : IIdentifiable<int>
-      //{
-      //  public int LoginWithoutPasswordID { get; set; }
-      //  public string? Code { get; set; }
-      //  public string? Email { get; set; }
-      //  public DateTime Expires { get; set; }
-      //  public DateTime? Completed { get; set; }
-      //  public DateTime Created { get; set; }
-
-      //  public int Identifiable => this.LoginWithoutPasswordID;
-      //}
-
-      //CREATE TABLE "LoginWithoutPassword"
-      //(
-      //	"LoginWithoutPasswordID" SERIAL PRIMARY KEY NOT NULL,
-      //	"Code" VARCHAR(100) NOT NULL,
-      //	"Email" VARCHAR(100) NOT NULL,
-      //	"Expires" TIMESTAMPTZ NOT NULL,
-      //	"Completed" TIMESTAMPTZ NULL,
-      //	"Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
-      //);
-
       public async Task<LoginWithoutPassword> CreateAsync(string email)
       {
         DynamicParameters p = new DynamicParameters();
@@ -6131,12 +6109,28 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<int> DeleteAsync(LoginWithoutPassword loginWithoutPassword)
+      {
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+            return await con.ExecuteAsync("""
+                DELETE FROM "LoginWithoutPassword"
+                WHERE "LoginWithoutPasswordID" = @LoginWithoutPasswordID;
+                """, loginWithoutPassword);
+        }
+      }
+
       public LoginWithoutPassword Get(int id)
       {
         throw new NotImplementedException();
       }
 
       public IEnumerable<LoginWithoutPassword> GetAll()
+      {
+        throw new NotImplementedException();
+      }
+
+      public async Task<LoginWithoutPassword?> GetAsync(string email)
       {
         throw new NotImplementedException();
       }

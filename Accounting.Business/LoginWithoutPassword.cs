@@ -11,6 +11,10 @@ namespace Accounting.Business
     public DateTime? Completed { get; set; }
     public DateTime Created { get; set; }
 
+    #region Computed properties
+    public bool IsExpired => DateTime.UtcNow > Expires;
+    #endregion
+
     public int Identifiable => this.LoginWithoutPasswordID;
   }
 }
