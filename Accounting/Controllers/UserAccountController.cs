@@ -248,7 +248,6 @@ namespace Accounting.Controllers
       else
       {
         claims.Add(new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.Email));
-        claims.Add(new System.Security.Claims.Claim(ClaimTypes.Email, user.Email));
       }
 
       claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.Password, user.Password));
