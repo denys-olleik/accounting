@@ -161,8 +161,8 @@ namespace Accounting.Controllers
     }
 
     [HttpGet]
-    [Route("choose-organization")]
-    public async Task<IActionResult> ChooseOrganization()
+    [Route("choose-organization/{tenantPublicId?}")]
+    public async Task<IActionResult> ChooseOrganization(int? tenantPublicId)
     {
       List<(Organization Organization, Tenant? Tenant)> organizationTuples = await _userOrganizationService.GetByEmailAsync(GetEmail(), true);
 
@@ -172,7 +172,7 @@ namespace Accounting.Controllers
         {
           OrganizationId = x.Organization.OrganizationID,
           Name = x.Organization.Name!,
-          TenantId = x.Tenant?.TenantID
+          TenantPublicId = x.Tenant?.TenantID
         }).ToList()
       };
 
@@ -180,16 +180,16 @@ namespace Accounting.Controllers
     }
 
     [HttpPost]
-    [Route("choose-organization")]
-    public async Task<IActionResult> ChooseOrganization(ChooseOrganizationViewModel model)
+    [Route("choose-organization/{tenantPublicId?}")]
+    public async Task<IActionResult> ChooseOrganization(ChooseOrganizationViewModel model, int? tenantPublicId)
     {
       List<Organization> organizations = await _userOrganizationService.GetByUserIdAsync(GetUserId());
 
       model.Organizations = organizations.Select(x => new OrganizationViewModel()
       {
         OrganizationId = x.OrganizationID,
-        Name = x.Name,
-        TenantId = null
+        Name = x.Name!,
+        TenantPublicId = tenantPublicId
       }).ToList();
 
       model.ValidationResult = new ValidationResult();
@@ -200,7 +200,10 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      UserOrganization userOrganization = await _userOrganizationService.GetAsync(GetUserId(), model.SelectedOrganizationId);
+      UserOrganization userOrganization 
+        = await _userOrganizationService.GetAsync(
+          GetUserId(), 
+          model.SelectedOrganizationId!.Value);
 
       User user = (await _userOrganizationService.GetAsync(GetUserId(), userOrganization.OrganizationId)).User!;
 
@@ -209,11 +212,11 @@ namespace Accounting.Controllers
         ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user, userOrganization.OrganizationId, organizations.SingleOrDefault(x => x.OrganizationID == model.SelectedOrganizationId)!.Name);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                                       claimsPrincipal,
-                                       new AuthenticationProperties()
-                                       {
-                                         IsPersistent = true
-                                       });
+          claimsPrincipal,
+          new AuthenticationProperties()
+          {
+            IsPersistent = true
+          });
 
         return RedirectToAction("Index", "Home");
       }
@@ -223,7 +226,6 @@ namespace Accounting.Controllers
         return View(model);
       }
     }
-
 
     [HttpPost]
     [Route("logout")]
