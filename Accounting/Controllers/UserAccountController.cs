@@ -231,27 +231,27 @@ namespace Accounting.Controllers
     }
 
     private ClaimsPrincipal CreateClaimsPricipal(
-      User user, 
-      int? organizatonId = null, 
+      User user,
+      int? organizationId = null,
       string? organizationName = null)
     {
-      List<System.Security.Claims.Claim> claims = new List<System.Security.Claims.Claim>()
-        {
-          new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
-          new System.Security.Claims.Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()),
-          new System.Security.Claims.Claim(ClaimTypes.Email, user.Email),
-          new System.Security.Claims.Claim(CustomClaimTypeConstants.Password, user.Password)
-        };
+      List<System.Security.Claims.Claim> claims = new List<System.Security.Claims.Claim>();
 
-      if (organizatonId.HasValue)
+      if (organizationId.HasValue && !string.IsNullOrEmpty(organizationName))
       {
-        claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationId, organizatonId.Value.ToString()));
-      }
-
-      if (!string.IsNullOrEmpty(organizationName))
-      {
+        claims.Add(new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()));
+        claims.Add(new System.Security.Claims.Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()));
+        claims.Add(new System.Security.Claims.Claim(ClaimTypes.Email, user.Email));
+        claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationId, organizationId.Value.ToString()));
         claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationName, organizationName));
       }
+      else
+      {
+        claims.Add(new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.Email));
+        claims.Add(new System.Security.Claims.Claim(ClaimTypes.Email, user.Email));
+      }
+
+      claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.Password, user.Password));
 
       ClaimsIdentity identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
       return new ClaimsPrincipal(identity);
