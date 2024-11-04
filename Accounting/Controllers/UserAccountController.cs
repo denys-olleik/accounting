@@ -183,7 +183,7 @@ namespace Accounting.Controllers
     [Route("choose-organization/{tenantPublicId?}")]
     public async Task<IActionResult> ChooseOrganization(ChooseOrganizationViewModel model, int? tenantPublicId)
     {
-      List<Organization> organizations = await _userOrganizationService.GetByUserIdAsync(GetUserId());
+      List<Organization> organizations = await _userOrganizationService.GetByUserIdAsync(GetUserId(), tenantPublicId);
 
       model.Organizations = organizations.Select(x => new OrganizationViewModel()
       {

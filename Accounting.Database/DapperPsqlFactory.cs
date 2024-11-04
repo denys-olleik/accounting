@@ -4786,7 +4786,7 @@ namespace Accounting.Database
         return organizationsWithTenants;
       }
 
-      public async Task<List<Organization>> GetByUserIdAsync(int userId)
+      public async Task<List<Organization>> GetByUserIdAsync(int userId, int? tenantPublicId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@UserId", userId);

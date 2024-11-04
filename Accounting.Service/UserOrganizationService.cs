@@ -5,10 +5,10 @@ namespace Accounting.Service
 {
   public class UserOrganizationService
   {
-    public async Task<List<Organization>> GetByUserIdAsync(int userId)
+    public async Task<List<Organization>> GetByUserIdAsync(int userId, int? tenantPublicId)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetUserOrganizationManager().GetByUserIdAsync(userId);
+      return await factoryManager.GetUserOrganizationManager().GetByUserIdAsync(userId, tenantPublicId);
     }
 
     public async Task<UserOrganization> GetAsync(int userId, int organizationId)
