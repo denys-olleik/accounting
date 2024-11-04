@@ -4700,6 +4700,92 @@ namespace Accounting.Database
         return result.SingleOrDefault()!;
       }
 
+      public async Task<List<(Organization Organization, Tenant? Tenant)>> GetByEmailAsync(string email, bool searchTenants)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+
+        List<(Organization Organization, Tenant? Tenant)> organizationsWithTenants = new List<(Organization, Tenant?)>();
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+            SELECT uo.*, u.*, o.*
+            FROM "UserOrganization" uo
+            INNER JOIN "User" u ON uo."UserId" = u."UserID"
+            INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+            WHERE u."Email" = @Email
+            """,
+              (userOrg, user, org) =>
+              {
+                userOrg.User = user;
+                userOrg.Organization = org;
+                return userOrg;
+              }, p, splitOn: "UserID,OrganizationID"
+          );
+
+          foreach (var userOrg in userOrganizations)
+          {
+            var org = userOrg.Organization;
+            Tenant? tenant = null;
+
+            if (org.TenantId.HasValue)
+            {
+              tenant = await con.QuerySingleOrDefaultAsync<Tenant>("""
+                    SELECT *
+                    FROM "Tenant"
+                    WHERE "TenantID" = @TenantId
+                    """, new { TenantId = org.TenantId.Value });
+            }
+
+            organizationsWithTenants.Add((org, tenant));
+          }
+
+          if (organizationsWithTenants.Count > 0)
+            return organizationsWithTenants;
+        }
+
+        if (searchTenants)
+        {
+          TenantManager tenantManager = new TenantManager();
+          var tenants = await tenantManager.GetAllAsync();
+
+          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+
+          foreach (var tenant in tenants)
+          {
+            if (string.IsNullOrEmpty(tenant.DatabaseName))
+              continue;
+
+            builder.Database = tenant.DatabaseName;
+            using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+            {
+              var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+                    SELECT uo.*, u.*, o.*
+                    FROM "UserOrganization" uo
+                    INNER JOIN "User" u ON uo."UserId" = u."UserID"
+                    INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+                    WHERE u."Email" = @Email
+                    """,
+                  (userOrg, user, org) =>
+                  {
+                    userOrg.User = user;
+                    userOrg.Organization = org;
+                    return userOrg;
+                  }, p, splitOn: "UserID,OrganizationID"
+              );
+
+              foreach (var userOrg in userOrganizations)
+              {
+                organizationsWithTenants.Add((userOrg.Organization, tenant));
+              }
+            }
+          }
+        }
+
+        return organizationsWithTenants;
+      }
+
       public async Task<List<Organization>> GetByUserIdAsync(int userId)
       {
         DynamicParameters p = new DynamicParameters();

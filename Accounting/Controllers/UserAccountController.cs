@@ -164,14 +164,15 @@ namespace Accounting.Controllers
     [Route("choose-organization")]
     public async Task<IActionResult> ChooseOrganization()
     {
-      List<Organization> organizations = await _userOrganizationService.GetByUserIdAsync(GetUserId());
+      List<(Organization Organization, Tenant? Tenant)> organizationTuples = await _userOrganizationService.GetByEmailAsync(GetEmail(), true);
 
       ChooseOrganizationViewModel model = new ChooseOrganizationViewModel()
       {
-        Organizations = organizations.Select(x => new SelectListItem()
+        Organizations = organizationTuples.Select(x => new OrganizationViewModel()
         {
-          Text = x.Name,
-          Value = x.OrganizationID.ToString()
+          OrganizationId = x.Organization.OrganizationID,
+          Name = x.Organization.Name!,
+          TenantId = x.Tenant?.TenantID
         }).ToList()
       };
 
@@ -184,33 +185,35 @@ namespace Accounting.Controllers
     {
       List<Organization> organizations = await _userOrganizationService.GetByUserIdAsync(GetUserId());
 
-      model.Organizations = organizations.Select(x => new SelectListItem()
+      model.Organizations = organizations.Select(x => new OrganizationViewModel()
       {
-        Text = x.Name,
-        Value = x.OrganizationID.ToString()
+        OrganizationId = x.OrganizationID,
+        Name = x.Name,
+        TenantId = null
       }).ToList();
+
       model.ValidationResult = new ValidationResult();
 
-      if (model.OrganizationId == 0)
+      if (model.SelectedOrganizationId == 0)
       {
         model.ValidationResult.Errors.Add(new ValidationFailure("OrganizationId", "You must select an organization."));
         return View(model);
       }
 
-      UserOrganization userOrganization = await _userOrganizationService.GetAsync(GetUserId(), model.OrganizationId);
+      UserOrganization userOrganization = await _userOrganizationService.GetAsync(GetUserId(), model.SelectedOrganizationId);
 
       User user = (await _userOrganizationService.GetAsync(GetUserId(), userOrganization.OrganizationId)).User!;
 
       if (userOrganization != null)
       {
-        ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user, userOrganization.OrganizationId, organizations.SingleOrDefault(x => x.OrganizationID == model.OrganizationId)!.Name);
+        ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user, userOrganization.OrganizationId, organizations.SingleOrDefault(x => x.OrganizationID == model.SelectedOrganizationId)!.Name);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                               claimsPrincipal,
-                                                  new AuthenticationProperties()
-                                                  {
-                                                    IsPersistent = true
-                                                  });
+                                       claimsPrincipal,
+                                       new AuthenticationProperties()
+                                       {
+                                         IsPersistent = true
+                                       });
 
         return RedirectToAction("Index", "Home");
       }
@@ -220,6 +223,7 @@ namespace Accounting.Controllers
         return View(model);
       }
     }
+
 
     [HttpPost]
     [Route("logout")]
@@ -248,6 +252,7 @@ namespace Accounting.Controllers
       else
       {
         claims.Add(new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.Email));
+        claims.Add(new System.Security.Claims.Claim(ClaimTypes.Email, user.Email));
       }
 
       claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.Password, user.Password));

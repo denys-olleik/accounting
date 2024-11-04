@@ -29,5 +29,13 @@ namespace Accounting.Controllers
       var request = HttpContext.Request;
       return $"{request.Scheme}://{request.Host}";
     }
+
+    [NonAction]
+    public string GetEmail()
+    {
+      ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
+      string email = identity.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+      return email;
+    }
   }
 }
