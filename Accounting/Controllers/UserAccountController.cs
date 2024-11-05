@@ -172,7 +172,7 @@ namespace Accounting.Controllers
         {
           OrganizationId = x.Organization.OrganizationID,
           Name = x.Organization.Name!,
-          TenantPublicId = x.Tenant?.TenantID
+          TenantPublicId = x.Tenant?.PublicId
         }).ToList()
       };
 
