@@ -9,7 +9,6 @@
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
-
 <form asp-action="ChooseOrganization" asp-controller="UserAccount" method="post" class="display-flex flex-direction-column">
   <div class="display-flex flex-direction-column">
     <label asp-for="SelectedOrganizationId" class="background-color-antiquewhite">Organization</label>
@@ -17,6 +16,8 @@
     @* <select asp-for="SelectedOrganizationId" asp-items="Model." class="margin-bottom-5px font-size-20px font-Roboto-Mono">
       <option value="" class="font-Roboto">Select an organization</option>
     </select> *@
+
+
   </div>
 
   <button type="submit" class="full-width-regular-button">Choose Organization</button>

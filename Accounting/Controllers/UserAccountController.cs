@@ -194,7 +194,7 @@ namespace Accounting.Controllers
 
       model.ValidationResult = new ValidationResult();
 
-      if (model.SelectedOrganizationId == 0)
+      if (model.SelectedOrganizationId == 0) 
       {
         model.ValidationResult.Errors.Add(new ValidationFailure("OrganizationId", "You must select an organization."));
         return View(model);
