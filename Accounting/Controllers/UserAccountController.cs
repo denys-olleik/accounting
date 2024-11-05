@@ -181,7 +181,7 @@ namespace Accounting.Controllers
 
     [HttpPost]
     [Route("choose-organization/{tenantPublicId?}")]
-    public async Task<IActionResult> ChooseOrganization(ChooseOrganizationViewModel model, int? tenantPublicId)
+    public async Task<IActionResult> ChooseOrganization(ChooseOrganizationViewModel model, string? tenantPublicId)
     {
       List<Organization> organizations = await _userOrganizationService.GetByUserIdAsync(GetUserId(), tenantPublicId);
 
@@ -200,9 +200,9 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      UserOrganization userOrganization 
+      UserOrganization userOrganization
         = await _userOrganizationService.GetAsync(
-          GetUserId(), 
+          GetUserId(),
           model.SelectedOrganizationId!.Value);
 
       User user = (await _userOrganizationService.GetAsync(GetUserId(), userOrganization.OrganizationId)).User!;

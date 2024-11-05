@@ -3132,48 +3132,6 @@ namespace Accounting.Database
         }
       }
 
-      public async Task<bool> OrganizationExistsAsync(string name, bool checkTenantDatabases)
-      {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@Name", name);
-
-        // Check main database
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-        {
-          if ((await con.QueryAsync<Organization>("""
-            SELECT * 
-            FROM "Organization" 
-            WHERE "Name" = @Name
-            """, p)).Any())
-            return true;
-        }
-
-        // Check tenant databases if requested
-        if (checkTenantDatabases)
-        {
-          TenantManager tenantManager = new TenantManager();
-          var tenants = await tenantManager.GetAllAsync();
-
-          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-
-          foreach (var tenant in tenants)
-          {
-            builder.Database = tenant.DatabaseName;
-            using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
-            {
-              if ((await con.QueryAsync<Organization>("""
-                    SELECT * 
-                    FROM "Organization" 
-                    WHERE "Name" = @Name
-                    """, p)).Any())
-                return true;
-            }
-          }
-        }
-
-        return false;
-      }
-
       public async Task<Organization> GetAsync(string name, bool searchTenants)
       {
         DynamicParameters p = new DynamicParameters();
@@ -4786,21 +4744,36 @@ namespace Accounting.Database
         return organizationsWithTenants;
       }
 
-      public async Task<List<Organization>> GetByUserIdAsync(int userId, int? tenantPublicId)
+      public async Task<List<Organization>> GetByUserIdAsync(int userId, string? tenantPublicId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@UserId", userId);
 
         IEnumerable<Organization> result;
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        if (!string.IsNullOrEmpty(tenantPublicId))
+        {
+          TenantManager tenantManager = new TenantManager();
+          Tenant tenant = await tenantManager.GetAsync(tenantPublicId);
+
+          if (tenant != null && !string.IsNullOrEmpty(tenant.DatabaseName))
+          {
+            builder.Database = tenant.DatabaseName;
+          }
+          else
+          {
+            throw new Exception("Tenant not found or invalid tenant configuration.");
+          }
+        }
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
           result = await con.QueryAsync<Organization>("""
-            select o.* from "Organization" o
-            inner join "UserOrganization" uo on uo."OrganizationId" = o."OrganizationID"
-            where uo."UserId" = @UserId
-            """
-            , p);
+          select o.* from "Organization" o
+          inner join "UserOrganization" uo on uo."OrganizationId" = o."OrganizationID"
+          where uo."UserId" = @UserId
+          """, p);
         }
 
         return result.ToList();
@@ -5975,6 +5948,11 @@ namespace Accounting.Database
         }
 
         return rowsModified;
+      }
+
+      internal async Task<Tenant> GetAsync(string tenantPublicId)
+      {
+        throw new NotImplementedException();
       }
     }
 

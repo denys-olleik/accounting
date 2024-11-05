@@ -6,7 +6,7 @@ namespace Accounting.Models.UserAccountViewModels
   {
     public int OrganizationId { get; set; }
     public string Name { get; set; } = string.Empty;
-    public int? TenantPublicId { get; set; }
+    public string? TenantPublicId { get; set; }
   }
 
   public class ChooseOrganizationViewModel
