@@ -35,7 +35,8 @@ INSERT INTO "Organization" (
   "AccountsPayableEmail", 
   "AccountsReceivablePhone", 
   "AccountsPayablePhone", 
-  "Website"
+  "Website",
+  "TenantId"
 ) VALUES (
   'Oil Fields Corp', 
   '456 Oil Patch Rd
@@ -45,7 +46,8 @@ Bakersfield, CA 93308',
   'ap@oilfieldscorp.com', 
   '(555) 987-6543', 
   '(555) 654-3210', 
-  'http://www.oilfieldscorp.com'
+  'http://www.oilfieldscorp.com',
+  1
 );
 
 INSERT INTO "UserOrganization" ("UserId", "OrganizationId") VALUES (1, 1);

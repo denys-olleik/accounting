@@ -25,7 +25,7 @@ CREATE TABLE "Organization"
 	"Website" VARCHAR(100) NULL,
   "PaymentInstructions" TEXT,
 	"ElevatedSecurity" BOOLEAN NOT NULL DEFAULT FALSE,
-	"TenantId" INT NULL,
+	"TenantId" INT NOT NULL,
   "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	FOREIGN KEY ("TenantId") REFERENCES "Tenant"("TenantID")
 );
