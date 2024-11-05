@@ -15,11 +15,6 @@
   <div class="display-flex flex-direction-column">
     <label asp-for="SelectedOrganizationId" class="background-color-antiquewhite">Organization</label>
 
-    @* <select asp-for="SelectedOrganizationId" asp-items="Model." class="margin-bottom-5px font-size-20px font-Roboto-Mono">
-      <option value="" class="font-Roboto">Select an organization</option>
-    </select> *@
-
-
     <select v-model="selectedOrganizationId" class="margin-bottom-5px font-size-20px font-Roboto-Mono">
       <option value="" class="font-Roboto">Select an organization</option>
       <option v-for="organization in organizations" :value="organization.organizationId" :key="organization.organizationId">
@@ -37,6 +32,7 @@
   foreach (var error in Model.ValidationResult.Errors)
   {
     <div>
+      <small class="color-red">@error.ErrorMessage</small>
     </div>
   }
 }
