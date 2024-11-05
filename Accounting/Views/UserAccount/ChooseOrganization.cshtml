@@ -9,7 +9,9 @@
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
-<form asp-action="ChooseOrganization" asp-controller="UserAccount" method="post" class="display-flex flex-direction-column">
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<form id="app" asp-action="ChooseOrganization" asp-controller="UserAccount" method="post" class="display-flex flex-direction-column">
   <div class="display-flex flex-direction-column">
     <label asp-for="SelectedOrganizationId" class="background-color-antiquewhite">Organization</label>
 
@@ -17,6 +19,13 @@
       <option value="" class="font-Roboto">Select an organization</option>
     </select> *@
 
+
+    <select v-model="selectedOrganizationId" class="margin-bottom-5px font-size-20px font-Roboto-Mono">
+      <option value="" class="font-Roboto">Select an organization</option>
+      <option v-for="organization in organizations" :value="organization.organizationId" :key="organization.organizationId">
+        {{ organization.name }}
+      </option>
+    </select>
 
   </div>
 
@@ -28,7 +37,21 @@
   foreach (var error in Model.ValidationResult.Errors)
   {
     <div>
-      <small class="color-red">@error.ErrorMessage</small>
     </div>
   }
 }
+
+<script>
+  const { createApp } = Vue;
+
+  const app = createApp({
+    data() {
+      return {
+        selectedOrganizationId: null,
+        organizations: @Html.Raw(Json.Serialize(Model.Organizations))
+      };
+    }
+  });
+
+  app.mount('#app');
+</script>
