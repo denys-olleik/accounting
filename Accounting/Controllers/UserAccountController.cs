@@ -129,7 +129,7 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> CompleteLoginWithoutPassword(CompleteLoginWithoutPasswordViewModel model, string email)
     {
-      CompleteLoginWithoutPasswordViewModelValidator validator 
+      CompleteLoginWithoutPasswordViewModelValidator validator
         = new CompleteLoginWithoutPasswordViewModelValidator(_loginWithoutPasswordService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
@@ -140,7 +140,7 @@ namespace Accounting.Controllers
       }
 
       LoginWithoutPassword? loginWithoutPassword = await _loginWithoutPasswordService.GetAsync(model.Email!);
-      
+
       if (loginWithoutPassword == null || loginWithoutPassword.IsExpired)
       {
         model.ValidationResult.Errors.Add(new ValidationFailure("Code", "Invalid login code."));
@@ -183,33 +183,43 @@ namespace Accounting.Controllers
     [Route("choose-organization/{tenantPublicId?}")]
     public async Task<IActionResult> ChooseOrganization(ChooseOrganizationViewModel model, string? tenantPublicId)
     {
-      List<Organization> organizations = await _userOrganizationService.GetByUserIdAsync(GetUserId(), tenantPublicId);
+      List<(Organization Organization, Tenant? Tenant)> organizationTuples = await _userOrganizationService.GetByEmailAsync(GetEmail(), true);
 
-      model.Organizations = organizations.Select(x => new OrganizationViewModel()
+      model.Organizations = organizationTuples.Select(x => new OrganizationViewModel()
       {
-        OrganizationId = x.OrganizationID,
-        Name = x.Name!,
-        TenantPublicId = tenantPublicId
+        OrganizationId = x.Organization.OrganizationID,
+        Name = x.Organization.Name!,
+        TenantPublicId = x.Tenant?.PublicId
       }).ToList();
 
       model.ValidationResult = new ValidationResult();
 
-      if (model.SelectedOrganizationId == 0) 
+      if (model.SelectedOrganizationId == 0)
       {
         model.ValidationResult.Errors.Add(new ValidationFailure("OrganizationId", "You must select an organization."));
         return View(model);
       }
 
       UserOrganization userOrganization
-        = await _userOrganizationService.GetAsync(
-          GetUserId(),
-          model.SelectedOrganizationId!.Value);
+        = await _userOrganizationService
+          .GetByEmailAsync(
+            GetEmail(), 
+            model.SelectedOrganizationId, 
+            tenantPublicId);
 
-      User user = (await _userOrganizationService.GetAsync(GetUserId(), userOrganization.OrganizationId)).User!;
+      User user = (await _userOrganizationService
+        .GetAsync(
+          GetUserId(), 
+          userOrganization.OrganizationId)).User!;
 
       if (userOrganization != null)
       {
-        ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user, userOrganization.OrganizationId, organizations.SingleOrDefault(x => x.OrganizationID == model.SelectedOrganizationId)!.Name);
+        ClaimsPrincipal claimsPrincipal
+          = CreateClaimsPricipal(
+            user,
+            userOrganization.OrganizationId,
+            organizationTuples.SingleOrDefault(x => 
+              x.Organization.OrganizationID == model.SelectedOrganizationId)!.Organization.Name);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
           claimsPrincipal,

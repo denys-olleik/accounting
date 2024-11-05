@@ -4744,6 +4744,67 @@ namespace Accounting.Database
         return organizationsWithTenants;
       }
 
+      public async Task<UserOrganization?> GetByEmailAsync(string email, int? selectedOrganizationId, string? tenantPublicId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+
+        IEnumerable<UserOrganization?> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          if (!string.IsNullOrEmpty(tenantPublicId))
+          {
+            TenantManager tenantManager = new TenantManager();
+            Tenant tenant = await tenantManager.GetAsync(tenantPublicId);
+
+            if (tenant != null && !string.IsNullOrEmpty(tenant.DatabaseName))
+            {
+              NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+              builder.Database = tenant.DatabaseName;
+
+              using (NpgsqlConnection tenantCon = new NpgsqlConnection(builder.ConnectionString))
+              {
+                result = await tenantCon.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+                  SELECT uo.*, u.*, o.*
+                  FROM "UserOrganization" uo
+                  INNER JOIN "User" u ON uo."UserId" = u."UserID"
+                  INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+                  WHERE u."Email" = @Email
+                  AND o."OrganizationID" = @OrganizationId
+                  """, (uo, u, o) =>
+                {
+                  uo.User = u;
+                  uo.Organization = o;
+                  return uo;
+                }, new { Email = email, OrganizationId = selectedOrganizationId });
+              }
+            }
+            else
+            {
+              throw new Exception("Tenant not found or invalid tenant configuration.");
+            }
+          }
+          else
+          {
+            result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+              SELECT uo.*, u.*, o.*
+              FROM "UserOrganization" uo
+              INNER JOIN "User" u ON uo."UserId" = u."UserID"
+              INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+              WHERE u."Email" = @Email
+              """, (uo, u, o) =>
+            {
+              uo.User = u;
+              uo.Organization = o;
+              return uo;
+            }, p);
+          }
+        }
+
+        return result.Single();
+      }
+
       public async Task<List<Organization>> GetByUserIdAsync(int userId, string? tenantPublicId)
       {
         DynamicParameters p = new DynamicParameters();

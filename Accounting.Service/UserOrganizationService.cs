@@ -40,5 +40,11 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetUserOrganizationManager().GetByEmailAsync(email, searchTenants);
     }
+
+    public async Task<UserOrganization> GetByEmailAsync(string email, int? selectedOrganizationId, string? tenantPublicId)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      return await factoryManager.GetUserOrganizationManager().GetByEmailAsync(email, selectedOrganizationId, tenantPublicId);
+    }
   }
 }
