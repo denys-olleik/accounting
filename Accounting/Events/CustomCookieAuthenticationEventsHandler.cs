@@ -13,11 +13,14 @@ namespace Accounting.Events
     {
       var principal = context.Principal;
 
-      string probablyUserEmailInsteadOfInt = principal!.Claims.Single(x => x.Type == ClaimTypes.NameIdentifier).Value;
-
       int? userId = null;
-      if (string.IsNullOrEmpty(probablyUserEmailInsteadOfInt))
-        userId = Convert.ToInt32(probablyUserEmailInsteadOfInt);
+
+      var nameIdentifierClaim = principal?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+      if (nameIdentifierClaim != null && !string.IsNullOrEmpty(nameIdentifierClaim.Value) && int.TryParse(nameIdentifierClaim.Value, out int parsedValue))
+      {
+        userId = parsedValue;
+      }
+      string email = principal!.Claims.Single(x => x.Type == ClaimTypes.Email).Value;
 
       int organizationId = Convert.ToInt32(principal.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.OrganizationId)?.Value);
 
@@ -35,7 +38,7 @@ namespace Accounting.Events
       }
       else
       {
-        user = await userService.GetAsync(probablyUserEmailInsteadOfInt, true);
+        user = await userService.GetAsync(email, true);
       }
 
       if (user == null || user.Password != password)
