@@ -161,8 +161,8 @@ namespace Accounting.Controllers
     }
 
     [HttpGet]
-    [Route("choose-organization/{tenantPublicId?}")]
-    public async Task<IActionResult> ChooseOrganization(int? tenantPublicId)
+    [Route("choose-organization")]
+    public async Task<IActionResult> ChooseOrganization()
     {
       List<(Organization Organization, Tenant? Tenant)> organizationTuples = await _userOrganizationService.GetByEmailAsync(GetEmail(), true);
 
@@ -180,8 +180,8 @@ namespace Accounting.Controllers
     }
 
     [HttpPost]
-    [Route("choose-organization/{tenantPublicId?}")]
-    public async Task<IActionResult> ChooseOrganization(ChooseOrganizationViewModel model, string? tenantPublicId)
+    [Route("choose-organization")]
+    public async Task<IActionResult> ChooseOrganization(ChooseOrganizationViewModel model)
     {
       List<(Organization Organization, Tenant? Tenant)> organizationTuples = await _userOrganizationService.GetByEmailAsync(GetEmail(), true);
 
@@ -205,12 +205,9 @@ namespace Accounting.Controllers
           .GetByEmailAsync(
             GetEmail(), 
             model.SelectedOrganizationId, 
-            tenantPublicId);
+            model.SelectedPublicTenantId);
 
-      User user = (await _userOrganizationService
-        .GetAsync(
-          GetUserId(), 
-          userOrganization.OrganizationId)).User!;
+      User user = userOrganization.User!;
 
       if (userOrganization != null)
       {

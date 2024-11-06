@@ -4765,19 +4765,24 @@ namespace Accounting.Database
 
               using (NpgsqlConnection tenantCon = new NpgsqlConnection(builder.ConnectionString))
               {
-                result = await tenantCon.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+                result = await tenantCon.QueryAsync<UserOrganization, User, Organization, UserOrganization>(
+                  """
                   SELECT uo.*, u.*, o.*
                   FROM "UserOrganization" uo
                   INNER JOIN "User" u ON uo."UserId" = u."UserID"
                   INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
                   WHERE u."Email" = @Email
-                  AND o."OrganizationID" = @OrganizationId
-                  """, (uo, u, o) =>
-                {
-                  uo.User = u;
-                  uo.Organization = o;
-                  return uo;
-                }, new { Email = email, OrganizationId = selectedOrganizationId });
+                    AND o."OrganizationID" = @OrganizationId
+                  """,
+                    (uo, u, o) =>
+                  {
+                    uo.User = u;
+                    uo.Organization = o;
+                    return uo;
+                  },
+                  new { Email = email, OrganizationId = selectedOrganizationId },
+                  splitOn: "UserID,OrganizationID"
+                );
               }
             }
             else
@@ -6011,9 +6016,23 @@ namespace Accounting.Database
         return rowsModified;
       }
 
-      internal async Task<Tenant> GetAsync(string tenantPublicId)
+      public async Task<Tenant> GetAsync(string tenantPublicId)
       {
-        throw new NotImplementedException();
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantPublicId", tenantPublicId);
+
+        IEnumerable<Tenant> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<Tenant>("""
+            SELECT * 
+            FROM "Tenant" 
+            WHERE "PublicId" = @TenantPublicId
+            """, p);
+        }
+
+        return result.Single();
       }
     }
 
@@ -6238,7 +6257,7 @@ namespace Accounting.Database
       {
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-            return await con.ExecuteAsync("""
+          return await con.ExecuteAsync("""
                 DELETE FROM "LoginWithoutPassword"
                 WHERE "LoginWithoutPasswordID" = @LoginWithoutPasswordID;
                 """, loginWithoutPassword);

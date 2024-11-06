@@ -4,6 +4,8 @@ namespace Accounting.Database.Interfaces
 {
   public interface ITenantManager : IGenericRepository<Tenant, int>
   {
+    Task<Tenant> GetAsync(string tenantPublicId);
+
     Task<bool> ExistsAsync(string email);
     Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
       int page, 
@@ -21,6 +23,6 @@ namespace Accounting.Database.Interfaces
       int tenantId, 
       string sshPublic);
     Task<Tenant?> GetAsync(int tenantId);
-    Task<int> DeleteAsync(int tenantID);
+    Task<int> DeleteAsync(int tenantID);    
   }
 }

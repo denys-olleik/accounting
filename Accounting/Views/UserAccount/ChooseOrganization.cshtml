@@ -14,6 +14,8 @@
 <form id="app" asp-action="ChooseOrganization" asp-controller="UserAccount" method="post" class="display-flex flex-direction-column">
   <div class="display-flex flex-direction-column">
     <label asp-for="SelectedOrganizationId" class="background-color-antiquewhite">Organization</label>
+    <input type="hidden" name="SelectedOrganizationId" :value="selectedOrganizationId" />
+    <input type="hidden" name="SelectedPublicTenantId" :value="selectedPublicTenantId" />
 
     <select v-model="selectedOrganizationId" class="margin-bottom-5px font-size-20px font-Roboto-Mono">
       <option value="" class="font-Roboto">Select an organization</option>
@@ -21,7 +23,6 @@
         {{ organization.name }}
       </option>
     </select>
-
   </div>
 
   <button type="submit" class="full-width-regular-button">Choose Organization</button>
@@ -43,9 +44,22 @@
   const app = createApp({
     data() {
       return {
-        selectedOrganizationId: null,
-        organizations: @Html.Raw(Json.Serialize(Model.Organizations))
-      };
+        selectedOrganizationId: '',
+        selectedPublicTenantId: '',
+        organizations: @Html.Raw(Json.Serialize(Model.Organizations)),
+      }
+    },
+    watch: {
+      selectedOrganizationId(newVal) {
+        if (newVal) {
+          const selectedOrganization = this.organizations.find(
+            org => org.organizationId === newVal
+          );
+          this.selectedPublicTenantId = selectedOrganization ? selectedOrganization.tenantPublicId : null;
+        } else {
+          this.selectedPublicTenantId = null;
+        }
+      }
     }
   });
 
