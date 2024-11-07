@@ -67,7 +67,7 @@ namespace Accounting.Controllers
       }
 
       AddUserOrganizationViewModelValidator validator
-        = new AddUserOrganizationViewModelValidator(_userService, _organizationService);
+        = new AddUserOrganizationViewModelValidator(_userService, _organizationService, tenantId);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -331,13 +331,16 @@ namespace Accounting.Validators
   {
     private readonly UserService _userService;
     private readonly OrganizationService _organizationService;
+    private readonly string _tenantId;
 
     public AddUserOrganizationViewModelValidator(
       UserService userService,
-      OrganizationService organizationService)
+      OrganizationService organizationService,
+      string tenantId)
     {
       _userService = userService;
       _organizationService = organizationService;
+      _tenantId = tenantId;
 
       RuleFor(x => x.Email)
         .Cascade(CascadeMode.Stop)
@@ -350,8 +353,8 @@ namespace Accounting.Validators
             RuleFor(x => x.Email)
               .MustAsync(async (email, cancellation) =>
               {
-                User exists = await _userService.GetAsync(email!, true);
-                return exists == null;
+                User user = await _userService.GetAsync(email!, true);
+                return user == null;
               }).WithMessage("Email already exists.");
           });
         });
@@ -374,8 +377,8 @@ namespace Accounting.Validators
             RuleFor(x => x.OrganizationName)
                 .MustAsync(async (name, cancellation) =>
                 {
-                  Organization exists = await _organizationService.GetAsync(name!, true);
-                  return exists == null;
+                  Organization organization = await _organizationService.GetAsync(name!, _tenantId);
+                  return organization == null;
                 }).WithMessage("Organization already exists.");
           });
         });

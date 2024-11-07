@@ -258,7 +258,7 @@ namespace Accounting.Controllers
         claims.Add(new System.Security.Claims.Claim(ClaimTypes.Email, user.Email));
       }
 
-      claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.Password, user.Password ?? ""));
+      claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.Password, user.Password));
 
       ClaimsIdentity identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
       return new ClaimsPrincipal(identity);

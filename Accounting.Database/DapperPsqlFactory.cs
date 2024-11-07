@@ -3178,6 +3178,39 @@ namespace Accounting.Database
 
         return null!;
       }
+
+      public async Task<Organization> GetAsync(string name, string tenantId)
+      {
+        if (string.IsNullOrEmpty(tenantId))
+        {
+          return null!;
+        }
+
+        TenantManager tenantManager = new TenantManager();
+        var tenant = await tenantManager.GetAsync(tenantId);
+
+        if (tenant == null)
+        {
+          return null!;
+        }
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = tenant.DatabaseName;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          DynamicParameters p = new DynamicParameters();
+          p.Add("@Name", name);
+
+          var organization = (await con.QueryAsync<Organization>("""
+            SELECT * 
+            FROM "Organization" 
+            WHERE "Name" = @Name
+            """, p)).FirstOrDefault();
+
+          return organization;
+        }
+      }
     }
 
     public IPaymentInstructionManager GetPaymentInstructionManager()
@@ -6032,7 +6065,7 @@ namespace Accounting.Database
             """, p);
         }
 
-        return result.Single();
+        return result.SingleOrDefault();
       }
     }
 
