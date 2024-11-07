@@ -11,7 +11,7 @@ namespace Accounting.Service
       return await factoryManager.GetLoginWithoutPasswordManager().CreateAsync(email);
     }
 
-    public async Task<LoginWithoutPassword?> GetAsync(string email)
+    public async Task<LoginWithoutPassword> GetAsync(string email)
     {
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetLoginWithoutPasswordManager().GetAsync(email);

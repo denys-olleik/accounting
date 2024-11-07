@@ -140,14 +140,6 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      LoginWithoutPassword? loginWithoutPassword = await _loginWithoutPasswordService.GetAsync(model.Email!);
-
-      if (loginWithoutPassword == null || loginWithoutPassword.IsExpired)
-      {
-        model.ValidationResult.Errors.Add(new ValidationFailure("Code", "Invalid login code."));
-        return View(model);
-      }
-
       User user = await _userService.GetAsync(model.Email!, true);
       ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user);
 
@@ -157,6 +149,7 @@ namespace Accounting.Controllers
         new AuthenticationProperties() { IsPersistent = true }
       );
 
+      LoginWithoutPassword loginWithoutPassword = await _loginWithoutPasswordService.GetAsync(model.Email)!;
       await _loginWithoutPasswordService.DeleteAsync(loginWithoutPassword);
       return RedirectToAction("ChooseOrganization", "UserAccount");
     }

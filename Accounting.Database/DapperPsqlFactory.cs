@@ -6274,7 +6274,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<LoginWithoutPassword?> GetAsync(string email)
+      public async Task<LoginWithoutPassword> GetAsync(string email)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
