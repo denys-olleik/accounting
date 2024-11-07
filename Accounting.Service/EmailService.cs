@@ -19,7 +19,9 @@ namespace Accounting.Service
       Secret emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email);
       var client = new SendGridClient(emailSecret!.Value);
 
-      var from = new EmailAddress(ConfigurationSingleton.Instance.NoReplyEmailAddress, ConfigurationSingleton.Instance.ApplicationName);
+      Secret fromSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply);
+
+      var from = new EmailAddress(fromSecret.Value, ConfigurationSingleton.Instance.ApplicationName);
       var subject = $"Invitation from {ConfigurationSingleton.Instance.ApplicationName}";
       var to = new EmailAddress(invitation.Email, $"{invitation.FirstName} {invitation.LastName}");
       var plainTextContent = $"Hello {invitation.FirstName}, you have been invited to {ConfigurationSingleton.Instance.ApplicationName}. Use the following link to accept the invitation: {baseUrl}/i/invitation/{invitation.Guid}";
@@ -34,7 +36,9 @@ namespace Accounting.Service
       var emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email);
       var client = new SendGridClient(emailSecret!.Value);
 
-      var from = new EmailAddress(ConfigurationSingleton.Instance.NoReplyEmailAddress);
+      Secret fromSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply);
+
+      var from = new EmailAddress(fromSecret.Value, ConfigurationSingleton.Instance.ApplicationName);
       var subject = $"Login without password for {ConfigurationSingleton.Instance.ApplicationName}";
       var to = new EmailAddress(loginWithoutPassword.Email);
       var plainTextContent = $"Login code: {loginWithoutPassword.Code}";
