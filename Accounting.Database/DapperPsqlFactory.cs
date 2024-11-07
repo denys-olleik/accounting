@@ -6276,7 +6276,22 @@ namespace Accounting.Database
 
       public async Task<LoginWithoutPassword?> GetAsync(string email)
       {
-        throw new NotImplementedException();
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+
+        IEnumerable<LoginWithoutPassword> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          result = await con.QueryAsync<LoginWithoutPassword>("""
+            SELECT * 
+            FROM "LoginWithoutPassword" 
+            WHERE "Email" = @Email
+            AND "Expires" > CURRENT_TIMESTAMP AT TIME ZONE 'UTC'
+            """, p);
+        }
+
+        return result.SingleOrDefault();
       }
 
       public int Update(LoginWithoutPassword entity)
