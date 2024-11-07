@@ -103,7 +103,7 @@ namespace Accounting.Controllers
           loginWithoutPassword = await _loginWithoutPasswordService.CreateAsync(model.Email!);
           await _emailService.SendLoginWithoutPasswordAsync(loginWithoutPassword);
           scope.Complete();
-          return RedirectToAction("CompleteLoginWithoutPassword", "UserAccount", new { Email = model.Email });
+          return RedirectToAction("LoginWithoutPassword", "UserAccount", new { Email = model.Email });
         }
       }
       else
@@ -117,20 +117,21 @@ namespace Accounting.Controllers
     }
 
     [AllowAnonymous]
-    [Route("complete-login-without-password/{email}")]
+    [Route("login-without-password/{email}")]
     [HttpGet]
-    public IActionResult CompleteLoginWithoutPassword(string email)
+    public IActionResult LoginWithoutPassword(string email)
     {
-      return View(email);
+      ViewBag.Email = email;
+      return View();
     }
 
     [AllowAnonymous]
-    [Route("complete-login-without-password/{email}")]
+    [Route("login-without-password/{email}")]
     [HttpPost]
-    public async Task<IActionResult> CompleteLoginWithoutPassword(CompleteLoginWithoutPasswordViewModel model, string email)
+    public async Task<IActionResult> LoginWithoutPassword(LoginWithoutPasswordViewModel model, string email)
     {
-      CompleteLoginWithoutPasswordViewModelValidator validator
-        = new CompleteLoginWithoutPasswordViewModelValidator(_loginWithoutPasswordService);
+      LoginWithoutPasswordViewModelValidator validator
+        = new LoginWithoutPasswordViewModelValidator(_loginWithoutPasswordService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)

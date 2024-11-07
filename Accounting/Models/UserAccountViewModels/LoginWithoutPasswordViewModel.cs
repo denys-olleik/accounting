@@ -2,7 +2,7 @@ using FluentValidation.Results;
 
 namespace Accounting.Models.UserAccountViewModels
 {
-  public class CompleteLoginWithoutPasswordViewModel
+  public class LoginWithoutPasswordViewModel
   {
     private string? email;
     public string? Email

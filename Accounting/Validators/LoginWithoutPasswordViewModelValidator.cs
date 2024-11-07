@@ -5,11 +5,11 @@ using FluentValidation;
 
 namespace Accounting.Validators
 {
-  public class CompleteLoginWithoutPasswordViewModelValidator : AbstractValidator<CompleteLoginWithoutPasswordViewModel>
+  public class LoginWithoutPasswordViewModelValidator : AbstractValidator<LoginWithoutPasswordViewModel>
   {
     private readonly LoginWithoutPasswordService _loginWithoutPasswordService;
 
-    public CompleteLoginWithoutPasswordViewModelValidator(LoginWithoutPasswordService loginWithoutPasswordService)
+    public LoginWithoutPasswordViewModelValidator(LoginWithoutPasswordService loginWithoutPasswordService)
     {
       _loginWithoutPasswordService = loginWithoutPasswordService;
 
