@@ -6264,6 +6264,20 @@ namespace Accounting.Database
         }
       }
 
+      public async Task<int> DeleteAsync(string? email)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        {
+          return await con.ExecuteAsync("""
+                DELETE FROM "LoginWithoutPassword"
+                WHERE "Email" = @Email;
+                """, p);
+        }
+      }
+
       public LoginWithoutPassword Get(int id)
       {
         throw new NotImplementedException();

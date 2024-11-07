@@ -6,6 +6,7 @@ namespace Accounting.Database.Interfaces
   {
     Task<LoginWithoutPassword> CreateAsync(string email);
     Task<int> DeleteAsync(LoginWithoutPassword loginWithoutPassword);
+    Task<int> DeleteAsync(string? email);
     Task<LoginWithoutPassword> GetAsync(string email);
   }
 }
