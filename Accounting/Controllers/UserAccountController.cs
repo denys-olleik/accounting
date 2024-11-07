@@ -209,7 +209,7 @@ namespace Accounting.Controllers
         ClaimsPrincipal claimsPrincipal
           = CreateClaimsPricipal(
             user,
-            userOrganization.OrganizationId,
+            userOrganization.Organization.OrganizationID,
             organizationTuples.SingleOrDefault(x => 
               x.Organization.OrganizationID == model.SelectedOrganizationId)!.Organization.Name);
 
