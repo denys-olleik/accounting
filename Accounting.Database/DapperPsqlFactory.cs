@@ -4698,42 +4698,42 @@ namespace Accounting.Database
 
         List<(Organization Organization, Tenant? Tenant)> organizationsWithTenants = new List<(Organization, Tenant?)>();
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        if (!searchTenants)
         {
-          var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
-            SELECT uo.*, u.*, o.*
-            FROM "UserOrganization" uo
-            INNER JOIN "User" u ON uo."UserId" = u."UserID"
-            INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
-            WHERE u."Email" = @Email
-            """,
-              (userOrg, user, org) =>
-              {
-                userOrg.User = user;
-                userOrg.Organization = org;
-                return userOrg;
-              }, p, splitOn: "UserID,OrganizationID"
-          );
-
-          foreach (var userOrg in userOrganizations)
+          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
           {
-            var org = userOrg.Organization;
-            Tenant? tenant = null;
+            var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+                SELECT uo.*, u.*, o.*
+                FROM "UserOrganization" uo
+                INNER JOIN "User" u ON uo."UserId" = u."UserID"
+                INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+                WHERE u."Email" = @Email
+                """,
+                (userOrg, user, org) =>
+                {
+                  userOrg.User = user;
+                  userOrg.Organization = org;
+                  return userOrg;
+                }, p, splitOn: "UserID,OrganizationID"
+            );
 
-            if (org.TenantId.HasValue)
+            foreach (var userOrg in userOrganizations)
             {
-              tenant = await con.QuerySingleOrDefaultAsync<Tenant>("""
-                    SELECT *
-                    FROM "Tenant"
-                    WHERE "TenantID" = @TenantId
-                    """, new { TenantId = org.TenantId.Value });
+              var org = userOrg.Organization;
+              Tenant? tenant = null;
+
+              if (org.TenantId.HasValue)
+              {
+                tenant = await con.QuerySingleOrDefaultAsync<Tenant>("""
+                        SELECT *
+                        FROM "Tenant"
+                        WHERE "TenantID" = @TenantId
+                        """, new { TenantId = org.TenantId.Value });
+              }
+
+              organizationsWithTenants.Add((org, tenant));
             }
-
-            organizationsWithTenants.Add((org, tenant));
           }
-
-          if (organizationsWithTenants.Count > 0)
-            return organizationsWithTenants;
         }
 
         if (searchTenants)
