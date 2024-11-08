@@ -40,7 +40,7 @@ namespace Accounting.Service
       return await factoryManager.GetUserManager().GetAsync(email, searchTenants);
     }
 
-    public async Task<User> GetAsync(string email, int? tenantId = null)
+    public async Task<User> GetAsync(string email, int tenantId)
     {
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetUserManager().GetAsync(email, tenantId);

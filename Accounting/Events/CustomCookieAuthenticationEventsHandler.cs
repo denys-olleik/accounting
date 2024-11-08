@@ -14,7 +14,7 @@ namespace Accounting.Events
       var principal = context.Principal;
 
       int? userId = null;
-      int? tenantId = null;
+      int tenantId = 0;
 
       var nameIdentifierClaim = principal?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
       

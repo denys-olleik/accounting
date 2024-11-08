@@ -22,7 +22,7 @@ namespace Accounting.Database.Interfaces
     Task<int> UpdateSshPublicAsync(
       int tenantId, 
       string sshPublic);
-    Task<Tenant?> GetAsync(int tenantId);
+    Task<Tenant> GetAsync(int tenantId);
     Task<int> DeleteAsync(int tenantID);    
   }
 }
