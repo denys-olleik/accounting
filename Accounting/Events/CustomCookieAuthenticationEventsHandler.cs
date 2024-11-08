@@ -46,7 +46,7 @@ namespace Accounting.Events
       }
       else
       {
-        user = await userService.GetAsync(email, tenantId);
+        user = await userService.GetAsync(email, true);
       }
 
       if (user == null || user.Password != password)
