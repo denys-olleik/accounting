@@ -4562,6 +4562,38 @@ namespace Accounting.Database
 
         return result.SingleOrDefault();
       }
+
+      public async Task<int> UpdatePasswordAllTenantsAsync(string email, string password)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+        p.Add("@Password", password);
+
+        int rowsModified = 0;
+
+        TenantManager tenantManager = new TenantManager();
+        var tenants = await tenantManager.GetAllAsync();
+
+        foreach (var tenant in tenants)
+        {
+          if (string.IsNullOrEmpty(tenant.DatabaseName))
+            continue;
+
+          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+          builder.Database = tenant.DatabaseName;
+
+          using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+          {
+            rowsModified += await con.ExecuteAsync("""
+              UPDATE "User" 
+              SET "Password" = @Password
+              WHERE "Email" = @Email
+              """, p);
+          }
+        }
+
+        return rowsModified;
+      }
     }
 
     public IUserOrganizationManager GetUserOrganizationManager()

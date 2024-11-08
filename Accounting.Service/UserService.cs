@@ -51,5 +51,11 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetUserManager().UpdatePasswordAsync(userId, passwordHash);
     }
+
+    public Task<int> UpdatePasswordAllTenantsAsync(string email, string password)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      return factoryManager.GetUserManager().UpdatePasswordAllTenantsAsync(email, password);
+    }
   }
 }

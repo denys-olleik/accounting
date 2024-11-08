@@ -55,8 +55,8 @@ namespace Accounting.Controllers
     [Route("add-user-orgnization/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> AddUserOrganization(
-      AddUserOrganizationViewModel model, 
-      string tenantId)
+    AddUserOrganizationViewModel model,
+    string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
@@ -67,7 +67,7 @@ namespace Accounting.Controllers
       }
 
       AddUserOrganizationViewModelValidator validator
-        = new AddUserOrganizationViewModelValidator(_userService, _organizationService, tenantId);
+          = new AddUserOrganizationViewModelValidator(_userService, _organizationService, tenantId);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -76,18 +76,27 @@ namespace Accounting.Controllers
         return View(model);
       }
 
+      User existingUser = await _userService.GetAsync(model.Email!, true);
+      string? password = null;
+
+      if (existingUser != null && model.InheritUser)
+      {
+        password = existingUser.Password;
+      }
+
+      User user;
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        User user = await _userService.CreateAsync(new User()
+        user = await _userService.CreateAsync(new User()
         {
           Email = model.Email,
           FirstName = model.FirstName,
           LastName = model.LastName,
-          Password = !string.IsNullOrWhiteSpace(model.Password) ? PasswordStorage.CreateHash(model.Password) : null
+          Password = password
         }, tenant.DatabaseName!);
 
         Organization organization = await _organizationService
-          .CreateAsync(model.OrganizationName!, tenant.DatabaseName!);
+            .CreateAsync(model.OrganizationName!, tenant.DatabaseName!);
 
         await _userOrganizationService.CreateAsync(new UserOrganization()
         {
@@ -97,6 +106,8 @@ namespace Accounting.Controllers
 
         scope.Complete();
       }
+
+      await _userService.UpdatePasswordAllTenantsAsync(user.Email!, password!);
 
       return RedirectToAction("Tenants");
     }
