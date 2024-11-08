@@ -11,10 +11,10 @@ namespace Accounting.Service
       return await factoryManager.GetUserOrganizationManager().GetByUserIdAsync(userId, tenantPublicId);
     }
 
-    public async Task<UserOrganization> GetAsync(int userId, int organizationId)
+    public async Task<UserOrganization> GetAsync(int userId, int organizationId, int? tenantId)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetUserOrganizationManager().GetAsync(userId, organizationId);
+      return await factoryManager.GetUserOrganizationManager().GetAsync(userId, organizationId, tenantId);
     }
 
     public async Task<UserOrganization> CreateAsync(UserOrganization userOrganization)

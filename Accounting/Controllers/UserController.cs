@@ -116,7 +116,7 @@ namespace Accounting.Controllers
     [Route("details/{id}")]
     public async Task<IActionResult> Details(int id)
     {
-      User user = (await _userOrganizationService.GetAsync(id, GetOrganizationId())).User!;
+      User user = (await _userOrganizationService.GetAsync(id, GetOrganizationId(), null)).User!;
 
       if (user == null)
       {

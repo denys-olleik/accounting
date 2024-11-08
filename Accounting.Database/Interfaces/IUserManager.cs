@@ -1,9 +1,4 @@
 ﻿using Accounting.Business;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Accounting.Database.Interfaces
 {
@@ -14,5 +9,6 @@ namespace Accounting.Database.Interfaces
     Task<User> GetAsync(string email, bool searchTenants);
     Task<int> UpdatePasswordAsync(int userId, string passwordHash);
     Task<User> CreateAsync(User entity, string databaseName);
+    Task<User> GetAsync(string email, int? tenantId);
   }
 }

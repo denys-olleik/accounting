@@ -4540,6 +4540,45 @@ namespace Accounting.Database
       {
         throw new NotImplementedException();
       }
+
+      public async Task<User> GetAsync(string email, int? tenantId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+
+        IEnumerable<User> result;
+
+        TenantManager tenantManager = new TenantManager();
+        Tenant? tenant = await tenantManager.GetAsync(tenantId!.Value);
+
+        if (tenant != null && !string.IsNullOrEmpty(tenant.DatabaseName))
+        {
+          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+          builder.Database = tenant.DatabaseName;
+
+          using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+          {
+            result = await con.QueryAsync<User>("""
+              SELECT * 
+              FROM "User" 
+              WHERE "Email" = @Email
+              """, p);
+          }
+        }
+        else
+        {
+          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+          {
+            result = await con.QueryAsync<User>("""
+              SELECT * 
+              FROM "User" 
+              WHERE "Email" = @Email
+              """, p);
+          }
+        }
+
+        return result.SingleOrDefault();
+      }
     }
 
     public IUserOrganizationManager GetUserOrganizationManager()
@@ -4661,7 +4700,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<UserOrganization> GetAsync(int userId, int organizationId)
+      public async Task<UserOrganization> GetAsync(int userId, int organizationId, int? tenantId)
       {
         var p = new DynamicParameters();
         p.Add("UserID", userId);
@@ -4669,23 +4708,51 @@ namespace Accounting.Database
 
         IEnumerable<UserOrganization> result;
 
-        using (IDbConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        TenantManager tenantManager = new TenantManager();
+        Tenant? tenant = await tenantManager.GetAsync(tenantId!.Value);
+
+        if (tenant != null && !string.IsNullOrEmpty(tenant.DatabaseName))
         {
-          result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>(
-            """
-            SELECT uo.*, u.*, o.* 
-            FROM "UserOrganization" uo
-            INNER JOIN "User" u ON uo."UserId" = u."UserID"
-            INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
-            WHERE uo."UserId" = @UserID AND uo."OrganizationId" = @OrganizationId
-            """,
-            (uo, u, o) =>
-            {
-              uo.User = u;
-              uo.Organization = o;
-              return uo;
-            }, p,
-            splitOn: "UserID,OrganizationID");
+          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+          builder.Database = tenant.DatabaseName;
+
+          using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+          {
+            result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+              SELECT uo.*, u.*, o.* 
+              FROM "UserOrganization" uo
+              INNER JOIN "User" u ON uo."UserId" = u."UserID"
+              INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+              WHERE uo."UserId" = @UserID AND uo."OrganizationId" = @OrganizationId
+              """,
+              (uo, u, o) =>
+              {
+                uo.User = u;
+                uo.Organization = o;
+                return uo;
+              }, p,
+              splitOn: "UserID,OrganizationID");
+          }
+        }
+        else
+        {
+          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+          {
+            result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+              SELECT uo.*, u.*, o.* 
+              FROM "UserOrganization" uo
+              INNER JOIN "User" u ON uo."UserId" = u."UserID"
+              INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+              WHERE uo."UserId" = @UserID AND uo."OrganizationId" = @OrganizationId
+              """,
+              (uo, u, o) =>
+              {
+                uo.User = u;
+                uo.Organization = o;
+                return uo;
+              }, p,
+              splitOn: "UserID,OrganizationID");
+          }
         }
 
         return result.SingleOrDefault()!;
