@@ -55,8 +55,8 @@ namespace Accounting.Controllers
     [Route("add-user-orgnization/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> AddUserOrganization(
-    AddUserOrganizationViewModel model,
-    string tenantId)
+      AddUserOrganizationViewModel model,
+      string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
@@ -76,27 +76,29 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      User existingUser = await _userService.GetAsync(model.Email!, true);
-      string? password = null;
-
-      if (existingUser != null && model.InheritUser)
+      User user = null!;
+      if (model.InheritUser)
       {
-        password = existingUser.Password;
+        user = await _userService.GetAsync(model.Email!, true);
       }
 
-      User user;
+      Organization organization = null!;
+      if (model.InheritOrganization)
+      {
+        organization = await _organizationService.GetAsync(model.OrganizationName!, tenant.DatabaseName!);
+      }
+
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        user = await _userService.CreateAsync(new User()
+        if (user == null)
         {
-          Email = model.Email,
-          FirstName = model.FirstName,
-          LastName = model.LastName,
-          Password = password
-        }, tenant.DatabaseName!);
+          user = await _userService.CreateAsync(new User() { Email = model.Email }, tenant.DatabaseName!);
+        }
 
-        Organization organization = await _organizationService
-            .CreateAsync(model.OrganizationName!, tenant.DatabaseName!);
+        if (organization == null)
+        {
+          organization = await _organizationService.CreateAsync(model.OrganizationName!, tenant.DatabaseName!);
+        }
 
         await _userOrganizationService.CreateAsync(new UserOrganization()
         {
@@ -107,7 +109,7 @@ namespace Accounting.Controllers
         scope.Complete();
       }
 
-      await _userService.UpdatePasswordAllTenantsAsync(user.Email!, password!);
+      await _userService.UpdatePasswordAllTenantsAsync(user.Email!, user.Password!);
 
       return RedirectToAction("Tenants");
     }
@@ -352,47 +354,6 @@ namespace Accounting.Validators
       _userService = userService;
       _organizationService = organizationService;
       _tenantId = tenantId;
-
-      RuleFor(x => x.Email)
-        .Cascade(CascadeMode.Stop)
-        .NotEmpty().WithMessage("Email is required.")
-        .EmailAddress().WithMessage("Invalid email format.")
-        .DependentRules(() =>
-        {
-          When(x => !x.InheritUser, () =>
-          {
-            RuleFor(x => x.Email)
-              .MustAsync(async (email, cancellation) =>
-              {
-                User user = await _userService.GetAsync(email!, true);
-                return user == null;
-              }).WithMessage("Email already exists.");
-          });
-        });
-
-      RuleFor(x => x.FirstName)
-        .NotEmpty()
-        .WithMessage("First name is required.");
-
-      RuleFor(x => x.LastName)
-        .NotEmpty()
-        .WithMessage("Last name is required.");
-
-      RuleFor(x => x.OrganizationName)
-        .Cascade(CascadeMode.Stop)
-        .NotEmpty().WithMessage("Organization name is required.")
-        .DependentRules(() =>
-        {
-          When(x => !x.InheritOrganization, () =>
-          {
-            RuleFor(x => x.OrganizationName)
-                .MustAsync(async (name, cancellation) =>
-                {
-                  Organization organization = await _organizationService.GetAsync(name!, _tenantId);
-                  return organization == null;
-                }).WithMessage("Organization already exists.");
-          });
-        });
     }
   }
 

@@ -3179,23 +3179,10 @@ namespace Accounting.Database
         return null!;
       }
 
-      public async Task<Organization> GetAsync(string name, string tenantId)
+      public async Task<Organization> GetAsync(string name, string databaseName)
       {
-        if (string.IsNullOrEmpty(tenantId))
-        {
-          return null!;
-        }
-
-        TenantManager tenantManager = new TenantManager();
-        var tenant = await tenantManager.GetAsync(tenantId);
-
-        if (tenant == null)
-        {
-          return null!;
-        }
-
         var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = tenant.DatabaseName;
+        builder.Database = databaseName;
 
         using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
