@@ -77,25 +77,30 @@ namespace Accounting.Controllers
       }
 
       User user = null!;
-      if (model.InheritUser)
-      {
-        user = await _userService.GetAsync(model.Email!, true);
-      }
-
       Organization organization = null!;
-      if (model.InheritOrganization)
-      {
-        organization = await _organizationService.GetAsync(model.OrganizationName!, tenant.DatabaseName!);
-      }
 
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        if (user == null)
+        if (model.InheritUser)
         {
-          user = await _userService.CreateAsync(new User() { Email = model.Email }, tenant.DatabaseName!);
+          user = await _userService.GetAsync(model.Email!, true);
+        }
+        else
+        {
+          user = await _userService.CreateAsync(new User()
+          {
+            Email = model.Email,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Password = !string.IsNullOrEmpty(model.Password) ? PasswordStorage.CreateHash(model.Password) : null
+          }, tenant.DatabaseName!);
         }
 
-        if (organization == null)
+        if (model.InheritOrganization)
+        {
+          organization = await _organizationService.GetAsync(model.OrganizationName!, tenant.DatabaseName!);
+        }
+        else
         {
           organization = await _organizationService.CreateAsync(model.OrganizationName!, tenant.DatabaseName!);
         }
