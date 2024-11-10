@@ -6,7 +6,7 @@ namespace Accounting.Database.Interfaces
   {
     Task<List<User>> GetAllAsync(int organizationId);
     Task<User> GetAsync(int userId);
-    Task<User> GetAsync(string email, bool searchTenants);
+    Task<(User, Tenant)> GetAsync(string email);
     Task<int> UpdatePasswordAsync(int userId, string passwordHash);
     Task<User> CreateAsync(User entity, string databaseName);
     Task<User> GetAsync(string email, int tenantId);

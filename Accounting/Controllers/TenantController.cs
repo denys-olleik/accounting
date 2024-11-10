@@ -54,8 +54,8 @@ namespace Accounting.Controllers
     [Route("add-user-orgnization/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> AddUserOrganization(
-  AddUserOrganizationViewModel model,
-  string tenantId)
+      AddUserOrganizationViewModel model,
+      string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
@@ -85,7 +85,23 @@ namespace Accounting.Controllers
       {
         if (model.InheritUser)
         {
-          user = await _userService.GetAsync(model.Email!, true);
+          var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
+
+          if (tenantExistingUserBelongsTo.TenantID != tenant.TenantID)
+          {
+            user = await _userService.CreateAsync(new User()
+            {
+              Email = model.Email,
+              FirstName = model.FirstName,
+              LastName = model.LastName,
+              Password = !string.IsNullOrEmpty(model.Password)
+              ? PasswordStorage.CreateHash(model.Password) : null
+            }, tenant.DatabaseName!);
+          }
+          else
+          {
+            user = existingUser;
+          }
         }
         else
         {
@@ -474,7 +490,7 @@ namespace Accounting.Models.Tenant
             RuleFor(x => x)
               .MustAsync(async (model, cancellationToken) =>
               {
-                var existingUser = await _userService.GetAsync(model.Email!, true);
+                var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
                 return model.InheritUser ? existingUser != null : existingUser == null;
               })
               .WithMessage(model =>

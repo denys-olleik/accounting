@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using System.Transactions;
 using static Accounting.Business.Claim;
@@ -64,14 +63,14 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      User user = await _userService.GetAsync(model.Email!, true);
+      var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
 
       if (
-        user != null
-        && (!string.IsNullOrEmpty(user.Password) && !string.IsNullOrEmpty(model.Password))
-        && PasswordStorage.VerifyPassword(model.Password, user.Password))
+        existingUser != null
+        && (!string.IsNullOrEmpty(existingUser.Password) && !string.IsNullOrEmpty(model.Password))
+        && PasswordStorage.VerifyPassword(model.Password, existingUser.Password))
       {
-        ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user);
+        ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(existingUser);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
           claimsPrincipal,
@@ -82,7 +81,7 @@ namespace Accounting.Controllers
 
         return RedirectToAction("ChooseOrganization", "UserAccount");
       }
-      else if (user != null && string.IsNullOrEmpty(model.Password))
+      else if (existingUser != null && string.IsNullOrEmpty(model.Password))
       {
         Secret? emailApiKeySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, null);
         Secret? noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, null);
@@ -141,8 +140,8 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      User user = await _userService.GetAsync(model.Email!, true);
-      ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(user);
+      var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
+      ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(existingUser);
 
       await HttpContext.SignInAsync(
         CookieAuthenticationDefaults.AuthenticationScheme,

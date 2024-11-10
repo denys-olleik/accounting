@@ -18,9 +18,7 @@ namespace Accounting.Validators
 
     private async Task<bool> UserDoesNotExistAsync(string email, CancellationToken token)
     {
-      UserService userService = new UserService();
-      User user = await userService.GetAsync(email, false);
-      return user == null;
+      throw new NotImplementedException();
     }
   }
 }
