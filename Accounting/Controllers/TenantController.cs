@@ -67,7 +67,10 @@ namespace Accounting.Controllers
       }
 
       AddUserOrganizationViewModelValidator validator
-          = new AddUserOrganizationViewModelValidator(_userService, _organizationService, tenantId);
+          = new AddUserOrganizationViewModelValidator(
+            _userService, 
+            _organizationService, 
+            tenantId);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -92,17 +95,22 @@ namespace Accounting.Controllers
             Email = model.Email,
             FirstName = model.FirstName,
             LastName = model.LastName,
-            Password = !string.IsNullOrEmpty(model.Password) ? PasswordStorage.CreateHash(model.Password) : null
+            Password = !string.IsNullOrEmpty(model.Password) 
+              ? PasswordStorage.CreateHash(model.Password) : null
           }, tenant.DatabaseName!);
         }
 
         if (model.InheritOrganization)
         {
-          organization = await _organizationService.GetAsync(model.OrganizationName!, tenant.DatabaseName!);
+          organization = await _organizationService.GetAsync(
+            model.OrganizationName!, 
+            tenant.DatabaseName!);
         }
         else
         {
-          organization = await _organizationService.CreateAsync(model.OrganizationName!, tenant.DatabaseName!);
+          organization = await _organizationService.CreateAsync(
+            model.OrganizationName!, 
+            tenant.DatabaseName!);
         }
 
         await _userOrganizationService.CreateAsync(new UserOrganization()
