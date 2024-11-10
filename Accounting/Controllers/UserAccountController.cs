@@ -24,6 +24,7 @@ namespace Accounting.Controllers
     private readonly LoginWithoutPasswordService _loginWithoutPasswordService;
     private readonly EmailService _emailService;
     private readonly SecretService _secretService;
+    private readonly TenantService _tenantService;
 
     public UserAccountController(
       OrganizationService organizationService,
@@ -31,7 +32,9 @@ namespace Accounting.Controllers
       UserService userService,
       LoginWithoutPasswordService loginWithoutPasswordService,
       EmailService emailService,
-      SecretService secretService)
+      SecretService secretService,
+      TenantService tenantService
+      )
     {
       _organizationService = organizationService;
       _userOrganizationService = userOrganizationService;
@@ -39,6 +42,7 @@ namespace Accounting.Controllers
       _loginWithoutPasswordService = loginWithoutPasswordService;
       _emailService = emailService;
       _secretService = secretService;
+      _tenantService = tenantService;
     }
 
     [AllowAnonymous]
@@ -166,7 +170,7 @@ namespace Accounting.Controllers
         {
           OrganizationId = x.Organization.OrganizationID,
           Name = x.Organization.Name!,
-          TenantPublicId = x.Tenant?.PublicId
+          TenantId = x.Tenant?.TenantID
         }).ToList()
       };
 
@@ -179,11 +183,13 @@ namespace Accounting.Controllers
     {
       List<(Organization Organization, Tenant? Tenant)> organizationTuples = await _userOrganizationService.GetByEmailAsync(GetEmail(), true);
 
+      Tenant tenant = await _tenantService.GetAsync(model.SelectedTenantId!.Value);
+
       model.Organizations = organizationTuples.Select(x => new OrganizationViewModel()
       {
         OrganizationId = x.Organization.OrganizationID,
         Name = x.Organization.Name!,
-        TenantPublicId = x.Tenant?.PublicId
+        TenantId = x.Tenant?.TenantID
       }).ToList();
 
       model.ValidationResult = new ValidationResult();
@@ -198,8 +204,8 @@ namespace Accounting.Controllers
         = await _userOrganizationService
           .GetByEmailAsync(
             GetEmail(), 
-            model.SelectedOrganizationId, 
-            model.SelectedPublicTenantId);
+            model.SelectedOrganizationId,
+            model.SelectedTenantId!.Value);
 
       User user = userOrganization.User!;
 
@@ -210,7 +216,8 @@ namespace Accounting.Controllers
             user,
             userOrganization.Organization.OrganizationID,
             organizationTuples.SingleOrDefault(x => 
-              x.Organization.OrganizationID == model.SelectedOrganizationId)!.Organization.Name);
+              x.Organization.OrganizationID == model.SelectedOrganizationId)!.Organization.Name,
+            tenant.TenantID);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
           claimsPrincipal,
@@ -240,7 +247,8 @@ namespace Accounting.Controllers
     private ClaimsPrincipal CreateClaimsPricipal(
       User user,
       int? organizationId = null,
-      string? organizationName = null)
+      string? organizationName = null,
+      int? tenantId = null)
     {
       List<System.Security.Claims.Claim> claims = new List<System.Security.Claims.Claim>();
 
@@ -251,6 +259,7 @@ namespace Accounting.Controllers
         claims.Add(new System.Security.Claims.Claim(ClaimTypes.Email, user.Email));
         claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationId, organizationId.Value.ToString()));
         claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationName, organizationName));
+        claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.TenantId, tenantId.ToString()!));
       }
       else
       {

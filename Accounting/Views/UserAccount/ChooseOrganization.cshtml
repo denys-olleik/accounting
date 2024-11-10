@@ -15,7 +15,7 @@
   <div class="display-flex flex-direction-column">
     <label asp-for="SelectedOrganizationId" class="background-color-antiquewhite">Organization</label>
     <input type="hidden" name="SelectedOrganizationId" :value="selectedOrganizationId" />
-    <input type="hidden" name="SelectedPublicTenantId" :value="selectedPublicTenantId" />
+    <input type="hidden" name="SelectedTenantId" :value="selectedTenantId" />
 
     <select v-model="selectedOrganizationId" class="margin-bottom-5px font-size-20px font-Roboto-Mono">
       <option value="" class="font-Roboto">Select an organization</option>
@@ -45,7 +45,7 @@
     data() {
       return {
         selectedOrganizationId: '',
-        selectedPublicTenantId: '',
+        selectedTenantId: '',
         organizations: @Html.Raw(Json.Serialize(Model.Organizations)),
       }
     },
@@ -55,9 +55,9 @@
           const selectedOrganization = this.organizations.find(
             org => org.organizationId === newVal
           );
-          this.selectedPublicTenantId = selectedOrganization ? selectedOrganization.tenantPublicId : null;
+          this.selectedTenantId = selectedOrganization ? selectedOrganization.tenantId : null;
         } else {
-          this.selectedPublicTenantId = null;
+          this.selectedTenantId = null;
         }
       }
     }

@@ -146,8 +146,6 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-
-
       await _userService.UpdatePasswordAllTenantsAsync(user.Email!, user.Password!);
 
       return RedirectToAction("Tenants");

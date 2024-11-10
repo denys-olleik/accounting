@@ -4831,7 +4831,10 @@ namespace Accounting.Database
         return organizationsWithTenants;
       }
 
-      public async Task<UserOrganization?> GetByEmailAsync(string email, int? selectedOrganizationId, string? tenantPublicId)
+      public async Task<UserOrganization?> GetByEmailAsync(
+        string email, 
+        int? selectedOrganizationId, 
+        int tenantId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
@@ -4840,10 +4843,10 @@ namespace Accounting.Database
 
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
         {
-          if (!string.IsNullOrEmpty(tenantPublicId))
+          if (tenantId > 0)
           {
             TenantManager tenantManager = new TenantManager();
-            Tenant tenant = await tenantManager.GetAsync(tenantPublicId);
+            Tenant tenant = await tenantManager.GetAsync(tenantId);
 
             if (tenant != null && !string.IsNullOrEmpty(tenant.DatabaseName))
             {
