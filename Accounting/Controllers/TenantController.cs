@@ -466,12 +466,6 @@ namespace Accounting.Models.Tenant
         _tenantService = tenantService;
         _tenantId = tenantId;
 
-        RuleFor(x => x.FirstName)
-          .NotEmpty().WithMessage("First name is required.");
-
-        RuleFor(x => x.LastName)
-          .NotEmpty().WithMessage("Last name is required.");
-
         RuleFor(x => x.Email)
           .NotEmpty().WithMessage("Email is required.")
           .EmailAddress().WithMessage("Invalid email format.")
@@ -480,43 +474,35 @@ namespace Accounting.Models.Tenant
             RuleFor(x => x)
               .MustAsync(async (model, cancellationToken) =>
               {
-                if (!model.InheritUser)
-                {
-                  var existingUser = await _userService.GetAsync(model.Email!, true);
-                  return existingUser == null;
-                }
-                else
-                {
-                  var existingUser = await _userService.GetAsync(model.Email!, true);
-                  return existingUser != null;
-                }
+                var existingUser = await _userService.GetAsync(model.Email!, true);
+                return model.InheritUser ? existingUser != null : existingUser == null;
               })
               .WithMessage(model =>
                 model.InheritUser ? "User does not exist to inherit." : "A user with this email already exists. Inherit user instead.");
           });
 
+        RuleFor(x => x.FirstName)
+            .NotEmpty().WithMessage("First name is required.")
+            .When(x => !x.InheritUser);
+
+        RuleFor(x => x.LastName)
+            .NotEmpty().WithMessage("Last name is required.")
+            .When(x => !x.InheritUser);
+
         RuleFor(x => x.OrganizationName)
-          .NotEmpty().WithMessage("Organization name is required.")
-          .DependentRules(() =>
-          {
-            RuleFor(x => x)
-              .MustAsync(async (model, cancellationToken) =>
-              {
-                Business.Tenant tenant = await _tenantService.GetAsync(Convert.ToInt32(_tenantId));
-                if (!model.InheritOrganization)
-                {
-                  var existingOrganization = await _organizationService.GetAsync(model.OrganizationName!, tenant.DatabaseName);
-                  return existingOrganization == null;
-                }
-                else
-                {
-                  var existingOrganization = await _organizationService.GetAsync(model.OrganizationName!, tenant.DatabaseName);
-                  return existingOrganization != null;
-                }
-              })
-              .WithMessage(model =>
-                model.InheritOrganization ? "Organization does not exist to inherit." : "This combination of user and organization already exists.");
-          });
+            .NotEmpty().WithMessage("Organization name is required.")
+            .DependentRules(() =>
+            {
+              RuleFor(x => x)
+                  .MustAsync(async (model, cancellationToken) =>
+                  {
+                    var tenant = await _tenantService.GetAsync(Convert.ToInt32(_tenantId));
+                    var existingOrganization = await _organizationService.GetAsync(model.OrganizationName!, tenant.DatabaseName);
+                    return model.InheritOrganization ? existingOrganization != null : existingOrganization == null;
+                  })
+                  .WithMessage(model =>
+                      model.InheritOrganization ? "Organization does not exist to inherit." : "This combination of user and organization already exists.");
+            });
       }
     }
   }
