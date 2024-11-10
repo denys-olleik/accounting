@@ -67,10 +67,11 @@ namespace Accounting.Controllers
       }
 
       AddUserOrganizationViewModelValidator validator
-          = new AddUserOrganizationViewModelValidator(
-            _userService, 
-            _organizationService, 
-            tenantId);
+        = new AddUserOrganizationViewModelValidator(
+          _userService,
+          _organizationService,
+          _tenantService,
+          tenantId);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -95,7 +96,7 @@ namespace Accounting.Controllers
             Email = model.Email,
             FirstName = model.FirstName,
             LastName = model.LastName,
-            Password = !string.IsNullOrEmpty(model.Password) 
+            Password = !string.IsNullOrEmpty(model.Password)
               ? PasswordStorage.CreateHash(model.Password) : null
           }, tenant.DatabaseName!);
         }
@@ -103,21 +104,35 @@ namespace Accounting.Controllers
         if (model.InheritOrganization)
         {
           organization = await _organizationService.GetAsync(
-            model.OrganizationName!, 
+            model.OrganizationName!,
             tenant.DatabaseName!);
         }
         else
         {
           organization = await _organizationService.CreateAsync(
-            model.OrganizationName!, 
+            model.OrganizationName!,
             tenant.DatabaseName!);
         }
 
-        await _userOrganizationService.CreateAsync(new UserOrganization()
+        UserOrganization userOrganization = await _userOrganizationService
+          .GetAsync(
+            user.UserID,
+            organization.OrganizationID,
+            tenant.TenantID);
+
+        if (userOrganization == null)
         {
-          UserId = user.UserID,
-          OrganizationId = organization.OrganizationID
-        }, tenant.DatabaseName!);
+          await _userOrganizationService.CreateAsync(new UserOrganization()
+          {
+            UserId = user.UserID,
+            OrganizationId = organization.OrganizationID
+          }, tenant.DatabaseName!);
+        }
+        else
+        {
+          model.ValidationResult.Errors.Add(new ValidationFailure("Email", "User is already a member of the organization."));
+          return View(model);
+        }
 
         scope.Complete();
       }
