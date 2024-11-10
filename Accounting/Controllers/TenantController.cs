@@ -81,75 +81,72 @@ namespace Accounting.Controllers
       User user = null!;
       Organization organization = null!;
 
-      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      if (model.InheritUser)
       {
-        if (model.InheritUser)
-        {
-          var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
+        var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
 
-          if (tenantExistingUserBelongsTo.TenantID != tenant.TenantID)
-          {
-            user = await _userService.CreateAsync(new User()
-            {
-              Email = model.Email,
-              FirstName = model.FirstName,
-              LastName = model.LastName,
-              Password = !string.IsNullOrEmpty(model.Password)
-              ? PasswordStorage.CreateHash(model.Password) : null
-            }, tenant.DatabaseName!);
-          }
-          else
-          {
-            user = existingUser;
-          }
-        }
-        else
+        if (tenantExistingUserBelongsTo.TenantID != tenant.TenantID)
         {
           user = await _userService.CreateAsync(new User()
           {
             Email = model.Email,
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            Password = !string.IsNullOrEmpty(model.Password)
-              ? PasswordStorage.CreateHash(model.Password) : null
-          }, tenant.DatabaseName!);
-        }
-
-        if (model.InheritOrganization)
-        {
-          organization = await _organizationService.GetAsync(
-            model.OrganizationName!,
-            tenant.DatabaseName!);
-        }
-        else
-        {
-          organization = await _organizationService.CreateAsync(
-            model.OrganizationName!,
-            tenant.DatabaseName!);
-        }
-
-        UserOrganization userOrganization = await _userOrganizationService
-          .GetAsync(
-            user.UserID,
-            organization.OrganizationID,
-            tenant.TenantID);
-
-        if (userOrganization == null)
-        {
-          await _userOrganizationService.CreateAsync(new UserOrganization()
-          {
-            UserId = user.UserID,
-            OrganizationId = organization.OrganizationID
+            FirstName = existingUser.FirstName,
+            LastName = existingUser.LastName,
+            Password = !string.IsNullOrEmpty(existingUser.Password)
+              ? PasswordStorage.CreateHash(existingUser.Password) : null
           }, tenant.DatabaseName!);
         }
         else
         {
-          model.ValidationResult.Errors.Add(new ValidationFailure("Email", "User is already a member of the organization."));
-          return View(model);
+          user = existingUser;
         }
-
-        scope.Complete();
       }
+      else
+      {
+        user = await _userService.CreateAsync(new User()
+        {
+          Email = model.Email,
+          FirstName = model.FirstName,
+          LastName = model.LastName,
+          Password = !string.IsNullOrEmpty(model.Password)
+            ? PasswordStorage.CreateHash(model.Password) : null
+        }, tenant.DatabaseName!);
+      }
+
+      if (model.InheritOrganization)
+      {
+        organization = await _organizationService.GetAsync(
+          model.OrganizationName!,
+          tenant.DatabaseName!);
+      }
+      else
+      {
+        organization = await _organizationService.CreateAsync(
+          model.OrganizationName!,
+          tenant.DatabaseName!);
+      }
+
+      UserOrganization userOrganization = await _userOrganizationService
+        .GetAsync(
+          user.UserID,
+          organization.OrganizationID,
+          tenant.TenantID);
+
+      if (userOrganization == null)
+      {
+        await _userOrganizationService.CreateAsync(new UserOrganization()
+        {
+          UserId = user.UserID,
+          OrganizationId = organization.OrganizationID
+        }, tenant.DatabaseName!);
+      }
+      else
+      {
+        model.ValidationResult.Errors.Add(new ValidationFailure("Email", "User is already a member of the organization."));
+        return View(model);
+      }
+
+
 
       await _userService.UpdatePasswordAllTenantsAsync(user.Email!, user.Password!);
 
