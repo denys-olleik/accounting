@@ -54,8 +54,8 @@ namespace Accounting.Controllers
     [Route("add-user-orgnization/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> AddUserOrganization(
-      AddUserOrganizationViewModel model,
-      string tenantId)
+  AddUserOrganizationViewModel model,
+  string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
@@ -65,12 +65,11 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      AddUserOrganizationViewModel.AddUserOrganizationViewModelValidator validator
-        = new AddUserOrganizationViewModel.AddUserOrganizationViewModelValidator(
-          _userService,
-          _organizationService,
-          _tenantService,
-          tenantId);
+      var validator = new AddUserOrganizationViewModel.AddUserOrganizationViewModelValidator(
+        _userService,
+        _organizationService,
+        _tenantService,
+        tenantId);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -407,17 +406,44 @@ namespace Accounting.Models.Tenant
   public class AddUserOrganizationViewModel
   {
     public int TenantId { get; set; }
+
     private string? _email;
     public string? Email
     {
       get => _email;
-      set => _email = value?.ToLower();
+      set => _email = value?.Trim().ToLower();
     }
+
     public bool InheritUser { get; set; }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public string? Password { get; set; }
-    public string? OrganizationName { get; set; }
+
+    private string? _firstName;
+    public string? FirstName
+    {
+      get => _firstName;
+      set => _firstName = value?.Trim();
+    }
+
+    private string? _lastName;
+    public string? LastName
+    {
+      get => _lastName;
+      set => _lastName = value?.Trim();
+    }
+
+    private string? _password;
+    public string? Password
+    {
+      get => _password;
+      set => _password = value?.Trim();
+    }
+
+    private string? _organizationName;
+    public string? OrganizationName
+    {
+      get => _organizationName;
+      set => _organizationName = value?.Trim();
+    }
+
     public bool InheritOrganization { get; set; }
 
     public ValidationResult? ValidationResult { get; set; } = new ValidationResult();
@@ -459,8 +485,14 @@ namespace Accounting.Models.Tenant
                   var existingUser = await _userService.GetAsync(model.Email!, true);
                   return existingUser == null;
                 }
-                return true;
-              }).WithMessage("A user with this email already exists. Inherit user instead.");
+                else
+                {
+                  var existingUser = await _userService.GetAsync(model.Email!, true);
+                  return existingUser != null;
+                }
+              })
+              .WithMessage(model =>
+                model.InheritUser ? "User does not exist to inherit." : "A user with this email already exists. Inherit user instead.");
           });
 
         RuleFor(x => x.OrganizationName)
@@ -470,14 +502,20 @@ namespace Accounting.Models.Tenant
             RuleFor(x => x)
               .MustAsync(async (model, cancellationToken) =>
               {
+                Business.Tenant tenant = await _tenantService.GetAsync(Convert.ToInt32(_tenantId));
                 if (!model.InheritOrganization)
                 {
-                  Business.Tenant tenant = await _tenantService.GetAsync(Convert.ToInt32(_tenantId));
                   var existingOrganization = await _organizationService.GetAsync(model.OrganizationName!, tenant.DatabaseName);
                   return existingOrganization == null;
                 }
-                return true;
-              }).WithMessage("This combination of user and organization already exists.");
+                else
+                {
+                  var existingOrganization = await _organizationService.GetAsync(model.OrganizationName!, tenant.DatabaseName);
+                  return existingOrganization != null;
+                }
+              })
+              .WithMessage(model =>
+                model.InheritOrganization ? "Organization does not exist to inherit." : "This combination of user and organization already exists.");
           });
       }
     }
