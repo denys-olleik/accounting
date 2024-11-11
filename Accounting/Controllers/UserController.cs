@@ -1,6 +1,7 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
 using Accounting.CustomAttributes;
+using Accounting.Models.User;
 using Accounting.Models.UserViewModels;
 using Accounting.Service;
 using Accounting.Validators;
@@ -131,6 +132,23 @@ namespace Accounting.Controllers
       userDetailsViewModel.Created = user.Created;
 
       return View(userDetailsViewModel);
+    }
+
+    [HttpGet]
+    [Route("update-password/{id}")]
+    public async Task<IActionResult> UpdatePassword(int id)
+    {
+      User user = await _userService.GetAsync(id);
+
+      if (user == null)
+      {
+        return NotFound();
+      }
+
+      UpdatePasswordViewModel model = new UpdatePasswordViewModel();
+      model.UserId = user.UserID;
+
+      return View(model);
     }
   }
 }
