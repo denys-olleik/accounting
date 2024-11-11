@@ -594,7 +594,7 @@ namespace Accounting.Database
 
         if (includeDescendants)
         {
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+          using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
           {
             var allAccounts = await con.QueryAsync<Account>($"""
               SELECT * 
