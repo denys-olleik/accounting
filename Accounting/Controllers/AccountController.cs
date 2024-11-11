@@ -90,17 +90,11 @@ namespace Accounting.Controllers
         Name = model.AccountName,
         Type = model.SelectedAccountType,
         ParentAccountId = model.ParentAccountId,
-        InvoiceCreationForCredit = model.ShowInInvoiceCreationDropDownForCredit,
-        InvoiceCreationForDebit = model.ShowInInvoiceCreationDropDownForDebit,
-        ReceiptOfPaymentForCredit = model.ShowInReceiptOfPaymentDropDownForCredit,
-        ReceiptOfPaymentForDebit = model.ShowInReceiptOfPaymentDropDownForDebit,
-        ReconciliationExpense = model.ReconciliationExpense,
-        ReconciliationLiabilitiesAndAssets = model.ReconciliationLiabilitiesAndAssets,
         OrganizationId = GetOrganizationId(),
         CreatedById = GetUserId()
       };
 
-      await _accountService.CreateAsync(account);
+      await _accountService.CreateAsync(account, GetTenantId());
 
       return RedirectToAction("Accounts");
     }

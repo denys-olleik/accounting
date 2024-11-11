@@ -37,5 +37,13 @@ namespace Accounting.Controllers
       string email = identity.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
       return email;
     }
+
+    [NonAction]
+    public int GetTenantId()
+    {
+      ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
+      int tenantId = Convert.ToInt32(identity.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.TenantId)?.Value);
+      return tenantId;
+    }
   }
 }

@@ -6,6 +6,7 @@ using Npgsql;
 using System.Data;
 using System.Text.RegularExpressions;
 using Renci.SshNet.Security;
+using static Dapper.SqlMapper;
 
 namespace Accounting.Database
 {
@@ -291,6 +292,38 @@ namespace Accounting.Database
       public Account Create(Account entity)
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<Account> CreateAsync(Account entity, int tenantId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Name", entity.Name);
+        p.Add("@Type", entity.Type);
+        p.Add("@ParentAccountId", entity.ParentAccountId);
+        p.Add("@CreatedById", entity.CreatedById);
+        p.Add("@OrganizationId", entity.OrganizationId);
+
+        IEnumerable<Account> result;
+
+        TenantManager tenantManager = new TenantManager();
+        Tenant tenant = await tenantManager.GetAsync(tenantId);
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.ApplicationName = tenant.DatabaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        {
+          result = await con.QueryAsync<Account>("""
+            INSERT INTO "Account" 
+            ("Name", "Type", "ParentAccountId", "CreatedById", "OrganizationId")
+            VALUES 
+            (@Name, @Type, @ParentAccountId, @CreatedById, @OrganizationId)
+            RETURNING *;
+            """, p);
+        }
+
+        return result.Single();
       }
 
       public async Task<Account> CreateAsync(Account entity)
@@ -840,6 +873,8 @@ namespace Accounting.Database
 
         return rowsModified;
       }
+
+     
     }
 
     //public IJournalInvoiceManager GetJournalInvoiceManager()

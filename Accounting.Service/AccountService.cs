@@ -114,5 +114,11 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetAccountManager().GetAllAsync(organizationId, includeJournalEntriesCount);
     }
+
+    public async Task<Account> CreateAsync(Account account, int tenantId)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      return await factoryManager.GetAccountManager().CreateAsync(account, tenantId);
+    }
   }
 }
