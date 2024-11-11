@@ -26,7 +26,7 @@ namespace Accounting.Controllers
     [HttpGet]
     public async Task<IActionResult> Update()
     {
-      Organization organization = await _organizationService.GetAsync(GetOrganizationId());
+      Organization organization = await _organizationService.GetAsync(GetOrganizationId(), GetTenantId());
 
       if (organization == null)
       {

@@ -28,18 +28,11 @@ namespace Accounting.Controllers
       _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
     }
 
-    //[HttpGet("print-invoice/{id}")]
-    //public async Task<IActionResult> PrintInvoice(int id)
-    //{
-    //  byte[] pdf = await _ironPdfService.PrintInvoice(id, GetOrganizationId());
-    //  return File(pdf, "application/pdf", $"Invoice-{id}.pdf");
-    //}
-
     [HttpGet("view-invoice/{id}")]
     public async Task<IActionResult> ViewInvoice(int id)
     {
       Invoice invoice = await _invoiceService.GetAsync(id, GetOrganizationId());
-      invoice.IssuingOrganization = await _organizationService.GetAsync(invoice.OrganizationId);
+      invoice.IssuingOrganization = await _organizationService.GetAsync(invoice.OrganizationId, GetTenantId());
       invoice.BusinessEntity = await _businessEntityService.GetAsync(invoice.BusinessEntityId, GetOrganizationId());
       invoice.InvoiceLines = await _journalInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
 
