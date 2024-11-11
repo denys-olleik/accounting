@@ -309,7 +309,7 @@ namespace Accounting.Database
         Tenant tenant = await tenantManager.GetAsync(tenantId);
 
         var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.ApplicationName = tenant.DatabaseName;
+        builder.Database = tenant.DatabaseName;
         string connectionString = builder.ConnectionString;
 
         using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
