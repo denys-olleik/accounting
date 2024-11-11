@@ -59,10 +59,10 @@ namespace Accounting.Service
       return await factoryManager.GetAccountManager().GetByAccountNameAsync(accountName, organizationId);
     }
 
-    public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, bool includeJournalEntriesCount, bool includeDescendants)
+    public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, int tenantId, bool includeJournalEntriesCount, bool includeDescendants)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetAccountManager().GetAllAsync(page, pageSize, organizationId, includeJournalEntriesCount, includeDescendants);
+      return await factoryManager.GetAccountManager().GetAllAsync(page, pageSize, organizationId, tenantId, includeJournalEntriesCount, includeDescendants);
     }
 
     private void PopulateChildrenRecursively(List<Account> children, List<Account> allOrganizationAccountsFlatList)

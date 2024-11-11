@@ -554,6 +554,7 @@ namespace Accounting.Database
         int page,
         int pageSize,
         int organizationId,
+        int tenantId,
         bool includeJournalEntriesCount,
         bool includeDescendants)
       {
@@ -564,7 +565,14 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        TenantManager tenantManager = new TenantManager();
+        Tenant tenant = await tenantManager.GetAsync(tenantId);
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = tenant.DatabaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           result = await con.QueryAsync<Account>($"""
             SELECT *, ROW_NUMBER() OVER (ORDER BY "AccountID") AS "RowNumber"

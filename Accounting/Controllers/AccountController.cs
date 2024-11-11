@@ -216,6 +216,7 @@ namespace Accounting.Controllers
           page,
           pageSize,
           GetOrganizationId(),
+          GetTenantId(),
           includeJournalEntriesCount,
           includeDescendants);
 
