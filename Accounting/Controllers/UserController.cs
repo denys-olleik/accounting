@@ -135,20 +135,29 @@ namespace Accounting.Controllers
     }
 
     [HttpGet]
-    [Route("update-password/{id}")]
-    public async Task<IActionResult> UpdatePassword(int id)
+    [Route("update-password")]
+    public async Task<IActionResult> UpdatePassword()
     {
-      User user = await _userService.GetAsync(id);
+      return View();
+    }
 
-      if (user == null)
+    [HttpPost]
+    [Route("update-password")]
+    public async Task<IActionResult> UpdatePassword(UpdatePasswordViewModel model)
+    {
+      UpdatePasswordViewModel.UpdatePasswordViewModelValidator validator 
+        = new UpdatePasswordViewModel.UpdatePasswordViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
       {
-        return NotFound();
+        model.ValidationResult = validationResult;
+        return View(model);
       }
 
-      UpdatePasswordViewModel model = new UpdatePasswordViewModel();
-      model.UserId = user.UserID;
+      await _userService.UpdatePasswordAllTenantsAsync(GetEmail(), PasswordStorage.CreateHash(model.NewPassword));
 
-      return View(model);
+      return RedirectToAction("Users");
     }
   }
 }

@@ -4476,14 +4476,21 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<User> GetAsync(int userId)
+      public async Task<User> GetAsync(int userId, int tenantId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@UserId", userId);
 
         IEnumerable<User> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        TenantManager tenantManager = new TenantManager();
+        var tenant = await tenantManager.GetAsync(tenantId);
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = tenant.DatabaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           result = await con.QueryAsync<User>("""
             SELECT * 
@@ -4536,26 +4543,6 @@ namespace Accounting.Database
         }
 
         return (null, null);
-      }
-
-      public async Task<int> UpdatePasswordAsync(int userId, string passwordHash)
-      {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@UserID", userId);
-        p.Add("@Password", passwordHash);
-
-        int rowsModified;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-        {
-          rowsModified = await con.ExecuteAsync("""
-            UPDATE "User" 
-            SET "Password" = @Password
-            WHERE "UserID" = @UserID
-            """, p);
-        }
-
-        return rowsModified;
       }
 
       public int Update(User entity)

@@ -62,7 +62,7 @@ namespace Accounting.Controllers
       UserService userService = new UserService();
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        await userService.UpdatePasswordAsync(invitation.UserId, PasswordStorage.CreateHash(model.Password));
+        await userService.UpdatePasswordAllTenantsAsync(invitation.Email, PasswordStorage.CreateHash(model.Password));
         await invitationService.DeleteAsync(model.Guid);
         scope.Complete();
       }
