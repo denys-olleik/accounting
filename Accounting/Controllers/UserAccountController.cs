@@ -215,8 +215,7 @@ namespace Accounting.Controllers
           = CreateClaimsPricipal(
             user,
             userOrganization.Organization.OrganizationID,
-            organizationTuples.SingleOrDefault(x => 
-              x.Organization.OrganizationID == model.SelectedOrganizationId)!.Organization.Name,
+            userOrganization.Organization.Name,
             tenant.TenantID);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
