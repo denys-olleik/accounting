@@ -17,9 +17,9 @@
     <input type="hidden" name="SelectedOrganizationId" :value="selectedOrganizationId" />
     <input type="hidden" name="SelectedTenantId" :value="selectedTenantId" />
 
-    <select v-model="selectedOrganizationId" class="margin-bottom-5px font-size-20px font-Roboto-Mono">
+    <select v-model="selectedOrganization" class="margin-bottom-5px font-size-20px font-Roboto-Mono">
       <option value="" class="font-Roboto">Select an organization</option>
-      <option v-for="organization in organizations" :value="organization.organizationId" :key="organization.organizationId">
+      <option v-for="organization in organizations" :value="{ organizationId: organization.organizationId, tenantId: organization.tenantId }">
         {{ organization.name }}
       </option>
     </select>
@@ -44,19 +44,19 @@
   const app = createApp({
     data() {
       return {
-        selectedOrganizationId: '',
-        selectedTenantId: '',
         organizations: @Html.Raw(Json.Serialize(Model.Organizations)),
-      }
+        selectedOrganization: null,
+        selectedOrganizationId: null,
+        selectedTenantId: null
+      };
     },
     watch: {
-      selectedOrganizationId(newVal) {
+      selectedOrganization(newVal) {
         if (newVal) {
-          const selectedOrganization = this.organizations.find(
-            org => org.organizationId === newVal
-          );
-          this.selectedTenantId = selectedOrganization ? selectedOrganization.tenantId : null;
+          this.selectedOrganizationId = newVal.organizationId;
+          this.selectedTenantId = newVal.tenantId;
         } else {
+          this.selectedOrganizationId = null;
           this.selectedTenantId = null;
         }
       }
