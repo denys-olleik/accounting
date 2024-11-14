@@ -758,19 +758,28 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<Account> GetAsync(int id, int organizationId)
+      public async Task<Account> GetAsync(int id, int organizationId, int tenantId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@AccountID", id);
+        p.Add("@OrganizationId", organizationId);
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        TenantManager tenantManager = new TenantManager();
+        Tenant tenant = await tenantManager.GetAsync(tenantId);
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = tenant.DatabaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
             FROM "Account" 
             WHERE "AccountID" = @AccountID
+            AND "OrganizationId" = @OrganizationId
             """, p);
         }
 

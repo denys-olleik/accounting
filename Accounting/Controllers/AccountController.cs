@@ -49,7 +49,7 @@ namespace Accounting.Controllers
 
       if (parentAccountId.HasValue)
       {
-        parentAccount = await _accountService.GetAsync(parentAccountId.Value, GetOrganizationId());
+        parentAccount = await _accountService.GetAsync(parentAccountId.Value, GetOrganizationId(), GetTenantId());
         if (parentAccount == null)
           return NotFound();
       }
@@ -103,14 +103,14 @@ namespace Accounting.Controllers
     [HttpGet]
     public async Task<IActionResult> Update(int accountId)
     {
-      Account account = await _accountService.GetAsync(accountId, GetOrganizationId());
+      Account account = await _accountService.GetAsync(accountId, GetOrganizationId(), GetTenantId());
       if (account == null)
         return NotFound();
 
       Account? parentAccount = null;
 
       if (account.ParentAccountId.HasValue)
-        parentAccount = await _accountService.GetAsync(account.ParentAccountId!.Value, GetOrganizationId());
+        parentAccount = await _accountService.GetAsync(account.ParentAccountId!.Value, GetOrganizationId(), GetTenantId());
 
       UpdateAccountViewModel model = new UpdateAccountViewModel()
       {
@@ -153,7 +153,7 @@ namespace Accounting.Controllers
 
         if (model.ParentAccountId.HasValue)
         {
-          var parentAccount = await _accountService.GetAsync(model.ParentAccountId.Value, GetOrganizationId());
+          var parentAccount = await _accountService.GetAsync(model.ParentAccountId.Value, GetOrganizationId(), GetTenantId());
           if (parentAccount != null)
           {
             model.ParentAccount = new AccountViewModel()
@@ -167,7 +167,7 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      Account account = await _accountService.GetAsync(model.AccountID, GetOrganizationId());
+      Account account = await _accountService.GetAsync(model.AccountID, GetOrganizationId(), GetTenantId());
       if (account == null)
         return NotFound();
 

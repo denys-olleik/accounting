@@ -25,7 +25,7 @@ namespace Accounting.Database.Interfaces
     Task<List<Account>> GetAsync(string[] accountName, int organizationId);
     Task<Account> GetAsync(int id);
     Task<Account> GetAsync(string accountName, int organizationId);
-    Task<Account> GetAsync(int id, int organizationId);
+    Task<Account> GetAsync(int id, int organizationId, int tenantId);
     Task<Account> GetByAccountNameAsync(string accountName, int organizationId);
     Task<string> GetTypeAsync(int accountId);
     Task<int> UpdateAsync(Account account);
