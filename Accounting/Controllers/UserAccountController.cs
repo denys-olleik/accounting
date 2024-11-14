@@ -183,8 +183,6 @@ namespace Accounting.Controllers
     {
       List<(Organization Organization, Tenant? Tenant)> organizationTuples = await _userOrganizationService.GetByEmailAsync(GetEmail(), true);
 
-      Tenant tenant = await _tenantService.GetAsync(model.SelectedTenantId!.Value);
-
       model.Organizations = organizationTuples.Select(x => new OrganizationViewModel()
       {
         OrganizationId = x.Organization.OrganizationID,
@@ -192,13 +190,13 @@ namespace Accounting.Controllers
         TenantId = x.Tenant?.TenantID
       }).ToList();
 
-      model.ValidationResult = new ValidationResult();
-
       if (model.SelectedOrganizationId == null || model.SelectedOrganizationId == 0)
       {
         model.ValidationResult.Errors.Add(new ValidationFailure("OrganizationId", "You must select an organization."));
         return View(model);
       }
+
+      Tenant tenant = await _tenantService.GetAsync(model.SelectedTenantId!.Value);
 
       UserOrganization userOrganization
         = await _userOrganizationService

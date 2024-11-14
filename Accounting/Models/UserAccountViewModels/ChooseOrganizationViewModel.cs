@@ -7,7 +7,7 @@ namespace Accounting.Models.UserAccountViewModels
     public List<OrganizationViewModel> Organizations { get; set; } = null!;
     public int? SelectedOrganizationId { get; set; }
     public int? SelectedTenantId { get; set; }
-    public ValidationResult? ValidationResult { get; set; }
+    public ValidationResult? ValidationResult { get; set; } = new ValidationResult();
   }
 
   public class OrganizationViewModel

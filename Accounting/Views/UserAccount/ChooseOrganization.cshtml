@@ -45,7 +45,7 @@
     data() {
       return {
         organizations: @Html.Raw(Json.Serialize(Model.Organizations)),
-        selectedOrganization: null,
+        selectedOrganization: '',
         selectedOrganizationId: null,
         selectedTenantId: null
       };
