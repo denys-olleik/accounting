@@ -201,7 +201,7 @@ namespace Accounting.Controllers
       UserOrganization userOrganization
         = await _userOrganizationService
           .GetByEmailAsync(
-            GetEmail(), 
+            GetEmail(),
             model.SelectedOrganizationId,
             model.SelectedTenantId!.Value);
 
@@ -214,7 +214,7 @@ namespace Accounting.Controllers
             user,
             userOrganization.Organization.OrganizationID,
             userOrganization.Organization.Name,
-            tenant.TenantID);
+            tenant.DatabaseName);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
           claimsPrincipal,
@@ -245,7 +245,7 @@ namespace Accounting.Controllers
       User user,
       int? organizationId = null,
       string? organizationName = null,
-      int? tenantId = null)
+      string? databaseName = null)
     {
       List<System.Security.Claims.Claim> claims = new List<System.Security.Claims.Claim>();
 
@@ -256,7 +256,10 @@ namespace Accounting.Controllers
         claims.Add(new System.Security.Claims.Claim(ClaimTypes.Email, user.Email));
         claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationId, organizationId.Value.ToString()));
         claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationName, organizationName));
-        claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.TenantId, tenantId.ToString()!));
+        if (!string.IsNullOrEmpty(databaseName))
+        {
+          claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.DatabaseName, databaseName));
+        }
       }
       else
       {
