@@ -39,7 +39,7 @@ namespace Accounting.Database
     IInventoryAdjustmentManager GetInventoryAdjustmentManager();
     IZIPCodeManager GetZIPCodeManager();
     ITenantManager GetTenantManager();
-    ISecretManager GetSecretManager();
+    ISecretManager GetSecretManager(string databaseName);
     ILoginWithoutPasswordManager GetLoginWithoutPasswordManager();
   }
 }

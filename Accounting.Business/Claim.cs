@@ -19,6 +19,7 @@ namespace Accounting.Business
       public const string OrganizationId = "organizationId";
       public const string OrganizationName = "organizationName";
       public const string TenantId = "tenantId";
+      public const string DatabaseName = "databaseName";
 
       private static readonly List<string> _all = new List<string>();
 

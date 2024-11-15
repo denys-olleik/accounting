@@ -186,9 +186,9 @@ namespace Accounting.Database
       return databaseFactoryDefinition.GetTenantManager();
     }
 
-    public ISecretManager GetSecretManager()
+    public ISecretManager GetSecretManager(string databaseName)
     {
-      return databaseFactoryDefinition.GetSecretManager();
+      return databaseFactoryDefinition.GetSecretManager(databaseName);
     }
 
     public ILoginWithoutPasswordManager GetLoginWithoutPasswordManager()

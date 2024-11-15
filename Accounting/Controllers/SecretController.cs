@@ -16,7 +16,7 @@ namespace Accounting.Controllers
 
     public SecretController(SecretService secretService)
     {
-      _secretService = secretService;
+      _secretService = new SecretService(GetDatabaseName());
     }
 
     [Route("secrets")]

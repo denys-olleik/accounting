@@ -891,7 +891,7 @@ namespace Accounting.Database
         return rowsModified;
       }
 
-     
+
     }
 
     //public IJournalInvoiceManager GetJournalInvoiceManager()
@@ -4878,8 +4878,8 @@ namespace Accounting.Database
       }
 
       public async Task<UserOrganization?> GetByEmailAsync(
-        string email, 
-        int? selectedOrganizationId, 
+        string email,
+        int? selectedOrganizationId,
         int tenantId)
       {
         DynamicParameters p = new DynamicParameters();
@@ -6172,13 +6172,20 @@ namespace Accounting.Database
       }
     }
 
-    public ISecretManager GetSecretManager()
+    public ISecretManager GetSecretManager(string databaseName)
     {
-      return new SecretManager();
+      return new SecretManager(databaseName);
     }
 
     public class SecretManager : ISecretManager
     {
+      private string _databaseName;
+
+      public SecretManager(string databaseName)
+      {
+        _databaseName = databaseName;
+      }
+
       public Secret Create(Secret entity)
       {
         throw new NotImplementedException();
@@ -6201,7 +6208,11 @@ namespace Accounting.Database
 
         IEnumerable<Secret> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = _databaseName;
+        string connectionString = builder.ToString();
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           result = await con.QueryAsync<Secret>("""
             INSERT INTO "Secret" ("Master", "Value", "Type", "Purpose", "OrganizationId", "CreatedById")
@@ -6224,7 +6235,11 @@ namespace Accounting.Database
         p.Add("@ID", id);
         p.Add("@OrganizationId", organizationId);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = _databaseName;
+        string connectionString = builder.ToString();
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           return await con.ExecuteAsync("""
           DELETE FROM "Secret"
@@ -6239,7 +6254,11 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@OrganizationId", organizationId);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = _databaseName;
+        string connectionString = builder.ToString();
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           return await con.ExecuteAsync("""
           DELETE FROM "Secret"
@@ -6266,7 +6285,11 @@ namespace Accounting.Database
 
         IEnumerable<Secret> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = _databaseName;
+        string connectionString = builder.ToString();
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           result = await con.QueryAsync<Secret>("""
                 SELECT * 
@@ -6287,8 +6310,12 @@ namespace Accounting.Database
 
         IEnumerable<Secret> result;
 
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = _databaseName;
+        string connectionString = builder.ToString();
+
         using (NpgsqlConnection con
-          = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+          = new NpgsqlConnection(connectionString))
         {
           result = await con.QueryAsync<Secret>("""
             SELECT * 
@@ -6309,7 +6336,11 @@ namespace Accounting.Database
 
         IEnumerable<Secret> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = _databaseName;
+        string connectionString = builder.ToString();
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           result = await con.QueryAsync<Secret>("""
             SELECT * 
@@ -6329,7 +6360,11 @@ namespace Accounting.Database
 
         IEnumerable<Secret> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = _databaseName;
+        string connectionString = builder.ToString();
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           result = await con.QueryAsync<Secret>("""
             SELECT * 

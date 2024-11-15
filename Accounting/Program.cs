@@ -135,7 +135,7 @@ app.Run();
 
 async Task IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsTrueThere()
 {
-  SecretService secretService = new SecretService();
+  SecretService secretService = new SecretService(null);
   var tenantManagement = await secretService.GetAsync(Secret.SecretTypeConstants.TenantManagement);
 
   if (tenantManagement != null)

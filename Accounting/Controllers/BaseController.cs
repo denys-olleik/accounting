@@ -1,4 +1,5 @@
-﻿using Accounting.Service;
+﻿using Accounting.Business;
+using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using static Accounting.Business.Claim;
@@ -44,6 +45,14 @@ namespace Accounting.Controllers
       ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
       int tenantId = Convert.ToInt32(identity.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.TenantId)?.Value);
       return tenantId;
+    }
+
+    [NonAction]
+    public string GetDatabaseName()
+    {
+      ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
+      string databaseName = identity.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.DatabaseName)?.Value;
+      return databaseName;
     }
   }
 }
