@@ -4405,10 +4405,11 @@ namespace Accounting.Database
         p.Add("@Email", entity.Email);
         p.Add("@FirstName", entity.FirstName);
         p.Add("@LastName", entity.LastName);
+        p.Add("@Password", entity.Password);
 
         string sql = """
-          INSERT INTO "User" ("Email", "FirstName", "LastName") 
-          VALUES (@Email, @FirstName, @LastName)
+          INSERT INTO "User" ("Email", "FirstName", "LastName", "Password")
+          VALUES (@Email, @FirstName, @LastName, @Password)
           RETURNING *;
           """;
 

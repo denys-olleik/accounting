@@ -512,7 +512,7 @@ namespace Accounting.Models.Tenant
                     return model.InheritOrganization ? existingOrganization != null : existingOrganization == null;
                   })
                   .WithMessage(model =>
-                      model.InheritOrganization ? "Organization does not exist to inherit." : "This combination of user and organization already exists.");
+                      model.InheritOrganization ? "Organization does not exist to inherit." : "This organization already exists. Inherit organization instead.");
             });
       }
     }
