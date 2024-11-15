@@ -14,6 +14,7 @@
 
 @{
   var organizationName = User.FindFirst(Accounting.Business.Claim.CustomClaimTypeConstants.OrganizationName)?.Value;
+  var email = User.FindFirst(ClaimTypes.Email)?.Value;
 }
 
 <body class="background-color-darkslategray">
@@ -78,8 +79,9 @@
     @RenderBody()
   </div>
 
-  <footer class="width-100 text-align-center background-color-lightcoral border-top-2px-solid-white">
+  <footer class="display-flex flex-direction-column width-100 text-align-center background-color-lightcoral border-top-2px-solid-white">
     <a href="https://github.com/denys-olleik/accounting">source available</a>
+    <a href="@Url.Action("Profile", "UserAccount")">@email</a>
   </footer>
 </body>
 </html>
