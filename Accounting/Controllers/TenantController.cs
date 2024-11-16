@@ -73,7 +73,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      var validator = new CreateUserViewModel.CreateUserViewModelValidator();
+      var validator = new CreateUserViewModel.CreateUserViewModelValidator(_userService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
