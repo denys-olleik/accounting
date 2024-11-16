@@ -9,6 +9,7 @@ namespace Accounting.Models.UserViewModels
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Password { get; set; }
+    public string ConfirmPassword { get; set; }
     public bool SendInvitationEmail { get; set; }
 
     public ValidationResult ValidationResult { get; set; }
