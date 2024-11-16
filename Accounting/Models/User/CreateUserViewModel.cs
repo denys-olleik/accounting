@@ -1,4 +1,5 @@
-﻿using Accounting.Service;
+﻿using Accounting.Database;
+using Accounting.Service;
 using FluentValidation;
 using FluentValidation.Results;
 
@@ -24,25 +25,31 @@ namespace Accounting.Models.UserViewModels
       {
         _userService = userService;
 
-        RuleFor(x => x.TenantId)
-            .NotEmpty().WithMessage("TenantId is required.");
-
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("Email is required.")
-            .EmailAddress().WithMessage("Email is not in email format.")
-            .DependentRules(() =>
-            {
-              RuleFor(x => x)
-                  .MustAsync(async (model, cancellationToken) =>
-                      !await UserExistsAsync(model.Email, model.TenantId))
-                  .WithMessage("A user with this email already exists for the specified tenant.");
-            });
-      }
+          .NotEmpty().WithMessage("Email is required.")
+          .EmailAddress().WithMessage("Email is not valid.")
+          .DependentRules(() =>
+          {
+            RuleFor(x => x)
+              .MustAsync(async (model, cancellation) =>
+              {
+                var (existingUser, _) = await _userService.GetAsync(model.Email);
 
-      private async Task<bool> UserExistsAsync(string email, int tenantId)
-      {
-        var existingUser = await _userService.GetAsync(email, tenantId);
-        return existingUser != null;
+                return existingUser == null ||
+                       (string.IsNullOrWhiteSpace(model.FirstName) &&
+                        string.IsNullOrWhiteSpace(model.LastName) &&
+                        string.IsNullOrWhiteSpace(model.Password));
+              })
+              .WithMessage("User with this email exists elsewhere, clear first, last, and password to reuse those properties.");
+          });
+
+        RuleFor(x => x.Password)
+          .NotEmpty().When(x => !string.IsNullOrWhiteSpace(x.FirstName) || !string.IsNullOrWhiteSpace(x.LastName))
+          .WithMessage("Password is required when first name or last name is provided.");
+
+        RuleFor(x => x.ConfirmPassword)
+          .Equal(x => x.Password).When(x => !string.IsNullOrWhiteSpace(x.Password))
+          .WithMessage("Passwords do not match.");
       }
     }
   }
