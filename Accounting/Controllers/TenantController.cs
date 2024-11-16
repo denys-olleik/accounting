@@ -8,6 +8,7 @@ using Accounting.Models.Tenant;
 using Accounting.CustomAttributes;
 using Accounting.Common;
 using Accounting.Models.TenantViewModels;
+using Accounting.Models.UserViewModels;
 
 namespace Accounting.Controllers
 {
@@ -42,7 +43,58 @@ namespace Accounting.Controllers
       _userOrganizationService = userOrganizationService;
     }
 
+    [Route("create-user/{tenantId}")]
+    [HttpGet]
+    public async Task<IActionResult> CreateUser(string tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      CreateUserViewModel model = new CreateUserViewModel();
+      model.TenantId = tenant.TenantID;
+
+      return View(model);
+    }
+
+    [Route("create-user/{tenantId}")]
+    [HttpPost]
+    public async Task<IActionResult> CreateUser(
+      CreateUserViewModel model,
+      string tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      var validator = new CreateUserViewModel.CreateUserViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      User user = await _userService.CreateAsync(new User()
+      {
+        Email = model.Email,
+        FirstName = model.FirstName,
+        LastName = model.LastName,
+        Password = !string.IsNullOrEmpty(model.Password)
+          ? PasswordStorage.CreateHash(model.Password) : null
+      }, tenant.DatabaseName!);
+
+      await _userService.UpdatePasswordAllTenantsAsync(user.Email!, user.Password!);
+
+      return RedirectToAction("Tenants");
+    }
 
     [Route("add-user-orgnization/{tenantId}")]
     [HttpGet]
