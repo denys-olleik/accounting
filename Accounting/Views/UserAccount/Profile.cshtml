@@ -1,0 +1,17 @@
+﻿@{
+  ViewData["Title"] = "Profile - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Profile";
+}
+
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form id="logoutForm" asp-action="Logout" asp-controller="UserAccount" method="post"
+      class="max-width-768-flex-1 background-color-A62626 text-align-center">
+  <a href="javascript:void(0);" onclick="document.getElementById('logoutForm').submit();"
+     class="display-block font-Oswald color-white padding-sides-25px ">
+    Logout
+  </a>
+</form>

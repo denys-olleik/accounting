@@ -45,6 +45,13 @@ namespace Accounting.Controllers
       _tenantService = tenantService;
     }
 
+    [HttpGet]
+    [Route("profile")]
+    public async Task<IActionResult> Profile()
+    {
+      return View();
+    }
+
     [AllowAnonymous]
     [Route("login")]
     [HttpGet]
