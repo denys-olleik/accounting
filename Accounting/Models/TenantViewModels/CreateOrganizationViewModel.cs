@@ -1,4 +1,5 @@
-﻿using Accounting.Service;
+﻿using Accounting.Business;
+using Accounting.Service;
 using FluentValidation;
 using FluentValidation.Results;
 
@@ -15,10 +16,12 @@ namespace Accounting.Models.TenantViewModels
     public class CreateOrganizationViewModelValidator : AbstractValidator<CreateOrganizationViewModel>
     {
       private readonly OrganizationService _organizationService;
+      private readonly string _databaseName;
 
-      public CreateOrganizationViewModelValidator(OrganizationService organizationService)
+      public CreateOrganizationViewModelValidator(OrganizationService organizationService, string databaseName)
       {
         _organizationService = organizationService;
+        _databaseName = databaseName;
 
         RuleFor(x => x.Name)
           .NotEmpty()
@@ -27,19 +30,19 @@ namespace Accounting.Models.TenantViewModels
           {
             RuleFor(x => x)
                 .MustAsync(async (model, cancellation) =>
-                    !await OrganizationExistsAsync(model.TenantId, model.Name))
+                    !await OrganizationExistsAsync(model.Name, _databaseName))
                 .WithMessage("Organization with this name already exists for this tenant");
           });
-
 
         RuleFor(x => x.TenantId)
           .NotEmpty()
           .WithMessage("TenantId is required");
       }
 
-      private async Task<bool> OrganizationExistsAsync(int tenantId, string name)
+      private async Task<bool> OrganizationExistsAsync(string name, string databaseName)
       {
-        OrganizationService organization = await _organizationService.GetAsync(name, tenantId);
+        Organization organization = await _organizationService.GetAsync(name, databaseName);
+        return organization != null;
       }
     }
   }
