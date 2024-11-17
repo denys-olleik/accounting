@@ -1,0 +1,51 @@
+﻿@model Accounting.Models.TenantViewModels.CreateOrganizationViewModel
+
+@{
+  ViewData["Title"] = "Create Organization - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Create Organization";
+}
+
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div class="margin-left-20px">
+    <a asp-action="Tenants" asp-controller="Tenant"
+       class="font-Roboto font-size-16px color-blue">Tenants</a>
+  </div>
+</div>
+
+<form id="app"
+      asp-action="CreateOrganization"
+      asp-controller="Tenant"
+      method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="Name" class="background-color-antiquewhite"></label>
+    <input asp-for="Name"
+           class="font-size-20px"
+           maxlength="100" />
+  </div>
+
+  <input type="hidden" asp-for="TenantId" />
+
+  <button type="submit" class="full-width-regular-button">Create Organization</button>
+</form>
+
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+  <div class="margin-bottom-5px">
+  </div>
+}

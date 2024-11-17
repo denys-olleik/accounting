@@ -136,6 +136,37 @@ namespace Accounting.Controllers
       return View(model);
     }
 
+    [Route("create-organization/{tenantId}")]
+    [HttpPost]
+    public async Task<IActionResult> CreateOrganization(
+      CreateOrganizationViewModel model,
+      string tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      var validator = new CreateOrganizationViewModel.CreateOrganizationViewModelValidator(
+        _organizationService,
+        tenant.DatabaseName!);
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      Organization organization = await _organizationService.CreateAsync(
+        model.Name,
+        tenant.DatabaseName!);
+
+      return RedirectToAction("Tenants");
+    }
+
     [Route("add-user-orgnization/{tenantId}")]
     [HttpGet]
     public async Task<IActionResult> AddUserOrganization(string tenantId)
