@@ -43,6 +43,29 @@ namespace Accounting.Controllers
       _userOrganizationService = userOrganizationService;
     }
 
+    [Route("organizations/{tenantId}")]
+    [HttpGet]
+    public async Task<IActionResult> Organizations(string tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      OrganizationsViewModel model = new OrganizationsViewModel();
+      model.TenantId = tenant.TenantID;
+
+      List<Organization> organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
+      model.Organizations = organizations.Select(organizations => new OrganizationsViewModel.OrganizationViewModel
+      {
+        Name = organizations.Name
+      }).ToList();
+
+      return View(model);
+    }
+
     [Route("create-user/{tenantId}")]
     [HttpGet]
     public async Task<IActionResult> CreateUser(string tenantId)

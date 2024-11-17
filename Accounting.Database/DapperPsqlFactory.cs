@@ -3257,6 +3257,22 @@ namespace Accounting.Database
           return organization;
         }
       }
+
+      public async Task<List<Organization>> GetAllAsync(string databaseName)
+      {
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          var organizations = await con.QueryAsync<Organization>("""
+            SELECT * 
+            FROM "Organization"
+            """);
+
+          return organizations.ToList();
+        }
+      }
     }
 
     public IPaymentInstructionManager GetPaymentInstructionManager()
