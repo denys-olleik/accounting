@@ -163,8 +163,8 @@ namespace Accounting.Controllers
       Organization organization = await _organizationService.CreateAsync(
         model.Name,
         tenant.DatabaseName!);
-
-      return RedirectToAction("Tenants");
+      
+      return RedirectToAction("Organizations", "Tenant", new { tenantId });
     }
 
     [Route("add-user-orgnization/{tenantId}")]
