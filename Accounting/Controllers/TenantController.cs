@@ -96,6 +96,23 @@ namespace Accounting.Controllers
       return RedirectToAction("Tenants");
     }
 
+    [Route("create-organization/{tenantId}")]
+    [HttpGet]
+    public async Task<IActionResult> CreateOrganization(string tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      CreateOrganizationViewModel model = new CreateOrganizationViewModel();
+      model.TenantId = tenant.TenantID;
+
+      return View(model);
+    }
+
     [Route("add-user-orgnization/{tenantId}")]
     [HttpGet]
     public async Task<IActionResult> AddUserOrganization(string tenantId)
