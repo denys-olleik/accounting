@@ -43,6 +43,12 @@ namespace Accounting.Models.UserViewModels
               .WithMessage("User with this email exists elsewhere, clear first, last, and password to reuse those properties.");
           });
 
+        RuleFor(x => x.FirstName)
+          .NotEmpty().WithMessage("First name is required.");
+
+        RuleFor(x => x.LastName)
+          .NotEmpty().WithMessage("Last name is required.");
+
         RuleFor(x => x.Password)
           .NotEmpty().When(x => !string.IsNullOrWhiteSpace(x.FirstName) || !string.IsNullOrWhiteSpace(x.LastName))
           .WithMessage("Password is required when first name or last name is provided.");
