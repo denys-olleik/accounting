@@ -505,7 +505,7 @@ namespace Accounting.Controllers
       return Ok(userOrganizations);
     }
 
-    [HttpPost("{tenantId}/users")]
+    [HttpGet("{tenantId}/users")]
     public async Task<IActionResult> GetUsers(int tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(tenantId);

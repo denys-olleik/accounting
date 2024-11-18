@@ -40,14 +40,12 @@
       <th class="text-align-right">Organization</th>
     </tr>
   </thead>
-  <tbody class="font-Roboto-Mono">
-    <template v-for="(userOrg, index) in userOrganizations" :key="userOrg.userOrganizationID">
-      <tr>
-        <td class="padding-right-20px">{{ userOrg.user?.email || 'N/A' }}</td>
-        <td class="text-align-right">{{ userOrg.organization?.name || 'N/A' }}</td>
+    <tbody class="font-Roboto-Mono">
+      <tr v-for="user in users" :key="user.userID">
+        <td class="padding-right-20px">{{ user.email }}</td>
+        <td class="text-align-right">{{ user.organization?.name || 'N/A' }}</td>
       </tr>
-    </template>
-  </tbody>
+    </tbody>
 </table>
 </div>
 
@@ -58,20 +56,20 @@
     data() {
       return {
         tenantId: @Model.TenantId,
-        userOrganizations: []
+        users: []
       };
     },
     methods: {
-      fetchUserOrganizations() {
-        fetch(`/api/tenant/${this.tenantId}/user-organizations`)
+      fetchUsers() {
+        fetch(`/api/tenant/${this.tenantId}/users`)
           .then(response => response.json())
           .then(data => {
-            this.userOrganizations = data;
+            this.users = data.users;
           });
       }
     },
-    mounted(){
-      this.fetchUserOrganizations();
+    mounted() {
+      this.fetchUsers();
     }
   });
 
