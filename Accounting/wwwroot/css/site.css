@@ -655,6 +655,10 @@ td.fitwidth, th.fitwidth {
   text-align: center;
 }
 
+.vertical-align-top {
+  vertical-align: top;
+}
+
 .white-space-nowrap {
   white-space: nowrap;
 }

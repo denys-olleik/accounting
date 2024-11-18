@@ -34,7 +34,6 @@
   </div>
 </template>
 
-
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div class="margin-left-20px">
     <a asp-action="Tenants" asp-controller="Tenant"
@@ -63,15 +62,25 @@
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
       <tr>
         <th class="text-align-left width-1px padding-right-20px">Email</th>
-        <th class="text-align-right">Organization</th>
+        <th class="text-align-right">Organizations</th>
       </tr>
     </thead>
     <tbody class="font-Roboto-Mono">
-      <tr v-for="user in users" :key="user.userID">
-        <td class="padding-right-20px">
+      <tr v-for="user in users" :key="user.userID" class="border-bottom-1px-solid-lightgray">
+        <td class="padding-right-20px vertical-align-top">
           <user-action :user='user' :is-expanded="user.userID === expandedUserId" @@expand="handleUserExpand(user.userID)"></user-action>
         </td>
-        <td class="text-align-right">{{ user.organization?.name || 'N/A' }}</td>
+        <td class="text-align-right">
+          <!-- Display list of organizations on new lines -->
+          <span v-if="user.organizations && user.organizations.length > 0">
+            <div v-for="org in user.organizations" :key="org.organizationID">
+              {{ org.name }}
+            </div>
+          </span>
+          <span v-else>
+            N/A
+          </span>
+        </td>
       </tr>
     </tbody>
   </table>
