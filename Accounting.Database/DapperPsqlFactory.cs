@@ -5024,7 +5024,7 @@ namespace Accounting.Database
             query,
             (user, organization) =>
             {
-              user.Organization = organization;
+              user.Organizations = organization;
               return user;
             },
             splitOn: "OrganizationID"

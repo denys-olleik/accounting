@@ -14,6 +14,6 @@ namespace Accounting.Business
 
     public int Identifiable => UserID;
 
-    public Organization? Organization { get; set; }
+    public List<Organization>? Organizations { get; set; }
   }
 }

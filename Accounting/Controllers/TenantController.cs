@@ -523,10 +523,10 @@ namespace Accounting.Controllers
         {
           UserID = x.UserID,
           Email = x.Email!,
-          Organization = x.Organization != null ? new GetUsersViewModel.OrganizationViewModel
+          Organization = x.Organizations != null ? new GetUsersViewModel.OrganizationViewModel
           {
-            OrganizationID = x.Organization.OrganizationID,
-            Name = x.Organization.Name!
+            OrganizationID = x.Organizations.OrganizationID,
+            Name = x.Organizations.Name!
           } : null
         }).ToList()
       };
