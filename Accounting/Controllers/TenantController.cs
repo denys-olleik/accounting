@@ -60,8 +60,11 @@ namespace Accounting.Controllers
       List<Organization> organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
       model.Organizations = organizations.Select(organizations => new OrganizationsViewModel.OrganizationViewModel
       {
+        OrganizationID = organizations.OrganizationID,
         Name = organizations.Name
       }).ToList();
+
+      model.Organizations = model.Organizations.OrderByDescending(x => x.OrganizationID).ToList();
 
       return View(model);
     }
