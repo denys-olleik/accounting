@@ -9,6 +9,32 @@
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
+<template id="user-action-template">
+  <div class="display-flex padding-top-bottom-2px">
+    <div class="display-flex flex-1">
+      <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ user.email }}</a>
+      <span v-if="isExpanded" class="display-flex margin-left-2px">
+        <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+          <div class="flex-1"></div>
+          <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/Tenant/UpdateUser/' + user.userID" class="font-size-16px font-Roboto color-white text-decoration-none">update</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/Tenant/DeleteUser/' + user.userID" class="font-size-16px font-Roboto color-white text-decoration-none">delete</a>
+          <div class="flex-1"></div>
+        </div>
+      </span>
+    </div>
+  </div>
+</template>
+
+
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div class="margin-left-20px">
     <a asp-action="Tenants" asp-controller="Tenant"
@@ -34,29 +60,46 @@
 
 <div id="app">
   <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
-  <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
-    <tr>
-      <th class="text-align-left width-1px padding-right-20px">Email</th>
-      <th class="text-align-right">Organization</th>
-    </tr>
-  </thead>
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th class="text-align-left width-1px padding-right-20px">Email</th>
+        <th class="text-align-right">Organization</th>
+      </tr>
+    </thead>
     <tbody class="font-Roboto-Mono">
       <tr v-for="user in users" :key="user.userID">
-        <td class="padding-right-20px">{{ user.email }}</td>
+        <td class="padding-right-20px">
+          <user-action :user='user' :is-expanded="user.userID === expandedUserId" @@expand="handleUserExpand(user.userID)"></user-action>
+        </td>
         <td class="text-align-right">{{ user.organization?.name || 'N/A' }}</td>
       </tr>
     </tbody>
-</table>
+  </table>
 </div>
 
 <script>
   const { createApp } = Vue;
 
+  const UserAction = {
+    name: 'UserAction',
+    props: ['user', 'isExpanded'],
+    template: '#user-action-template',
+    methods: {
+      toggleAction() {
+        this.$emit('expand');
+      }
+    }
+  };
+
   const app = createApp({
+    components: {
+      'user-action': UserAction
+    },
     data() {
       return {
         tenantId: @Model.TenantId,
-        users: []
+        users: [],
+        expandedUserId: null
       };
     },
     methods: {
@@ -66,6 +109,9 @@
           .then(data => {
             this.users = data.users;
           });
+      },
+      handleUserExpand(id) {
+        this.expandedUserId = this.expandedUserId === id ? null : id;
       }
     },
     mounted() {
