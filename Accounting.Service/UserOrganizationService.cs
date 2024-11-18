@@ -47,12 +47,6 @@ namespace Accounting.Service
       return await factoryManager.GetUserOrganizationManager().GetByEmailAsync(email, selectedOrganizationId, tenantPublicId);
     }
 
-    public async Task<List<User>> GetUsersAsync(string databaseName)
-    {
-      FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetUserOrganizationManager().GetUsersAsync(databaseName);
-    }
-
     public async Task<List<User>> GetUsersWithOrganizationsAsync(string databaseName)
     {
       FactoryManager factoryManager = new FactoryManager();

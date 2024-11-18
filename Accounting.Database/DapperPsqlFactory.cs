@@ -5001,11 +5001,6 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<List<User>> GetUsersAsync(string databaseName)
-      {
-        throw new NotImplementedException();
-      }
-
       public async Task<List<User>> GetUsersWithOrganizationsAsync(string databaseName)
       {
         NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql)
