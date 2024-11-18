@@ -4545,21 +4545,24 @@ namespace Accounting.Database
             continue;
 
           builder.Database = tenant.DatabaseName;
+
           using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
           {
             var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
-                  SELECT uo.*, u.*, o.*
-                  FROM "UserOrganization" uo
-                  INNER JOIN "User" u ON uo."UserId" = u."UserID"
-                  INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
-                  WHERE u."Email" = @Email
-                  """,
+                SELECT uo.*, u.*, o.*
+                FROM "User" u
+                LEFT JOIN "UserOrganization" uo ON u."UserID" = uo."UserId"
+                LEFT JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+                WHERE u."Email" = @Email
+                """,
                 (userOrg, user, org) =>
                 {
                   userOrg.User = user;
                   userOrg.Organization = org;
                   return userOrg;
-                }, p, splitOn: "UserID,OrganizationID"
+                },
+                p,
+                splitOn: "UserID,OrganizationID"
             );
 
             var user = userOrganizations.FirstOrDefault()?.User;
