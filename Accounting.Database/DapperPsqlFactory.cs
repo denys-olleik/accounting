@@ -5003,34 +5003,64 @@ namespace Accounting.Database
 
       public async Task<List<User>> GetUsersAsync(string databaseName)
       {
+        throw new NotImplementedException();
+      }
+
+      public async Task<List<User>> GetUsersWithOrganizationsAsync(string databaseName)
+      {
         NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql)
         {
           Database = databaseName
         };
 
-        IEnumerable<User> result;
-
         using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
-          var query = """
-            SELECT u."UserID", u."Email", u."FirstName", u."LastName", u."Created", u."CreatedById",
-              o."OrganizationID", o."Name", o."Address", o."BaseCurrency", o."Website"
-            FROM "User" u
-            LEFT JOIN "UserOrganization" uo ON u."UserID" = uo."UserId"
-            LEFT JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
-            """;
+          // Step 1: Fetch all users
+          var users = (await con.QueryAsync<User>(
+              """
+            SELECT "UserID", "Email", "FirstName", "LastName", "Created", "CreatedById"
+            FROM "User"
+            """
+          )).ToList();
 
-          result = await con.QueryAsync<User, Organization, User>(
-            query,
-            (user, organization) =>
-            {
-              user.Organizations = organization;
-              return user;
-            },
-            splitOn: "OrganizationID"
+          if (users.Count == 0)
+            return users;
+
+          // Step 2: Fetch all organizations for the users
+          var userIds = users.Select(u => u.UserID).ToArray();
+          var organizations = await con.QueryAsync<User, Organization, User>(
+              """
+            SELECT uo."UserId", o."OrganizationID", o."Name", o."Address", o."BaseCurrency", o."Website"
+            FROM "UserOrganization" uo
+            INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+            WHERE uo."UserId" = ANY(@UserIds)
+            """,
+              (user, organization) =>
+              {
+                return new User
+                {
+                  UserID = user.UserID,
+                  Organizations = new List<Organization> { organization }
+                };
+              },
+              new { UserIds = userIds },
+              splitOn: "OrganizationID"
           );
 
-          return result.ToList();
+          // Step 3: Map organizations to their respective users
+          var organizationsByUserId = organizations
+              .GroupBy(o => o.UserID)
+              .ToDictionary(g => g.Key, g => g.SelectMany(u => u.Organizations).ToList());
+
+          foreach (var user in users)
+          {
+            if (organizationsByUserId.TryGetValue(user.UserID, out var orgList))
+            {
+              user.Organizations = orgList;
+            }
+          }
+
+          return users;
         }
       }
 
