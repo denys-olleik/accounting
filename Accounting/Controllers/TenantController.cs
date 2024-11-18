@@ -517,7 +517,21 @@ namespace Accounting.Controllers
 
       List<User> users = await _userOrganizationService.GetUsersAsync(tenant.DatabaseName!);
 
-      return Ok(users);
+      var model = new GetUsersViewModel
+      {
+        Users = users.Select(x => new GetUsersViewModel.UserViewModel
+        {
+          UserID = x.UserID,
+          Email = x.Email!,
+          Organization = x.Organization != null ? new GetUsersViewModel.OrganizationViewModel
+          {
+            OrganizationID = x.Organization.OrganizationID,
+            Name = x.Organization.Name!
+          } : null
+        }).ToList()
+      };
+
+      return Ok(model);
     }
   }
 }
