@@ -8,7 +8,7 @@
     {
       public int UserID { get; set; }
       public string Email { get; set; }
-      public OrganizationViewModel? Organization { get; set; }
+      public List<OrganizationViewModel> Organizations { get; set; } = new List<OrganizationViewModel>();
     }
 
     public class OrganizationViewModel

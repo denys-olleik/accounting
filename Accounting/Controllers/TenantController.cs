@@ -515,7 +515,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      List<User> users = await _userOrganizationService.GetUsersAsync(tenant.DatabaseName!);
+      List<User> users = await _userOrganizationService.GetUsersWithOrganizationsAsync(tenant.DatabaseName!);
 
       var model = new GetUsersViewModel
       {
@@ -523,11 +523,11 @@ namespace Accounting.Controllers
         {
           UserID = x.UserID,
           Email = x.Email!,
-          Organization = x.Organizations != null ? new GetUsersViewModel.OrganizationViewModel
+          Organizations = x.Organizations.Select(o => new GetUsersViewModel.OrganizationViewModel
           {
-            OrganizationID = x.Organizations.OrganizationID,
-            Name = x.Organizations.Name!
-          } : null
+            OrganizationID = o.OrganizationID,
+            Name = o.Name!
+          }).ToList()
         }).ToList()
       };
 
