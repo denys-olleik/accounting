@@ -13,5 +13,7 @@ namespace Accounting.Business
     public DateTime Created { get; set; }
 
     public int Identifiable => UserID;
+
+    public Organization? Organization { get; set; }
   }
 }

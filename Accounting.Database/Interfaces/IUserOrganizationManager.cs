@@ -10,5 +10,6 @@ namespace Accounting.Database.Interfaces
     Task<List<UserOrganization>> GetAllAsync(int tenantId);
     Task<List<(Organization Organization, Tenant? Tenant)>> GetByEmailAsync(string email, bool searchTenants);
     Task<UserOrganization> GetByEmailAsync(string email, int? selectedOrganizationId, int tenantPublicId);
+    Task<List<User>> GetUsersAsync(string databaseName);
   }
 }

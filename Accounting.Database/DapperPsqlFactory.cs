@@ -4998,6 +4998,39 @@ namespace Accounting.Database
         return result.ToList();
       }
 
+      public async Task<List<User>> GetUsersAsync(string databaseName)
+      {
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql)
+        {
+          Database = databaseName
+        };
+
+        IEnumerable<User> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          var query = """
+            SELECT u."UserID", u."Email", u."FirstName", u."LastName", u."Created", u."CreatedById",
+              o."OrganizationID", o."Name", o."Address", o."BaseCurrency", o."Website"
+            FROM "User" u
+            LEFT JOIN "UserOrganization" uo ON u."UserID" = uo."UserId"
+            LEFT JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+            """;
+
+          result = await con.QueryAsync<User, Organization, User>(
+            query,
+            (user, organization) =>
+            {
+              user.Organization = organization;
+              return user;
+            },
+            splitOn: "OrganizationID"
+          );
+
+          return result.ToList();
+        }
+      }
+
       public int Update(UserOrganization entity)
       {
         throw new NotImplementedException();

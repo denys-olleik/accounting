@@ -427,13 +427,16 @@ namespace Accounting.Controllers
   {
     private readonly TenantService _tenantService;
     private readonly UserOrganizationService _userOrganizationService;
+    private readonly UserService _userService;
 
     public TenantApiController(
       TenantService tenantService,
-      UserOrganizationService userOrganizationService)
+      UserOrganizationService userOrganizationService,
+      UserService userService)
     {
       _tenantService = tenantService;
       _userOrganizationService = userOrganizationService;
+      _userService = userService;
     }
 
     [HttpGet("get-all-tenants")]
@@ -500,6 +503,21 @@ namespace Accounting.Controllers
       };
 
       return Ok(userOrganizations);
+    }
+
+    [HttpPost("{tenantId}/users")]
+    public async Task<IActionResult> GetUsers(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      List<User> users = await _userOrganizationService.GetUsersAsync(tenant.DatabaseName!);
+
+      return Ok(users);
     }
   }
 }
