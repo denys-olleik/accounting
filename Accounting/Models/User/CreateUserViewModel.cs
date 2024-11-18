@@ -26,36 +26,36 @@ namespace Accounting.Models.UserViewModels
         _userService = userService;
 
         RuleFor(x => x.Email)
-          .NotEmpty().WithMessage("Email is required.")
-          .EmailAddress().WithMessage("Email is not valid.")
-          .DependentRules(() =>
-          {
-            RuleFor(x => x)
-              .MustAsync(async (model, cancellation) =>
-              {
-                var (existingUser, _) = await _userService.GetAsync(model.Email);
-
-                return existingUser == null ||
-                       (string.IsNullOrWhiteSpace(model.FirstName) &&
-                        string.IsNullOrWhiteSpace(model.LastName) &&
-                        string.IsNullOrWhiteSpace(model.Password));
-              })
-              .WithMessage("User with this email exists elsewhere, clear first, last, and password to reuse those properties.");
-          });
+            .NotEmpty().WithMessage("Email is required.")
+            .EmailAddress().WithMessage("Email is not valid.")
+            .DependentRules(() =>
+            {
+              RuleFor(x => x)
+                  .MustAsync(async (model, cancellation) =>
+                  {
+                    var (existingUser, _) = await _userService.GetAsync(model.Email);
+                    return existingUser == null ||
+                             (string.IsNullOrWhiteSpace(model.FirstName) &&
+                              string.IsNullOrWhiteSpace(model.LastName) &&
+                              string.IsNullOrWhiteSpace(model.Password));
+                  })
+                  .WithMessage("User with this email exists elsewhere, clear first, last, and password to reuse those properties.");
+            });
 
         RuleFor(x => x.FirstName)
-          .NotEmpty().WithMessage("First name is required.");
+            .NotEmpty().WithMessage("First name is required.");
 
         RuleFor(x => x.LastName)
-          .NotEmpty().WithMessage("Last name is required.");
+            .NotEmpty().WithMessage("Last name is required.");
 
         RuleFor(x => x.Password)
-          .NotEmpty().When(x => !string.IsNullOrWhiteSpace(x.FirstName) || !string.IsNullOrWhiteSpace(x.LastName))
-          .WithMessage("Password is required when first name or last name is provided.");
+            .NotEmpty().When(x => !string.IsNullOrWhiteSpace(x.Password))
+            .WithMessage("Password cannot be empty if provided.");
 
         RuleFor(x => x.ConfirmPassword)
-          .Equal(x => x.Password).When(x => !string.IsNullOrWhiteSpace(x.Password))
-          .WithMessage("Passwords do not match.");
+            .Equal(x => x.Password)
+            .When(x => !string.IsNullOrWhiteSpace(x.Password))
+            .WithMessage("Passwords do not match.");
       }
     }
   }
