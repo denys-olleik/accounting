@@ -64,6 +64,14 @@
            maxlength="100" />
   </div>
 
+  <div class="margin-bottom-5px">
+    <label class="background-color-antiquewhite">Available Organizations:</label>
+    <div v-for="organization in organizations" :key="organization.OrganizationID" class="display-flex margin-bottom-5px">
+      <input type="checkbox" :value="organization.OrganizationID" v-model="selectedOrganizationIds" />
+      <label>{{ organization.Name }}</label>
+    </div>
+  </div>
+
   <button type="submit" class="full-width-regular-button">Create User</button>
 </form>
 
