@@ -9,6 +9,7 @@ using Accounting.CustomAttributes;
 using Accounting.Common;
 using Accounting.Models.TenantViewModels;
 using Accounting.Models.UserViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Accounting.Controllers
 {
@@ -80,11 +81,21 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      Models.TenantViewModels.CreateUserViewModel model = new Models.TenantViewModels.CreateUserViewModel();
-      model.TenantId = tenant.TenantID;
+      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!); // Load list of organizations
+
+      Models.TenantViewModels.CreateUserViewModel model = new Models.TenantViewModels.CreateUserViewModel
+      {
+        TenantId = tenant.TenantID,
+        AvailableOrganizations = organizations.Select(x => new Models.TenantViewModels.CreateUserViewModel.OrganizationViewModel
+        {
+          OrganizationID = x.OrganizationID,
+          Name = x.Name
+        }).ToList()
+      };
 
       return View(model);
     }
+
 
     [Route("create-user/{tenantId}")]
     [HttpPost]

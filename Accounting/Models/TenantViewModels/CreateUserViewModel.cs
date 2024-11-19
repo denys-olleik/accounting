@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Accounting.Business;
+using FluentValidation;
 using FluentValidation.Results;
 
 namespace Accounting.Models.TenantViewModels
@@ -14,6 +15,13 @@ namespace Accounting.Models.TenantViewModels
 
     public ValidationResult ValidationResult { get; set; } = new ValidationResult();
     public ExistingUserViewModel? ExistingUser { get; set; }
+    public List<OrganizationViewModel> AvailableOrganizations { get; internal set; }
+
+    public class OrganizationViewModel
+    {
+      public int OrganizationID { get; set; }
+      public string Name { get; set; }
+    }
 
     public class ExistingUserViewModel
     {
