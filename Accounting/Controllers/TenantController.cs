@@ -96,7 +96,6 @@ namespace Accounting.Controllers
       return View(model);
     }
 
-
     [Route("create-user/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> CreateUser(

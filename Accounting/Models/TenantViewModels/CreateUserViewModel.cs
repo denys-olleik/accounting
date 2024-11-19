@@ -12,7 +12,7 @@ namespace Accounting.Models.TenantViewModels
     public string Password { get; set; }
     public string ConfirmPassword { get; set; }
 
-    public string OrganizationIdsCsv { get; set; }
+    public string SelectedOrganizationIdsCsv { get; set; }
 
     public ValidationResult ValidationResult { get; set; } = new ValidationResult();
     public ExistingUserViewModel? ExistingUser { get; set; }
