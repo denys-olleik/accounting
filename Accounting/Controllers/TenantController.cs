@@ -80,7 +80,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      CreateUserViewModel model = new CreateUserViewModel();
+      Models.TenantViewModels.CreateUserViewModel model = new Models.TenantViewModels.CreateUserViewModel();
       model.TenantId = tenant.TenantID;
 
       return View(model);
@@ -89,7 +89,7 @@ namespace Accounting.Controllers
     [Route("create-user/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> CreateUser(
-      CreateUserViewModel model,
+      Models.TenantViewModels.CreateUserViewModel model,
       string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
@@ -103,16 +103,17 @@ namespace Accounting.Controllers
 
       if (existingUser != null)
       {
-        model.ExistingUser = new UserViewModel()
+        model.ExistingUser = new Models.TenantViewModels.CreateUserViewModel.UserViewModel()
         {
           UserID = existingUser.UserID,
           Email = existingUser.Email,
           FirstName = existingUser.FirstName,
-          LastName = existingUser.LastName
+          LastName = existingUser.LastName,
+          Password = existingUser.Password
         };
       }
 
-      var validator = new CreateUserViewModel.CreateUserViewModelValidator(_userService);
+      var validator = new Models.TenantViewModels.CreateUserViewModel.CreateUserViewModelValidator(_userService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
