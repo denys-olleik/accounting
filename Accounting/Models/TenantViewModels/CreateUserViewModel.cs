@@ -1,5 +1,4 @@
-﻿using Accounting.Business;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 
 namespace Accounting.Models.TenantViewModels
