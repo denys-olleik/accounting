@@ -25,6 +25,8 @@
       method="post"
       class="display-flex flex-direction-column margin-bottom-5px">
 
+  <input type="hidden" asp-for="OrganizationIdsCsv" />
+
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label asp-for="Email" class="background-color-antiquewhite"></label>
     <input asp-for="Email"
@@ -86,12 +88,11 @@
     },
     data() {
       return {
-
+        organizations: @Html.Raw(Json.Serialize(Model.AvailableOrganizations))
       };
     },
     methods: {
 
-      }
     }
   });
 
