@@ -25,7 +25,7 @@
       method="post"
       class="display-flex flex-direction-column margin-bottom-5px">
 
-  <input type="hidden" asp-for="OrganizationIdsCsv" />
+  <input type="hidden" asp-for="OrganizationIdsCsv" :value="selectedOrganizationIds.join(',')" />
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label asp-for="Email" class="background-color-antiquewhite"></label>
@@ -64,11 +64,13 @@
            maxlength="100" />
   </div>
 
-  <div class="margin-bottom-5px">
-    <label class="background-color-antiquewhite">Available Organizations:</label>
-    <div v-for="organization in organizations" :key="organization.OrganizationID" class="display-flex margin-bottom-5px">
-      <input type="checkbox" :value="organization.OrganizationID" v-model="selectedOrganizationIds" />
-      <label>{{ organization.Name }}</label>
+  <div class="margin-bottom-5px background-color-antiquewhite">
+    <label>Available Organizations:</label>
+    <div class="display-flex flex-direction-column">
+      <div v-for="organization in organizations" :key="organization.organizationID" class="display-flex flex-1 margin-bottom-5px">
+        <input type="checkbox" :value="organization.organizationID" v-model="selectedOrganizationIds" />
+        <label class="margin-left-5px">{{ organization.name }}</label>
+      </div>
     </div>
   </div>
 
@@ -91,17 +93,11 @@
   const { createApp } = Vue;
 
   const app = createApp({
-    components: {
-
-    },
     data() {
       return {
         organizations: @Html.Raw(Json.Serialize(Model.AvailableOrganizations)),
         selectedOrganizationIds: []
       };
-    },
-    methods: {
-
     }
   });
 
