@@ -27,25 +27,41 @@ namespace Accounting.Models.TenantViewModels
 
     public class CreateUserViewModelValidator : AbstractValidator<CreateUserViewModel>
     {
-      private readonly UserService _userService;
-
-      public CreateUserViewModelValidator(UserService userService)
+      public CreateUserViewModelValidator()
       {
-        _userService = userService;
-
         RuleFor(x => x.Email)
           .NotEmpty().WithMessage("Email is required.")
           .EmailAddress().WithMessage("Invalid email format.")
           .DependentRules(() =>
           {
             RuleFor(x => x)
-              .MustAsync(async (model, cancellation) =>
+              .Must(model =>
               {
-                var existingUser = await _userService.GetAsync(model.Email, model.TenantId);
-                return existingUser == null;
+                if (model.ExistingUser != null)
+                {
+                  return string.IsNullOrWhiteSpace(model.FirstName) && string.IsNullOrWhiteSpace(model.LastName);
+                }
+                return true;
               })
-              .WithMessage("A user with this email already exists for the tenant.");
+              .WithMessage("First name and last name must be blank if an existing user with this email already exists.");
           });
+
+        RuleFor(x => x.FirstName)
+          .NotEmpty().WithMessage("First name is required.")
+          .When(model => model.ExistingUser == null);
+
+        RuleFor(x => x.LastName)
+          .NotEmpty().WithMessage("Last name is required.")
+          .When(model => model.ExistingUser == null);
+
+        RuleFor(x => x.Password)
+          .NotEmpty().WithMessage("Password is required.")
+          .When(model => model.ExistingUser == null);
+
+        RuleFor(x => x.ConfirmPassword)
+          .NotEmpty().WithMessage("Password confirmation is required.")
+          .Equal(x => x.Password).WithMessage("Passwords must match.")
+          .When(model => model.ExistingUser == null);
       }
     }
   }

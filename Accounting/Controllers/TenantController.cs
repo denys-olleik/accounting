@@ -113,7 +113,7 @@ namespace Accounting.Controllers
         };
       }
 
-      var validator = new Models.TenantViewModels.CreateUserViewModel.CreateUserViewModelValidator(_userService);
+      var validator = new Models.TenantViewModels.CreateUserViewModel.CreateUserViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
