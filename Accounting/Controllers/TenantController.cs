@@ -124,10 +124,11 @@ namespace Accounting.Controllers
       User user = await _userService.CreateAsync(new User()
       {
         Email = model.Email,
-        FirstName = model.FirstName,
-        LastName = model.LastName,
+        FirstName = model.ExistingUser?.FirstName ?? model.FirstName,
+        LastName = model.ExistingUser?.LastName ?? model.LastName,
         Password = !string.IsNullOrEmpty(model.Password)
-          ? PasswordStorage.CreateHash(model.Password) : null
+          ? PasswordStorage.CreateHash(model.Password)
+          : null
       }, tenant.DatabaseName!);
 
       await _userService.UpdatePasswordAllTenantsAsync(user.Email!, user.Password!);
