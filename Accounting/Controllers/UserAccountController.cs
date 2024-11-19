@@ -74,7 +74,7 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
+      var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
 
       if (
         existingUser != null
@@ -151,7 +151,7 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
+      var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
       ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(existingUser);
 
       await HttpContext.SignInAsync(

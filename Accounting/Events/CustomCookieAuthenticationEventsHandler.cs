@@ -46,7 +46,7 @@ namespace Accounting.Events
       }
       else
       {
-        var (existingUser, tenantExistingUserBelongsTo) = await userService.GetAsync(email);
+        var (existingUser, tenantExistingUserBelongsTo) = await userService.GetFirstOfAnyTenantAsync(email);
         user = existingUser;
       }
 

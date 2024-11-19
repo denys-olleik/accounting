@@ -18,7 +18,6 @@ namespace Accounting.Models.TenantViewModels
     public class ExistingUserViewModel
     {
       public int UserID { get; set; }
-      public int TenantId { get; set; }
       public string Email { get; set; }
       public string FirstName { get; set; }
       public string LastName { get; set; }

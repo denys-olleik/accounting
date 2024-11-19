@@ -4529,7 +4529,7 @@ namespace Accounting.Database
         return result.SingleOrDefault()!;
       }
 
-      public async Task<(User, Tenant)> GetAsync(string email)
+      public async Task<(User, Tenant)> GetFirstOfAnyTenantAsync(string email)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
@@ -4571,7 +4571,7 @@ namespace Accounting.Database
           }
         }
 
-        return (null, null);
+        return (null!, null!);
       }
 
       public int Update(User entity)
@@ -4631,6 +4631,28 @@ namespace Accounting.Database
         }
 
         return rowsModified;
+      }
+
+      public async Task<User> GetAsync(string email, string databaseName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+
+        IEnumerable<User> result;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          result = await con.QueryAsync<User>("""
+            SELECT * 
+            FROM "User" 
+            WHERE "Email" = @Email
+            """, p);
+        }
+
+        return result.SingleOrDefault();
       }
     }
 

@@ -89,8 +89,8 @@ namespace Accounting.Controllers
     [Route("create-user/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> CreateUser(
-  Models.TenantViewModels.CreateUserViewModel model,
-  string tenantId)
+      Models.TenantViewModels.CreateUserViewModel model,
+      string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
@@ -99,14 +99,21 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      (User existingUser, Tenant tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
+      User user = await _userService.GetAsync(model.Email, tenant.DatabaseName);
+
+      if (user != null)
+      {
+        model.ValidationResult.Errors.Add(new ValidationFailure("Email", "User already exists."));
+        return View(model);
+      }
+
+      (User existingUser, Tenant tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
 
       if (existingUser != null)
       {
         model.ExistingUser = new Models.TenantViewModels.CreateUserViewModel.ExistingUserViewModel()
         {
           UserID = existingUser.UserID,
-          TenantId = tenantExistingUserBelongsTo.TenantID,
           Email = existingUser.Email,
           FirstName = existingUser.FirstName,
           LastName = existingUser.LastName,
@@ -123,7 +130,7 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      User user = await _userService.CreateAsync(new User()
+      user = await _userService.CreateAsync(new User()
       {
         Email = model.Email,
         FirstName = model.ExistingUser?.FirstName ?? model.FirstName,
@@ -183,7 +190,7 @@ namespace Accounting.Controllers
       Organization organization = await _organizationService.CreateAsync(
         model.Name,
         tenant.DatabaseName!);
-      
+
       return RedirectToAction("Organizations", "Tenant", new { tenantId });
     }
 
@@ -229,7 +236,7 @@ namespace Accounting.Controllers
 
       if (model.InheritUser)
       {
-        var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
+        var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
 
         if (tenantExistingUserBelongsTo.TenantID != tenant.TenantID)
         {
@@ -663,7 +670,7 @@ namespace Accounting.Models.Tenant
             RuleFor(x => x)
               .MustAsync(async (model, cancellationToken) =>
               {
-                var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
+                var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
                 return model.InheritUser ? existingUser != null : existingUser == null;
               })
               .WithMessage(model =>

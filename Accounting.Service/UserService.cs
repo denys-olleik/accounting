@@ -34,10 +34,10 @@ namespace Accounting.Service
       return await factoryManager.GetUserManager().GetAsync(userId, tenantId);
     }
 
-    public async Task<(User, Tenant)> GetAsync(string email)
+    public async Task<(User, Tenant)> GetFirstOfAnyTenantAsync(string email)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetUserManager().GetAsync(email);
+      return await factoryManager.GetUserManager().GetFirstOfAnyTenantAsync(email);
     }
 
     public async Task<User> GetAsync(string email, int tenantId)
@@ -50,6 +50,12 @@ namespace Accounting.Service
     {
       FactoryManager factoryManager = new FactoryManager();
       return factoryManager.GetUserManager().UpdatePasswordAllTenantsAsync(email, password);
+    }
+
+    public async Task<User> GetAsync(string email, string databaseName)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      return await factoryManager.GetUserManager().GetAsync(email, databaseName);
     }
   }
 }
