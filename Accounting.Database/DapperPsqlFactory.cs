@@ -4714,6 +4714,30 @@ namespace Accounting.Database
         return result.Single();
       }
 
+      public async Task<UserOrganization> CreateAsync(int userID, int organizationId, string databaseName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("UserId", userID);
+        p.Add("OrganizationId", organizationId);
+
+        IEnumerable<UserOrganization> result;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        {
+          result = await con.QueryAsync<UserOrganization>($"""
+            INSERT INTO "UserOrganization" ("UserId", "OrganizationId") 
+            VALUES (@UserId, @OrganizationId)
+            RETURNING *;
+            """, p);
+        }
+
+        return result.Single();
+      }
+
       public int Delete(int id)
       {
         throw new NotImplementedException();

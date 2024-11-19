@@ -99,8 +99,8 @@ namespace Accounting.Controllers
     [Route("create-user/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> CreateUser(
-      Models.TenantViewModels.CreateUserViewModel model,
-      string tenantId)
+  Models.TenantViewModels.CreateUserViewModel model,
+  string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
@@ -162,6 +162,15 @@ namespace Accounting.Controllers
           ? PasswordStorage.CreateHash(model.Password)
           : null
       }, tenant.DatabaseName!);
+
+      if (!string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
+      {
+        var selectedOrganizationIds = model.SelectedOrganizationIdsCsv.Split(',').Select(int.Parse);
+        foreach (var organizationId in selectedOrganizationIds)
+        {
+          await _userOrganizationService.CreateAsync(user.UserID, organizationId, tenant.DatabaseName!);
+        }
+      }
 
       await _userService.UpdatePasswordAllTenantsAsync(user.Email!, user.Password!);
 
