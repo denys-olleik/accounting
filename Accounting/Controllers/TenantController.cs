@@ -103,7 +103,7 @@ namespace Accounting.Controllers
 
       if (existingUser != null)
       {
-        model.ExistingUser = new Models.TenantViewModels.CreateUserViewModel.UserViewModel()
+        model.ExistingUser = new Models.TenantViewModels.CreateUserViewModel.ExistingUserViewModel()
         {
           UserID = existingUser.UserID,
           Email = existingUser.Email,
