@@ -81,7 +81,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!); // Load list of organizations
+      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
 
       Models.TenantViewModels.CreateUserViewModel model = new Models.TenantViewModels.CreateUserViewModel
       {
