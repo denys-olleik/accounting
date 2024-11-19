@@ -12,8 +12,8 @@ namespace Accounting.Models.TenantViewModels
     public string Password { get; set; }
     public string ConfirmPassword { get; set; }
 
-    public ValidationResult ValidationResult { get; set; }
-    public ExistingUserViewModel ExistingUser { get; set; }
+    public ValidationResult ValidationResult { get; set; } = new ValidationResult();
+    public ExistingUserViewModel? ExistingUser { get; set; }
 
     public class ExistingUserViewModel
     {
@@ -28,7 +28,26 @@ namespace Accounting.Models.TenantViewModels
     {
       public CreateUserViewModelValidator()
       {
-       
+        RuleFor(x => x.Email)
+          .NotEmpty().WithMessage("Email is required.")
+          .EmailAddress().WithMessage("A valid email is required.")
+          .DependentRules(() =>
+          {
+            When(x => x.ExistingUser == null, () =>
+            {
+              RuleFor(x => x.FirstName)
+                .NotEmpty().WithMessage("First name is required.");
+
+              RuleFor(x => x.LastName)
+                .NotEmpty().WithMessage("Last name is required.");
+
+              When(x => !string.IsNullOrEmpty(x.Password) || !string.IsNullOrEmpty(x.ConfirmPassword), () =>
+              {
+                RuleFor(x => x.Password)
+                  .Equal(x => x.ConfirmPassword).WithMessage("Password and Confirm Password must match.");
+              });
+            });
+          });
       }
     }
   }
