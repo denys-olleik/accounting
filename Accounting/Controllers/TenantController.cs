@@ -89,8 +89,8 @@ namespace Accounting.Controllers
     [Route("create-user/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> CreateUser(
-      Models.TenantViewModels.CreateUserViewModel model,
-      string tenantId)
+  Models.TenantViewModels.CreateUserViewModel model,
+  string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
@@ -106,6 +106,7 @@ namespace Accounting.Controllers
         model.ExistingUser = new Models.TenantViewModels.CreateUserViewModel.ExistingUserViewModel()
         {
           UserID = existingUser.UserID,
+          TenantId = tenantExistingUserBelongsTo.TenantID,
           Email = existingUser.Email,
           FirstName = existingUser.FirstName,
           LastName = existingUser.LastName,
@@ -136,6 +137,7 @@ namespace Accounting.Controllers
 
       return RedirectToAction("Tenants");
     }
+
 
     [Route("create-organization/{tenantId}")]
     [HttpGet]
