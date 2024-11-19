@@ -4799,7 +4799,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<UserOrganization> GetAsync(int userId, int organizationId, int? tenantId)
+      public async Task<UserOrganization> GetAsync(int userId, int organizationId, string databaseName)
       {
         var p = new DynamicParameters();
         p.Add("UserID", userId);
@@ -4807,51 +4807,25 @@ namespace Accounting.Database
 
         IEnumerable<UserOrganization> result;
 
-        TenantManager tenantManager = new TenantManager();
-        Tenant? tenant = await tenantManager.GetAsync(tenantId!.Value);
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
 
-        if (tenant != null && !string.IsNullOrEmpty(tenant.DatabaseName))
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
-          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-          builder.Database = tenant.DatabaseName;
-
-          using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
-          {
-            result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
+          result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
               SELECT uo.*, u.*, o.* 
               FROM "UserOrganization" uo
               INNER JOIN "User" u ON uo."UserId" = u."UserID"
               INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
               WHERE uo."UserId" = @UserID AND uo."OrganizationId" = @OrganizationId
               """,
-              (uo, u, o) =>
-              {
-                uo.User = u;
-                uo.Organization = o;
-                return uo;
-              }, p,
-              splitOn: "UserID,OrganizationID");
-          }
-        }
-        else
-        {
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-          {
-            result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
-              SELECT uo.*, u.*, o.* 
-              FROM "UserOrganization" uo
-              INNER JOIN "User" u ON uo."UserId" = u."UserID"
-              INNER JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
-              WHERE uo."UserId" = @UserID AND uo."OrganizationId" = @OrganizationId
-              """,
-              (uo, u, o) =>
-              {
-                uo.User = u;
-                uo.Organization = o;
-                return uo;
-              }, p,
-              splitOn: "UserID,OrganizationID");
-          }
+            (uo, u, o) =>
+            {
+              uo.User = u;
+              uo.Organization = o;
+              return uo;
+            }, p,
+            splitOn: "UserID,OrganizationID");
         }
 
         return result.SingleOrDefault()!;

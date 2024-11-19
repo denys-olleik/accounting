@@ -14,7 +14,7 @@ namespace Accounting.Events
       var principal = context.Principal;
 
       int? userId = null;
-      int tenantId = 0;
+      string? databaseName = null;
 
       var nameIdentifierClaim = principal?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
       
@@ -24,10 +24,10 @@ namespace Accounting.Events
       }
       string email = principal!.Claims.Single(x => x.Type == ClaimTypes.Email).Value;
 
-      var tenantIdClaim = principal?.Claims.FirstOrDefault(x => x.Type == CustomClaimTypeConstants.TenantId);
-      if (tenantIdClaim != null && !string.IsNullOrEmpty(tenantIdClaim.Value) && int.TryParse(tenantIdClaim.Value, out int parsedTenantId))
+      var databaseNameClaim = principal?.Claims.FirstOrDefault(x => x.Type == CustomClaimTypeConstants.DatabaseName);
+      if (databaseNameClaim != null && !string.IsNullOrEmpty(databaseNameClaim.Value))
       {
-        tenantId = parsedTenantId;
+        databaseName = databaseNameClaim.Value;
       }
 
       int organizationId = Convert.ToInt32(principal.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.OrganizationId)?.Value);
@@ -41,7 +41,7 @@ namespace Accounting.Events
 
       if (organizationId > 0)
       {
-        var userOrganization = await userOrganizationService.GetAsync(userId!.Value, organizationId, tenantId);
+        var userOrganization = await userOrganizationService.GetAsync(userId!.Value, organizationId, databaseName!);
         user = userOrganization.User!;
       }
       else
