@@ -99,6 +99,19 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
+      (User existingUser, Tenant tenantExistingUserBelongsTo) = await _userService.GetAsync(model.Email!);
+
+      if (existingUser != null)
+      {
+        model.ExistingUser = new UserViewModel()
+        {
+          UserID = existingUser.UserID,
+          Email = existingUser.Email,
+          FirstName = existingUser.FirstName,
+          LastName = existingUser.LastName
+        };
+      }
+
       var validator = new CreateUserViewModel.CreateUserViewModelValidator(_userService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
