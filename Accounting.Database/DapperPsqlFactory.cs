@@ -4971,7 +4971,7 @@ namespace Accounting.Database
         return result.Single();
       }
 
-      public async Task<List<Organization>> GetByUserIdAsync(int userId, string? tenantPublicId)
+      public async Task<List<Organization>> GetByUserIdAsync(int userId, string? databaseName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@UserId", userId);
@@ -4979,20 +4979,7 @@ namespace Accounting.Database
         IEnumerable<Organization> result;
         NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
 
-        if (!string.IsNullOrEmpty(tenantPublicId))
-        {
-          TenantManager tenantManager = new TenantManager();
-          Tenant tenant = await tenantManager.GetAsync(tenantPublicId);
-
-          if (tenant != null && !string.IsNullOrEmpty(tenant.DatabaseName))
-          {
-            builder.Database = tenant.DatabaseName;
-          }
-          else
-          {
-            throw new Exception("Tenant not found or invalid tenant configuration.");
-          }
-        }
+        builder.Database = databaseName;
 
         using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
