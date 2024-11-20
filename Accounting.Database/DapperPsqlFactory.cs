@@ -294,7 +294,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<Account> CreateAsync(Account entity, int tenantId)
+      public async Task<Account> CreateAsync(Account entity, string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Name", entity.Name);
@@ -305,11 +305,8 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        TenantManager tenantManager = new TenantManager();
-        Tenant tenant = await tenantManager.GetAsync(tenantId);
-
         var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = tenant.DatabaseName;
+        builder.Database = databaseName;
         string connectionString = builder.ConnectionString;
 
         using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
@@ -554,7 +551,7 @@ namespace Accounting.Database
         int page,
         int pageSize,
         int organizationId,
-        int tenantId,
+        string databaseName,
         bool includeJournalEntriesCount,
         bool includeDescendants)
       {
@@ -565,11 +562,8 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        TenantManager tenantManager = new TenantManager();
-        Tenant tenant = await tenantManager.GetAsync(tenantId);
-
         var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = tenant.DatabaseName;
+        builder.Database = databaseName;
         string connectionString = builder.ConnectionString;
 
         using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
@@ -758,19 +752,16 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<Account> GetAsync(int id, int organizationId, int tenantId)
+      public async Task<Account> GetAsync(int accountId, int organizationId, string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@AccountID", id);
+        p.Add("@AccountID", accountId);
         p.Add("@OrganizationId", organizationId);
 
         IEnumerable<Account> result;
 
-        TenantManager tenantManager = new TenantManager();
-        Tenant tenant = await tenantManager.GetAsync(tenantId);
-
         var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = tenant.DatabaseName;
+        builder.Database = databaseName;
         string connectionString = builder.ConnectionString;
 
         using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
@@ -3001,18 +2992,15 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<Organization> GetAsync(int organizationId, int tenantId)
+      public async Task<Organization> GetAsync(int organizationId, string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@OrganizationId", organizationId);
 
         IEnumerable<Organization>? result;
 
-        TenantManager tenantManager = new TenantManager();
-        Tenant tenant = await tenantManager.GetAsync(tenantId);
-
         var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = tenant.DatabaseName;
+        builder.Database = databaseName;
         string connectionString = builder.ConnectionString;
 
         using (NpgsqlConnection con = new NpgsqlConnection(connectionString))

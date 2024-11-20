@@ -11,10 +11,10 @@ namespace Accounting.Service
       return await factoryManager.GetAccountManager().GetAccountBalanceReport(organizationId);
     }
 
-    public async Task<Account> GetAsync(int accountId, int organizationId, int tenantId)
+    public async Task<Account> GetAsync(int accountId, int organizationId, string databaseName)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetAccountManager().GetAsync(accountId, organizationId, tenantId);
+      return await factoryManager.GetAccountManager().GetAsync(accountId, organizationId, databaseName);
     }
 
     public async Task<Account> CreateAsync(Account account)
@@ -59,10 +59,10 @@ namespace Accounting.Service
       return await factoryManager.GetAccountManager().GetByAccountNameAsync(accountName, organizationId);
     }
 
-    public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, int tenantId, bool includeJournalEntriesCount, bool includeDescendants)
+    public async Task<(List<Account> Accounts, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId, string databaseName, bool includeJournalEntriesCount, bool includeDescendants)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetAccountManager().GetAllAsync(page, pageSize, organizationId, tenantId, includeJournalEntriesCount, includeDescendants);
+      return await factoryManager.GetAccountManager().GetAllAsync(page, pageSize, organizationId, databaseName, includeJournalEntriesCount, includeDescendants);
     }
 
     private void PopulateChildrenRecursively(List<Account> children, List<Account> allOrganizationAccountsFlatList)
@@ -115,10 +115,10 @@ namespace Accounting.Service
       return await factoryManager.GetAccountManager().GetAllAsync(organizationId, includeJournalEntriesCount);
     }
 
-    public async Task<Account> CreateAsync(Account account, int tenantId)
+    public async Task<Account> CreateAsync(Account account, string databaseName)
     {
       FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager.GetAccountManager().CreateAsync(account, tenantId);
+      return await factoryManager.GetAccountManager().CreateAsync(account, databaseName);
     }
   }
 }

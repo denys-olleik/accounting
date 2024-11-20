@@ -4,7 +4,7 @@ namespace Accounting.Database.Interfaces
 {
   public interface IAccountManager : IGenericRepository<Account, int>
   {
-    Task<Account> CreateAsync(Account account, int tenantId);
+    Task<Account> CreateAsync(Account account, string databaseName);
     Task<bool> ExistsAsync(int id, int organizationId);
     Task<List<Account>> GetAccountBalanceReport(int organizationId);
     Task<List<Account>> GetAccountOptionsForInvoiceCreationCredit(int organizationId);
@@ -16,7 +16,7 @@ namespace Accounting.Database.Interfaces
       int page, 
       int pageSize, 
       int organizationId, 
-      int tenantId, 
+      string databaseName, 
       bool includeJournalEntriesCount, 
       bool includeDescendants);
     Task<List<Account>> GetAllAsync(int organizationId, bool includeJournalEntriesCount);
@@ -25,7 +25,7 @@ namespace Accounting.Database.Interfaces
     Task<List<Account>> GetAsync(string[] accountName, int organizationId);
     Task<Account> GetAsync(int id);
     Task<Account> GetAsync(string accountName, int organizationId);
-    Task<Account> GetAsync(int id, int organizationId, int tenantId);
+    Task<Account> GetAsync(int id, int organizationId, string databaseName);
     Task<Account> GetByAccountNameAsync(string accountName, int organizationId);
     Task<string> GetTypeAsync(int accountId);
     Task<int> UpdateAsync(Account account);

@@ -102,7 +102,7 @@ namespace Accounting.Controllers
               OrganizationId = GetOrganizationId(),
             });
 
-            var debitAccount = await _accountService.GetAsync(int.Parse(model.SelectedDebitAccountId!), GetOrganizationId(), GetTenantId());
+            var debitAccount = await _accountService.GetAsync(int.Parse(model.SelectedDebitAccountId!), GetOrganizationId(), GetDatabaseName());
 
             // Debit Entry
             var debitGlEntry = await _journalService.CreateAsync(new Journal()

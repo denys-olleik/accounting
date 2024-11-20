@@ -40,14 +40,6 @@ namespace Accounting.Controllers
     }
 
     [NonAction]
-    public int GetTenantId()
-    {
-      ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
-      int tenantId = Convert.ToInt32(identity.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.TenantId)?.Value);
-      return tenantId;
-    }
-
-    [NonAction]
     public string GetDatabaseName()
     {
       ClaimsIdentity identity = (ClaimsIdentity)User.Identity;

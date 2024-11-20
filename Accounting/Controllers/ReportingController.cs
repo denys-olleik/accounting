@@ -32,7 +32,7 @@ namespace Accounting.Controllers
     public async Task<IActionResult> ViewInvoice(int id)
     {
       Invoice invoice = await _invoiceService.GetAsync(id, GetOrganizationId());
-      invoice.IssuingOrganization = await _organizationService.GetAsync(invoice.OrganizationId, GetTenantId());
+      invoice.IssuingOrganization = await _organizationService.GetAsync(invoice.OrganizationId, GetDatabaseName());
       invoice.BusinessEntity = await _businessEntityService.GetAsync(invoice.BusinessEntityId, GetOrganizationId());
       invoice.InvoiceLines = await _journalInvoiceInvoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
 
