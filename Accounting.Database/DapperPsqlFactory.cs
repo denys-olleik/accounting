@@ -4490,18 +4490,15 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<User> GetAsync(int userId, int tenantId)
+      public async Task<User> GetAsync(int userId, string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@UserId", userId);
 
         IEnumerable<User> result;
 
-        TenantManager tenantManager = new TenantManager();
-        var tenant = await tenantManager.GetAsync(tenantId);
-
         var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = tenant.DatabaseName;
+        builder.Database = databaseName;
         string connectionString = builder.ConnectionString;
 
         using (NpgsqlConnection con = new NpgsqlConnection(connectionString))

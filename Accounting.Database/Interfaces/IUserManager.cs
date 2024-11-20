@@ -5,7 +5,7 @@ namespace Accounting.Database.Interfaces
   public interface IUserManager : IGenericRepository<User, int>
   {
     Task<List<User>> GetAllAsync(int organizationId);
-    Task<User> GetAsync(int userId, int tenantId);
+    Task<User> GetAsync(int userId, string databaseName);
     Task<(User, Tenant)> GetFirstOfAnyTenantAsync(string email);
     Task<User> CreateAsync(User entity, string databaseName);
     Task<User> GetAsync(string email, int tenantId);
