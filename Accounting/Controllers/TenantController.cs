@@ -70,6 +70,45 @@ namespace Accounting.Controllers
       return View(model);
     }
 
+    [Route("update-user/{tenantId}/{userId}")]
+    [HttpGet]
+    public async Task<IActionResult> UpdateUser(string tenantId, string userId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      User user = await _userService.GetAsync(int.Parse(userId), tenant.DatabaseName!);
+
+      if (user == null)
+      {
+        return NotFound();
+      }
+
+      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
+      var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, tenant.DatabaseName!);
+
+      UpdateUserViewModel model = new UpdateUserViewModel
+      {
+        TenantId = tenant.TenantID,
+        UserID = user.UserID,
+        Email = user.Email,
+        FirstName = user.FirstName,
+        LastName = user.LastName,
+        AvailableOrganizations = organizations.Select(x => new UpdateUserViewModel.OrganizationViewModel
+        {
+          OrganizationID = x.OrganizationID,
+          Name = x.Name
+        }).ToList(),
+        SelectedOrganizationIdsCsv = string.Join(',', userOrganizations.Select(x => x.OrganizationID))
+      };
+
+      return View(model);
+    }
+
     [Route("create-user/{tenantId}")]
     [HttpGet]
     public async Task<IActionResult> CreateUser(string tenantId)
