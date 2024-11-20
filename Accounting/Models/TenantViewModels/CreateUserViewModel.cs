@@ -39,24 +39,31 @@ namespace Accounting.Models.TenantViewModels
       {
         RuleFor(x => x.Email)
           .NotEmpty().WithMessage("Email is required.")
-          .EmailAddress().WithMessage("A valid email is required.")
-          .DependentRules(() =>
+          .EmailAddress().WithMessage("A valid email is required.");
+
+        When(x => x.ExistingUser == null, () =>
+        {
+          RuleFor(x => x.FirstName)
+            .NotEmpty().WithMessage("First name is required.");
+
+          RuleFor(x => x.LastName)
+            .NotEmpty().WithMessage("Last name is required.");
+
+          When(x => !string.IsNullOrEmpty(x.Password) || !string.IsNullOrEmpty(x.ConfirmPassword), () =>
           {
-            When(x => x.ExistingUser == null, () =>
-            {
-              RuleFor(x => x.FirstName)
-                .NotEmpty().WithMessage("First name is required.");
-
-              RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("Last name is required.");
-
-              When(x => !string.IsNullOrEmpty(x.Password) || !string.IsNullOrEmpty(x.ConfirmPassword), () =>
-              {
-                RuleFor(x => x.Password)
-                  .Equal(x => x.ConfirmPassword).WithMessage("Password and Confirm Password must match.");
-              });
-            });
+            RuleFor(x => x.Password)
+              .Equal(x => x.ConfirmPassword).WithMessage("Password and Confirm Password must match.");
           });
+        });
+
+        When(x => x.ExistingUser != null, () =>
+        {
+          RuleFor(x => x.FirstName)
+            .Empty().WithMessage("First name must be empty for an existing user.");
+
+          RuleFor(x => x.LastName)
+            .Empty().WithMessage("Last name must be empty for an existing user.");
+        });
       }
     }
   }

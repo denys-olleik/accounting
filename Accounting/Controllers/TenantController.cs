@@ -99,8 +99,8 @@ namespace Accounting.Controllers
     [Route("create-user/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> CreateUser(
-  Models.TenantViewModels.CreateUserViewModel model,
-  string tenantId)
+      Models.TenantViewModels.CreateUserViewModel model,
+      string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
