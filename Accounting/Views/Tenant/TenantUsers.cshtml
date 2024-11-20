@@ -21,12 +21,12 @@
         </div>
         <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
           <div class="flex-1"></div>
-          <a :href="'/update-user/' + tenantId + '/' + user.userID" class="font-size-16px font-Roboto color-white text-decoration-none">update</a>
+          <a :href="'/tenant/update-user/' + tenantId + '/' + user.userID" class="font-size-16px font-Roboto color-white text-decoration-none">update</a>
           <div class="flex-1"></div>
         </div>
         <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
           <div class="flex-1"></div>
-          <a :href="'/delete-user/' + tenantId + '/' + user.userID" class="font-size-16px font-Roboto color-white text-decoration-none">delete</a>
+          <a :href="'/tenant/delete-user/' + tenantId + '/' + user.userID" class="font-size-16px font-Roboto color-white text-decoration-none">delete</a>
           <div class="flex-1"></div>
         </div>
       </span>
@@ -68,7 +68,7 @@
     <tbody class="font-Roboto-Mono">
       <tr v-for="user in users" :key="user.userID" class="border-bottom-1px-solid-lightgray">
         <td class="padding-right-20px vertical-align-top">
-          <user-action :user='user' :is-expanded="user.userID === expandedUserId" @@expand="handleUserExpand(user.userID)"></user-action>
+          <user-action :user="user" :tenant-id="tenantId" :is-expanded="user.userID === expandedUserId" @@expand="handleUserExpand(user.userID)"></user-action>
         </td>
         <td class="text-align-right">
           <!-- Display list of organizations on new lines -->
@@ -91,7 +91,7 @@
 
   const UserAction = {
     name: 'UserAction',
-    props: ['user', 'isExpanded'],
+    props: ['user', 'tenantId', 'isExpanded'],
     template: '#user-action-template',
     methods: {
       toggleAction() {
