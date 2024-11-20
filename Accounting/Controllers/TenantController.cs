@@ -8,8 +8,6 @@ using Accounting.Models.Tenant;
 using Accounting.CustomAttributes;
 using Accounting.Common;
 using Accounting.Models.TenantViewModels;
-using Accounting.Models.UserViewModels;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Accounting.Controllers
 {
