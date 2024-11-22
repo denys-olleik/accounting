@@ -571,7 +571,7 @@ namespace Accounting.Controllers
   }
 }
 
-namespace Accounting.Models.Tenant
+namespace Accounting.Models.TenantViewModels
 {
   public class GetUserOrganizationsViewModel
   {
