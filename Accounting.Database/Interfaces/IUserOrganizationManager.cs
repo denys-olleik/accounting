@@ -12,5 +12,6 @@ namespace Accounting.Database.Interfaces
     Task<UserOrganization> GetByEmailAsync(string email, int? selectedOrganizationId, int tenantPublicId);
     Task<List<User>> GetUsersWithOrganizationsAsync(string databaseName);
     Task<UserOrganization> CreateAsync(int userID, int organizationId, string databaseName);
+    Task<int> UpdateUserOrganizationsAsync(int userID, List<int> selectedOrganizationIds, string databaseName);
   }
 }

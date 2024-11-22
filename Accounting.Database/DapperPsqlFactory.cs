@@ -4639,6 +4639,30 @@ namespace Accounting.Database
 
         return result.SingleOrDefault();
       }
+
+      public async Task<int> UpdateAsync(string email, string firstName, string lastName, string databaseName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@FirstName", firstName);
+        p.Add("@LastName", lastName);
+        p.Add("@Email", email);
+
+        int rowsAffected;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            UPDATE "User" 
+            SET "FirstName" = @FirstName, "LastName" = @LastName
+            WHERE "Email" = @Email
+            """, p);
+        }
+
+        return rowsAffected;
+      }
     }
 
     public IUserOrganizationManager GetUserOrganizationManager()
@@ -5054,6 +5078,43 @@ namespace Accounting.Database
       public int Update(UserOrganization entity)
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<int> UpdateUserOrganizationsAsync(int userId, List<int> selectedOrganizationIds, string databaseName)
+      {
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql)
+        {
+          Database = databaseName
+        };
+
+        using var con = new NpgsqlConnection(builder.ConnectionString);
+
+        var rowsAffected = 0;
+
+        rowsAffected += await con.ExecuteAsync("""
+          DELETE FROM "UserOrganization"
+          WHERE "UserId" = @UserId
+          AND "OrganizationId" NOT IN (@SelectedOrganizationIds);
+          """,
+          new { UserId = userId, SelectedOrganizationIds = selectedOrganizationIds }
+        );
+
+        if (selectedOrganizationIds.Any())
+        {
+          rowsAffected += await con.ExecuteAsync("""
+            INSERT INTO "UserOrganization" ("UserId", "OrganizationId")
+            SELECT @UserId, x
+            FROM UNNEST(@SelectedOrganizationIds) AS x
+            WHERE NOT EXISTS (
+              SELECT 1 
+              FROM "UserOrganization" 
+              WHERE "UserId" = @UserId AND "OrganizationId" = x
+            );
+            """, new { UserId = userId, SelectedOrganizationIds = selectedOrganizationIds }
+          );
+        }
+
+        return rowsAffected;
       }
     }
 

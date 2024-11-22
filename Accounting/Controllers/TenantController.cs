@@ -107,6 +107,59 @@ namespace Accounting.Controllers
       return View(model);
     }
 
+    [Route("update-user/{tenantId}/{userId}")]
+    [HttpPost]
+    public async Task<IActionResult> UpdateUser(
+      string tenantId,
+      string userId,
+      UpdateUserViewModel model)
+    {
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      User user = await _userService.GetAsync(int.Parse(userId), tenant.DatabaseName!);
+      if (user == null)
+      {
+        return NotFound();
+      }
+
+      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
+      model.AvailableOrganizations = organizations.Select(x => new UpdateUserViewModel.OrganizationViewModel
+      {
+        OrganizationID = x.OrganizationID,
+        Name = x.Name
+      }).ToList();
+
+      var validator = new UpdateUserViewModel.UpdateUserViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      user.FirstName = model.FirstName;
+      user.LastName = model.LastName;
+
+      await _userService.UpdateAsync(user.Email, user.FirstName, user.LastName, tenant.DatabaseName!);
+
+      if (!string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
+      {
+        var selectedOrganizationIds = model.SelectedOrganizationIdsCsv
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(int.Parse)
+            .ToList();
+
+        await _userOrganizationService.UpdateUserOrganizationsAsync(user.UserID, selectedOrganizationIds, tenant.DatabaseName!);
+      }
+
+      return RedirectToAction("UserDetails", new { tenantId = tenant.TenantID, userId = user.UserID });
+    }
+
     [Route("create-user/{tenantId}")]
     [HttpGet]
     public async Task<IActionResult> CreateUser(string tenantId)

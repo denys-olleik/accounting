@@ -58,5 +58,11 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager();
       return await factoryManager.GetUserOrganizationManager().CreateAsync(userID, organizationId, databaseName);
     }
+
+    public async Task UpdateUserOrganizationsAsync(int userID, List<int> selectedOrganizationIds, string databaseName)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      await factoryManager.GetUserOrganizationManager().UpdateUserOrganizationsAsync(userID, selectedOrganizationIds, databaseName);
+    }
   }
 }
