@@ -4,10 +4,9 @@ using FluentValidation.Results;
 using System.Transactions;
 using Accounting.Business;
 using FluentValidation;
-using Accounting.Models.Tenant;
+using Accounting.Models.TenantViewModels;
 using Accounting.CustomAttributes;
 using Accounting.Common;
-using Accounting.Models.TenantViewModels;
 
 namespace Accounting.Controllers
 {

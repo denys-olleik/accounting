@@ -10,13 +10,21 @@
 
 <partial name="_H1HeaderPartial" model="@headerText" />
 
-<form id="update-user-form"
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div>
+    <a asp-action="TenantUsers" asp-controller="Tenant" asp-route-tenantId="@Model.TenantId" class="font-Roboto font-size-16px color-blue margin-left-20px">Tenant Users</a>
+  </div>
+</div>
+
+<form id="app"
       asp-action="UpdateUser"
       asp-controller="Tenant"
       asp-route-tenantId="@Model.TenantId"
       asp-route-userId="@Model.UserID"
       method="post"
       class="display-flex flex-direction-column margin-bottom-5px">
+
+  <input type="hidden" asp-for="SelectedOrganizationIdsCsv" :value="selectedOrganizationIds.join(',')" />
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label asp-for="Email" class="background-color-antiquewhite">Email</label>
@@ -38,15 +46,13 @@
   <div class="margin-bottom-5px background-color-antiquewhite">
     <label>Available Organizations:</label>
     <div class="display-flex flex-direction-column margin-top-5px">
-      @foreach (var organization in Model.AvailableOrganizations)
-      {
-        <div class="display-flex flex-1 margin-bottom-5px">
-          <input type="checkbox"
-                 value="@organization.OrganizationID"
-          @(Model.SelectedOrganizationIdsCsv?.Split(',').Contains(organization.OrganizationID.ToString()) == true ? "checked" : "") />
-          <label class="margin-left-5px">@organization.Name</label>
-        </div>
-      }
+      <div v-for="organization in organizations" :key="organization.organizationID" class="display-flex flex-1 margin-bottom-5px">
+        <input type="checkbox"
+               :value="organization.organizationID"
+               :checked="selectedOrganizationIds.includes(organization.organizationID.toString())"
+               @@change="updateSelectedOrganizations" />
+        <label class="margin-left-5px">{{ organization.name }}</label>
+      </div>
     </div>
   </div>
 
@@ -73,6 +79,28 @@
   </div>
 }
 
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script>
+  const { createApp } = Vue;
 
+  const app = createApp({
+    data() {
+      return {
+        organizations: @Html.Raw(Json.Serialize(Model.AvailableOrganizations)),
+        selectedOrganizationIds: @Html.Raw(Json.Serialize(Model.SelectedOrganizationIdsCsv?.Split(',') ?? []))
+      };
+    },
+    methods: {
+      updateSelectedOrganizations(event) {
+        const value = event.target.value;
+        if (event.target.checked) {
+          this.selectedOrganizationIds.push(value);
+        } else {
+          this.selectedOrganizationIds = this.selectedOrganizationIds.filter(id => id !== value);
+        }
+      }
+    }
+  });
+
+  app.mount('#app');
 </script>
