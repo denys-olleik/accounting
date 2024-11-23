@@ -5089,29 +5089,30 @@ namespace Accounting.Database
 
         using var con = new NpgsqlConnection(builder.ConnectionString);
 
+        var p = new DynamicParameters();
+        p.Add("UserId", userId);
+        p.Add("SelectedOrganizationIds", selectedOrganizationIds.ToArray());
+
         var rowsAffected = 0;
 
         rowsAffected += await con.ExecuteAsync("""
           DELETE FROM "UserOrganization"
           WHERE "UserId" = @UserId
-          AND "OrganizationId" NOT IN (@SelectedOrganizationIds);
-          """,
-          new { UserId = userId, SelectedOrganizationIds = selectedOrganizationIds }
-        );
+          AND "OrganizationId" NOT IN (SELECT UNNEST(@SelectedOrganizationIds));
+          """, p);
 
         if (selectedOrganizationIds.Any())
         {
           rowsAffected += await con.ExecuteAsync("""
             INSERT INTO "UserOrganization" ("UserId", "OrganizationId")
-            SELECT @UserId, x
-            FROM UNNEST(@SelectedOrganizationIds) AS x
+            SELECT @UserId, OrganizationId
+            FROM UNNEST(@SelectedOrganizationIds) AS OrganizationId
             WHERE NOT EXISTS (
               SELECT 1 
               FROM "UserOrganization" 
-              WHERE "UserId" = @UserId AND "OrganizationId" = x
+              WHERE "UserId" = @UserId AND "OrganizationId" = OrganizationId
             );
-            """, new { UserId = userId, SelectedOrganizationIds = selectedOrganizationIds }
-          );
+            """, p);
         }
 
         return rowsAffected;
