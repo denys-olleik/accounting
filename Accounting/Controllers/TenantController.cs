@@ -69,9 +69,28 @@ namespace Accounting.Controllers
 
     [Route("update-organization/{tenantId}/{organizationId}")]
     [HttpPost]
-    public IActionResult UpdateOrganization(string tenantId, string organizationId, UpdateOrganizationViewModel model)
+    public async Task<IActionResult> UpdateOrganization(string tenantId, string organizationId, UpdateOrganizationViewModel model)
     {
-      throw new NotImplementedException();
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+      Organization organization = await _organizationService.GetAsync(int.Parse(organizationId), tenant.DatabaseName!);
+      if (organization == null)
+      {
+        return NotFound();
+      }
+      var validator = new UpdateOrganizationViewModel.UpdateOrganizationViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+      organization.Name = model.Name;
+      await _organizationService.UpdateAsync(organization.OrganizationID, model.Name, tenant.DatabaseName!);
+      return RedirectToAction("Organizations", new { tenantId = tenant.TenantID });
     }
 
     [Route("organizations/{tenantId}")]

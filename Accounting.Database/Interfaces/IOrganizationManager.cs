@@ -16,6 +16,7 @@ namespace Accounting.Database.Interfaces
     Task<int> UpdateAccountsReceivableEmailAsync(int organizationId, string accountsReceivableEmail);
     Task<int> UpdateAccountsReceivablePhoneAsync(int organizationId, string accountsReceivablePhone);
     Task<int> UpdateAddressAsync(int organizationId, string address);
+    Task<int> UpdateAsync(int organizationId, string name, string databaseName);
     Task<int> UpdateNameAsync(int organizationId, string name);
     Task<int> UpdatePaymentInstructions(int organizationId, string? PaymentInstructions);
     Task<int> UpdateWebsiteAsync(int organizationId, string website);

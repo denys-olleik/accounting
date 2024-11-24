@@ -77,6 +77,12 @@ namespace Accounting.Service
       return await factoryManager.GetOrganizationManager().UpdateAddressAsync(organizationId, address);
     }
 
+    public async Task UpdateAsync(int organizationId, string name, string databaseName)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      await factoryManager.GetOrganizationManager().UpdateAsync(organizationId, name, databaseName);
+    }
+
     public async Task<int> UpdateNameAsync(int organizationId, string name)
     {
       FactoryManager factoryManager = new FactoryManager();

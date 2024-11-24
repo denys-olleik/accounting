@@ -3261,6 +3261,30 @@ namespace Accounting.Database
           return organizations.ToList();
         }
       }
+
+      public async Task<int> UpdateAsync(int organizationId, string name, string databaseName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@OrganizationId", organizationId);
+        p.Add("@Name", name);
+
+        int rowsAffected;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            UPDATE "Organization" 
+            SET "Name" = @Name 
+            WHERE "OrganizationID" = @OrganizationId
+            """, p);
+        }
+
+        return rowsAffected;
+      }
     }
 
     public IPaymentInstructionManager GetPaymentInstructionManager()
