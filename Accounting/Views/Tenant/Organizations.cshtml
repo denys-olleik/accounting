@@ -24,6 +24,35 @@
 	</div>
 </div>
 
+<template id="organization-action-template">
+	<div class="display-flex padding-top-bottom-2px">
+		<div class="display-flex flex-1">
+			<a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ organization.Name }}</a>
+			<span v-if="isExpanded" class="display-flex">
+				<div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+					<div class="flex-1"></div>
+					<a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+					<div class="flex-1"></div>
+				</div>
+				<div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+					<div class="flex-1"></div>
+					<a :href="'/organization/update/' + organization.OrganizationID" class="font-size-16px font-Roboto color-white text-decoration-none">
+						update
+					</a>
+					<div class="flex-1"></div>
+				</div>
+				<div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+					<div class="flex-1"></div>
+					<a :href="'/organization/delete/' + organization.OrganizationID" class="font-size-16px font-Roboto color-white text-decoration-none">
+						delete
+					</a>
+					<div class="flex-1"></div>
+				</div>
+			</span>
+		</div>
+	</div>
+</template>
+
 <div id="app">
 	<table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
 		<thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
@@ -32,9 +61,14 @@
 			</tr>
 		</thead>
 		<tbody class="font-Roboto-Mono">
-			<template v-for="organization in organizations" :key="organization.name">
+			<template v-for="organization in organizations" :key="organization.OrganizationID">
 				<tr>
-					<td class="padding-right-20px">{{ organization.Name }}</td>
+					<td class="padding-right-20px">
+						<organization-action :organization="organization"
+																 :is-expanded="organization.OrganizationID === expandedOrganizationId"
+																 @@expand="handleOrganizationExpand(organization.OrganizationID)">
+						</organization-action>
+					</td>
 				</tr>
 			</template>
 		</tbody>
@@ -44,11 +78,31 @@
 <script>
 	const { createApp } = Vue;
 
+	const OrganizationAction = {
+		name: 'OrganizationAction',
+		props: ['organization', 'isExpanded'],
+		template: '#organization-action-template',
+		methods: {
+			toggleAction() {
+				this.$emit('expand');
+			}
+		}
+	};
+
 	const app = createApp({
+		components: {
+			'organization-action': OrganizationAction,
+		},
 		data() {
 			return {
-				organizations: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Organizations))
+				organizations: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Organizations)),
+				expandedOrganizationId: null,
 			};
+		},
+		methods: {
+			handleOrganizationExpand(id) {
+				this.expandedOrganizationId = this.expandedOrganizationId === id ? null : id;
+			}
 		}
 	});
 
