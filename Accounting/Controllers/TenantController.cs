@@ -156,7 +156,7 @@ namespace Accounting.Controllers
         await _userOrganizationService.UpdateUserOrganizationsAsync(user.UserID, selectedOrganizationIds, tenant.DatabaseName!);
       }
 
-      return RedirectToAction("UserDetails", new { tenantId = tenant.TenantID, userId = user.UserID });
+      return RedirectToAction("TenantUsers", new { tenantId = tenant.TenantID });
     }
 
     [Route("create-user/{tenantId}")]
@@ -188,7 +188,7 @@ namespace Accounting.Controllers
     [Route("create-user/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> CreateUser(
-      Models.TenantViewModels.CreateUserViewModel model,
+      CreateUserViewModel model,
       string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
