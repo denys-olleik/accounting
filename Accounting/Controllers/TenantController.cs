@@ -7,6 +7,7 @@ using FluentValidation;
 using Accounting.Models.TenantViewModels;
 using Accounting.CustomAttributes;
 using Accounting.Common;
+using Accounting.Models.OrganizationViewModels;
 
 namespace Accounting.Controllers
 {
@@ -39,6 +40,20 @@ namespace Accounting.Controllers
       _userService = userService;
       _organizationService = organizationService;
       _userOrganizationService = userOrganizationService;
+    }
+
+    [Route("update-organization/{tenantId}/{organizationId}")]
+    [HttpGet]
+    public IActionResult UpdateOrganization(string tenantId, string organizationId)
+    {
+      throw new NotImplementedException();
+    }
+
+    [Route("update-organization/{tenantId}/{organizationId}")]
+    [HttpPost]
+    public IActionResult UpdateOrganization(string tenantId, string organizationId, Models.TenantViewModels.UpdateOrganizationViewModel model)
+    {
+      throw new NotImplementedException();
     }
 
     [Route("organizations/{tenantId}")]

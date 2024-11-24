@@ -1,0 +1,53 @@
+﻿@model Accounting.Models.TenantViewModels.UpdateOrganizationViewModel
+
+@{
+  ViewData["Title"] = "Update Organization - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Update Organization";
+}
+
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div>
+    <a asp-action="Organizations" asp-controller="Tenant" asp-route-tenantId="@Model.TenantId" class="font-Roboto font-size-16px color-blue margin-left-20px">Organizations</a>
+  </div>
+</div>
+
+<form id="app"
+      asp-action="UpdateOrganization"
+      asp-controller="Tenant"
+      asp-route-tenantId="@Model.TenantId"
+      asp-route-organizationId="@Model.OrganizationID"
+      method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="Name" class="background-color-antiquewhite">Organization Name</label>
+    <input asp-for="Name" class="font-size-20px" maxlength="100" />
+  </div>
+
+  <div class="display-flex">
+    <div class="flex-1">
+      <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Organizations", "Tenant", new { tenantId = Model.TenantId })';">Cancel</button>
+    </div>
+    <div class="width-5px"></div>
+    <div class="flex-1">
+      <button type="submit" class="full-width-regular-button width-100">Save</button>
+    </div>
+  </div>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+  <div class="margin-bottom-5px">
+  </div>
+}
