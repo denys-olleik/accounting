@@ -64,7 +64,7 @@
 			<template v-for="organization in organizations" :key="organization.OrganizationID">
 				<tr>
 					<td class="padding-right-20px">
-						<organization-action :organization="organization"
+						<organization-action :organization="organization" :tenant-id="tenantId"
 																 :is-expanded="organization.OrganizationID === expandedOrganizationId"
 																 @@expand="handleOrganizationExpand(organization.OrganizationID)">
 						</organization-action>
@@ -80,7 +80,7 @@
 
 	const OrganizationAction = {
 		name: 'OrganizationAction',
-		props: ['organization', 'isExpanded'],
+		props: ['organization', 'tenantId', 'isExpanded'],
 		template: '#organization-action-template',
 		methods: {
 			toggleAction() {
@@ -95,6 +95,7 @@
 		},
 		data() {
 			return {
+				tenantId: @Model.TenantId,
 				organizations: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Organizations)),
 				expandedOrganizationId: null,
 			};

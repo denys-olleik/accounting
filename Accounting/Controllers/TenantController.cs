@@ -7,7 +7,6 @@ using FluentValidation;
 using Accounting.Models.TenantViewModels;
 using Accounting.CustomAttributes;
 using Accounting.Common;
-using Accounting.Models.OrganizationViewModels;
 
 namespace Accounting.Controllers
 {
@@ -44,14 +43,33 @@ namespace Accounting.Controllers
 
     [Route("update-organization/{tenantId}/{organizationId}")]
     [HttpGet]
-    public IActionResult UpdateOrganization(string tenantId, string organizationId)
+    public async Task<IActionResult> UpdateOrganization(string tenantId, string organizationId)
     {
-      throw new NotImplementedException();
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      Organization organization = await _organizationService.GetAsync(int.Parse(organizationId), tenant.DatabaseName!);
+      if (organization == null)
+      {
+        return NotFound();
+      }
+
+      UpdateOrganizationViewModel model = new UpdateOrganizationViewModel
+      {
+        TenantId = tenant.TenantID,
+        OrganizationID = organization.OrganizationID,
+        Name = organization.Name
+      };
+
+      return View(model);
     }
 
     [Route("update-organization/{tenantId}/{organizationId}")]
     [HttpPost]
-    public IActionResult UpdateOrganization(string tenantId, string organizationId, Models.TenantViewModels.UpdateOrganizationViewModel model)
+    public IActionResult UpdateOrganization(string tenantId, string organizationId, UpdateOrganizationViewModel model)
     {
       throw new NotImplementedException();
     }
