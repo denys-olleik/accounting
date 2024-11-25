@@ -1,5 +1,6 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
+using Accounting.Helpers;
 using Accounting.Models.UserAccountViewModels;
 using Accounting.Service;
 using Accounting.Validators;
@@ -81,7 +82,7 @@ namespace Accounting.Controllers
         && (!string.IsNullOrEmpty(existingUser.Password) && !string.IsNullOrEmpty(model.Password))
         && PasswordStorage.VerifyPassword(model.Password, existingUser.Password))
       {
-        ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(existingUser);
+        ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
           claimsPrincipal,
@@ -152,7 +153,7 @@ namespace Accounting.Controllers
       }
 
       var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
-      ClaimsPrincipal claimsPrincipal = CreateClaimsPricipal(existingUser);
+      ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser);
 
       await HttpContext.SignInAsync(
         CookieAuthenticationDefaults.AuthenticationScheme,
@@ -217,7 +218,7 @@ namespace Accounting.Controllers
       if (userOrganization != null)
       {
         ClaimsPrincipal claimsPrincipal
-          = CreateClaimsPricipal(
+          = AuthenticationHelper.CreateClaimsPrincipal(
             user,
             userOrganization.Organization.OrganizationID,
             userOrganization.Organization.Name,
