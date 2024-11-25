@@ -1,4 +1,5 @@
 ﻿using Accounting.Business;
+using Accounting.Helpers;
 using Accounting.Service;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -66,36 +67,10 @@ namespace Accounting.Events
         var currentOrganizationNameClaim = principal?.Claims.FirstOrDefault(x => x.Type == CustomClaimTypeConstants.OrganizationName)?.Value;
         if (organization != null && organization.Name != currentOrganizationNameClaim)
         {
-          var claimsPrincipal = CreateClaimsPrincipal(user, organizationId, databaseName);
-          claimsPrincipal.Identities.First().AddClaim(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationName, organization.Name));
+          var claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(user, organizationId, organization.Name, databaseName);
           await context.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties { IsPersistent = true });
         }
       }
-    }
-
-    private ClaimsPrincipal CreateClaimsPrincipal(User user, int? organizationId = null, string? databaseName = null)
-    {
-      var claims = new List<System.Security.Claims.Claim>
-      {
-        new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
-        new System.Security.Claims.Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()),
-        new System.Security.Claims.Claim(ClaimTypes.Email, user.Email)
-      };
-
-      if (organizationId.HasValue)
-      {
-        claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationId, organizationId.Value.ToString()));
-      }
-
-      if (!string.IsNullOrEmpty(databaseName))
-      {
-        claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.DatabaseName, databaseName));
-      }
-
-      claims.Add(new System.Security.Claims.Claim(CustomClaimTypeConstants.Password, user.Password));
-
-      var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-      return new ClaimsPrincipal(identity);
     }
   }
 }
