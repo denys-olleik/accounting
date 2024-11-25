@@ -42,7 +42,7 @@ namespace Accounting.Events
       string password = principal?.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.Password)?.Value;
 
       User user;
-      Organization organization;
+      Organization organization = null;
 
       if (organizationId > 0)
       {
@@ -63,19 +63,24 @@ namespace Accounting.Events
       }
       else
       {
-        var claimsPrincipal = CreateClaimsPrincipal(user, organizationId, databaseName);
-        await context.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties { IsPersistent = true });
+        var currentOrganizationNameClaim = principal?.Claims.FirstOrDefault(x => x.Type == CustomClaimTypeConstants.OrganizationName)?.Value;
+        if (organization != null && organization.Name != currentOrganizationNameClaim)
+        {
+          var claimsPrincipal = CreateClaimsPrincipal(user, organizationId, databaseName);
+          claimsPrincipal.Identities.First().AddClaim(new System.Security.Claims.Claim(CustomClaimTypeConstants.OrganizationName, organization.Name));
+          await context.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties { IsPersistent = true });
+        }
       }
     }
 
     private ClaimsPrincipal CreateClaimsPrincipal(User user, int? organizationId = null, string? databaseName = null)
     {
       var claims = new List<System.Security.Claims.Claim>
-        {
-            new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
-            new System.Security.Claims.Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()),
-            new System.Security.Claims.Claim(ClaimTypes.Email, user.Email)
-        };
+      {
+        new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
+        new System.Security.Claims.Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()),
+        new System.Security.Claims.Claim(ClaimTypes.Email, user.Email)
+      };
 
       if (organizationId.HasValue)
       {
