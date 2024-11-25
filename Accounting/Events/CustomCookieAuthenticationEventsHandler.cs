@@ -42,11 +42,13 @@ namespace Accounting.Events
       string password = principal?.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.Password)?.Value;
 
       User user;
+      Organization organization;
 
       if (organizationId > 0)
       {
         var userOrganization = await _userOrganizationService.GetAsync(userId!.Value, organizationId, databaseName!);
         user = userOrganization.User!;
+        organization = userOrganization.Organization!;
       }
       else
       {
@@ -69,11 +71,11 @@ namespace Accounting.Events
     private ClaimsPrincipal CreateClaimsPrincipal(User user, int? organizationId = null, string? databaseName = null)
     {
       var claims = new List<System.Security.Claims.Claim>
-            {
-                new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
-                new System.Security.Claims.Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()),
-                new System.Security.Claims.Claim(ClaimTypes.Email, user.Email)
-            };
+        {
+            new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
+            new System.Security.Claims.Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}".Trim()),
+            new System.Security.Claims.Claim(ClaimTypes.Email, user.Email)
+        };
 
       if (organizationId.HasValue)
       {
