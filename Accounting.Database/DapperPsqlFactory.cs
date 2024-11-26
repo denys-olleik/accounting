@@ -5113,28 +5113,35 @@ namespace Accounting.Database
 
         using var con = new NpgsqlConnection(builder.ConnectionString);
 
-        var p = new DynamicParameters();
-        p.Add("UserId", userId);
-        p.Add("SelectedOrganizationIds", selectedOrganizationIds.ToArray());
-
         var rowsAffected = 0;
 
-        rowsAffected += await con.ExecuteAsync("""
-          DELETE FROM "UserOrganization"
-          WHERE "UserId" = @UserId
-          AND "OrganizationId" NOT IN (SELECT UNNEST(@SelectedOrganizationIds));
-          """, p);
-
-        if (selectedOrganizationIds.Any())
+        if (!selectedOrganizationIds.Any())
         {
+          rowsAffected += await con.ExecuteAsync("""
+            DELETE FROM "UserOrganization"
+            WHERE "UserId" = @UserId;
+            """, new { UserId = userId });
+        }
+        else
+        {
+          var p = new DynamicParameters();
+          p.Add("UserId", userId);
+          p.Add("SelectedOrganizationIds", selectedOrganizationIds.ToArray());
+
+          rowsAffected += await con.ExecuteAsync("""
+            DELETE FROM "UserOrganization"
+            WHERE "UserId" = @UserId
+            AND "OrganizationId" NOT IN (SELECT UNNEST(@SelectedOrganizationIds));
+            """, p);
+
           rowsAffected += await con.ExecuteAsync("""
             INSERT INTO "UserOrganization" ("UserId", "OrganizationId")
             SELECT @UserId, OrganizationId
             FROM UNNEST(@SelectedOrganizationIds) AS OrganizationId
             WHERE NOT EXISTS (
-              SELECT 1 
-              FROM "UserOrganization" 
-              WHERE "UserId" = @UserId AND "OrganizationId" = OrganizationId
+                SELECT 1 
+                FROM "UserOrganization" 
+                WHERE "UserId" = @UserId AND "OrganizationId" = OrganizationId
             );
             """, p);
         }

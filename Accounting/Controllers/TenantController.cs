@@ -198,15 +198,15 @@ namespace Accounting.Controllers
 
       await _userService.UpdateAsync(user.Email, user.FirstName, user.LastName, tenant.DatabaseName!);
 
-      if (!string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
-      {
-        var selectedOrganizationIds = model.SelectedOrganizationIdsCsv
-            .Split(',', StringSplitOptions.RemoveEmptyEntries)
-            .Select(int.Parse)
-            .ToList();
+      // Handle the case when no organizations are selected
+      var selectedOrganizationIds = !string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv)
+          ? model.SelectedOrganizationIdsCsv
+              .Split(',', StringSplitOptions.RemoveEmptyEntries)
+              .Select(int.Parse)
+              .ToList()
+          : new List<int>();
 
-        await _userOrganizationService.UpdateUserOrganizationsAsync(user.UserID, selectedOrganizationIds, tenant.DatabaseName!);
-      }
+      await _userOrganizationService.UpdateUserOrganizationsAsync(user.UserID, selectedOrganizationIds, tenant.DatabaseName!);
 
       return RedirectToAction("TenantUsers", new { tenantId = tenant.TenantID });
     }
