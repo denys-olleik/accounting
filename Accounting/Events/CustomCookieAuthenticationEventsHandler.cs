@@ -62,15 +62,6 @@ namespace Accounting.Events
         context.RejectPrincipal();
         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
       }
-      else
-      {
-        var currentOrganizationNameClaim = principal?.Claims.FirstOrDefault(x => x.Type == CustomClaimTypeConstants.OrganizationName)?.Value;
-        if (organization != null && organization.Name != currentOrganizationNameClaim)
-        {
-          var claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(user, organizationId, organization.Name, databaseName);
-          await context.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties { IsPersistent = true });
-        }
-      }
     }
   }
 }

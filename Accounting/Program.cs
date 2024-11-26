@@ -125,6 +125,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+app.UseMiddleware<UpdateClaimsMiddleware>();
 app.UseAuthorization();
 
 app.MapControllerRoute(
