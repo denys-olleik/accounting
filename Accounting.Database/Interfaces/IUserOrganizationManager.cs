@@ -13,5 +13,6 @@ namespace Accounting.Database.Interfaces
     Task<List<User>> GetUsersWithOrganizationsAsync(string databaseName);
     Task<UserOrganization> CreateAsync(int userID, int organizationId, string databaseName);
     Task<int> UpdateUserOrganizationsAsync(int userID, List<int> selectedOrganizationIds, string databaseName);
+    Task<int> DeleteByOrganizationIdAsync(int organizationId, string databaseName);
   }
 }

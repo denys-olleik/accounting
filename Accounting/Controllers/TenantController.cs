@@ -41,46 +41,50 @@ namespace Accounting.Controllers
       _userOrganizationService = userOrganizationService;
     }
 
-    //[Route("delete-organization/{tenantId}/{organizationId}")]
-    //[HttpGet]
-    //public async Task<IActionResult> DeleteOrganization(string tenantId, string organizationId)
-    //{
-    //  Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
-    //  if (tenant == null)
-    //  {
-    //    return NotFound();
-    //  }
+    [Route("delete-organization/{tenantId}/{organizationId}")]
+    [HttpGet]
+    public async Task<IActionResult> DeleteOrganization(string tenantId, string organizationId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+      if (tenant == null)
+      {
+        return NotFound();
+      }
 
-    //  Organization organization = await _organizationService.GetAsync(int.Parse(organizationId), tenant.DatabaseName!);
-    //  if (organization == null)
-    //  {
-    //    return NotFound();
-    //  }
+      Organization organization = await _organizationService.GetAsync(int.Parse(organizationId), tenant.DatabaseName!);
+      if (organization == null)
+      {
+        return NotFound();
+      }
 
-    //  var model = new DeleteOrganizationViewModel
-    //  {
-    //    TenantId = tenant.TenantID,
-    //    OrganizationId = organization.OrganizationID,
-    //    OrganizationName = organization.Name
-    //  };
+      var model = new DeleteOrganizationViewModel
+      {
+        TenantId = tenant.TenantID,
+        OrganizationId = organization.OrganizationID,
+        OrganizationName = organization.Name
+      };
 
-    //  return View(model);
-    //}
+      return View(model);
+    }
 
-    //[Route("delete-organization/{tenantId}/{organizationId}")]
-    //[HttpPost]
-    //public async Task<IActionResult> DeleteOrganization(DeleteOrganizationViewModel model)
-    //{
-    //  Tenant tenant = await _tenantService.GetAsync(model.TenantId);
-    //  if (tenant == null)
-    //  {
-    //    return NotFound();
-    //  }
+    [Route("delete-organization/{tenantId}/{organizationId}")]
+    [HttpPost]
+    public async Task<IActionResult> DeleteOrganization(DeleteOrganizationViewModel model)
+    {
+      Tenant tenant = await _tenantService.GetAsync(model.TenantId);
+      if (tenant == null)
+      {
+        return NotFound();
+      }
 
-    //  await _organizationService.DeleteAsync(model.OrganizationId, tenant.DatabaseName!);
+      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      {
+        await _userOrganizationService.DeleteByOrganizationIdAsync(model.OrganizationId, tenant.DatabaseName!);
+        await _organizationService.DeleteAsync(model.OrganizationId, tenant.DatabaseName!);
+      }
 
-    //  return RedirectToAction("Organizations", new { tenantId = model.TenantId });
-    //}
+      return RedirectToAction("Organizations", new { tenantId = model.TenantId });
+    }
 
     [Route("update-organization/{tenantId}/{organizationId}")]
     [HttpGet]

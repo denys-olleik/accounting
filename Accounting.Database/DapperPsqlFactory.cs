@@ -3285,6 +3285,28 @@ namespace Accounting.Database
 
         return rowsAffected;
       }
+
+      public async Task<int> DeleteAsync(int organizationId, string databaseName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@OrganizationId", organizationId);
+
+        int rowsAffected;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            DELETE FROM "Organization" 
+            WHERE "OrganizationID" = @OrganizationId
+            """, p);
+        }
+
+        return rowsAffected;
+      }
     }
 
     public IPaymentInstructionManager GetPaymentInstructionManager()
@@ -4704,8 +4726,8 @@ namespace Accounting.Database
       public async Task<UserOrganization> CreateAsync(UserOrganization entity)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("UserId", entity.UserId);
-        p.Add("OrganizationId", entity.OrganizationId);
+        p.Add("@UserId", entity.UserId);
+        p.Add("@OrganizationId", entity.OrganizationId);
 
         IEnumerable<UserOrganization> result;
 
@@ -4726,8 +4748,8 @@ namespace Accounting.Database
         string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("UserId", userOrganization.UserId);
-        p.Add("OrganizationId", userOrganization.OrganizationId);
+        p.Add("@UserId", userOrganization.UserId);
+        p.Add("@OrganizationId", userOrganization.OrganizationId);
 
         IEnumerable<UserOrganization> result;
 
@@ -4750,8 +4772,8 @@ namespace Accounting.Database
       public async Task<UserOrganization> CreateAsync(int userID, int organizationId, string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("UserId", userID);
-        p.Add("OrganizationId", organizationId);
+        p.Add("@UserId", userID);
+        p.Add("@OrganizationId", organizationId);
 
         IEnumerable<UserOrganization> result;
 
@@ -4774,6 +4796,28 @@ namespace Accounting.Database
       public int Delete(int id)
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<int> DeleteByOrganizationIdAsync(int organizationId, string databaseName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@OrganizationId", organizationId);
+
+        int rowsAffected;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = databaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            DELETE FROM "UserOrganization" 
+            WHERE "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return rowsAffected;
       }
 
       public UserOrganization Get(int id)

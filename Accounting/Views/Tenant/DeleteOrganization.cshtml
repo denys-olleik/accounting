@@ -1,0 +1,46 @@
+﻿@model Accounting.Models.TenantViewModels.DeleteOrganizationViewModel
+
+@{
+  ViewData["Title"] = "Delete Organization - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Delete Organization";
+}
+
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="Delete" asp-controller="Organization" method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
+
+  <input asp-for="TenantId" type="hidden" />
+  <input asp-for="OrganizationId" type="hidden" />
+
+  <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite margin-bottom-5px">
+    <div>
+      <label asp-for="OrganizationName" class="font-size-20px">Organization Name</label>
+      <input asp-for="OrganizationName" class="font-size-20px" readonly />
+    </div>
+  </div>
+
+  <div class="display-flex">
+    <div class="flex-1">
+      <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Organizations", "Organization")';">Cancel</button>
+    </div>
+    <div class="width-5px"></div>
+    <div class="flex-1">
+      <button type="submit" class="full-width-orange-red-button width-100">Delete</button>
+    </div>
+  </div>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+  <div class="margin-bottom-5px"></div>
+}

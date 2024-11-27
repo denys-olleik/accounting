@@ -17,6 +17,12 @@ namespace Accounting.Service
       return await factoryManager.GetOrganizationManager().CreateAsync(organizationName, databaseName);
     }
 
+    public async Task<int> DeleteAsync(int organizationId, string databaseName)
+    {
+      FactoryManager factoryManager = new FactoryManager();
+      return await factoryManager.GetOrganizationManager().DeleteAsync(organizationId, databaseName);
+    }
+
     public async Task<List<Organization>> GetAllAsync(string databaseName)
     {
       FactoryManager factoryManager = new FactoryManager();
