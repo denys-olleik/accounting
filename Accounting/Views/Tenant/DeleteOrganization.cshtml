@@ -25,7 +25,7 @@
 
   <div class="display-flex">
     <div class="flex-1">
-      <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Organizations", "Organization")';">Cancel</button>
+      <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Organizations", "Tenant", new { tenantId = Model.TenantId })';">Cancel</button>
     </div>
     <div class="width-5px"></div>
     <div class="flex-1">
