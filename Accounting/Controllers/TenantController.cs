@@ -81,6 +81,7 @@ namespace Accounting.Controllers
       {
         await _userOrganizationService.DeleteByOrganizationIdAsync(model.OrganizationId, tenant.DatabaseName!);
         await _organizationService.DeleteAsync(model.OrganizationId, tenant.DatabaseName!);
+        scope.Complete();
       }
 
       return RedirectToAction("Organizations", new { tenantId = model.TenantId });
