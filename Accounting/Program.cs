@@ -5,6 +5,7 @@ using Accounting.Filters;
 using Accounting.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
+using static Accounting.Business.Claim;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
   options.Secure = CookieSecurePolicy.Always;
 });
 
+builder.Services.AddScoped<RequestContext>();
 builder.Services.AddTransient<AddressService>();
 builder.Services.AddTransient<BusinessEntityService>();
 builder.Services.AddTransient<AccountService>();
@@ -80,6 +82,24 @@ ConfigurationSingleton.Instance.TempPath = builder.Configuration["TempPath"];
 ConfigurationSingleton.Instance.PermPath = builder.Configuration["PermPath"];
 
 var app = builder.Build();
+
+#region Middleware
+app.Use(async (context, next) =>
+{
+  var requestContext = context.RequestServices.GetRequiredService<RequestContext>();
+
+  if (context.User.Identity?.IsAuthenticated == true)
+  {
+    var databaseNameClaim = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaimTypeConstants.DatabaseName);
+    if (databaseNameClaim != null)
+    {
+      requestContext.DatabaseName = databaseNameClaim.Value;
+    }
+  }
+
+  await next();
+});
+#endregion
 
 #region reset-database
 if (app.Environment.IsDevelopment())
@@ -144,4 +164,9 @@ async Task IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsT
     ConfigurationSingleton.Instance.TenantManagement
         = Convert.ToBoolean(tenantManagement.Value);
   }
+}
+
+public class RequestContext
+{
+  public string? DatabaseName { get; set; }
 }
