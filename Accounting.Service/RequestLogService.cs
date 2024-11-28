@@ -5,9 +5,16 @@ namespace Accounting.Service
 {
   public class RequestLogService
   {
+    private readonly string _databaseName;
+
+    public RequestLogService(string databaseName)
+    {
+      _databaseName = databaseName;
+    }
+
     public async Task<RequestLog> CreateAsync(RequestLog requestLog)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetRequestLogManager().CreateAsync(requestLog);
     }
   }

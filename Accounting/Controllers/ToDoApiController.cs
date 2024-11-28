@@ -15,10 +15,10 @@ namespace Accounting.Controllers
     [HttpGet("get-todos")]
     public async Task<IActionResult> GetTasks()
     {
-      ToDoService taskService = new ToDoService();
+      ToDoService taskService = new ToDoService(GetDatabaseName());
       List<ToDo> toDos = await taskService.GetAllAsync(GetOrganizationId());
 
-      UserTaskService userTaskService = new UserTaskService();
+      UserTaskService userTaskService = new UserTaskService(GetDatabaseName());
       foreach (var task in toDos)
       {
         await LoadUsersForTaskAndSubtasks(task, userTaskService, GetOrganizationId());
@@ -41,7 +41,7 @@ namespace Accounting.Controllers
     [HttpPost("update-content")]
     public async Task<IActionResult> UpdateContent([FromBody] UpdateContentModel model)
     {
-      ToDoService taskService = new ToDoService();
+      ToDoService taskService = new ToDoService(GetDatabaseName());
 
       ToDo task = await taskService.UpdateContentAsync(model.ToDoId, model.Content, GetOrganizationId());
 
@@ -64,7 +64,7 @@ namespace Accounting.Controllers
     [HttpPost("update-todo-parent")]
     public async Task<IActionResult> UpdateTaskParent(UpdateTaskParentBindingModel model)
     {
-      ToDoService taskService = new ToDoService();
+      ToDoService taskService = new ToDoService(GetDatabaseName());
 
       try
       {
@@ -88,10 +88,10 @@ namespace Accounting.Controllers
     [HttpGet]
     public async Task<IActionResult> GetTaskChildren(int toDoID)
     {
-      ToDoService taskService = new ToDoService();
+      ToDoService taskService = new ToDoService(GetDatabaseName());
       List<ToDo> children = await taskService.GetTaskChildren(toDoID, GetOrganizationId());
 
-      UserTaskService userTaskService = new UserTaskService();
+      UserTaskService userTaskService = new UserTaskService(GetDatabaseName());
       foreach (var task in children)
       {
         await LoadUsersForTaskAndSubtasks(task, userTaskService, GetOrganizationId());
@@ -110,7 +110,7 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> UpdateTaskStatusId(UpdateToDoStatusBindingModel model)
     {
-      ToDoService taskService = new ToDoService();
+      ToDoService taskService = new ToDoService(GetDatabaseName());
 
       try
       {

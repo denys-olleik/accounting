@@ -3,18 +3,25 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-    public class UserTaskService
-    {
-        public async Task<UserToDo> CreateAsync(UserToDo userTask)
-        {
-            FactoryManager factoryManager = new FactoryManager();
-            return await factoryManager.GetUserTaskManager().CreateAsync(userTask);
-        }
+  public class UserTaskService
+  {
+    private readonly string _databaseName;
 
-        public async Task<List<User>> GetUsers(int taskId, int organizationId)
-        {
-            FactoryManager factoryManager = new FactoryManager();
-            return await factoryManager.GetUserTaskManager().GetUsersAsync(taskId, organizationId);
-        }
+    public UserTaskService(string databaseName)
+    {
+      _databaseName = databaseName;
     }
+
+    public async Task<UserToDo> CreateAsync(UserToDo userTask)
+    {
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetUserTaskManager().CreateAsync(userTask);
+    }
+
+    public async Task<List<User>> GetUsers(int taskId, int organizationId)
+    {
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetUserTaskManager().GetUsersAsync(taskId, organizationId);
+    }
+  }
 }

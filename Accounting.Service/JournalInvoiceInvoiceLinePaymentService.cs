@@ -5,21 +5,28 @@ namespace Accounting.Service
 {
   public class JournalInvoiceInvoiceLinePaymentService
   {
+    private readonly string _databaseName;
+
+    public JournalInvoiceInvoiceLinePaymentService(string databaseName)
+    {
+      _databaseName = databaseName;
+    }
+
     public async Task<JournalInvoiceInvoiceLinePayment> CreateAsync(JournalInvoiceInvoiceLinePayment ledgerContext)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetJournalInvoiceInvoiceLinePaymentManager().CreateAsync(ledgerContext);
     }
 
     public async Task<List<JournalInvoiceInvoiceLinePayment>> GetAllAsync(int paymentId, bool getReversedEntries)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetJournalInvoiceInvoiceLinePaymentManager().GetAllAsync(paymentId, getReversedEntries);
     }
 
     public async Task<List<JournalInvoiceInvoiceLinePayment>> GetAllAsync(int invoicePaymentId, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetJournalInvoiceInvoiceLinePaymentManager().GetAllAsync(invoicePaymentId, organizationId);
     }
   }

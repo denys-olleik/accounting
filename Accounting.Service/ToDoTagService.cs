@@ -5,9 +5,16 @@ namespace Accounting.Service
 {
   public class ToDoTagService
   {
+    private readonly string _databaseName;
+
+    public ToDoTagService(string databaseName)
+    {
+      _databaseName = databaseName;
+    }
+
     public async Task<ToDoTag> CreateAsync(ToDoTag taskTag)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetTaskTagManager().CreateAsync(taskTag);
     }
   }

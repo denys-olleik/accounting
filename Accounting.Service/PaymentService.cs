@@ -6,21 +6,28 @@ namespace Accounting.Service
 {
   public class PaymentService
   {
+    private readonly string _databaseName;
+
+    public PaymentService(string databaseName)
+    {
+      _databaseName = databaseName;
+    }
+
     public async Task<Payment> CreateAsync(Payment payment)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetPaymentManager().CreateAsync(payment);
     }
 
     public async Task<List<Payment>> GetAllByInvoiceIdAsync(int invoiceId, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetPaymentManager().GetAllByInvoiceIdAsync(invoiceId, organizationId);
     }
 
     public async Task<Payment> GetAsync(int id, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetPaymentManager().GetAsync(id, organizationId);
     }
 
@@ -30,18 +37,18 @@ namespace Accounting.Service
       int userId,
       int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       await factoryManager.GetPaymentManager().UpdateVoidReasonAsync(payment.PaymentID, voidReason, organizationId);
 
-      List<JournalInvoiceInvoiceLinePayment> lastTransactions
-        = await factoryManager.GetJournalInvoiceInvoiceLinePaymentManager()
+      List<JournalInvoiceInvoiceLinePayment> lastTransactions = await factoryManager
+        .GetJournalInvoiceInvoiceLinePaymentManager()
         .GetLastTransactionsAsync(payment.PaymentID, organizationId, true);
 
       Guid transactionGuid = GuidExtensions.CreateSecureGuid();
 
       foreach (JournalInvoiceInvoiceLinePayment entry in lastTransactions)
       {
-        Journal undoEntry = await factoryManager.GetJournalManager().CreateAsync(new Journal()
+        Journal undoEntry = await factoryManager.GetJournalManager().CreateAsync(new Journal
         {
           AccountId = entry.Journal!.AccountId,
           Credit = entry.Journal.Debit,
@@ -50,7 +57,7 @@ namespace Accounting.Service
           OrganizationId = organizationId,
         });
 
-        await factoryManager.GetJournalInvoiceInvoiceLinePaymentManager().CreateAsync(new JournalInvoiceInvoiceLinePayment()
+        await factoryManager.GetJournalInvoiceInvoiceLinePaymentManager().CreateAsync(new JournalInvoiceInvoiceLinePayment
         {
           JournalId = undoEntry.JournalID,
           ReversedJournalInvoiceInvoiceLinePaymentId = entry.JournalInvoiceInvoiceLinePaymentID,

@@ -21,7 +21,7 @@ namespace Accounting.Controllers
                 Stream = formFile.OpenReadStream()
             };
 
-            InvoiceAttachmentService attachmentService = new InvoiceAttachmentService();
+            InvoiceAttachmentService attachmentService = new InvoiceAttachmentService(GetDatabaseName());
             InvoiceAttachment attachment = await attachmentService.UploadInvoiceAttachmentAsync(fileUpload, GetUserId(), GetOrganizationId());
 
             return Ok(new { Id = attachment.InvoiceAttachmentID, FileName = attachment.FileName });
@@ -31,7 +31,7 @@ namespace Accounting.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdatePrintOrder([FromBody] UpdatePrintOrderModel model)
         {
-            InvoiceAttachmentService attachmentService = new InvoiceAttachmentService();
+            InvoiceAttachmentService attachmentService = new InvoiceAttachmentService(GetDatabaseName());
             bool isSuccess = await attachmentService.UpdatePrintOrderAsync(model.ID, model.NewPrintOrder, GetUserId(), GetOrganizationId());
 
             if (isSuccess)

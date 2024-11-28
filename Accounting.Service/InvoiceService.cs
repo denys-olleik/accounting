@@ -13,11 +13,11 @@ namespace Accounting.Service
     public InvoiceService(
         JournalService journalService,
         JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService,
-        RequestContext requestContext)
+        string databaseName)
     {
       _journalService = journalService;
       _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
-      _databaseName = requestContext.DatabaseName ?? throw new InvalidOperationException("Database name not found.");
+      _databaseName = databaseName;
     }
 
     public async Task<Invoice> CreateAsync(Invoice invoice)

@@ -98,7 +98,7 @@ if (app.Environment.IsDevelopment())
 
     string sampleDataScript = System.IO.File.ReadAllText(sampleDataPath);
 
-    await databaseManager.RunSQLScript(sampleDataScript, "Accounting");
+    await databaseManager.RunSQLScript(sampleDataScript);
 
     databaseResetConfig.Reset = false;
     System.IO.File.WriteAllText(databaseResetConfigPath, JsonConvert.SerializeObject(databaseResetConfig, Formatting.Indented));

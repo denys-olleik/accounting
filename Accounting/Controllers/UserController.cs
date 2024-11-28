@@ -71,7 +71,7 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      InvitationService invitationService = new InvitationService();
+      InvitationService invitationService = new InvitationService(GetDatabaseName());
 
       EmailService emailService = new EmailService(_secretService);
       using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))

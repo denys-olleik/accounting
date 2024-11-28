@@ -5,60 +5,67 @@ namespace Accounting.Service
 {
   public class TenantService
   {
+    private readonly string _databaseName;
+
+    public TenantService(string databaseName)
+    {
+      _databaseName = databaseName;
+    }
+
     public async Task<Tenant> CreateAsync(Tenant tenant)
     {
-      FactoryManager manager = new FactoryManager();
-      return await manager.GetTenantManager().CreateAsync(tenant);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetTenantManager().CreateAsync(tenant);
     }
 
     public async Task<int> DeleteAsync(int tenantID)
     {
-      FactoryManager manager = new FactoryManager();
-      return await manager.GetTenantManager().DeleteAsync(tenantID);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetTenantManager().DeleteAsync(tenantID);
     }
 
     public async Task<bool> ExistsAsync(string email)
     {
-      FactoryManager manager = new FactoryManager();
-      return await manager.GetTenantManager().ExistsAsync(email);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetTenantManager().ExistsAsync(email);
     }
 
     public async Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
-      int page, 
+      int page,
       int pageSize)
     {
-      FactoryManager manager = new FactoryManager();
-      return await manager.GetTenantManager().GetAllAsync(page, pageSize);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetTenantManager().GetAllAsync(page, pageSize);
     }
 
     public async Task<Tenant> GetAsync(int tenantId)
     {
-      FactoryManager manager = new FactoryManager();
-      return await manager.GetTenantManager().GetAsync(tenantId);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetTenantManager().GetAsync(tenantId);
     }
 
     public async Task UpdateDatabaseName(int tenantID, string? databaseName)
     {
-      FactoryManager manager = new FactoryManager();
-      await manager.GetTenantManager().UpdateDatabaseName(tenantID, databaseName);
+      var factoryManager = new FactoryManager(_databaseName);
+      await factoryManager.GetTenantManager().UpdateDatabaseName(tenantID, databaseName);
     }
 
     public async Task UpdateDropletIdAsync(int tenantId, long dropletId)
     {
-      FactoryManager manager = new FactoryManager();
-      await manager.GetTenantManager().UpdateDropletIdAsync(tenantId, dropletId);
+      var factoryManager = new FactoryManager(_databaseName);
+      await factoryManager.GetTenantManager().UpdateDropletIdAsync(tenantId, dropletId);
     }
 
     public async Task UpdateSshPrivateAsync(int tenantId, string sshPrivate)
     {
-      FactoryManager manager = new FactoryManager();
-      await manager.GetTenantManager().UpdateSshPrivateAsync(tenantId, sshPrivate);
+      var factoryManager = new FactoryManager(_databaseName);
+      await factoryManager.GetTenantManager().UpdateSshPrivateAsync(tenantId, sshPrivate);
     }
 
     public async Task UpdateSshPublicAsync(int tenantId, string sshPublicKey)
     {
-      FactoryManager manager = new FactoryManager();
-      await manager.GetTenantManager().UpdateSshPublicAsync(tenantId, sshPublicKey);
+      var factoryManager = new FactoryManager(_databaseName);
+      await factoryManager.GetTenantManager().UpdateSshPublicAsync(tenantId, sshPublicKey);
     }
   }
 }

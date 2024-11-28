@@ -31,10 +31,10 @@ namespace Accounting.Controllers
     [Route("create")]
     public async Task<IActionResult> Create(int? parentToDoId)
     {
-      TagService tagService = new TagService();
+      TagService tagService = new TagService(GetDatabaseName());
       List<Tag> tags = await tagService.GetAllAsync();
 
-      UserService userService = new UserService();
+      UserService userService = new UserService(GetDatabaseName());
 
       CreateToDoViewModel createToDoViewModel = new CreateToDoViewModel();
       createToDoViewModel.Users = (await userService.GetAllAsync(GetOrganizationId())).Select(user => new UserViewModel
@@ -51,7 +51,7 @@ namespace Accounting.Controllers
         Name = tag.Name
       }).ToList();
 
-      ToDoService toDoService = new ToDoService();
+      ToDoService toDoService = new ToDoService(GetDatabaseName());
 
       createToDoViewModel.ParentToDoId = parentToDoId;
 
@@ -77,9 +77,9 @@ namespace Accounting.Controllers
 
       var deserializedSelectedTagIds = JsonConvert.DeserializeObject<List<int>>(model.SelectedTagIds!);
 
-      UserService userService = new UserService();
+      UserService userService = new UserService(GetDatabaseName());
 
-      ToDoService toDoService = new ToDoService();
+      ToDoService toDoService = new ToDoService(GetDatabaseName());
       ToDo? parentToDoItem = model.ParentToDoId.HasValue ? await toDoService.GetAsync(model.ParentToDoId.Value, GetOrganizationId()) : null;
       model.ParentToDo = parentToDoItem != null ? new ToDoViewModel
       {
@@ -90,7 +90,7 @@ namespace Accounting.Controllers
 
       if (!validationResult.IsValid)
       {
-        TagService tagService = new TagService();
+        TagService tagService = new TagService(GetDatabaseName());
         List<Tag> tags = await tagService.GetAllAsync();
 
         if (deserializedSelectedTagIds != null && deserializedSelectedTagIds.Any())
@@ -126,8 +126,8 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      ToDoTagService taskTagService = new ToDoTagService();
-      UserTaskService userTaskService = new UserTaskService();
+      ToDoTagService taskTagService = new ToDoTagService(GetDatabaseName());
+      UserTaskService userTaskService = new UserTaskService(GetDatabaseName());
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
         ToDo taskItem = await toDoService.CreateAsync(new ToDo()
@@ -176,7 +176,7 @@ namespace Accounting.Controllers
     [Route("details/{id}")]
     public async Task<IActionResult> Details(int id)
     {
-      ToDoService taskService = new ToDoService();
+      ToDoService taskService = new ToDoService(GetDatabaseName());
       ToDo taskItem = await taskService.GetAsync(id, GetOrganizationId());
 
       MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();

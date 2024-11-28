@@ -5,21 +5,28 @@ namespace Accounting.Service
 {
   public class InventoryService
   {
+    private readonly string _databaseName;
+
+    public InventoryService(string databaseName)
+    {
+      _databaseName = databaseName;
+    }
+
     public async Task CreateAsync(Inventory inventory)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       await factoryManager.GetInventoryManager().CreateAsync(inventory);
     }
 
     public async Task<List<Inventory>?> GetAllAsync(int page, int pageSize, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetInventoryManager().GetAllAsync(page, pageSize, organizationId);
     }
 
     public async Task<List<Inventory>?> GetAllAsync(int[] itemIds, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetInventoryManager().GetAllAsync(itemIds, organizationId);
     }
   }

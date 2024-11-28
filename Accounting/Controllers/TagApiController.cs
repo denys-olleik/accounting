@@ -25,7 +25,7 @@ namespace Accounting.Controllers
         return BadRequest(new { errors = errorMessages });
       }
 
-      TagService tagService = new TagService();
+      TagService tagService = new TagService(GetDatabaseName());
       Tag tag = await tagService.CreateAsync(new Tag
       {
         Name = model.Name,

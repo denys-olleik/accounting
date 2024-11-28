@@ -445,7 +445,7 @@ namespace Accounting.Controllers
 
       if (model.DeleteDatabase && !string.IsNullOrEmpty(tenant.DatabaseName))
       {
-        await _databaseService.DeleteAsync(tenant.DatabaseName);
+        await _databaseService.DeleteAsync();
       }
 
       await _tenantService.DeleteAsync(tenant.TenantID);
@@ -499,7 +499,7 @@ namespace Accounting.Controllers
         string createSchemaScript = System.IO.File.ReadAllText(createSchemaScriptPath);
 
         DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.PublicId);
-        await _databaseService.RunSQLScript(createSchemaScript, database.Name);
+        await _databaseService.RunSQLScript(createSchemaScript);
         await _tenantService.UpdateDatabaseName(tenant.TenantID, database.Name);
       }
       else

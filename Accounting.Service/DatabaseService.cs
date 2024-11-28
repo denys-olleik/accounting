@@ -5,28 +5,30 @@ namespace Accounting.Service
 {
   public class DatabaseService
   {
+    private readonly string _databaseName = DatabaseThing.DatabaseConstants.Database; 
+
     public async Task ResetDatabase()
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       await factoryManager.GetDatabaseManager().ResetDatabaseAsync();
     }
 
     public async Task<DatabaseThing> CreateDatabaseAsync(string tenantId)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetDatabaseManager().CreateDatabase(tenantId);
     }
 
-    public async Task RunSQLScript(string script, string databaseName)
+    public async Task RunSQLScript(string script)
     {
-      FactoryManager factoryManager = new FactoryManager();
-      await factoryManager.GetDatabaseManager().RunSQLScript(script, databaseName);
+      var factoryManager = new FactoryManager(_databaseName);
+      await factoryManager.GetDatabaseManager().RunSQLScript(script, _databaseName);
     }
 
-    public async Task DeleteAsync(string databaseName)
+    public async Task DeleteAsync()
     {
-      FactoryManager factoryManager = new FactoryManager();
-      await factoryManager.GetDatabaseManager().DeleteAsync(databaseName);
+      var factoryManager = new FactoryManager(_databaseName);
+      await factoryManager.GetDatabaseManager().DeleteAsync(_databaseName);
     }
   }
 }

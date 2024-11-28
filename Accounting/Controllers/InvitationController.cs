@@ -19,7 +19,7 @@ namespace Accounting.Controllers
     [Route("invitation/{guid}")]
     public async Task<IActionResult> Invitation(Guid guid)
     {
-      InvitationService invitationService = new InvitationService();
+      InvitationService invitationService = new InvitationService(GetDatabaseName());
       Invitation invitation = await invitationService.GetAsync(guid);
 
       bool invitationDoesNotExist = invitation == null;
@@ -42,7 +42,7 @@ namespace Accounting.Controllers
     [Route("invitation/{guid}")]
     public async Task<IActionResult> Invitation(InvitationViewModel model)
     {
-      InvitationService invitationService = new InvitationService();
+      InvitationService invitationService = new InvitationService(GetDatabaseName());
       Invitation invitation = await invitationService.GetAsync(model.Guid);
 
       if (invitation.Expiration != null && invitation.Expiration < DateTime.UtcNow)
@@ -59,7 +59,7 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      UserService userService = new UserService();
+      UserService userService = new UserService(GetDatabaseName());
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
         await userService.UpdatePasswordAllTenantsAsync(invitation.Email, PasswordStorage.CreateHash(model.Password));

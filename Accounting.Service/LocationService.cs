@@ -5,18 +5,25 @@ namespace Accounting.Service
 {
   public class LocationService
   {
+    private readonly string _databaseName;
+
+    public LocationService(string databaseName)
+    {
+      _databaseName = databaseName;
+    }
+
     public async Task<Location> CreateLocationAsync(Location location)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetLocationService().CreateAsync(location);
     }
 
     public async Task<(List<Location> locations, int? nextPage)> GetAllAsync(
-      int page, 
-      int pageSize, 
+      int page,
+      int pageSize,
       int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetLocationService().GetAllAsync(page, pageSize, organizationId);
     }
 
@@ -40,13 +47,13 @@ namespace Accounting.Service
 
     public async Task<Location?> GetAsync(int locationId, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetLocationService().GetAsync(locationId, organizationId);
     }
 
     public async Task<List<Location>> GetAllAsync(int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetLocationService().GetAllAsync(organizationId);
     }
 

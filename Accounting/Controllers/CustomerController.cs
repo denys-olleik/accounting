@@ -23,9 +23,9 @@ namespace Accounting.Controllers
 
     public CustomerController()
     {
-      _customerService = new BusinessEntityService();
-      _addressService = new AddressService();
-      _paymentTermsService = new PaymentTermsService();
+      _customerService = new BusinessEntityService(GetDatabaseName());
+      _addressService = new AddressService(GetDatabaseName());
+      _paymentTermsService = new PaymentTermsService(GetDatabaseName());
     }
 
     [Route("customers")]

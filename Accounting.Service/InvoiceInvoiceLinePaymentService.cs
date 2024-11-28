@@ -5,94 +5,67 @@ namespace Accounting.Service
 {
   public class InvoiceInvoiceLinePaymentService
   {
+    private readonly string _databaseName;
+
+    public InvoiceInvoiceLinePaymentService(string databaseName)
+    {
+      _databaseName = databaseName;
+    }
+
     public async Task<InvoiceInvoiceLinePayment> CreateAsync(InvoiceInvoiceLinePayment invoicePayment)
     {
-      FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager
-          .GetInvoiceInvoiceLinePaymentManager()
-          .CreateAsync(invoicePayment);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetInvoiceInvoiceLinePaymentManager().CreateAsync(invoicePayment);
     }
 
     public async Task<(List<InvoiceInvoiceLinePayment> InvoicePayment, int? NextPageNumber)> GetAllAsync(
-        int page,
-        int pageSize,
-        int organizationId,
-        List<string> typesToLoad)
+        int page, int pageSize, int organizationId, List<string> typesToLoad)
     {
-      FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager
-        .GetInvoiceInvoiceLinePaymentManager()
-        .GetAllAsync(page, pageSize, organizationId, typesToLoad);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetInvoiceInvoiceLinePaymentManager().GetAllAsync(page, pageSize, organizationId, typesToLoad);
     }
 
     public async Task<List<Invoice>> GetAllInvoicesByPaymentIdAsync(int paymentID, int organizationId, bool includeVoid = false)
     {
-      FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager
-          .GetInvoiceInvoiceLinePaymentManager()
-          .GetAllInvoicesByPaymentIdAsync(paymentID, organizationId);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetInvoiceInvoiceLinePaymentManager().GetAllInvoicesByPaymentIdAsync(paymentID, organizationId);
     }
 
     public async Task<List<Payment>> GetAllPaymentsByInvoiceIdAsync(int invoiceId, int organizationId, bool includeVoid = false)
     {
-      FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager
-          .GetInvoiceInvoiceLinePaymentManager()
-          .GetAllPaymentsByInvoiceIdAsync(invoiceId, organizationId, includeVoid);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetInvoiceInvoiceLinePaymentManager().GetAllPaymentsByInvoiceIdAsync(invoiceId, organizationId, includeVoid);
     }
 
-    public async Task<InvoiceInvoiceLinePayment> GetInvoicePaymentAsync(
-        int id,
-        int organizationId)
+    public async Task<InvoiceInvoiceLinePayment> GetInvoicePaymentAsync(int id, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager
-          .GetInvoiceInvoiceLinePaymentManager()
-          .GetInvoicePaymentAsync(id, organizationId);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetInvoiceInvoiceLinePaymentManager().GetInvoicePaymentAsync(id, organizationId);
     }
 
-    public async Task<decimal> GetTotalReceivedAsync(
-        int invoiceLineId,
-        int organizationId)
+    public async Task<decimal> GetTotalReceivedAsync(int invoiceLineId, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager
-          .GetInvoiceInvoiceLinePaymentManager()
-          .GetTotalReceivedAsync(invoiceLineId, organizationId);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetInvoiceInvoiceLinePaymentManager().GetTotalReceivedAsync(invoiceLineId, organizationId);
     }
 
-    public async Task<List<InvoiceInvoiceLinePayment>> GetValidInvoiceInvoiceLinePaymentsAsync(
-        int invoiceId,
-        int organizationId)
+    public async Task<List<InvoiceInvoiceLinePayment>> GetValidInvoiceInvoiceLinePaymentsAsync(int invoiceId, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager
-      .GetInvoiceInvoiceLinePaymentManager()
-      .GetValidInvoicePaymentsAsync(invoiceId, organizationId);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetInvoiceInvoiceLinePaymentManager().GetValidInvoicePaymentsAsync(invoiceId, organizationId);
     }
 
     public async Task<(List<InvoiceInvoiceLinePayment> InvoicePayments, int? NextPageNumber)> SearchInvoicePaymentsAsync(
-      int page,
-      int pageSize,
-      string customerSearchQuery,
-      List<string> typesToLoad,
-      int organizationId)
+      int page, int pageSize, string customerSearchQuery, List<string> typesToLoad, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager
-        .GetInvoiceInvoiceLinePaymentManager()
-        .SearchInvoicePaymentsAsync(page, pageSize, customerSearchQuery, typesToLoad, organizationId);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetInvoiceInvoiceLinePaymentManager().SearchInvoicePaymentsAsync(page, pageSize, customerSearchQuery, typesToLoad, organizationId);
     }
 
-    public async Task<int> VoidAsync(
-      int id,
-      string voidReason,
-      int organizationId)
+    public async Task<int> VoidAsync(int id, string voidReason, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager();
-      return await factoryManager
-        .GetInvoiceInvoiceLinePaymentManager()
-        .VoidAsync(id, voidReason, organizationId);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetInvoiceInvoiceLinePaymentManager().VoidAsync(id, voidReason, organizationId);
     }
   }
 }

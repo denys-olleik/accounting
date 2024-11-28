@@ -8,9 +8,16 @@ namespace Accounting.Service
 {
   public class ZipCodeService
   {
+    private readonly string _databaseName;
+
+    public ZipCodeService(string databaseName)
+    {
+      _databaseName = databaseName;
+    }
+
     public async Task<List<ZipCode>> GetAllAsync(bool locationIsNull)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetZIPCodeManager().GetAllAsync(locationIsNull);
     }
 
@@ -37,9 +44,9 @@ namespace Accounting.Service
         }
       }
 
-      List<ZipCode> zipCodesWithoutLocationGeography = await GetAllAsync(true);
+      var zipCodesWithoutLocationGeography = await GetAllAsync(true);
 
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       await factoryManager.GetZIPCodeManager().UpdateLocationAsync(zipCodesWithoutLocationGeography);
     }
 
@@ -51,9 +58,9 @@ namespace Accounting.Service
       var stateValue = zipCode.State2.Replace("'", "''");
 
       return $"""
-           INSERT INTO "ZipCode" ("Zip5", "Latitude", "Longitude", "City", "State2")
-           VALUES ('{zipCode.Zip5}', {latitude}, {longitude}, '{cityValue}', '{stateValue}');
-       """;
+                INSERT INTO "ZipCode" ("Zip5", "Latitude", "Longitude", "City", "State2")
+                VALUES ('{zipCode.Zip5}', {latitude}, {longitude}, '{cityValue}', '{stateValue}');
+            """;
     }
   }
 }

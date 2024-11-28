@@ -5,15 +5,25 @@ namespace Accounting.Service
 {
   public class JournalReconciliationTransactionService
   {
+    private readonly string _databaseName;
+
+    public JournalReconciliationTransactionService(string databaseName)
+    {
+      _databaseName = databaseName;
+    }
+
     public async Task<JournalReconciliationTransaction> CreateAsync(JournalReconciliationTransaction journalExpense)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetJournalReconciliationTransactionManager().CreateAsync(journalExpense);
     }
 
-    public async Task<List<JournalReconciliationTransaction>> GetLastRelevantTransactionsAsync(int reconciliationTransactionId, int organizationId, bool loadChildren = false)
+    public async Task<List<JournalReconciliationTransaction>> GetLastRelevantTransactionsAsync(
+      int reconciliationTransactionId,
+      int organizationId,
+      bool loadChildren = false)
     {
-      FactoryManager factoryManager = new FactoryManager();
+      var factoryManager = new FactoryManager(_databaseName);
       var manager = factoryManager.GetJournalReconciliationTransactionManager();
 
       var transactions = await manager.GetLastTransactionAsync(reconciliationTransactionId, organizationId, loadChildren);
@@ -23,12 +33,10 @@ namespace Accounting.Service
       {
         if (lastTransaction.ReversedJournalReconciliationTransactionId.HasValue)
         {
-          // Last is a reversal, get all reversals
           return transactions.Where(t => t.ReversedJournalReconciliationTransactionId.HasValue).ToList();
         }
         else
         {
-          // Last is not a reversal, get all non-reversals
           return transactions.Where(t => !t.ReversedJournalReconciliationTransactionId.HasValue).ToList();
         }
       }

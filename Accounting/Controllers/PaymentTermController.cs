@@ -19,7 +19,7 @@ namespace Accounting.Controllers
     {
       PaymentTermsViewModel paymentTermsViewModel = new PaymentTermsViewModel();
 
-      PaymentTermsService paymentTermsService = new PaymentTermsService();
+      PaymentTermsService paymentTermsService = new PaymentTermsService(GetDatabaseName());
       List<PaymentTerm> paymentTerms = await paymentTermsService.GetAllAsync();
 
       paymentTermsViewModel.PaymentTerms = paymentTerms.Select(paymentTerm => new PaymentTermViewModel
@@ -52,7 +52,7 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      PaymentTermsService paymentTermsService = new PaymentTermsService();
+      PaymentTermsService paymentTermsService = new PaymentTermsService(GetDatabaseName());
       await paymentTermsService.CreatePaymentTermAsync(new PaymentTerm()
       {
         Description = model.Description,

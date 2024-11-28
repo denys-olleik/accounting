@@ -17,7 +17,7 @@ namespace Accounting.Controllers
         {
             TagsViewModel tagsViewModel = new TagsViewModel();
 
-            TagService tagService = new TagService();
+            TagService tagService = new TagService(GetDatabaseName());
             List<Tag> tags = await tagService.GetAllAsync();
 
             tagsViewModel.Tags = tags.Select(tag => new TagViewModel

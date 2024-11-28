@@ -18,7 +18,7 @@ namespace Accounting.Controllers
     {
       PaymentInstructionsViewModel paymentInstructionsViewModel = new PaymentInstructionsViewModel();
 
-      PaymentInstructionService paymentInstructionService = new PaymentInstructionService();
+      PaymentInstructionService paymentInstructionService = new PaymentInstructionService(GetDatabaseName());
       List<PaymentInstruction> paymentInstructions =
           await paymentInstructionService.GetPaymentInstructionsAsync(GetOrganizationId());
 
@@ -61,7 +61,7 @@ namespace Accounting.Controllers
         OrganizationId = GetOrganizationId()
       };
 
-      PaymentInstructionService paymentInstructionService = new PaymentInstructionService();
+      PaymentInstructionService paymentInstructionService = new PaymentInstructionService(GetDatabaseName());
       await paymentInstructionService.CreateAsync(paymentInstruction);
 
       return RedirectToAction("PaymentInstructions");
