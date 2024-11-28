@@ -12,6 +12,13 @@ namespace Accounting.Database
 {
   public class DapperPsqlFactory : IDatabaseFactoryDefinition
   {
+    private readonly string _databaseName;
+
+    public DapperPsqlFactory(string databaseName)
+    {
+      _databaseName = databaseName;
+    }
+
     public IAddressManager GetAddressManager()
     {
       return new AddressManager();
@@ -884,158 +891,6 @@ namespace Accounting.Database
 
 
     }
-
-    //public IJournalInvoiceManager GetJournalInvoiceManager()
-    //{
-    //  return new JournalInvoiceManager();
-    //}
-
-    //public class JournalInvoiceManager : IJournalInvoiceManager
-    //{
-    //  public JournalInvoice Create(JournalInvoice entity)
-    //  {
-    //    throw new NotImplementedException();
-    //  }
-
-    //  public async Task<JournalInvoice> CreateAsync(JournalInvoice entity)
-    //  {
-    //    DynamicParameters p = new DynamicParameters();
-    //    p.Add("@JournalId", entity.JournalId);
-    //    p.Add("@InvoiceId", entity.InvoiceId);
-    //    p.Add("@ReversedJournalInvoiceId", entity.ReversedJournalInvoiceId);
-    //    p.Add("@TransactionGuid", entity.TransactionGuid);
-    //    p.Add("@OrganizationId", entity.OrganizationId);
-    //    p.Add("@CreatedById", entity.CreatedById);
-
-    //    IEnumerable<JournalInvoice> result;
-
-    //    using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-    //    {
-    //      result = await con.QueryAsync<JournalInvoice>("""
-    //        INSERT INTO "JournalInvoice" 
-    //        ("JournalId", "InvoiceId", "ReversedJournalInvoiceId", "TransactionGuid", "OrganizationId", "CreatedById") 
-    //        VALUES 
-    //        (@JournalId, @InvoiceId, @ReversedJournalInvoiceId, @TransactionGuid, @OrganizationId, @CreatedById)
-    //        RETURNING *;
-    //        """, p);
-    //    }
-
-    //    return result.Single();
-    //  }
-
-    //  public int Delete(int id)
-    //  {
-    //    throw new NotImplementedException();
-    //  }
-
-    //  public JournalInvoice Get(int id)
-    //  {
-    //    throw new NotImplementedException();
-    //  }
-
-    //  public IEnumerable<JournalInvoice> GetAll()
-    //  {
-    //    throw new NotImplementedException();
-    //  }
-
-    //  public async Task<List<JournalInvoice>> GetAllAsync(int invoiceId, bool getReversedEntries, int organizationId)
-    //  {
-    //    DynamicParameters p = new DynamicParameters();
-    //    p.Add("@InvoiceId", invoiceId);
-    //    p.Add("@OrganizationId", organizationId);
-
-    //    string query = """
-    //    SELECT * FROM "JournalInvoice" 
-    //    WHERE "InvoiceId" = @InvoiceId 
-    //    AND "TransactionGuid" = (
-    //        SELECT "TransactionGuid" 
-    //        FROM "JournalInvoice" 
-    //        WHERE "InvoiceId" = @InvoiceId
-    //        AND "OrganizationId" = @OrganizationId
-    //        ORDER BY "Created" DESC
-    //        LIMIT 1)
-    //    """;
-
-    //    if (getReversedEntries)
-    //    {
-    //      query += " AND \"ReversedJournalInvoiceId\" IS NOT NULL";
-    //    }
-    //    else
-    //    {
-    //      query += " AND \"ReversedJournalInvoiceId\" IS NULL";
-    //    }
-
-    //    IEnumerable<JournalInvoice> result;
-
-    //    using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-    //    {
-    //      result = await con.QueryAsync<JournalInvoice>(query, p);
-    //    }
-
-    //    return result.ToList();
-    //  }
-
-    //  public async Task<List<JournalInvoice>> GetLastTransaction(
-    //    int invoiceId,
-    //    int organizationId,
-    //    bool loadChildren)
-    //  {
-    //    DynamicParameters p = new DynamicParameters();
-    //    p.Add("@InvoiceId", invoiceId);
-    //    p.Add("@OrganizationId", organizationId);
-
-    //    IEnumerable<JournalInvoice> result;
-
-    //    if (loadChildren)
-    //    {
-    //      using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-    //      {
-    //        result = await con.QueryAsync<JournalInvoice, Journal, JournalInvoice>($"""
-    //        SELECT gli.*, gl.*
-    //        FROM "JournalInvoice" gli
-    //        INNER JOIN "Journal" gl ON gli."JournalId" = gl."JournalID"
-    //        WHERE gli."InvoiceId" = @InvoiceId
-    //        AND "TransactionGuid" = (
-    //            SELECT "TransactionGuid" 
-    //            FROM "JournalInvoice" 
-    //            WHERE "InvoiceId" = @InvoiceId
-    //            AND "OrganizationId" = @OrganizationId
-    //            ORDER BY "JournalInvoiceID" DESC
-    //            LIMIT 1
-    //        )
-    //        """, (gli, gl) =>
-    //        {
-    //          gli.Journal = gl;
-    //          return gli;
-    //        }, p, splitOn: "JournalID");
-    //      }
-    //    }
-    //    else
-    //    {
-    //      using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
-    //      {
-    //        result = await con.QueryAsync<JournalInvoice>("""
-    //        SELECT * FROM "JournalInvoice" 
-    //        WHERE "InvoiceId" = @InvoiceId 
-    //        AND "TransactionGuid" = (
-    //            SELECT "TransactionGuid" 
-    //            FROM "JournalInvoice" 
-    //            WHERE "InvoiceId" = @InvoiceId
-    //            AND "OrganizationId" = @OrganizationId
-    //            ORDER BY "JournalInvoiceID" DESC
-    //            LIMIT 1
-    //        )
-    //        """, p);
-    //      }
-    //    }
-    //    return result.ToList();
-    //  }
-
-    //  public int Update(JournalInvoice entity)
-    //  {
-    //    throw new NotImplementedException();
-    //  }
-    //}
 
     public IJournalInvoiceInvoiceLinePaymentManager GetJournalInvoiceInvoiceLinePaymentManager()
     {

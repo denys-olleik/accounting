@@ -83,24 +83,6 @@ ConfigurationSingleton.Instance.PermPath = builder.Configuration["PermPath"];
 
 var app = builder.Build();
 
-#region Middleware
-app.Use(async (context, next) =>
-{
-  var requestContext = context.RequestServices.GetRequiredService<RequestContext>();
-
-  if (context.User.Identity?.IsAuthenticated == true)
-  {
-    var databaseNameClaim = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaimTypeConstants.DatabaseName);
-    if (databaseNameClaim != null)
-    {
-      requestContext.DatabaseName = databaseNameClaim.Value;
-    }
-  }
-
-  await next();
-});
-#endregion
-
 #region reset-database
 if (app.Environment.IsDevelopment())
 {
@@ -145,6 +127,25 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
+
+#region UserContextMiddleware
+app.Use(async (context, next) =>
+{
+  var requestContext = context.RequestServices.GetRequiredService<RequestContext>();
+
+  if (context.User.Identity?.IsAuthenticated == true)
+  {
+    var databaseNameClaim = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaimTypeConstants.DatabaseName);
+    if (databaseNameClaim != null)
+    {
+      requestContext.DatabaseName = databaseNameClaim.Value;
+    }
+  }
+
+  await next();
+});
+#endregion
+
 app.UseMiddleware<UpdateClaimsMiddleware>();
 app.UseAuthorization();
 
@@ -164,9 +165,4 @@ async Task IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsT
     ConfigurationSingleton.Instance.TenantManagement
         = Convert.ToBoolean(tenantManagement.Value);
   }
-}
-
-public class RequestContext
-{
-  public string? DatabaseName { get; set; }
 }
