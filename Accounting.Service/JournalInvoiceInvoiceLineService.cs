@@ -12,9 +12,9 @@ namespace Accounting.Service
     private readonly JournalService _journalService;
 
     public JournalInvoiceInvoiceLineService(
-      string databaseName,
       InvoiceLineService invoiceLineService,
-      JournalService journalService)
+      JournalService journalService,
+      string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
       _invoiceLineService = invoiceLineService;

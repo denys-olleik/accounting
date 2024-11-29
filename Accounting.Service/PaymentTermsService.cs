@@ -7,7 +7,7 @@ namespace Accounting.Service
   {
     private readonly string _databaseName;
 
-    public PaymentTermsService(string databaseName)
+    public PaymentTermsService(string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
     }

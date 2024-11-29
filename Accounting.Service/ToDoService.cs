@@ -7,7 +7,7 @@ namespace Accounting.Service
   {
     private readonly string _databaseName;
 
-    public ToDoService(string databaseName)
+    public ToDoService(string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
     }

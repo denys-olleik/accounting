@@ -8,7 +8,7 @@ namespace Accounting.Service
   {
     private readonly string _databaseName;
 
-    public InvoiceAttachmentService(string databaseName)
+    public InvoiceAttachmentService(string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
     }

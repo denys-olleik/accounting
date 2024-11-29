@@ -10,7 +10,7 @@ namespace Accounting.Service
   {
     private readonly string _databaseName;
 
-    public ZipCodeService(string databaseName)
+    public ZipCodeService(string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
     }

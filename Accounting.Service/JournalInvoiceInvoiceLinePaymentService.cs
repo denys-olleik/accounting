@@ -7,7 +7,7 @@ namespace Accounting.Service
   {
     private readonly string _databaseName;
 
-    public JournalInvoiceInvoiceLinePaymentService(string databaseName)
+    public JournalInvoiceInvoiceLinePaymentService(string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
     }
