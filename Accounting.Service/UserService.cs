@@ -7,7 +7,7 @@ namespace Accounting.Service
   {
     private readonly string _databaseName;
 
-    public UserService(string databaseName)
+    public UserService(string databaseName = null)
     {
       _databaseName = databaseName;
     }
