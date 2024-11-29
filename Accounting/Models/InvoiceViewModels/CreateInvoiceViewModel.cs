@@ -4,6 +4,8 @@ using Accounting.Models.AddressViewModels;
 using Accounting.Models.BusinessEntityViewModels;
 using Accounting.Models.Item;
 using Accounting.Models.PaymentTermViewModels;
+using Accounting.Validators;
+using FluentValidation;
 using FluentValidation.Results;
 
 namespace Accounting.Models.InvoiceViewModels
@@ -38,6 +40,43 @@ namespace Accounting.Models.InvoiceViewModels
 
     public ValidationResult? ValidationResult { get; set; }
     public int OrganizationId { get; set; }
+
+    public class CreateInvoiceViewModelValidator : InvoiceViewModelValidatorBase<CreateInvoiceViewModel>
+    {
+      public CreateInvoiceViewModelValidator()
+      {
+        RuleFor(x => x.SelectedCustomerId)
+          .NotNull()
+          .WithMessage("Select a customer.")
+          .DependentRules(() =>
+          {
+            RuleFor(x => x.SelectedBillingAddress).NotNull()
+              .WithMessage("Select billing address.");
+          });
+
+        RuleFor(x => x.InvoiceLines)
+          .NotEmpty()
+          .WithMessage("'Invoice lines' cannot be empty.")
+          .DependentRules(() =>
+          {
+            RuleFor(x => x.InvoiceLines)
+                .MustAsync(async (invoiceLines, cancellationToken) => await BeValidInvoiceLineListAsync(invoiceLines))
+                .WithMessage("One or more invoice lines are invalid.");
+
+            RuleForEach(x => x.InvoiceLines)
+                .ChildRules(invoiceLine =>
+                {
+                  invoiceLine.RuleFor(line => line.Quantity)
+                      .GreaterThan(0)
+                      .WithMessage("'Quantity' must be greater than 0 for all invoice lines.");
+                });
+          });
+
+        RuleFor(x => x.DueDate)
+            .NotNull()
+            .WithMessage("'Due date' is required. Select payment terms.");
+      }
+    }
   }
 
   public class InvoiceLineViewModel

@@ -148,7 +148,7 @@ namespace Accounting.Controllers
 
     private async Task<ValidationResult> ValidateCreateInvoiceModel(CreateInvoiceViewModel model)
     {
-      var validator = new CreateInvoiceViewModelValidator(GetOrganizationId());
+      var validator = new CreateInvoiceViewModel.CreateInvoiceViewModelValidator();
 
       return await validator.ValidateAsync(model);
     }

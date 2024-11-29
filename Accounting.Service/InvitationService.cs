@@ -7,7 +7,7 @@ namespace Accounting.Service
   {
     private readonly string _databaseName;
 
-    public InvitationService(string databaseName)
+    public InvitationService(string databaseName = null)
     {
       _databaseName = databaseName;
     }

@@ -4,17 +4,17 @@ using FluentValidation;
 
 namespace Accounting.Validators
 {
-    public class InvitationViewModelValidator : AbstractValidator<InvitationViewModel>
+  public class InvitationViewModelValidator : AbstractValidator<InvitationViewModel>
+  {
+    private readonly InvitationService _invitationService;
+
+    public InvitationViewModelValidator()
     {
-        private readonly InvitationService _invitationService;
+      _invitationService = new InvitationService();
 
-        public InvitationViewModelValidator()
-        {
-            _invitationService = new InvitationService();
-
-            RuleFor(i => i.Password)
-                .Equal(i => i.ConfirmPassword)
-                .WithMessage("Passwords do not match");
-        }
+      RuleFor(i => i.Password)
+          .Equal(i => i.ConfirmPassword)
+          .WithMessage("Passwords do not match");
     }
+  }
 }
