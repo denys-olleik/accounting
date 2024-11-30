@@ -150,6 +150,13 @@ namespace Accounting.Database
         _databaseName = databaseName;
       }
 
+      private string GetConnectionString()
+      {
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = _databaseName;
+        return builder.ConnectionString;
+      }
+
       public BusinessEntity Create(BusinessEntity entity)
       {
         throw new NotImplementedException();
@@ -169,13 +176,13 @@ namespace Accounting.Database
 
         IEnumerable<BusinessEntity> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
         {
           result = await con.QueryAsync<BusinessEntity>("""
-            INSERT INTO "BusinessEntity" ("CustomerType", "BusinessEntityTypesCsv", "FirstName", "LastName", "CompanyName", "PaymentTermId", "CreatedById", "OrganizationId", "Created") 
-            VALUES (@CustomerType, @BusinessEntityTypesCsv, @FirstName, @LastName, @CompanyName, @PaymentTermId, @CreatedById, @OrganizationId, CURRENT_TIMESTAMP)
-            RETURNING *;
-            """, p);
+           INSERT INTO "BusinessEntity" ("CustomerType", "BusinessEntityTypesCsv", "FirstName", "LastName", "CompanyName", "PaymentTermId", "CreatedById", "OrganizationId", "Created") 
+           VALUES (@CustomerType, @BusinessEntityTypesCsv, @FirstName, @LastName, @CompanyName, @PaymentTermId, @CreatedById, @OrganizationId, CURRENT_TIMESTAMP)
+           RETURNING *;
+           """, p);
         }
 
         return result.Single();
@@ -200,7 +207,7 @@ namespace Accounting.Database
       {
         IEnumerable<BusinessEntity> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
         {
           result = await con.QueryAsync<BusinessEntity>("""
             SELECT * FROM "BusinessEntity"
@@ -218,7 +225,7 @@ namespace Accounting.Database
         p.Add("@OrganizationId", organizationId);
 
         IEnumerable<BusinessEntity> result;
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
         {
           result = await con.QueryAsync<BusinessEntity>("""
             SELECT * FROM (
@@ -250,7 +257,7 @@ namespace Accounting.Database
 
         BusinessEntity? result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
         {
           result = await con.QuerySingleOrDefaultAsync<BusinessEntity>("""
             SELECT * 
@@ -279,7 +286,7 @@ namespace Accounting.Database
 
         int rowsModified;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
         {
           rowsModified = await con.ExecuteAsync("""
             UPDATE "BusinessEntity" SET 
@@ -295,6 +302,7 @@ namespace Accounting.Database
         return rowsModified;
       }
     }
+
 
     public IAccountManager GetAccountManager()
     {
