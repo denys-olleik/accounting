@@ -21,11 +21,15 @@ namespace Accounting.Controllers
     private readonly AddressService _addressService;
     private readonly PaymentTermsService _paymentTermsService;
 
-    public CustomerController(BusinessEntityService businessEntityService)
+    public CustomerController(
+      BusinessEntityService businessEntityService, 
+      RequestContext requestContext, 
+      AddressService addressService,
+      PaymentTermsService paymentTermsService)
     {
       _customerService = businessEntityService;
-      _addressService = new AddressService(GetDatabaseName());
-      _paymentTermsService = new PaymentTermsService(GetDatabaseName());
+      _addressService = addressService;
+      _paymentTermsService = paymentTermsService;
     }
 
     [Route("customers")]

@@ -17,6 +17,12 @@ namespace Accounting.Service
       throw new NotImplementedException();
     }
 
+    public async Task<User> CreateAsync(User user, string databaseName)
+    {
+      var factoryManager = new FactoryManager(databaseName);
+      return await factoryManager.GetUserManager().CreateAsync(user);
+    }
+
     public async Task<User> CreateAsync(User user)
     {
       var factoryManager = new FactoryManager(_databaseName);
@@ -53,9 +59,9 @@ namespace Accounting.Service
       return factoryManager.GetUserManager().UpdatePasswordAllTenantsAsync(email, password);
     }
 
-    public async Task<User> GetAsync(string email)
+    public async Task<User> GetAsync(string email, string? databaseName)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(databaseName);
       return await factoryManager.GetUserManager().GetAsync(email);
     }
 

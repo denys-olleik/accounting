@@ -297,7 +297,7 @@ namespace Accounting.Controllers
       }
 
       var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
-      model.AvailableOrganizations = organizations.Select(x => new Models.TenantViewModels.CreateUserViewModel.OrganizationViewModel
+      model.AvailableOrganizations = organizations.Select(x => new CreateUserViewModel.OrganizationViewModel
       {
         OrganizationID = x.OrganizationID,
         Name = x.Name
@@ -309,7 +309,7 @@ namespace Accounting.Controllers
           model.SelectedOrganizationIdsCsv.Split(',').Where(id => !string.IsNullOrEmpty(id)));
       }
 
-      User user = await _userService.GetAsync(model.Email);
+      User user = await _userService.GetAsync(model.Email, tenant.DatabaseName);
 
       if (user != null)
       {
@@ -321,7 +321,7 @@ namespace Accounting.Controllers
 
       if (existingUser != null)
       {
-        model.ExistingUser = new Models.TenantViewModels.CreateUserViewModel.ExistingUserViewModel()
+        model.ExistingUser = new CreateUserViewModel.ExistingUserViewModel()
         {
           UserID = existingUser.UserID,
           Email = existingUser.Email,
@@ -331,7 +331,7 @@ namespace Accounting.Controllers
         };
       }
 
-      var validator = new Models.TenantViewModels.CreateUserViewModel.CreateUserViewModelValidator();
+      var validator = new CreateUserViewModel.CreateUserViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -348,7 +348,7 @@ namespace Accounting.Controllers
         Password = !string.IsNullOrEmpty(model.Password)
           ? PasswordStorage.CreateHash(model.Password)
           : null
-      });
+      }, tenant.DatabaseName!);
 
       if (!string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
       {
