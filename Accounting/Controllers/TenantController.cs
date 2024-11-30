@@ -499,7 +499,7 @@ namespace Accounting.Controllers
         string createSchemaScript = System.IO.File.ReadAllText(createSchemaScriptPath);
 
         DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.PublicId);
-        await _databaseService.RunSQLScript(createSchemaScript, tenant.DatabaseName);
+        await _databaseService.RunSQLScript(createSchemaScript, database.Name);
         await _tenantService.UpdateDatabaseName(tenant.TenantID, database.Name);
       }
       else
