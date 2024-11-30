@@ -23,22 +23,16 @@ namespace Accounting.Service
       return await factoryManager.GetUserManager().CreateAsync(user);
     }
 
-    public async Task<User> CreateAsync(User user, string databaseName)
-    {
-      var factoryManager = new FactoryManager(databaseName);
-      return await factoryManager.GetUserManager().CreateAsync(user, databaseName);
-    }
-
     public async Task<List<User>> GetAllAsync(int organizationId)
     {
       var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetUserManager().GetAllAsync(organizationId);
     }
 
-    public async Task<User> GetAsync(int userId, string databaseName)
+    public async Task<User> GetAsync(int userId)
     {
-      var factoryManager = new FactoryManager(databaseName);
-      return await factoryManager.GetUserManager().GetAsync(userId, databaseName);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetUserManager().GetAsync(userId);
     }
 
     public async Task<(User, Tenant)> GetFirstOfAnyTenantAsync(string email)
@@ -59,16 +53,16 @@ namespace Accounting.Service
       return factoryManager.GetUserManager().UpdatePasswordAllTenantsAsync(email, password);
     }
 
-    public async Task<User> GetAsync(string email, string databaseName)
+    public async Task<User> GetAsync(string email)
     {
-      var factoryManager = new FactoryManager(databaseName);
-      return await factoryManager.GetUserManager().GetAsync(email, databaseName);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetUserManager().GetAsync(email);
     }
 
-    public async Task<int> UpdateAsync(string email, string firstName, string lastName, string databaseName)
+    public async Task<int> UpdateAsync(string email, string firstName, string lastName)
     {
-      var factoryManager = new FactoryManager(databaseName);
-      return await factoryManager.GetUserManager().UpdateAsync(email, firstName, lastName, databaseName);
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetUserManager().UpdateAsync(email, firstName, lastName);
     }
   }
 }

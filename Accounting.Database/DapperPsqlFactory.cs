@@ -4309,17 +4309,33 @@ namespace Accounting.Database
 
     public IUserManager GetUserManager()
     {
-      return new UserManager();
+      return new UserManager(_databaseName);
     }
 
     public class UserManager : IUserManager
     {
+      private readonly string _databaseName;
+
+      public UserManager(string databaseName)
+      {
+        _databaseName = databaseName;
+      }
+
+      private string GetConnectionString()
+      {
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql)
+        {
+          Database = _databaseName
+        };
+        return builder.ConnectionString;
+      }
+
       public User Create(User entity)
       {
         throw new NotImplementedException();
       }
 
-      public async Task<User> CreateAsync(User entity, string databaseName)
+      public async Task<User> CreateAsync(User entity)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", entity.Email);
@@ -4335,35 +4351,7 @@ namespace Accounting.Database
 
         IEnumerable<User> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = databaseName;
-        string connectionString = builder.ConnectionString;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
-        {
-          result = await con.QueryAsync<User>(sql, p);
-        }
-
-        return result.Single();
-      }
-
-      public async Task<User> CreateAsync(User entity)
-      {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@Email", entity.Email);
-        p.Add("@FirstName", entity.FirstName);
-        p.Add("@LastName", entity.LastName);
-        p.Add("@CreatedById", entity.CreatedById);
-
-        string sql = """
-          INSERT INTO "User" ("Email", "FirstName", "LastName", "CreatedById") 
-          VALUES (@Email, @FirstName, @LastName, @CreatedById)
-          RETURNING *;
-          """;
-
-        IEnumerable<User> result;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
         {
           result = await con.QueryAsync<User>(sql, p);
         }
@@ -4393,41 +4381,59 @@ namespace Accounting.Database
 
         IEnumerable<User> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
         {
           result = await con.QueryAsync<User>("""
-            SELECT u.* 
-            FROM "User" u
-            INNER JOIN "UserOrganization" uo ON u."UserID" = uo."UserId"
-            WHERE uo."OrganizationId" = @OrganizationId
-            """, p);
+              SELECT u.* 
+              FROM "User" u
+              INNER JOIN "UserOrganization" uo ON u."UserID" = uo."UserId"
+              WHERE uo."OrganizationId" = @OrganizationId
+              """, p);
         }
 
         return result.ToList();
       }
 
-      public async Task<User> GetAsync(int userId, string databaseName)
+      public async Task<User> GetAsync(int userId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@UserId", userId);
 
         IEnumerable<User> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = databaseName;
-        string connectionString = builder.ConnectionString;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
         {
           result = await con.QueryAsync<User>("""
-            SELECT * 
-            FROM "User" 
-            WHERE "UserID" = @UserId
-            """
-            , p);
+              SELECT * 
+              FROM "User" 
+              WHERE "UserID" = @UserId
+              """, p);
         }
 
         return result.SingleOrDefault()!;
+      }
+
+      public async Task<User> GetAsync(string email, int tenantId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+
+        string tenantDatabaseName = (await new TenantManager().GetAsync(tenantId)).DatabaseName;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql)
+        {
+          Database = tenantDatabaseName
+        };
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          var result = await con.QueryAsync<User>("""
+              SELECT * 
+              FROM "User" 
+              WHERE "Email" = @Email
+              """, p);
+          return result.SingleOrDefault();
+        }
       }
 
       public async Task<(User, Tenant)> GetFirstOfAnyTenantAsync(string email)
@@ -4450,12 +4456,12 @@ namespace Accounting.Database
           using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
           {
             var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
-                SELECT uo.*, u.*, o.*
-                FROM "User" u
-                LEFT JOIN "UserOrganization" uo ON u."UserID" = uo."UserId"
-                LEFT JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
-                WHERE u."Email" = @Email
-                """,
+                    SELECT uo.*, u.*, o.*
+                    FROM "User" u
+                    LEFT JOIN "UserOrganization" uo ON u."UserID" = uo."UserId"
+                    LEFT JOIN "Organization" o ON uo."OrganizationId" = o."OrganizationID"
+                    WHERE u."Email" = @Email
+                    """,
                 (userOrg, user, org) =>
                 {
                   userOrg.User = user;
@@ -4480,23 +4486,20 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<User> GetAsync(string email, int tenantId)
+      public async Task<User> GetAsync(string email)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
 
         IEnumerable<User> result;
 
-        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = (await new TenantManager().GetAsync(tenantId)).DatabaseName;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
         {
           result = await con.QueryAsync<User>("""
-            SELECT * 
-            FROM "User" 
-            WHERE "Email" = @Email
-            """, p);
+              SELECT * 
+              FROM "User" 
+              WHERE "Email" = @Email
+              """, p);
         }
 
         return result.SingleOrDefault();
@@ -4518,45 +4521,25 @@ namespace Accounting.Database
           if (string.IsNullOrEmpty(tenant.DatabaseName))
             continue;
 
-          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-          builder.Database = tenant.DatabaseName;
+          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql)
+          {
+            Database = tenant.DatabaseName
+          };
 
           using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
           {
             rowsModified += await con.ExecuteAsync("""
-              UPDATE "User" 
-              SET "Password" = @Password
-              WHERE "Email" = @Email
-              """, p);
+                  UPDATE "User" 
+                  SET "Password" = @Password
+                  WHERE "Email" = @Email
+                  """, p);
           }
         }
 
         return rowsModified;
       }
 
-      public async Task<User> GetAsync(string email, string databaseName)
-      {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@Email", email);
-
-        IEnumerable<User> result;
-
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = databaseName;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
-        {
-          result = await con.QueryAsync<User>("""
-            SELECT * 
-            FROM "User" 
-            WHERE "Email" = @Email
-            """, p);
-        }
-
-        return result.SingleOrDefault();
-      }
-
-      public async Task<int> UpdateAsync(string email, string firstName, string lastName, string databaseName)
+      public async Task<int> UpdateAsync(string email, string firstName, string lastName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@FirstName", firstName);
@@ -4565,16 +4548,13 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = databaseName;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
         {
           rowsAffected = await con.ExecuteAsync("""
-            UPDATE "User" 
-            SET "FirstName" = @FirstName, "LastName" = @LastName
-            WHERE "Email" = @Email
-            """, p);
+              UPDATE "User" 
+              SET "FirstName" = @FirstName, "LastName" = @LastName
+              WHERE "Email" = @Email
+              """, p);
         }
 
         return rowsAffected;

@@ -176,7 +176,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      User user = await _userService.GetAsync(int.Parse(userId), tenant.DatabaseName!);
+      User user = await _userService.GetAsync(int.Parse(userId));
 
       if (user == null)
       {
@@ -217,7 +217,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      User user = await _userService.GetAsync(int.Parse(userId), tenant.DatabaseName!);
+      User user = await _userService.GetAsync(int.Parse(userId));
       if (user == null)
       {
         return NotFound();
@@ -242,7 +242,7 @@ namespace Accounting.Controllers
       user.FirstName = model.FirstName;
       user.LastName = model.LastName;
 
-      await _userService.UpdateAsync(user.Email, user.FirstName, user.LastName, tenant.DatabaseName!);
+      await _userService.UpdateAsync(user.Email, user.FirstName, user.LastName);
 
       // Handle the case when no organizations are selected
       var selectedOrganizationIds = !string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv)
@@ -309,7 +309,7 @@ namespace Accounting.Controllers
           model.SelectedOrganizationIdsCsv.Split(',').Where(id => !string.IsNullOrEmpty(id)));
       }
 
-      User user = await _userService.GetAsync(model.Email, tenant.DatabaseName);
+      User user = await _userService.GetAsync(model.Email);
 
       if (user != null)
       {
@@ -348,7 +348,7 @@ namespace Accounting.Controllers
         Password = !string.IsNullOrEmpty(model.Password)
           ? PasswordStorage.CreateHash(model.Password)
           : null
-      }, tenant.DatabaseName!);
+      });
 
       if (!string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
       {
