@@ -1,4 +1,5 @@
-﻿using Accounting.CustomAttributes;
+﻿using Accounting.Business;
+using Accounting.CustomAttributes;
 using Accounting.Models.BusinessEntityViewModels;
 using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,17 @@ namespace Accounting.Controllers
   [Route("api/c")]
   public class CustomerApiController : BaseController
   {
+    private readonly BusinessEntityService _businessEntityService;
+
+    public CustomerApiController(BusinessEntityService businessEntityService)
+    {
+      _businessEntityService = businessEntityService;
+    }
+
     [HttpGet("get-customers")]
     public async Task<IActionResult> GetCustomers(int page = 1, int pageSize = 2)
     {
-      BusinessEntityService customerService = new BusinessEntityService(GetDatabaseName());
-      var (businessEntities, nextPageNumber) = await customerService.GetAllAsync(page, pageSize, GetOrganizationId());
+      var (businessEntities, nextPageNumber) = await _businessEntityService.GetAllAsync(page, pageSize, GetOrganizationId());
 
       var getCustomersViewModel = new GetBusinessEntitiesViewModel
       {

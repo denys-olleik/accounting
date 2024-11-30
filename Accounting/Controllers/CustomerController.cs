@@ -21,9 +21,9 @@ namespace Accounting.Controllers
     private readonly AddressService _addressService;
     private readonly PaymentTermsService _paymentTermsService;
 
-    public CustomerController()
+    public CustomerController(BusinessEntityService businessEntityService)
     {
-      _customerService = new BusinessEntityService(GetDatabaseName());
+      _customerService = businessEntityService;
       _addressService = new AddressService(GetDatabaseName());
       _paymentTermsService = new PaymentTermsService(GetDatabaseName());
     }

@@ -18,6 +18,7 @@ namespace Accounting.Controllers
     private readonly PaymentService _paymentService;
     private readonly InvoiceInvoiceLinePaymentService _invoiceInvoiceLinePaymentService;
     private readonly InvoiceLineService _invoiceLineService;
+    private readonly BusinessEntityService _businessEntityService;
 
     public InvoiceApiController(
       JournalService journalService, 
@@ -25,7 +26,8 @@ namespace Accounting.Controllers
       JournalInvoiceInvoiceLinePaymentService journalInvoiceInvoiceLinePaymentService,
       PaymentService paymentService,
       InvoiceInvoiceLinePaymentService invoiceInvoiceLinePaymentService,
-      InvoiceLineService invoiceLineService)
+      InvoiceLineService invoiceLineService,
+      BusinessEntityService businessEntityService)
     {
       _journalService = journalService;
       _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
@@ -33,6 +35,7 @@ namespace Accounting.Controllers
       _paymentService = paymentService;
       _invoiceInvoiceLinePaymentService = invoiceInvoiceLinePaymentService;
       _invoiceLineService = invoiceLineService;
+      _businessEntityService = businessEntityService;
     }
 
     [HttpGet("get-invoices")]
@@ -64,10 +67,9 @@ namespace Accounting.Controllers
         invoice.Received = invoice.InvoiceLines.Sum(x => x.Received);
       }
 
-      BusinessEntityService customerService = new BusinessEntityService(GetDatabaseName());
       foreach (var invoice in invoices)
       {
-        invoice.BusinessEntity = await customerService.GetAsync(invoice.BusinessEntityId, GetOrganizationId());
+        invoice.BusinessEntity = await _businessEntityService.GetAsync(invoice.BusinessEntityId, GetOrganizationId());
       }
 
       //InvoiceLineService invoiceLineService = new InvoiceLineService();
@@ -140,10 +142,9 @@ namespace Accounting.Controllers
         invoice.Received = invoice.InvoiceLines.Sum(x => x.Received);
       }
 
-      BusinessEntityService customerService = new BusinessEntityService(GetDatabaseName());
       foreach (var invoice in invoices)
       {
-        invoice.BusinessEntity = await customerService.GetAsync(invoice.BusinessEntityId, GetOrganizationId());
+        invoice.BusinessEntity = await _businessEntityService.GetAsync(invoice.BusinessEntityId, GetOrganizationId());
       }
 
       //InvoiceLineService invoiceLineService = new InvoiceLineService();
