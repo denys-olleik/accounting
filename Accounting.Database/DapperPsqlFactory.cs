@@ -138,11 +138,18 @@ namespace Accounting.Database
 
     public IBusinessEntityManager GetBusinessEntityManager()
     {
-      return new BusinessEntityManager();
+      return new BusinessEntityManager(_databaseName);
     }
 
     public class BusinessEntityManager : IBusinessEntityManager
     {
+      private readonly string _databaseName;
+
+      public BusinessEntityManager(string databaseName)
+      {
+        _databaseName = databaseName;
+      }
+
       public BusinessEntity Create(BusinessEntity entity)
       {
         throw new NotImplementedException();
