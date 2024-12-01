@@ -311,17 +311,15 @@ namespace Accounting.Database
 
     public IAccountManager GetAccountManager()
     {
-      return new AccountManager(_databaseName, _connectionString);
+      return new AccountManager(_connectionString);
     }
 
     public class AccountManager : IAccountManager
     {
-      private readonly string _databaseName;
       private readonly string _connectionString;
 
-      public AccountManager(string databaseName, string connectionString)
+      public AccountManager(string connectionString)
       {
-        _databaseName = databaseName;
         _connectionString = connectionString;
       }
 
@@ -454,7 +452,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
@@ -474,7 +472,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
@@ -494,7 +492,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
@@ -514,7 +512,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
@@ -536,7 +534,7 @@ namespace Accounting.Database
       {
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           if (includeCountJournalEntries)
           {
@@ -569,7 +567,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
@@ -719,7 +717,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
@@ -739,7 +737,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
@@ -760,7 +758,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
@@ -781,7 +779,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = databaseName;
         string connectionString = builder.ConnectionString;
 
@@ -806,7 +804,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
@@ -832,7 +830,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
@@ -852,7 +850,7 @@ namespace Accounting.Database
 
         string? result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.ExecuteScalarAsync<string>("""
             SELECT "Type" 
@@ -884,7 +882,7 @@ namespace Accounting.Database
 
         int rowsModified;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsModified = await con.ExecuteAsync("""
             UPDATE "Account" SET 
