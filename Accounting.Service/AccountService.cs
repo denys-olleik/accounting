@@ -18,10 +18,10 @@ namespace Accounting.Service
       return await factoryManager.GetAccountManager().GetAccountBalanceReport(organizationId);
     }
 
-    public async Task<Account> GetAsync(int accountId, int organizationId, string databaseName)
+    public async Task<Account> GetAsync(int accountId, int organizationId)
     {
       FactoryManager factoryManager = new FactoryManager(_databaseName);
-      return await factoryManager.GetAccountManager().GetAsync(accountId, organizationId, databaseName);
+      return await factoryManager.GetAccountManager().GetAsync(accountId, organizationId);
     }
 
     public async Task<Account> CreateAsync(Account account)
@@ -74,7 +74,7 @@ namespace Accounting.Service
         bool includeDescendants)
     {
       var factoryManager = new FactoryManager(_databaseName);
-      return await factoryManager.GetAccountManager().GetAllAsync(page, pageSize, organizationId, _databaseName, includeJournalEntriesCount, includeDescendants);
+      return await factoryManager.GetAccountManager().GetAllAsync(page, pageSize, organizationId, includeJournalEntriesCount, includeDescendants);
     }
 
     private void PopulateChildrenRecursively(List<Account> children, List<Account> allOrganizationAccountsFlatList)
@@ -124,12 +124,6 @@ namespace Accounting.Service
     {
       var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetAccountManager().GetAllAsync(organizationId, includeJournalEntriesCount);
-    }
-
-    public async Task<Account> CreateAsync(Account account, string databaseName)
-    {
-      var factoryManager = new FactoryManager(databaseName);
-      return await factoryManager.GetAccountManager().CreateAsync(account, databaseName);
     }
   }
 }

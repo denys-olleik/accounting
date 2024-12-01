@@ -306,11 +306,18 @@ namespace Accounting.Database
 
     public IAccountManager GetAccountManager()
     {
-      return new AccountManager();
+      return new AccountManager(_databaseName);
     }
 
     public class AccountManager : IAccountManager
     {
+      private readonly string _databaseName;
+
+      public AccountManager(string databaseName)
+      {
+        _databaseName = databaseName;
+      }
+
       public Account Create(Account entity)
       {
         throw new NotImplementedException();
@@ -425,10 +432,9 @@ namespace Accounting.Database
             LEFT JOIN "Journal" gl ON a."AccountID" = gl."AccountId" AND a."OrganizationId" = gl."OrganizationId"
             WHERE a."OrganizationId" = @OrganizationId
             GROUP BY a."AccountID", a."Name", a."Type"
-        """;
+            """;
 
           result = await con.QueryAsync<Account>(query, new { OrganizationId = organizationId });
-          await con.CloseAsync();
         }
 
         return result.ToList();
@@ -573,7 +579,6 @@ namespace Accounting.Database
         int page,
         int pageSize,
         int organizationId,
-        string databaseName,
         bool includeJournalEntriesCount,
         bool includeDescendants)
       {
@@ -584,8 +589,10 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-        builder.Database = databaseName;
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql)
+        {
+          Database = _databaseName
+        };
         string connectionString = builder.ConnectionString;
 
         using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
@@ -613,30 +620,21 @@ namespace Accounting.Database
           using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
           {
             var allAccounts = await con.QueryAsync<Account>($"""
-              SELECT * 
-              FROM "Account"
-              WHERE "OrganizationId" = @OrganizationId
-              """, p);
+                SELECT * 
+                FROM "Account"
+                WHERE "OrganizationId" = @OrganizationId
+                """, p);
 
             foreach (var account in result)
             {
-              account.Children = allAccounts.Where(x => x.ParentAccountId == account.AccountID).OrderBy(x => x.Name).ToList();
+              account.Children = allAccounts
+                  .Where(x => x.ParentAccountId == account.AccountID)
+                  .OrderBy(x => x.Name)
+                  .ToList();
               if (account.Children.Any())
               {
                 PopulateChildrenRecursively(account.Children, allAccounts);
               }
-            }
-          }
-        }
-
-        void PopulateChildrenRecursively(List<Account> children, IEnumerable<Account> allAccounts)
-        {
-          foreach (var child in children)
-          {
-            child.Children = allAccounts.Where(x => x.ParentAccountId == child.AccountID).OrderBy(x => x.Name).ToList();
-            if (child.Children.Any())
-            {
-              PopulateChildrenRecursively(child.Children, allAccounts);
             }
           }
         }
@@ -664,14 +662,14 @@ namespace Accounting.Database
         {
           var accountIds = allIds;
 
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+          using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
           {
             var journalEntryCounts = await con.QueryAsync<(int AccountID, int JournalEntryCount)>($"""
-              SELECT "AccountId", COUNT(*) AS "JournalEntryCount"
-              FROM "Journal"
-              WHERE "AccountId" = ANY(@AccountIds)
-              GROUP BY "AccountId"
-              """, new { AccountIds = accountIds.ToArray() });
+                SELECT "AccountId", COUNT(*) AS "JournalEntryCount"
+                FROM "Journal"
+                WHERE "AccountId" = ANY(@AccountIds)
+                GROUP BY "AccountId"
+                """, new { AccountIds = accountIds.ToArray() });
 
             var journalEntryCountDict = journalEntryCounts.ToDictionary(x => x.AccountID, x => x.JournalEntryCount);
 
@@ -904,7 +902,30 @@ namespace Accounting.Database
         return rowsModified;
       }
 
+      public async Task<Account> GetAsync(int accountId, int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@AccountID", accountId);
+        p.Add("@OrganizationId", organizationId);
 
+        IEnumerable<Account> result;
+
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
+        builder.Database = _databaseName;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        {
+          result = await con.QueryAsync<Account>("""
+            SELECT * 
+            FROM "Account" 
+            WHERE "AccountID" = @AccountID
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return result.Single();
+      }
     }
 
     public IJournalInvoiceInvoiceLinePaymentManager GetJournalInvoiceInvoiceLinePaymentManager()

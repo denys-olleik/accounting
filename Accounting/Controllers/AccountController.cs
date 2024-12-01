@@ -49,7 +49,7 @@ namespace Accounting.Controllers
 
       if (parentAccountId.HasValue)
       {
-        parentAccount = await _accountService.GetAsync(parentAccountId.Value, GetOrganizationId(), GetDatabaseName());
+        parentAccount = await _accountService.GetAsync(parentAccountId.Value, GetOrganizationId());
         if (parentAccount == null)
           return NotFound();
       }
@@ -94,7 +94,7 @@ namespace Accounting.Controllers
         CreatedById = GetUserId()
       };
 
-      await _accountService.CreateAsync(account, GetDatabaseName());
+      await _accountService.CreateAsync(account);
 
       return RedirectToAction("Accounts");
     }
@@ -103,14 +103,14 @@ namespace Accounting.Controllers
     [HttpGet]
     public async Task<IActionResult> Update(int accountId)
     {
-      Account account = await _accountService.GetAsync(accountId, GetOrganizationId(), GetDatabaseName());
+      Account account = await _accountService.GetAsync(accountId, GetOrganizationId());
       if (account == null)
         return NotFound();
 
       Account? parentAccount = null;
 
       if (account.ParentAccountId.HasValue)
-        parentAccount = await _accountService.GetAsync(account.ParentAccountId!.Value, GetOrganizationId(), GetDatabaseName());
+        parentAccount = await _accountService.GetAsync(account.ParentAccountId!.Value, GetOrganizationId());
 
       UpdateAccountViewModel model = new UpdateAccountViewModel()
       {
@@ -153,7 +153,7 @@ namespace Accounting.Controllers
 
         if (model.ParentAccountId.HasValue)
         {
-          var parentAccount = await _accountService.GetAsync(model.ParentAccountId.Value, GetOrganizationId(), GetDatabaseName());
+          var parentAccount = await _accountService.GetAsync(model.ParentAccountId.Value, GetOrganizationId());
           if (parentAccount != null)
           {
             model.ParentAccount = new AccountViewModel()
@@ -167,7 +167,7 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      Account account = await _accountService.GetAsync(model.AccountID, GetOrganizationId(), GetDatabaseName());
+      Account account = await _accountService.GetAsync(model.AccountID, GetOrganizationId());
       if (account == null)
         return NotFound();
 
