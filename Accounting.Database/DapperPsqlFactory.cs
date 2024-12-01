@@ -3392,11 +3392,18 @@ namespace Accounting.Database
 
     public IPaymentTermManager GetPaymentTermManager()
     {
-      return new PaymentTermManager();
+      return new PaymentTermManager(_connectionString);
     }
 
     public class PaymentTermManager : IPaymentTermManager
     {
+      private readonly string _connectionString;
+
+      public PaymentTermManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public PaymentTerm Create(PaymentTerm entity)
       {
         throw new NotImplementedException();
@@ -3412,13 +3419,13 @@ namespace Accounting.Database
 
         IEnumerable<PaymentTerm> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<PaymentTerm>("""
-            INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "CreatedById", "OrganizationId") 
-            VALUES (@Description, @DaysUntilDue, @CreatedById, @OrganizationId)
-            RETURNING *;
-            """, p);
+        INSERT INTO "PaymentTerm" ("Description", "DaysUntilDue", "CreatedById", "OrganizationId") 
+        VALUES (@Description, @DaysUntilDue, @CreatedById, @OrganizationId)
+        RETURNING *;
+        """, p);
         }
 
         return result.Single();
@@ -3443,16 +3450,15 @@ namespace Accounting.Database
       {
         IEnumerable<PaymentTerm> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<PaymentTerm>("""
-            SELECT * FROM "PaymentTerm"
-            """);
+        SELECT * FROM "PaymentTerm"
+        """);
         }
 
         return result.ToList();
       }
-
 
       public async Task<PaymentTerm?> GetAsync(int paymentTermId)
       {
@@ -3461,13 +3467,13 @@ namespace Accounting.Database
 
         IEnumerable<PaymentTerm> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<PaymentTerm>("""
-            SELECT * 
-            FROM "PaymentTerm" 
-            WHERE "PaymentTermID" = @PaymentTermID
-            """, p);
+        SELECT * 
+        FROM "PaymentTerm" 
+        WHERE "PaymentTermID" = @PaymentTermID
+        """, p);
         }
 
         return result.SingleOrDefault();

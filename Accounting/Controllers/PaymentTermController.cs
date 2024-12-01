@@ -13,14 +13,20 @@ namespace Accounting.Controllers
   [Route("pt")]
   public class PaymentTermController : BaseController
   {
+    private readonly PaymentTermsService _paymentTermsService;
+
+    public PaymentTermController(PaymentTermsService paymentTermsService)
+    {
+      this._paymentTermsService = paymentTermsService;
+    }
+
     [Route("payment-terms")]
     [HttpGet]
     public async Task<IActionResult> PaymentTerms()
     {
       PaymentTermsViewModel paymentTermsViewModel = new PaymentTermsViewModel();
 
-      PaymentTermsService paymentTermsService = new PaymentTermsService(GetDatabaseName());
-      List<PaymentTerm> paymentTerms = await paymentTermsService.GetAllAsync();
+      List<PaymentTerm> paymentTerms = await _paymentTermsService.GetAllAsync();
 
       paymentTermsViewModel.PaymentTerms = paymentTerms.Select(paymentTerm => new PaymentTermViewModel
       {
@@ -52,8 +58,7 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      PaymentTermsService paymentTermsService = new PaymentTermsService(GetDatabaseName());
-      await paymentTermsService.CreatePaymentTermAsync(new PaymentTerm()
+      await _paymentTermsService.CreatePaymentTermAsync(new PaymentTerm()
       {
         Description = model.Description,
         DaysUntilDue = model.DaysUntilDue,
