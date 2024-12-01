@@ -13,10 +13,15 @@ namespace Accounting.Database
   public class DapperPsqlFactory : IDatabaseFactoryDefinition
   {
     private readonly string _databaseName;
+    private readonly string _connectionString;
 
     public DapperPsqlFactory(string databaseName)
     {
       _databaseName = databaseName;
+
+      NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+      builder.Database = databaseName;
+      _connectionString = builder.ConnectionString;
     }
 
     public IAddressManager GetAddressManager()
@@ -306,16 +311,18 @@ namespace Accounting.Database
 
     public IAccountManager GetAccountManager()
     {
-      return new AccountManager(_databaseName);
+      return new AccountManager(_databaseName, _connectionString);
     }
 
     public class AccountManager : IAccountManager
     {
       private readonly string _databaseName;
+      private readonly string _connectionString;
 
-      public AccountManager(string databaseName)
+      public AccountManager(string databaseName, string connectionString)
       {
         _databaseName = databaseName;
+        _connectionString = connectionString;
       }
 
       public Account Create(Account entity)
@@ -369,7 +376,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(this.))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             INSERT INTO "Account" 
