@@ -7,9 +7,9 @@ namespace Accounting.Service
   {
     private readonly string _databaseName;
 
-    public InventoryAdjustmentService(string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public InventoryAdjustmentService(RequestContext requestContext)
     {
-      _databaseName = databaseName;
+      _databaseName = requestContext.DatabaseName;
     }
 
     public async Task<InventoryAdjustment> CreateAsync(InventoryAdjustment inventoryAdjustment)
