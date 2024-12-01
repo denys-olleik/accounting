@@ -2575,11 +2575,18 @@ namespace Accounting.Database
 
     public IItemManager GetItemManager()
     {
-      return new ItemManager();
+      return new ItemManager(_connectionString);
     }
 
     public class ItemManager : IItemManager
     {
+      private readonly string _connectionString;
+
+      public ItemManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public Item Create(Item entity)
       {
         throw new NotImplementedException();
@@ -2602,13 +2609,13 @@ namespace Accounting.Database
 
         IEnumerable<Item> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Item>("""
-            INSERT INTO "Item" ("Name", "Description", "Quantity", "SellFor", "InventoryMethod", "ItemType", "RevenueAccountId", "AssetsAccountId", "CreatedById", "OrganizationId", "ParentItemId")
-            VALUES (@Name, @Description, @Quantity, @SellFor, @InventoryMethod, @ItemType, @RevenueAccountId, @AssetsAccountId, @CreatedById, @OrganizationId, @ParentItemId)
-            RETURNING *;
-            """, p);
+        INSERT INTO "Item" ("Name", "Description", "Quantity", "SellFor", "InventoryMethod", "ItemType", "RevenueAccountId", "AssetsAccountId", "CreatedById", "OrganizationId", "ParentItemId")
+        VALUES (@Name, @Description, @Quantity, @SellFor, @InventoryMethod, @ItemType, @RevenueAccountId, @AssetsAccountId, @CreatedById, @OrganizationId, @ParentItemId)
+        RETURNING *;
+        """, p);
         }
 
         return result.Single();
@@ -2636,13 +2643,13 @@ namespace Accounting.Database
 
         IEnumerable<Item> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Item>("""
-            SELECT * 
-            FROM "Item" 
-            WHERE "OrganizationId" = @OrganizationId
-            """, p);
+        SELECT * 
+        FROM "Item" 
+        WHERE "OrganizationId" = @OrganizationId
+        """, p);
         }
 
         return result.ToList();
@@ -2662,15 +2669,15 @@ namespace Accounting.Database
 
         IEnumerable<Item> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Item>($"""
-            SELECT *, ROW_NUMBER() OVER (ORDER BY "ItemID") AS "RowNumber"
-            FROM "Item"
-            WHERE "OrganizationId" = @OrganizationId AND "ParentItemId" IS NULL
-            ORDER BY "Name"
-            LIMIT @PageSize OFFSET @Offset
-            """, new { PageSize = pageSize + 1, Offset = pageSize * (page - 1), OrganizationId = organizationId });
+        SELECT *, ROW_NUMBER() OVER (ORDER BY "ItemID") AS "RowNumber"
+        FROM "Item"
+        WHERE "OrganizationId" = @OrganizationId AND "ParentItemId" IS NULL
+        ORDER BY "Name"
+        LIMIT @PageSize OFFSET @Offset
+        """, new { PageSize = pageSize + 1, Offset = pageSize * (page - 1), OrganizationId = organizationId });
         }
 
         var hasMoreRecords = result.Count() > pageSize;
@@ -2682,16 +2689,15 @@ namespace Accounting.Database
 
         int? nextPage = hasMoreRecords ? page + 1 : null;
 
-
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           if (includeDescendants)
           {
             var allItems = await con.QueryAsync<Item>($"""
-              SELECT * 
-              FROM "Item"
-              WHERE "OrganizationId" = @OrganizationId
-              """, p);
+          SELECT * 
+          FROM "Item"
+          WHERE "OrganizationId" = @OrganizationId
+          """, p);
 
             void PopulateChildrenRecursively(List<Item> children)
             {
@@ -2718,13 +2724,13 @@ namespace Accounting.Database
           async Task LoadInventoriesAsync(NpgsqlConnection con, Item item, int organizationId)
           {
             var inventories = await con.QueryAsync<Inventory, Item, Location, Inventory>($"""
-              SELECT i.*, it.*, l.*
-              FROM "Inventory" i
-              INNER JOIN "Item" it ON i."ItemId" = it."ItemID"
-              INNER JOIN "Location" l ON i."LocationId" = l."LocationID"
-              WHERE i."ItemId" = @ItemId
-              AND i."OrganizationId" = @OrganizationId
-              """,
+          SELECT i.*, it.*, l.*
+          FROM "Inventory" i
+          INNER JOIN "Item" it ON i."ItemId" = it."ItemID"
+          INNER JOIN "Location" l ON i."LocationId" = l."LocationID"
+          WHERE i."ItemId" = @ItemId
+          AND i."OrganizationId" = @OrganizationId
+          """,
                 (inventory, inventoryItem, location) =>
                 {
                   inventory.Location = location;
@@ -2762,14 +2768,14 @@ namespace Accounting.Database
 
         IEnumerable<Item> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Item>("""
-            SELECT * 
-            FROM "Item" 
-            WHERE "ItemID" = @ItemId 
-            AND "OrganizationId" = @OrganizationId
-            """, p);
+        SELECT * 
+        FROM "Item" 
+        WHERE "ItemID" = @ItemId 
+        AND "OrganizationId" = @OrganizationId
+        """, p);
         }
 
         return result.FirstOrDefault();
@@ -2783,14 +2789,14 @@ namespace Accounting.Database
 
         IEnumerable<Item> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Item>("""
-            SELECT * 
-            FROM "Item" 
-            WHERE "ParentItemId" = @ItemId 
-            AND "OrganizationId" = @OrganizationId
-            """, p);
+        SELECT * 
+        FROM "Item" 
+        WHERE "ParentItemId" = @ItemId 
+        AND "OrganizationId" = @OrganizationId
+        """, p);
         }
 
         return result.ToList();

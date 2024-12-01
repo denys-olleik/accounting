@@ -7,9 +7,9 @@ namespace Accounting.Service
   {
     private readonly string _databaseName;
 
-    public ItemService(string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public ItemService(RequestContext requestContext)
     {
-      _databaseName = databaseName;
+      _databaseName = requestContext.DatabaseName;
     }
 
     public async Task<Item> CreateAsync(Item item)
