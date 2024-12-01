@@ -417,7 +417,13 @@ namespace Accounting.Database
       {
         IEnumerable<Account> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringPsql))
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql)
+        {
+          Database = _databaseName
+        };
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           string query = $""" 
             SELECT 
