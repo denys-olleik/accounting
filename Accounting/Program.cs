@@ -75,8 +75,8 @@ builder.Services.AddTransient<EmailService>();
 builder.Services.AddTransient<LoginWithoutPasswordService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
-ConfigurationSingleton.Instance.ConnectionStringPsql = builder.Configuration["ConnectionStrings:Psql"];
-ConfigurationSingleton.Instance.AdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
+ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
+ConfigurationSingleton.Instance.ConnectionStringAdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
 ConfigurationSingleton.Instance.InvitationExpirationMinutes = Convert.ToInt32(builder.Configuration["InvitationExpirationMinutes"]);
 ConfigurationSingleton.Instance.TempPath = builder.Configuration["TempPath"];
 ConfigurationSingleton.Instance.PermPath = builder.Configuration["PermPath"];
