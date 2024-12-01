@@ -403,7 +403,7 @@ namespace Accounting.Database
 
         bool result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.ExecuteScalarAsync<bool>("""
             SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END
@@ -424,15 +424,9 @@ namespace Accounting.Database
       {
         IEnumerable<Account> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql)
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
-          Database = _databaseName
-        };
-        string connectionString = builder.ConnectionString;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
-        {
-          string query = $""" 
+          string query = $"""
             SELECT 
                 a."AccountID", 
                 a."Name", 
@@ -602,13 +596,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql)
-        {
-          Database = _databaseName
-        };
-        string connectionString = builder.ConnectionString;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>($"""
             SELECT *, ROW_NUMBER() OVER (ORDER BY "AccountID") AS "RowNumber"
@@ -630,7 +618,7 @@ namespace Accounting.Database
 
         if (includeDescendants)
         {
-          using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
             var allAccounts = await con.QueryAsync<Account>($"""
                 SELECT * 
@@ -675,7 +663,7 @@ namespace Accounting.Database
         {
           var accountIds = allIds;
 
-          using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
             var journalEntryCounts = await con.QueryAsync<(int AccountID, int JournalEntryCount)>($"""
                 SELECT "AccountId", COUNT(*) AS "JournalEntryCount"
@@ -923,11 +911,7 @@ namespace Accounting.Database
 
         IEnumerable<Account> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = _databaseName;
-        string connectionString = builder.ConnectionString;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
             SELECT * 
