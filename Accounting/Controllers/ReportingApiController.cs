@@ -1,4 +1,5 @@
-﻿using Accounting.CustomAttributes;
+﻿using Accounting.Business;
+using Accounting.CustomAttributes;
 using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +13,7 @@ namespace Accounting.Controllers
     private readonly InvoiceService _invoiceService;
     private readonly AccountService _accountService;
 
-    public ReportingApiController(InvoiceService invoiceService, AccountService accountService)
+    public ReportingApiController(InvoiceService invoiceService, AccountService accountService, RequestContext requestContent)
     {
       _invoiceService = invoiceService;
       _accountService = accountService;
