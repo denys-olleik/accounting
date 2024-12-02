@@ -10,8 +10,6 @@ namespace Accounting.Validators
 
     public InvitationViewModelValidator()
     {
-      _invitationService = new InvitationService();
-
       RuleFor(i => i.Password)
           .Equal(i => i.ConfirmPassword)
           .WithMessage("Passwords do not match");

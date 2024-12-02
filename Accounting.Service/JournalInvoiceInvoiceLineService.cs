@@ -1,7 +1,6 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
 using Accounting.Database;
-using Accounting.Database.Interfaces;
 
 namespace Accounting.Service
 {

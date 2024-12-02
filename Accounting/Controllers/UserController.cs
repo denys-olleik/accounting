@@ -18,15 +18,19 @@ namespace Accounting.Controllers
     private readonly UserOrganizationService _userOrganizationService;
     private readonly UserService _userService;
     private readonly SecretService _secretService;
+    private readonly InvitationService _invitationService;
 
     public UserController(
+      RequestContext requestContext, 
       UserOrganizationService userOrganizationService, 
       UserService userService, 
-      SecretService secretService)
+      SecretService secretService, 
+      InvitationService invitationService)
     {
       _userOrganizationService = userOrganizationService;
       _userService = userService;
       _secretService = secretService;
+      _invitationService = invitationService;
     }
 
     [HttpGet]
@@ -71,8 +75,6 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      InvitationService invitationService = new InvitationService(GetDatabaseName());
-
       EmailService emailService = new EmailService(_secretService);
       using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
@@ -92,7 +94,7 @@ namespace Accounting.Controllers
 
         if (model.SendInvitationEmail)
         {
-          Invitation invitation = await invitationService.CreatAsync(new Invitation()
+          Invitation invitation = await _invitationService.CreatAsync(new Invitation()
           {
             Email = user.Email,
             Guid = Guid.NewGuid(),

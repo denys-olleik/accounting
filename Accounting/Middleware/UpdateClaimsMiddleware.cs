@@ -6,13 +6,11 @@ using System.Security.Claims;
 public class UpdateClaimsMiddleware
 {
   private readonly RequestDelegate _next;
-  private readonly UserService _userService;
   private readonly UserOrganizationService _userOrganizationService;
 
   public UpdateClaimsMiddleware(RequestDelegate next, UserService userService, UserOrganizationService userOrganizationService)
   {
     _next = next;
-    _userService = userService;
     _userOrganizationService = userOrganizationService;
   }
 

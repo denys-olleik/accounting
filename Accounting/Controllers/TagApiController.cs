@@ -13,6 +13,9 @@ namespace Accounting.Controllers
   [Route("api/tag")]
   public class TagApiController : BaseController
   {
+    private readonly TagService _tagService;
+    private readonly string _databaseName;
+
     [HttpPost("create")]
     public async Task<IActionResult> Create(CreateTagApiViewModel model)
     {
@@ -25,8 +28,7 @@ namespace Accounting.Controllers
         return BadRequest(new { errors = errorMessages });
       }
 
-      TagService tagService = new TagService(GetDatabaseName());
-      Tag tag = await tagService.CreateAsync(new Tag
+      Tag tag = await _tagService.CreateAsync(new Tag
       {
         Name = model.Name,
         CreatedById = GetUserId(),

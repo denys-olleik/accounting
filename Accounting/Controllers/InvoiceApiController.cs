@@ -19,6 +19,7 @@ namespace Accounting.Controllers
     private readonly InvoiceInvoiceLinePaymentService _invoiceInvoiceLinePaymentService;
     private readonly InvoiceLineService _invoiceLineService;
     private readonly BusinessEntityService _businessEntityService;
+    private readonly RequestContext _requestContext;
 
     public InvoiceApiController(
       JournalService journalService, 
@@ -27,7 +28,8 @@ namespace Accounting.Controllers
       PaymentService paymentService,
       InvoiceInvoiceLinePaymentService invoiceInvoiceLinePaymentService,
       InvoiceLineService invoiceLineService,
-      BusinessEntityService businessEntityService)
+      BusinessEntityService businessEntityService,
+      RequestContext requestContext)
     {
       _journalService = journalService;
       _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
@@ -36,6 +38,7 @@ namespace Accounting.Controllers
       _invoiceInvoiceLinePaymentService = invoiceInvoiceLinePaymentService;
       _invoiceLineService = invoiceLineService;
       _businessEntityService = businessEntityService;
+      _requestContext = requestContext;
     }
 
     [HttpGet("get-invoices")]
@@ -45,7 +48,7 @@ namespace Accounting.Controllers
       string inStatus = $"{Invoice.InvoiceStatusConstants.Unpaid},{Invoice.InvoiceStatusConstants.PartiallyPaid},{Invoice.InvoiceStatusConstants.Paid}",
       bool includeVoidInvoices = false)
     {
-      InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, GetDatabaseName());
+      InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, _requestContext.DatabaseName);
       var (invoices, nextPageNumber) = await invoiceService.GetAllAsync(
           page,
           pageSize,
@@ -53,7 +56,7 @@ namespace Accounting.Controllers
           GetOrganizationId(),
           includeVoidInvoices);
 
-      InvoiceInvoiceLinePaymentService invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(GetDatabaseName());
+      InvoiceInvoiceLinePaymentService invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(_requestContext.DatabaseName);
       foreach (var invoice in invoices)
       {
         invoice.Payments = await _invoiceInvoiceLinePaymentService.GetAllPaymentsByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
@@ -125,10 +128,9 @@ namespace Accounting.Controllers
         string invoiceNumbers = null,
         string company = null)
     {
-      InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, GetDatabaseName());
+      InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, _requestContext.DatabaseName);
       List<Invoice> invoices = await invoiceService.SearchInvoicesAsync(inStatus?.Split(","), invoiceNumbers, company, GetOrganizationId());
 
-      InvoiceInvoiceLinePaymentService invoicePaymentService = new InvoiceInvoiceLinePaymentService(GetDatabaseName());
       foreach (var invoice in invoices)
       {
         invoice.Payments = await _invoiceInvoiceLinePaymentService.GetAllPaymentsByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);

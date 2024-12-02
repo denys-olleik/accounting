@@ -17,6 +17,23 @@ namespace Accounting.Controllers
   [Route("t")]
   public class ToDoController : BaseController
   {
+    private readonly TagService _tagService;
+    private readonly UserService _userService;
+    private readonly UserTaskService _userTaskService;
+    private readonly ToDoService _toDoService;
+    private readonly ToDoTagService _toDoTagService;
+    private readonly string _databaseName;
+
+    public ToDoController(RequestContext requestContext, TagService tagService, UserService userService, UserTaskService userTaskService, ToDoService toDoService, ToDoTagService toDoTagService)
+    {
+      _databaseName = requestContext.DatabaseName;
+      _tagService = tagService;
+      _userService = userService;
+      _userTaskService = userTaskService;
+      _toDoService = toDoService;
+      _toDoTagService = toDoTagService;
+    }
+
     [Route("todos")]
     [HttpGet]
     public async Task<IActionResult> ToDos()
@@ -31,13 +48,10 @@ namespace Accounting.Controllers
     [Route("create")]
     public async Task<IActionResult> Create(int? parentToDoId)
     {
-      TagService tagService = new TagService(GetDatabaseName());
-      List<Tag> tags = await tagService.GetAllAsync();
-
-      UserService userService = new UserService(GetDatabaseName());
+      List<Tag> tags = await _tagService.GetAllAsync();
 
       CreateToDoViewModel createToDoViewModel = new CreateToDoViewModel();
-      createToDoViewModel.Users = (await userService.GetAllAsync(GetOrganizationId())).Select(user => new UserViewModel
+      createToDoViewModel.Users = (await _userService.GetAllAsync(GetOrganizationId())).Select(user => new UserViewModel
       {
         UserID = user.UserID,
         Email = user.Email,
@@ -51,11 +65,9 @@ namespace Accounting.Controllers
         Name = tag.Name
       }).ToList();
 
-      ToDoService toDoService = new ToDoService(GetDatabaseName());
-
       createToDoViewModel.ParentToDoId = parentToDoId;
 
-      ToDo? toDo = parentToDoId.HasValue ? await toDoService.GetAsync(parentToDoId.Value, GetOrganizationId()) : null;
+      ToDo? toDo = parentToDoId.HasValue ? await _toDoService.GetAsync(parentToDoId.Value, GetOrganizationId()) : null;
       createToDoViewModel.ParentToDo = toDo != null ? new ToDoViewModel
       {
         ToDoID = toDo.ToDoID,
@@ -77,10 +89,7 @@ namespace Accounting.Controllers
 
       var deserializedSelectedTagIds = JsonConvert.DeserializeObject<List<int>>(model.SelectedTagIds!);
 
-      UserService userService = new UserService(GetDatabaseName());
-
-      ToDoService toDoService = new ToDoService(GetDatabaseName());
-      ToDo? parentToDoItem = model.ParentToDoId.HasValue ? await toDoService.GetAsync(model.ParentToDoId.Value, GetOrganizationId()) : null;
+      ToDo? parentToDoItem = model.ParentToDoId.HasValue ? await _toDoService.GetAsync(model.ParentToDoId.Value, GetOrganizationId()) : null;
       model.ParentToDo = parentToDoItem != null ? new ToDoViewModel
       {
         ToDoID = parentToDoItem.ToDoID,
@@ -90,8 +99,7 @@ namespace Accounting.Controllers
 
       if (!validationResult.IsValid)
       {
-        TagService tagService = new TagService(GetDatabaseName());
-        List<Tag> tags = await tagService.GetAllAsync();
+        List<Tag> tags = await _tagService.GetAllAsync();
 
         if (deserializedSelectedTagIds != null && deserializedSelectedTagIds.Any())
         {
@@ -108,7 +116,7 @@ namespace Accounting.Controllers
         model.ParentToDoId = model.ParentToDoId;
         model.ToDoStatuses = ToDo.ToDoStatuses.All.Select(s => s.ToLower()).ToList();
 
-        model.Users = (await userService.GetAllAsync(GetOrganizationId())).Select(user => new UserViewModel
+        model.Users = (await _userService.GetAllAsync(GetOrganizationId())).Select(user => new UserViewModel
         {
           UserID = user.UserID,
           Email = user.Email,
@@ -126,11 +134,9 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      ToDoTagService taskTagService = new ToDoTagService(GetDatabaseName());
-      UserTaskService userTaskService = new UserTaskService(GetDatabaseName());
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        ToDo taskItem = await toDoService.CreateAsync(new ToDo()
+        ToDo taskItem = await _toDoService.CreateAsync(new ToDo()
         {
           Title = model.Title,
           Content = model.Content,
@@ -150,7 +156,7 @@ namespace Accounting.Controllers
             userTask.Completed = false;
             userTask.OrganizationId = GetOrganizationId();
             userTask.CreatedById = GetUserId();
-            await userTaskService.CreateAsync(userTask);
+            await _userTaskService.CreateAsync(userTask);
           }
         }
 
@@ -162,7 +168,7 @@ namespace Accounting.Controllers
             taskTag.TaskId = taskItem.ToDoID;
             taskTag.TagId = tagId;
             taskTag.OrganizationId = GetOrganizationId();
-            await taskTagService.CreateAsync(taskTag);
+            await _toDoTagService.CreateAsync(taskTag);
           }
         }
 
@@ -176,12 +182,11 @@ namespace Accounting.Controllers
     [Route("details/{id}")]
     public async Task<IActionResult> Details(int id)
     {
-      ToDoService taskService = new ToDoService(GetDatabaseName());
-      ToDo taskItem = await taskService.GetAsync(id, GetOrganizationId());
+      ToDo taskItem = await _toDoService.GetAsync(id, GetOrganizationId());
 
       MarkdownPipeline pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
-      ToDoViewModel taskViewModel = await ConvertToTaskViewModel(taskItem, taskService, pipeline);
+      ToDoViewModel taskViewModel = await ConvertToTaskViewModel(taskItem, _toDoService, pipeline);
 
       return View(taskViewModel);
     }

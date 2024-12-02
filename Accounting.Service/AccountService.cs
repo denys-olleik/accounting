@@ -7,9 +7,9 @@ namespace Accounting.Service
   {
     private readonly string _databaseName;
 
-    public AccountService(RequestContext context)
+    public AccountService(string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
-      _databaseName = context.DatabaseName;
+      _databaseName = databaseName;
     }
 
     public async Task<List<Account>> GetAccountBalanceReport(int organizationId)

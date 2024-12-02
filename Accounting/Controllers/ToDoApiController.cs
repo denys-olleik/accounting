@@ -12,16 +12,25 @@ namespace Accounting.Controllers
   [Route("api/t")]
   public class ToDoApiController : BaseController
   {
+    private readonly ToDoService _toDoService;
+    private readonly UserTaskService _userTaskService;
+    private readonly string _databaseName;
+
+    public ToDoApiController(RequestContext requestContext, ToDoService toDoService, UserTaskService userTaskService)
+    {
+      _databaseName = requestContext.DatabaseName;
+      _toDoService = toDoService;
+      _userTaskService = userTaskService;
+    }
+
     [HttpGet("get-todos")]
     public async Task<IActionResult> GetTasks()
     {
-      ToDoService taskService = new ToDoService(GetDatabaseName());
-      List<ToDo> toDos = await taskService.GetAllAsync(GetOrganizationId());
+      List<ToDo> toDos = await _toDoService.GetAllAsync(GetOrganizationId());
 
-      UserTaskService userTaskService = new UserTaskService(GetDatabaseName());
       foreach (var task in toDos)
       {
-        await LoadUsersForTaskAndSubtasks(task, userTaskService, GetOrganizationId());
+        await LoadUsersForTaskAndSubtasks(task, _userTaskService, GetOrganizationId());
       }
 
       var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
@@ -41,9 +50,7 @@ namespace Accounting.Controllers
     [HttpPost("update-content")]
     public async Task<IActionResult> UpdateContent([FromBody] UpdateContentModel model)
     {
-      ToDoService taskService = new ToDoService(GetDatabaseName());
-
-      ToDo task = await taskService.UpdateContentAsync(model.ToDoId, model.Content, GetOrganizationId());
+      ToDo task = await _toDoService.UpdateContentAsync(model.ToDoId, model.Content, GetOrganizationId());
 
       var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
 
@@ -64,11 +71,9 @@ namespace Accounting.Controllers
     [HttpPost("update-todo-parent")]
     public async Task<IActionResult> UpdateTaskParent(UpdateTaskParentBindingModel model)
     {
-      ToDoService taskService = new ToDoService(GetDatabaseName());
-
       try
       {
-        int rowsAffected = await taskService.UpdateParentTaskIdAsync(model.ToDoId, model.NewParentToDoId, GetOrganizationId());
+        int rowsAffected = await _toDoService.UpdateParentTaskIdAsync(model.ToDoId, model.NewParentToDoId, GetOrganizationId());
 
         if (rowsAffected == 0)
         {
@@ -88,13 +93,11 @@ namespace Accounting.Controllers
     [HttpGet]
     public async Task<IActionResult> GetTaskChildren(int toDoID)
     {
-      ToDoService taskService = new ToDoService(GetDatabaseName());
-      List<ToDo> children = await taskService.GetTaskChildren(toDoID, GetOrganizationId());
+      List<ToDo> children = await _toDoService.GetTaskChildren(toDoID, GetOrganizationId());
 
-      UserTaskService userTaskService = new UserTaskService(GetDatabaseName());
       foreach (var task in children)
       {
-        await LoadUsersForTaskAndSubtasks(task, userTaskService, GetOrganizationId());
+        await LoadUsersForTaskAndSubtasks(task, _userTaskService, GetOrganizationId());
       }
 
       var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
@@ -110,11 +113,9 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> UpdateTaskStatusId(UpdateToDoStatusBindingModel model)
     {
-      ToDoService taskService = new ToDoService(GetDatabaseName());
-
       try
       {
-        int rowsAffected = await taskService.UpdateTaskStatusIdAsync(model.ToDoId, model.Status!, GetOrganizationId());
+        int rowsAffected = await _toDoService.UpdateTaskStatusIdAsync(model.ToDoId, model.Status!, GetOrganizationId());
 
         if (rowsAffected == 0)
         {

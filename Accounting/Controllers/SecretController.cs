@@ -12,11 +12,18 @@ namespace Accounting.Controllers
   [Route("secret")]
   public class SecretController : BaseController
   {
+    private readonly SecretService _secretService;
+    private readonly string _databaseName;
+
+    public SecretController(RequestContext requestContext, SecretService secretService)
+    {
+      _databaseName = requestContext.DatabaseName;
+      _secretService = secretService;
+    }
+
     [Route("secrets")]
     public async Task<IActionResult> Secrets()
     {
-      SecretService _secretService = new SecretService(GetDatabaseName());
-
       List<Secret> secrets = await _secretService.GetAllAsync(GetOrganizationId());
 
       SecretsViewModel model = new SecretsViewModel();
@@ -42,8 +49,6 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Create(CreateSecretViewModel model)
     {
-      SecretService _secretService = new SecretService(GetDatabaseName());
-
       model.OrganizationId = GetOrganizationId();
 
       CreateSecretViewModelValidator validator = new CreateSecretViewModelValidator(_secretService);
@@ -76,8 +81,6 @@ namespace Accounting.Controllers
     [HttpGet]
     public async Task<IActionResult> Delete(int secretID)
     {
-      SecretService _secretService = new SecretService(GetDatabaseName());
-
       Secret secret = await _secretService.GetAsync(secretID, GetOrganizationId());
 
       DeleteSecretViewModel model = new DeleteSecretViewModel
@@ -94,8 +97,6 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Delete(DeleteSecretViewModel model)
     {
-      SecretService _secretService = new SecretService(GetDatabaseName());
-
       await _secretService.DeleteAsync(model.SecretID, GetOrganizationId());
 
       return RedirectToAction("Secrets");

@@ -14,13 +14,23 @@ namespace Accounting.Controllers
   [Route("i")]
   public class InvitationController : BaseController
   {
+    private readonly InvitationService _invitationService;
+    private readonly UserService _userService;
+
+    public InvitationController(
+      InvitationService invitationService, 
+      UserService userService)
+    {
+      _invitationService = invitationService;
+      _userService = userService;
+    }
+
     [AllowAnonymous]
     [HttpGet]
     [Route("invitation/{guid}")]
     public async Task<IActionResult> Invitation(Guid guid)
     {
-      InvitationService invitationService = new InvitationService(GetDatabaseName());
-      Invitation invitation = await invitationService.GetAsync(guid);
+      Invitation invitation = await _invitationService.GetAsync(guid);
 
       bool invitationDoesNotExist = invitation == null;
       bool invitationHasExpired = invitation?.Expiration != null && invitation.Expiration < DateTime.UtcNow;
@@ -42,8 +52,7 @@ namespace Accounting.Controllers
     [Route("invitation/{guid}")]
     public async Task<IActionResult> Invitation(InvitationViewModel model)
     {
-      InvitationService invitationService = new InvitationService(GetDatabaseName());
-      Invitation invitation = await invitationService.GetAsync(model.Guid);
+      Invitation invitation = await _invitationService.GetAsync(model.Guid);
 
       if (invitation.Expiration != null && invitation.Expiration < DateTime.UtcNow)
       {
@@ -59,11 +68,10 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      UserService userService = new UserService(GetDatabaseName());
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        await userService.UpdatePasswordAllTenantsAsync(invitation.Email, PasswordStorage.CreateHash(model.Password));
-        await invitationService.DeleteAsync(model.Guid);
+        await _userService.UpdatePasswordAllTenantsAsync(invitation.Email, PasswordStorage.CreateHash(model.Password));
+        await _invitationService.DeleteAsync(model.Guid);
         scope.Complete();
       }
 

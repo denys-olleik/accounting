@@ -28,18 +28,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
       options.SlidingExpiration = true;
       options.EventsType = typeof(CustomCookieAuthenticationEventsHandler);
       options.LoginPath = new PathString("/user-account/login");
-
       options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     });
 
 builder.Services.AddScoped<CustomCookieAuthenticationEventsHandler>();
-
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-  options.MinimumSameSitePolicy = SameSiteMode.Strict;
-  options.Secure = CookieSecurePolicy.Always;
-});
-
 builder.Services.AddScoped<RequestContext>();
 builder.Services.AddTransient<AddressService>();
 builder.Services.AddTransient<BusinessEntityService>();
@@ -83,22 +75,22 @@ ConfigurationSingleton.Instance.PermPath = builder.Configuration["PermPath"];
 
 var app = builder.Build();
 
-#region reset-database
+#region Reset-Database
 if (app.Environment.IsDevelopment())
 {
   var databaseResetConfigPath = Path.Combine(app.Environment.ContentRootPath, "database-reset.json");
   var databaseResetConfig = JsonConvert.DeserializeObject<DatabaseResetConfig>(System.IO.File.ReadAllText(databaseResetConfigPath));
 
-  DatabaseService databaseManager = new DatabaseService();
   if (databaseResetConfig!.Reset)
   {
-    await databaseManager.ResetDatabase();
+    DatabaseService databaseService = new DatabaseService();
+
+    await databaseService.ResetDatabase();
 
     string sampleDataPath = Path.Combine(AppContext.BaseDirectory, "sample-data.sql");
-
     string sampleDataScript = System.IO.File.ReadAllText(sampleDataPath);
 
-    await databaseManager.RunSQLScript(sampleDataScript, DatabaseThing.DatabaseConstants.Database);
+    await databaseService.RunSQLScript(sampleDataScript, DatabaseThing.DatabaseConstants.Database);
 
     databaseResetConfig.Reset = false;
     System.IO.File.WriteAllText(databaseResetConfigPath, JsonConvert.SerializeObject(databaseResetConfig, Formatting.Indented));
@@ -106,13 +98,14 @@ if (app.Environment.IsDevelopment())
 }
 #endregion
 
-#region LoadTenantManagementConfiguration see Appsettings.json."TenantManagement"
+#region LoadTenantManagementConfiguration
 ConfigurationSingleton.Instance.TenantManagement
     = Convert.ToBoolean(builder.Configuration["TenantManagement"]);
 if (!ConfigurationSingleton.Instance.TenantManagement)
-  await IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsTrueThere();
+  await LoadTenantManagementFromDatabase(app);
 #endregion
 
+// Exception handling
 if (!app.Environment.IsDevelopment())
 {
   app.UseExceptionHandler("/Home/Error");
@@ -123,12 +116,10 @@ else
 }
 
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthentication();
+app.UseAuthorization();
 
-#region UserContextMiddleware
 app.Use(async (context, next) =>
 {
   var requestContext = context.RequestServices.GetRequiredService<RequestContext>();
@@ -144,10 +135,8 @@ app.Use(async (context, next) =>
 
   await next();
 });
-#endregion
 
 app.UseMiddleware<UpdateClaimsMiddleware>();
-app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
@@ -155,9 +144,10 @@ app.MapControllerRoute(
 
 app.Run();
 
-async Task IfTenantManagementIsNotSetTrueAtConfiguration_TryTheDatabaseMaybeItsTrueThere()
+async Task LoadTenantManagementFromDatabase(WebApplication app)
 {
-  SecretService secretService = new SecretService(null);
+  using var scope = app.Services.CreateScope();
+  var secretService = scope.ServiceProvider.GetRequiredService<SecretService>();
   var tenantManagement = await secretService.GetAsync(Secret.SecretTypeConstants.TenantManagement);
 
   if (tenantManagement != null)

@@ -12,15 +12,23 @@ namespace Accounting.Controllers
   [Route("pi")]
   public class PaymentInstructionController : BaseController
   {
+    private readonly PaymentInstructionService _paymentInstructionService;
+    private readonly string _databaseName;
+
+    public PaymentInstructionController(RequestContext requestContext, PaymentInstructionService paymentInstructionService)
+    {
+      _databaseName = requestContext.DatabaseName;
+      _paymentInstructionService = paymentInstructionService;
+    }
+
     [Route("payment-instructions")]
     [HttpGet]
     public async Task<IActionResult> PaymentInstructions()
     {
       PaymentInstructionsViewModel paymentInstructionsViewModel = new PaymentInstructionsViewModel();
 
-      PaymentInstructionService paymentInstructionService = new PaymentInstructionService(GetDatabaseName());
       List<PaymentInstruction> paymentInstructions =
-          await paymentInstructionService.GetPaymentInstructionsAsync(GetOrganizationId());
+          await _paymentInstructionService.GetPaymentInstructionsAsync(GetOrganizationId());
 
       paymentInstructionsViewModel.PaymentInstructions = paymentInstructions.Select(pi => new PaymentInstructionViewModel
       {
@@ -61,8 +69,7 @@ namespace Accounting.Controllers
         OrganizationId = GetOrganizationId()
       };
 
-      PaymentInstructionService paymentInstructionService = new PaymentInstructionService(GetDatabaseName());
-      await paymentInstructionService.CreateAsync(paymentInstruction);
+      await _paymentInstructionService.CreateAsync(paymentInstruction);
 
       return RedirectToAction("PaymentInstructions");
     }
