@@ -19,10 +19,11 @@ namespace Accounting.Controllers
 
     public AccountController(
       AccountService accountService, 
-      JournalService journalService)
+      JournalService journalService,
+      RequestContext requestContext)
     {
-      _accountService = accountService;
-      _journalService = journalService;
+      _accountService = new AccountService(requestContext.DatabaseName);
+      _journalService = new JournalService(requestContext.DatabaseName);
     }
 
     [Route("accounts")]
@@ -193,9 +194,9 @@ namespace Accounting.Controllers
   {
     private readonly AccountService _accountService;
 
-    public AccountApiController(AccountService accountService)
+    public AccountApiController(AccountService accountService, RequestContext requestContext)
     {
-      _accountService = accountService;
+      _accountService = new AccountService(requestContext.DatabaseName);
     }
 
     [HttpGet("account-types")]

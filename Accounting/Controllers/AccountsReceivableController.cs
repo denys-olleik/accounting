@@ -14,7 +14,8 @@ using System.Transactions;
 namespace Accounting.Controllers
 {
   [AuthorizeWithOrganizationId]
-  [Route("ar")]
+  [ApiController]
+  [Route("api/ar")]
   public class AccountsReceivableController : BaseController
   {
     private readonly InvoiceService _invoiceService;
@@ -28,25 +29,26 @@ namespace Accounting.Controllers
     private readonly JournalInvoiceInvoiceLineService _journalInvoiceInvoiceLineService;
 
     public AccountsReceivableController(
-        InvoiceService invoiceService,
-        AccountService accountService,
-        InvoiceLineService invoiceLineService,
-        JournalService journalService,
-        BusinessEntityService businessEntityService,
-        PaymentService paymentService,
-        InvoiceInvoiceLinePaymentService invoicePaymentService,
-        JournalInvoiceInvoiceLinePaymentService journalInvoiceInvoiceLinePaymentService,
-        JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService)
+    RequestContext requestContext,
+    InvoiceService invoiceService,
+    InvoiceLineService invoiceLineService,
+    JournalService journalService,
+    BusinessEntityService businessEntityService,
+    PaymentService paymentService,
+    InvoiceInvoiceLinePaymentService invoicePaymentService,
+    JournalInvoiceInvoiceLinePaymentService journalInvoiceInvoiceLinePaymentService,
+    JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService)
     {
-      _invoiceService = invoiceService;
-      _accountService = accountService;
-      _invoiceLineService = invoiceLineService;
-      _journalService = journalService;
-      _businessEntityService = businessEntityService;
-      _paymentService = paymentService;
-      _invoicePaymentService = invoicePaymentService;
-      _journalInvoicePaymentService = journalInvoiceInvoiceLinePaymentService;
-      _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
+      _journalService = new JournalService(requestContext.DatabaseName);
+      _invoiceLineService = new InvoiceLineService(requestContext.DatabaseName);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(invoiceLineService, journalService, requestContext.DatabaseName);
+      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName);
+      _accountService = new AccountService(requestContext.DatabaseName);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabaseName);
+      _paymentService = new PaymentService(requestContext.DatabaseName);
+      _invoicePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
+      _journalInvoicePaymentService = new JournalInvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
+      
     }
 
     [Route("receive-payment-for-invoice-ids")]
