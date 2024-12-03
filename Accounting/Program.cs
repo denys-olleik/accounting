@@ -65,6 +65,7 @@ builder.Services.AddTransient<CloudServices>();
 builder.Services.AddTransient<DatabaseService>();
 builder.Services.AddTransient<EmailService>();
 builder.Services.AddTransient<LoginWithoutPasswordService>();
+builder.Services.AddTransient<InvitationService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
