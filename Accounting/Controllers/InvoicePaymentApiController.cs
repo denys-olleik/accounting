@@ -1,4 +1,5 @@
-﻿using Accounting.Common;
+﻿using Accounting.Business;
+using Accounting.Common;
 using Accounting.CustomAttributes;
 using Accounting.Models.BusinessEntityViewModels;
 using Accounting.Models.InvoicePaymentViewModels;
@@ -18,12 +19,13 @@ namespace Accounting.Controllers
     private readonly BusinessEntityService _businessEntityService;
 
     public InvoicePaymentApiController(
-      InvoiceInvoiceLinePaymentService invoicePaymentService,
+      InvoiceInvoiceLinePaymentService invoiceInvoiceLinePaymentService,
       InvoiceService invoiceService,
-      BusinessEntityService businessEntityService)
+      BusinessEntityService businessEntityService,
+      RequestContext requestContext)
     {
-      _invoicePaymentService = invoicePaymentService;
-      _businessEntityService = businessEntityService;
+      _invoicePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabaseName);
     }
 
     [HttpGet("get-invoice-payments")]

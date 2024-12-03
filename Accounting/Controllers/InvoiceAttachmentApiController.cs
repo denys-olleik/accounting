@@ -17,7 +17,7 @@ namespace Accounting.Controllers
     public InvoiceAttachmentApiController(RequestContext requestContext, InvoiceAttachmentService invoiceAttachmentService)
     {
       _databaseName = requestContext.DatabaseName;
-      _invoiceAttachmentService = invoiceAttachmentService;
+      _invoiceAttachmentService = new InvoiceAttachmentService(requestContext.DatabaseName);
     }
 
     [Route("upload")]

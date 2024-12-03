@@ -29,15 +29,15 @@ namespace Accounting.Controllers
     private readonly JournalInvoiceInvoiceLineService _journalInvoiceInvoiceLineService;
 
     public AccountsReceivableController(
-    RequestContext requestContext,
-    InvoiceService invoiceService,
-    InvoiceLineService invoiceLineService,
-    JournalService journalService,
-    BusinessEntityService businessEntityService,
-    PaymentService paymentService,
-    InvoiceInvoiceLinePaymentService invoicePaymentService,
-    JournalInvoiceInvoiceLinePaymentService journalInvoiceInvoiceLinePaymentService,
-    JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService)
+      RequestContext requestContext,
+      InvoiceService invoiceService,
+      InvoiceLineService invoiceLineService,
+      JournalService journalService,
+      BusinessEntityService businessEntityService,
+      PaymentService paymentService,
+      InvoiceInvoiceLinePaymentService invoicePaymentService,
+      JournalInvoiceInvoiceLinePaymentService journalInvoiceInvoiceLinePaymentService,
+      JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService)
     {
       _journalService = new JournalService(requestContext.DatabaseName);
       _invoiceLineService = new InvoiceLineService(requestContext.DatabaseName);

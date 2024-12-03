@@ -19,10 +19,11 @@ namespace Accounting.Controllers
 
     public InvitationController(
       InvitationService invitationService, 
-      UserService userService)
+      UserService userService,
+      RequestContext requestContext)
     {
-      _invitationService = invitationService;
-      _userService = userService;
+      _invitationService = new InvitationService(requestContext.DatabaseName);
+      _userService = new UserService(requestContext.DatabaseName);
     }
 
     [AllowAnonymous]

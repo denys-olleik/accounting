@@ -12,10 +12,12 @@ namespace Accounting.Controllers
   public class CustomerApiController : BaseController
   {
     private readonly BusinessEntityService _businessEntityService;
+    private readonly RequestContext _requestContext;
 
-    public CustomerApiController(BusinessEntityService businessEntityService)
+    public CustomerApiController(RequestContext requestContext)
     {
-      _businessEntityService = businessEntityService;
+      _requestContext = requestContext;
+      _businessEntityService = new BusinessEntityService(_requestContext.DatabaseName);
     }
 
     [HttpGet("get-customers")]

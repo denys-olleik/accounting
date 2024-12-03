@@ -22,16 +22,20 @@ namespace Accounting.Controllers
     private readonly UserTaskService _userTaskService;
     private readonly ToDoService _toDoService;
     private readonly ToDoTagService _toDoTagService;
-    private readonly string _databaseName;
 
-    public ToDoController(RequestContext requestContext, TagService tagService, UserService userService, UserTaskService userTaskService, ToDoService toDoService, ToDoTagService toDoTagService)
+    public ToDoController(
+      RequestContext requestContext, 
+      TagService tagService, 
+      UserService userService, 
+      UserTaskService userTaskService, 
+      ToDoService toDoService, 
+      ToDoTagService toDoTagService)
     {
-      _databaseName = requestContext.DatabaseName;
-      _tagService = tagService;
-      _userService = userService;
-      _userTaskService = userTaskService;
-      _toDoService = toDoService;
-      _toDoTagService = toDoTagService;
+      _tagService = new TagService(requestContext.DatabaseName);
+      _userService = new UserService(requestContext.DatabaseName);
+      _userTaskService = new UserTaskService(requestContext.DatabaseName);
+      _toDoService = new ToDoService(requestContext.DatabaseName);
+      _toDoTagService = new ToDoTagService(requestContext.DatabaseName);
     }
 
     [Route("todos")]

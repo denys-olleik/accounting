@@ -16,29 +16,15 @@ namespace Accounting.Controllers
   public class ItemController : BaseController
   {
     private readonly AccountService _accountService;
-    private readonly LocationService _locationService;
-    private readonly InventoryService _inventoryService;
     private readonly ItemService _itemService;
-    private readonly InventoryAdjustmentService _inventoryAdjustmentService;
-    private readonly JournalInventoryAdjustmentService _journalInventoryAdjustmentService;
-    private readonly JournalService _journalService;
 
     public ItemController(
       AccountService accountService,
-      LocationService locationService,
-      InventoryService inventoryService,
       ItemService itemService,
-      InventoryAdjustmentService inventoryAdjustmentService,
-      JournalInventoryAdjustmentService journalInventoryAdjustmentService,
-      JournalService journalService)
+      RequestContext requestContext)
     {
-      _accountService = accountService;
-      _locationService = locationService;
-      _inventoryService = inventoryService;
-      _itemService = itemService;
-      _inventoryAdjustmentService = inventoryAdjustmentService;
-      _journalInventoryAdjustmentService = journalInventoryAdjustmentService;
-      _journalService = journalService;
+      _accountService = new AccountService(requestContext.DatabaseName);
+      _itemService = new ItemService(requestContext.DatabaseName);
     }
 
     [HttpGet]
@@ -187,11 +173,12 @@ namespace Accounting.Controllers
     public ItemApiController(
       ItemService itemService,
       InventoryService inventoryService,
-      LocationService locationService)
+      LocationService locationService,
+      RequestContext requestContext)
     {
-      _itemService = itemService;
-      _inventoryService = inventoryService;
-      _locationService = locationService;
+      _itemService = new ItemService(requestContext.DatabaseName);
+      _inventoryService = new InventoryService(requestContext.DatabaseName);
+      _locationService = new LocationService(requestContext.DatabaseName);
     }
 
     [HttpGet("get-all-items")]

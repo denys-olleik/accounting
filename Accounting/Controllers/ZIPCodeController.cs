@@ -1,4 +1,5 @@
-﻿using Accounting.CustomAttributes;
+﻿using Accounting.Business;
+using Accounting.CustomAttributes;
 using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +11,9 @@ namespace Accounting.Controllers
   {
     private readonly ZipCodeService _zipCodeService;
 
-    public ZipCodeController(ZipCodeService zipCodeService)
+    public ZipCodeController(ZipCodeService zipCodeService, RequestContext requestContext)
     {
-      _zipCodeService = zipCodeService;
+      _zipCodeService = new ZipCodeService(requestContext.DatabaseName);
     }
 
     public IActionResult Index()

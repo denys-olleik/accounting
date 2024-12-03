@@ -14,7 +14,11 @@ namespace Accounting.Controllers
   public class TagApiController : BaseController
   {
     private readonly TagService _tagService;
-    private readonly string _databaseName;
+
+    public TagApiController(RequestContext requestContext)
+    {
+      _tagService = new TagService(requestContext.DatabaseName);
+    }
 
     [HttpPost("create")]
     public async Task<IActionResult> Create(CreateTagApiViewModel model)

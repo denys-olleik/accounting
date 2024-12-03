@@ -13,15 +13,27 @@ namespace Accounting.Controllers
   [Route("p")]
   public class PaymentController : BaseController
   {
+    private readonly JournalService _journalService;  
     private readonly PaymentService _paymentService;
     private readonly InvoiceService _invoiceService;
+    private readonly JournalInvoiceInvoiceLineService _journalInvoiceInvoiceLineService;
     private readonly InvoiceInvoiceLinePaymentService _invoiceInvoiceLinePaymentService;
+    private readonly InvoiceLineService _invoiceLineService;
 
-    public PaymentController(PaymentService paymentService, InvoiceService invoiceService, InvoiceInvoiceLinePaymentService invoiceInvoiceLinePaymentService)
+    public PaymentController(
+      PaymentService paymentService, 
+      InvoiceService invoiceService, 
+      InvoiceInvoiceLinePaymentService invoiceInvoiceLinePaymentService,
+      RequestContext requestContext,
+      JournalService journalService,
+      InvoiceLineService invoiceLineService)
     {
-      _paymentService = paymentService;
-      _invoiceService = invoiceService;
-      _invoiceInvoiceLinePaymentService = invoiceInvoiceLinePaymentService;
+      _invoiceLineService = new InvoiceLineService(requestContext.DatabaseName);
+      _journalService = new JournalService(requestContext.DatabaseName);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName);
+      _paymentService = new PaymentService(requestContext.DatabaseName);
+      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName);
+      _invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
     }
 
     [HttpGet]

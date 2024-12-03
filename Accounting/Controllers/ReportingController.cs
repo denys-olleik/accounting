@@ -18,14 +18,25 @@ namespace Accounting.Controllers
     private readonly OrganizationService _organizationService;
     private readonly BusinessEntityService _businessEntityService;
     private readonly JournalInvoiceInvoiceLineService _journalInvoiceInvoiceLineService;
+    private readonly JournalService _journalService;
+    private readonly InvoiceLineService _invoiceLineService;
 
-    public ReportingController(IronPdfService ironPdfService, InvoiceService invoiceService, OrganizationService organizationService, BusinessEntityService businessEntityService, JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService)
+    public ReportingController(
+      IronPdfService ironPdfService, 
+      InvoiceService invoiceService, 
+      OrganizationService organizationService, 
+      BusinessEntityService businessEntityService, 
+      JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService,
+      RequestContext requestContext,
+      InvoiceLineService invoiceLineService)
     {
       _ironPdfService = ironPdfService;
-      _invoiceService = invoiceService;
-      _organizationService = organizationService;
-      _businessEntityService = businessEntityService;
-      _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
+      _invoiceLineService = new InvoiceLineService(requestContext.DatabaseName);
+      _journalService = new JournalService(requestContext.DatabaseName);
+      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName);
+      _organizationService = new OrganizationService(requestContext.DatabaseName);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabaseName);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName);
     }
 
     [HttpGet("view-invoice/{id}")]

@@ -13,12 +13,12 @@ namespace Accounting.Controllers
   public class PaymentInstructionController : BaseController
   {
     private readonly PaymentInstructionService _paymentInstructionService;
-    private readonly string _databaseName;
 
-    public PaymentInstructionController(RequestContext requestContext, PaymentInstructionService paymentInstructionService)
-    {
-      _databaseName = requestContext.DatabaseName;
-      _paymentInstructionService = paymentInstructionService;
+    public PaymentInstructionController(
+      RequestContext requestContext, 
+      PaymentInstructionService paymentInstructionService)
+    { 
+      _paymentInstructionService = new PaymentInstructionService(requestContext.DatabaseName);
     }
 
     [Route("payment-instructions")]

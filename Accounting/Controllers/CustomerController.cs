@@ -27,9 +27,9 @@ namespace Accounting.Controllers
       AddressService addressService,
       PaymentTermsService paymentTermsService)
     {
-      _customerService = businessEntityService;
-      _addressService = addressService;
-      _paymentTermsService = paymentTermsService;
+      _customerService = new BusinessEntityService(requestContext.DatabaseName);
+      _addressService = new AddressService(requestContext.DatabaseName);
+      _paymentTermsService = new PaymentTermsService(requestContext.DatabaseName);
     }
 
     [Route("customers")]

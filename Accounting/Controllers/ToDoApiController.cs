@@ -14,13 +14,11 @@ namespace Accounting.Controllers
   {
     private readonly ToDoService _toDoService;
     private readonly UserTaskService _userTaskService;
-    private readonly string _databaseName;
 
     public ToDoApiController(RequestContext requestContext, ToDoService toDoService, UserTaskService userTaskService)
     {
-      _databaseName = requestContext.DatabaseName;
-      _toDoService = toDoService;
-      _userTaskService = userTaskService;
+      _toDoService = new ToDoService(requestContext.DatabaseName);
+      _userTaskService = new UserTaskService(requestContext.DatabaseName);
     }
 
     [HttpGet("get-todos")]

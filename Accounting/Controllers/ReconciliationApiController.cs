@@ -25,13 +25,14 @@ namespace Accounting.Controllers
       ReconciliationService reconciliationService,
       JournalReconciliationTransactionService journalExpenseService,
       AccountService accountService,
-      JournalService journalService)
+      JournalService journalService,
+      RequestContext requestContext)
     {
-      _reconciliationTransactionService = reconciliationTransactionService;
-      _reconciliationService = reconciliationService;
-      _journalReconciliationTransactionService = journalExpenseService;
-      _accountService = accountService;
-      _journalService = journalService;
+      _reconciliationTransactionService = new ReconciliationTransactionService(requestContext.DatabaseName);
+      _reconciliationService = new ReconciliationService(requestContext.DatabaseName);
+      _journalReconciliationTransactionService = new JournalReconciliationTransactionService(requestContext.DatabaseName);
+      _accountService = new AccountService(requestContext.DatabaseName);
+      _journalService = new JournalService(requestContext.DatabaseName);
     }
 
     //[HttpPost]

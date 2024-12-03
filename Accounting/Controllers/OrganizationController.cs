@@ -14,12 +14,10 @@ namespace Accounting.Controllers
   public class OrganizationController : BaseController
   {
     private readonly OrganizationService _organizationService;
-    private readonly InvoiceService _invoiceService;
 
-    public OrganizationController(OrganizationService organizationService, InvoiceService invoiceService)
+    public OrganizationController(OrganizationService organizationService, RequestContext requestContext)
     {
-      _organizationService = organizationService;
-      _invoiceService = invoiceService;
+      _organizationService = new OrganizationService(requestContext.DatabaseName);
     }
 
     [Route("update")]

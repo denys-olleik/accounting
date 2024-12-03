@@ -27,10 +27,10 @@ namespace Accounting.Controllers
       SecretService secretService, 
       InvitationService invitationService)
     {
-      _userOrganizationService = userOrganizationService;
-      _userService = userService;
-      _secretService = secretService;
-      _invitationService = invitationService;
+      _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
+      _userService = new UserService(requestContext.DatabaseName);
+      _secretService = new SecretService(requestContext.DatabaseName);
+      _invitationService = new InvitationService(requestContext.DatabaseName);
     }
 
     [HttpGet]

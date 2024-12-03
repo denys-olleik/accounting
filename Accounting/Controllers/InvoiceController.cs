@@ -45,20 +45,21 @@ namespace Accounting.Controllers
       OrganizationService organizationService,
       PaymentTermsService paymentTermsService,
       AccountService accountService,
-      JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService)
+      JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService,
+      RequestContext requestContext)
     {
-      _addressService = addressService;
-      _businessEntityService = businessEntityService;
-      _journalService = journalLedgerService;
-      _invoiceAttachmentService = invoiceAttachmentService;
-      _invoiceLineService = invoiceLineService;
-      _invoicePaymentService = invoicePaymentService;
-      _invoiceService = invoiceService;
-      _itemService = itemService;
-      _organizationService = organizationService;
-      _paymentTermsService = paymentTermsService;
-      _accountService = accountService;
-      _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
+      _addressService = new AddressService(requestContext.DatabaseName);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabaseName);
+      _journalService = new JournalService(requestContext.DatabaseName);
+      _invoiceAttachmentService = new InvoiceAttachmentService(requestContext.DatabaseName);
+      _invoiceLineService = new InvoiceLineService(requestContext.DatabaseName);
+      _invoicePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
+      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName);
+      _itemService = new ItemService(requestContext.DatabaseName);
+      _organizationService = new OrganizationService(requestContext.DatabaseName);
+      _paymentTermsService = new PaymentTermsService(requestContext.DatabaseName);
+      _accountService = new AccountService(requestContext.DatabaseName);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName);
     }
 
     [Route("invoices")]

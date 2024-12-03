@@ -12,17 +12,22 @@ namespace Accounting.Controllers
   {
     private readonly InvoiceService _invoiceService;
     private readonly AccountService _accountService;
+    private readonly JournalService _journalService;
+    private readonly JournalInvoiceInvoiceLineService _journalInvoiceInvoiceLineService;
+    private readonly InvoiceLineService _invoiceLineService;
 
-    public ReportingApiController(RequestContext requestContext, InvoiceLineService invoiceLineServie, JournalService journalService)
+    public ReportingApiController(
+      RequestContext requestContext, 
+      InvoiceLineService invoiceLineServie,
+      JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService,
+      JournalService journalService,
+      InvoiceLineService invoiceLineService)
     {
-      var databaseName = requestContext.DatabaseName ?? throw new ArgumentNullException(nameof(requestContext.DatabaseName));
-
-      _invoiceService = new InvoiceService(
-          new JournalService(databaseName),
-          new JournalInvoiceInvoiceLineService(invoiceLineServie, journalService, databaseName),
-          databaseName);
-
-      _accountService = new AccountService(databaseName);
+      _journalService = new JournalService(requestContext.DatabaseName);
+      _invoiceLineService = new InvoiceLineService((requestContext.DatabaseName));
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName);
+      _invoiceService = new InvoiceService(journalService, _journalInvoiceInvoiceLineService,  requestContext.DatabaseName);
+      _accountService = new AccountService(requestContext.DatabaseName);
     }
 
     [HttpGet("get-unpaid-and-paid-balance")]

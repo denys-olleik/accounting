@@ -30,15 +30,16 @@ namespace Accounting.Controllers
       DatabaseService databaseService,
       UserService userService,
       OrganizationService organizationService,
-      UserOrganizationService userOrganizationService)
+      UserOrganizationService userOrganizationService,
+      RequestContext requestContext)
     {
-      _tenantService = tenantService;
+      _tenantService = new TenantService(requestContext.DatabaseName);
       _cloudServices = cloudServices;
-      _secretService = secretService;
+      _secretService = new SecretService(requestContext.DatabaseName);
       _databaseService = databaseService;
-      _userService = userService;
-      _organizationService = organizationService;
-      _userOrganizationService = userOrganizationService;
+      _userService = new UserService(requestContext.DatabaseName);
+      _organizationService = new OrganizationService(requestContext.DatabaseName);
+      _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
     }
 
     [Route("delete-organization/{tenantId}/{organizationId}")]

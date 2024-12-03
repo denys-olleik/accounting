@@ -31,13 +31,13 @@ namespace Accounting.Controllers
       BusinessEntityService businessEntityService,
       RequestContext requestContext)
     {
-      _journalService = journalService;
-      _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
-      _journalInvoiceInvoiceLinePaymentService = journalInvoiceInvoiceLinePaymentService;
-      _paymentService = paymentService;
-      _invoiceInvoiceLinePaymentService = invoiceInvoiceLinePaymentService;
       _invoiceLineService = invoiceLineService;
-      _businessEntityService = businessEntityService;
+      _journalService = new JournalService(requestContext.DatabaseName);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName);
+      _journalInvoiceInvoiceLinePaymentService = new JournalInvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
+      _paymentService = new PaymentService(requestContext.DatabaseName);
+      _invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabaseName);
       _requestContext = requestContext;
     }
 

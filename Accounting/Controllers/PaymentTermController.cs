@@ -15,9 +15,9 @@ namespace Accounting.Controllers
   {
     private readonly PaymentTermsService _paymentTermsService;
 
-    public PaymentTermController(PaymentTermsService paymentTermsService)
+    public PaymentTermController(PaymentTermsService paymentTermsService, RequestContext requestContext)
     {
-      this._paymentTermsService = paymentTermsService;
+      _paymentTermsService = new PaymentTermsService(requestContext.DatabaseName);
     }
 
     [Route("payment-terms")]

@@ -13,9 +13,9 @@ namespace Accounting.Controllers
   {
     private readonly LocationService _locationService;
 
-    public LocationApiController(LocationService locationService)
+    public LocationApiController(LocationService locationService, RequestContext requestContext)
     {
-      _locationService = locationService;
+      _locationService = new LocationService(requestContext.DatabaseName);
     }
 
     [HttpGet("all")]

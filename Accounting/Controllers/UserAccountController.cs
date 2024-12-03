@@ -33,16 +33,16 @@ namespace Accounting.Controllers
       LoginWithoutPasswordService loginWithoutPasswordService,
       EmailService emailService,
       SecretService secretService,
-      TenantService tenantService
-      )
+      TenantService tenantService,
+      RequestContext requestContext)
     {
-      _organizationService = organizationService;
-      _userOrganizationService = userOrganizationService;
-      _userService = userService;
-      _loginWithoutPasswordService = loginWithoutPasswordService;
-      _emailService = emailService;
-      _secretService = secretService;
-      _tenantService = tenantService;
+      _organizationService = new OrganizationService(requestContext.DatabaseName);
+      _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
+      _userService = new UserService(requestContext.DatabaseName);
+      _loginWithoutPasswordService = new LoginWithoutPasswordService(requestContext.DatabaseName);
+      _secretService = new SecretService(requestContext.DatabaseName);
+      _emailService = new EmailService(_secretService);
+      _tenantService = new TenantService(requestContext.DatabaseName);
     }
 
     [HttpGet]
@@ -94,7 +94,7 @@ namespace Accounting.Controllers
       }
       else if (existingUser != null && string.IsNullOrEmpty(model.Password))
       {
-        Secret? emailApiKeySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, null);
+        Secret? emailApiKeySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email);
         Secret? noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, null);
 
         if (emailApiKeySecret == null || noReplySecret == null)

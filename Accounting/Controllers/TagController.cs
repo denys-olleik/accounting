@@ -12,12 +12,10 @@ namespace Accounting.Controllers
   public class TagController : BaseController
   {
     private readonly TagService _tagService;
-    private readonly string _databaseName;
 
-    public TagController(RequestContext requestContext, TagService tagService)
+    public TagController(RequestContext requestContext)
     {
-      _databaseName = requestContext.DatabaseName;
-      _tagService = tagService;
+      _tagService = new TagService(requestContext.DatabaseName);
     }
 
     [HttpGet]
