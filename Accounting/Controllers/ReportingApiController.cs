@@ -13,10 +13,16 @@ namespace Accounting.Controllers
     private readonly InvoiceService _invoiceService;
     private readonly AccountService _accountService;
 
-    public ReportingApiController(InvoiceService invoiceService, AccountService accountService, RequestContext requestContent)
+    public ReportingApiController(RequestContext requestContext, InvoiceLineService invoiceLineServie, JournalService journalService)
     {
-      _invoiceService = invoiceService;
-      _accountService = accountService;
+      var databaseName = requestContext.DatabaseName ?? throw new ArgumentNullException(nameof(requestContext.DatabaseName));
+
+      _invoiceService = new InvoiceService(
+          new JournalService(databaseName),
+          new JournalInvoiceInvoiceLineService(invoiceLineServie, journalService, databaseName),
+          databaseName);
+
+      _accountService = new AccountService(databaseName);
     }
 
     [HttpGet("get-unpaid-and-paid-balance")]
