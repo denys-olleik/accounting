@@ -53,11 +53,18 @@ namespace Accounting.Service
         .GetAsync(id, organizationId);
     }
 
-    public async Task<Secret?> GetAsync(string type, int? organizationId = null)
+    public async Task<Secret?> GetAsync(string type, int organizationId)
     {
       var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetSecretManager(_databaseName)
         .GetAsync(type, organizationId);
+    }
+
+    public async Task<Secret> GetAsync(string type)
+    {
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetSecretManager(_databaseName)
+        .GetAsync(type);
     }
 
     public async Task<Secret?> GetMasterAsync(int organizationId)

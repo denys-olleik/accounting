@@ -6438,6 +6438,25 @@ namespace Accounting.Database
         return result.SingleOrDefault();
       }
 
+      public async Task<Secret> GetAsync(string type)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Type", type);
+
+        IEnumerable<Secret> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        {
+          result = await con.QueryAsync<Secret>("""
+            SELECT * 
+            FROM "Secret" 
+            WHERE "Type" = @Type
+            """, p);
+        }
+
+        return result.Single();
+      }
+
       public async Task<Secret?> GetMasterAsync(int organizationId)
       {
         DynamicParameters p = new DynamicParameters();

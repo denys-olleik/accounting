@@ -95,7 +95,7 @@ namespace Accounting.Controllers
       else if (existingUser != null && string.IsNullOrEmpty(model.Password))
       {
         Secret? emailApiKeySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email);
-        Secret? noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, null);
+        Secret? noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply);
 
         if (emailApiKeySecret == null || noReplySecret == null)
         {
