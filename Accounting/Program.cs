@@ -133,6 +133,10 @@ app.Use(async (context, next) =>
       requestContext.DatabaseName = databaseNameClaim.Value;
     }
   }
+  else
+  {
+    requestContext.DatabaseName = DatabaseThing.DatabaseConstants.Database;
+  }
 
   await next();
 });
