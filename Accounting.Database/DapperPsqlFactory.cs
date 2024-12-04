@@ -26,11 +26,20 @@ namespace Accounting.Database
 
     public IAddressManager GetAddressManager()
     {
-      return new AddressManager();
+      return new AddressManager(_databaseName);
     }
 
     public class AddressManager : IAddressManager
     {
+      private readonly string _connectionString;
+
+      public AddressManager(string databaseName)
+      {
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        builder.Database = databaseName;
+        _connectionString = builder.ConnectionString;
+      }
+
       public Address Create(Address entity)
       {
         throw new NotImplementedException();
@@ -53,7 +62,7 @@ namespace Accounting.Database
 
         IEnumerable<Address> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Address>("""
           INSERT INTO "Address" 
@@ -76,7 +85,7 @@ namespace Accounting.Database
       {
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             DELETE FROM "Address" WHERE "BusinessEntityId" = @BusinessEntityId
@@ -104,7 +113,7 @@ namespace Accounting.Database
 
         IEnumerable<Address> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Address>("""
             SELECT * 
@@ -116,14 +125,14 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<Address?> GetAsync(int selectedAddressId)
+      public async Task<Address?> GetAsync(int addressId)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@ID", selectedAddressId);
+        p.Add("@ID", addressId);
 
         IEnumerable<Address> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Address>("""
             SELECT * 
