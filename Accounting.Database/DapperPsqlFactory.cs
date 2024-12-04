@@ -157,18 +157,13 @@ namespace Accounting.Database
 
     public class BusinessEntityManager : IBusinessEntityManager
     {
-      private readonly string _databaseName;
+      private readonly string _connectionString;
 
       public BusinessEntityManager(string databaseName)
       {
-        _databaseName = databaseName;
-      }
-
-      private string GetConnectionString()
-      {
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = _databaseName;
-        return builder.ConnectionString;
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        builder.Database = databaseName;
+        _connectionString = builder.ConnectionString;
       }
 
       public BusinessEntity Create(BusinessEntity entity)
@@ -190,7 +185,7 @@ namespace Accounting.Database
 
         IEnumerable<BusinessEntity> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<BusinessEntity>("""
            INSERT INTO "BusinessEntity" ("CustomerType", "BusinessEntityTypesCsv", "FirstName", "LastName", "CompanyName", "PaymentTermId", "CreatedById", "OrganizationId", "Created") 
@@ -221,7 +216,7 @@ namespace Accounting.Database
       {
         IEnumerable<BusinessEntity> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<BusinessEntity>("""
             SELECT * FROM "BusinessEntity"
@@ -239,7 +234,7 @@ namespace Accounting.Database
         p.Add("@OrganizationId", organizationId);
 
         IEnumerable<BusinessEntity> result;
-        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<BusinessEntity>("""
             SELECT * FROM (
@@ -271,7 +266,7 @@ namespace Accounting.Database
 
         BusinessEntity? result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QuerySingleOrDefaultAsync<BusinessEntity>("""
             SELECT * 
@@ -300,7 +295,7 @@ namespace Accounting.Database
 
         int rowsModified;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsModified = await con.ExecuteAsync("""
             UPDATE "BusinessEntity" SET 
