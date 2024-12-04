@@ -27,14 +27,14 @@ namespace Accounting.Controllers
     private readonly TenantService _tenantService;
 
     public UserAccountController(
+      RequestContext requestContext,
       OrganizationService organizationService,
       UserOrganizationService userOrganizationService,
       UserService userService,
       LoginWithoutPasswordService loginWithoutPasswordService,
       EmailService emailService,
       SecretService secretService,
-      TenantService tenantService,
-      RequestContext requestContext)
+      TenantService tenantService)
     {
       _organizationService = new OrganizationService(requestContext.DatabaseName);
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);

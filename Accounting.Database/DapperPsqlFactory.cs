@@ -332,35 +332,6 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      //public async Task<Account> CreateAsync(Account entity, string databaseName)
-      //{
-      //  DynamicParameters p = new DynamicParameters();
-      //  p.Add("@Name", entity.Name);
-      //  p.Add("@Type", entity.Type);
-      //  p.Add("@ParentAccountId", entity.ParentAccountId);
-      //  p.Add("@CreatedById", entity.CreatedById);
-      //  p.Add("@OrganizationId", entity.OrganizationId);
-
-      //  IEnumerable<Account> result;
-
-      //  var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringPsql);
-      //  builder.Database = databaseName;
-      //  string connectionString = builder.ConnectionString;
-
-      //  using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
-      //  {
-      //    result = await con.QueryAsync<Account>("""
-      //      INSERT INTO "Account" 
-      //      ("Name", "Type", "ParentAccountId", "CreatedById", "OrganizationId")
-      //      VALUES 
-      //      (@Name, @Type, @ParentAccountId, @CreatedById, @OrganizationId)
-      //      RETURNING *;
-      //      """, p);
-      //  }
-
-      //  return result.Single();
-      //}
-
       public async Task<Account> CreateAsync(Account entity)
       {
         DynamicParameters p = new DynamicParameters();
@@ -4346,20 +4317,13 @@ namespace Accounting.Database
 
     public class UserManager : IUserManager
     {
-      private readonly string _databaseName;
+      private readonly string _connectionString;
 
       public UserManager(string databaseName)
       {
-        _databaseName = databaseName;
-      }
-
-      private string GetConnectionString()
-      {
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql)
-        {
-          Database = _databaseName
-        };
-        return builder.ConnectionString;
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        builder.Database = databaseName;
+        _connectionString = builder.ConnectionString;
       }
 
       public User Create(User entity)
@@ -4383,7 +4347,7 @@ namespace Accounting.Database
 
         IEnumerable<User> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<User>(sql, p);
         }
@@ -4413,7 +4377,7 @@ namespace Accounting.Database
 
         IEnumerable<User> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<User>("""
               SELECT u.* 
@@ -4433,7 +4397,7 @@ namespace Accounting.Database
 
         IEnumerable<User> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<User>("""
               SELECT * 
@@ -4443,29 +4407,6 @@ namespace Accounting.Database
         }
 
         return result.SingleOrDefault()!;
-      }
-
-      public async Task<User> GetAsync(string email, int tenantId)
-      {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@Email", email);
-
-        string tenantDatabaseName = (await new TenantManager().GetAsync(tenantId)).DatabaseName;
-
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql)
-        {
-          Database = tenantDatabaseName
-        };
-
-        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
-        {
-          var result = await con.QueryAsync<User>("""
-              SELECT * 
-              FROM "User" 
-              WHERE "Email" = @Email
-              """, p);
-          return result.SingleOrDefault();
-        }
       }
 
       public async Task<(User, Tenant)> GetFirstOfAnyTenantAsync(string email)
@@ -4525,7 +4466,7 @@ namespace Accounting.Database
 
         IEnumerable<User> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<User>("""
               SELECT * 
@@ -4580,7 +4521,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(GetConnectionString()))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
               UPDATE "User" 
@@ -4595,11 +4536,20 @@ namespace Accounting.Database
 
     public IUserOrganizationManager GetUserOrganizationManager()
     {
-      return new UserOrganizationManager();
+      return new UserOrganizationManager(_databaseName);
     }
 
     public class UserOrganizationManager : IUserOrganizationManager
     {
+      private readonly string _connectionString;
+
+      public UserOrganizationManager(string databaseName)
+      {
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        builder.Database = databaseName;
+        _connectionString = builder.ConnectionString;
+      }
+
       public UserOrganization Create(UserOrganization entity)
       {
         throw new NotImplementedException();
@@ -4613,7 +4563,7 @@ namespace Accounting.Database
 
         IEnumerable<UserOrganization> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<UserOrganization>($"""
             INSERT INTO "UserOrganization" ("UserId", "OrganizationId") 
@@ -4635,11 +4585,8 @@ namespace Accounting.Database
 
         IEnumerable<UserOrganization> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = databaseName;
-        string connectionString = builder.ConnectionString;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<UserOrganization>($"""
             INSERT INTO "UserOrganization" ("UserId", "OrganizationId") 
@@ -4659,11 +4606,7 @@ namespace Accounting.Database
 
         IEnumerable<UserOrganization> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = databaseName;
-        string connectionString = builder.ConnectionString;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<UserOrganization>($"""
             INSERT INTO "UserOrganization" ("UserId", "OrganizationId") 
@@ -4687,11 +4630,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = databaseName;
-        string connectionString = builder.ConnectionString;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             DELETE FROM "UserOrganization" 
@@ -6493,11 +6432,20 @@ namespace Accounting.Database
 
     public ILoginWithoutPasswordManager GetLoginWithoutPasswordManager()
     {
-      return new LoginWithoutPasswordManager();
+      return new LoginWithoutPasswordManager(_databaseName);
     }
 
     public class LoginWithoutPasswordManager : ILoginWithoutPasswordManager
     {
+      private readonly string _connectionString;
+
+      public LoginWithoutPasswordManager(string databaseName)
+      {
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        builder.Database = databaseName;
+        _connectionString = builder.ToString();
+      }
+
       public LoginWithoutPassword Create(LoginWithoutPassword entity)
       {
         throw new NotImplementedException();
@@ -6515,7 +6463,7 @@ namespace Accounting.Database
 
         IEnumerable<LoginWithoutPassword> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<LoginWithoutPassword>("""
             INSERT INTO "LoginWithoutPassword" ("Code", "Email", "Expires") 
@@ -6534,7 +6482,7 @@ namespace Accounting.Database
 
       public async Task<int> DeleteAsync(LoginWithoutPassword loginWithoutPassword)
       {
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           return await con.ExecuteAsync("""
                 DELETE FROM "LoginWithoutPassword"
@@ -6548,7 +6496,7 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           return await con.ExecuteAsync("""
                 DELETE FROM "LoginWithoutPassword"
@@ -6574,7 +6522,7 @@ namespace Accounting.Database
 
         IEnumerable<LoginWithoutPassword> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<LoginWithoutPassword>("""
             SELECT * 

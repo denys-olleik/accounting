@@ -20,6 +20,7 @@ namespace Accounting.Controllers
     private readonly InvoiceLineService _invoiceLineService;
     private readonly BusinessEntityService _businessEntityService;
     private readonly RequestContext _requestContext;
+    private readonly InvoiceService _invoiceService;
 
     public InvoiceApiController(
       JournalService journalService, 
@@ -39,6 +40,7 @@ namespace Accounting.Controllers
       _invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
       _businessEntityService = new BusinessEntityService(requestContext.DatabaseName);
       _requestContext = requestContext;
+      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName);
     }
 
     [HttpGet("get-invoices")]
@@ -48,8 +50,7 @@ namespace Accounting.Controllers
       string inStatus = $"{Invoice.InvoiceStatusConstants.Unpaid},{Invoice.InvoiceStatusConstants.PartiallyPaid},{Invoice.InvoiceStatusConstants.Paid}",
       bool includeVoidInvoices = false)
     {
-      InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, _requestContext.DatabaseName);
-      var (invoices, nextPageNumber) = await invoiceService.GetAllAsync(
+      var (invoices, nextPageNumber) = await _invoiceService.GetAllAsync(
           page,
           pageSize,
           inStatus.Split(","),
@@ -74,12 +75,6 @@ namespace Accounting.Controllers
       {
         invoice.BusinessEntity = await _businessEntityService.GetAsync(invoice.BusinessEntityId, GetOrganizationId());
       }
-
-      //InvoiceLineService invoiceLineService = new InvoiceLineService();
-      //foreach (var invoice in invoices)
-      //{
-      //  invoice.InvoiceLines = await invoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId());
-      //}
 
       GetInvoicesViewModel getInvoicesViewModel = new GetInvoicesViewModel
       {
@@ -148,12 +143,6 @@ namespace Accounting.Controllers
       {
         invoice.BusinessEntity = await _businessEntityService.GetAsync(invoice.BusinessEntityId, GetOrganizationId());
       }
-
-      //InvoiceLineService invoiceLineService = new InvoiceLineService();
-      //foreach (var invoice in invoices)
-      //{
-      //  invoice.InvoiceLines = await invoiceLineService.GetByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId());
-      //}
 
       GetInvoicesViewModel getInvoicesViewModel = new GetInvoicesViewModel
       {
