@@ -64,7 +64,7 @@ namespace Accounting.Controllers
 
     [Route("receive-payment-for-invoice-ids")]
     [HttpPost]
-    public async Task<IActionResult> ReceivePaymentForInvoiceIds(ReceivePaymentForInvoiceIdsViewModel model)
+    public async Task<IActionResult> ReceivePaymentForInvoiceIds([FromForm] ReceivePaymentForInvoiceIdsViewModel model)
     {
       ValidationResult validationResult = await ValidateReceivePaymentForInvoiceIdsViewModel(model, _invoiceService);
 

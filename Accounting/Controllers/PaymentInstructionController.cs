@@ -15,8 +15,7 @@ namespace Accounting.Controllers
     private readonly PaymentInstructionService _paymentInstructionService;
 
     public PaymentInstructionController(
-      RequestContext requestContext, 
-      PaymentInstructionService paymentInstructionService)
+      RequestContext requestContext)
     { 
       _paymentInstructionService = new PaymentInstructionService(requestContext.DatabaseName);
     }
