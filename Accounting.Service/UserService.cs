@@ -53,9 +53,9 @@ namespace Accounting.Service
       return factoryManager.GetUserManager().UpdatePasswordAllTenantsAsync(email, password);
     }
 
-    public async Task<User> GetAsync(string email, string? databaseName)
+    public async Task<User> GetAsync(string email)
     {
-      var factoryManager = new FactoryManager(databaseName);
+      var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetUserManager().GetAsync(email);
     }
 

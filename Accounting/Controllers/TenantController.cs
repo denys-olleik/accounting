@@ -18,7 +18,6 @@ namespace Accounting.Controllers
     private readonly CloudServices _cloudServices;
     private readonly SecretService _secretService;
     private readonly DatabaseService _databaseService;
-    private readonly UserService _userService;
     private readonly OrganizationService _organizationService;
     private readonly UserOrganizationService _userOrganizationService;
 
@@ -28,7 +27,6 @@ namespace Accounting.Controllers
       CloudServices cloudServices,
       SecretService secretService,
       DatabaseService databaseService,
-      UserService userService,
       OrganizationService organizationService,
       UserOrganizationService userOrganizationService,
       RequestContext requestContext)
@@ -37,7 +35,6 @@ namespace Accounting.Controllers
       _cloudServices = cloudServices;
       _secretService = new SecretService(requestContext.DatabaseName);
       _databaseService = databaseService;
-      _userService = new UserService(requestContext.DatabaseName);
       _organizationService = new OrganizationService(requestContext.DatabaseName);
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
     }
@@ -177,6 +174,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
+      UserService _userService = new UserService(tenant.DatabaseName);
       User user = await _userService.GetAsync(int.Parse(userId));
 
       if (user == null)
@@ -217,6 +215,8 @@ namespace Accounting.Controllers
       {
         return NotFound();
       }
+
+      UserService _userService = new UserService(tenant.DatabaseName);
 
       User user = await _userService.GetAsync(int.Parse(userId));
       if (user == null)
@@ -310,7 +310,8 @@ namespace Accounting.Controllers
           model.SelectedOrganizationIdsCsv.Split(',').Where(id => !string.IsNullOrEmpty(id)));
       }
 
-      User user = await _userService.GetAsync(model.Email, tenant.DatabaseName);
+      UserService _userService = new UserService(tenant.DatabaseName);
+      User user = await _userService.GetAsync(model.Email);
 
       if (user != null)
       {
