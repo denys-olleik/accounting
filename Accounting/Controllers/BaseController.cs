@@ -1,6 +1,5 @@
-﻿using Accounting.Business;
-using Accounting.Service;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using static Accounting.Business.Claim;
 
@@ -11,17 +10,37 @@ namespace Accounting.Controllers
     [NonAction]
     public int GetUserId()
     {
-      ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
-      int userId = Convert.ToInt32(identity.Claims.SingleOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value);
-      return userId;
+      var identity = User?.Identity as ClaimsIdentity;
+      if (identity == null)
+      {
+        throw new InvalidOperationException("User identity is not available.");
+      }
+
+      var userIdClaim = identity.Claims.SingleOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+      if (userIdClaim == null)
+      {
+        throw new InvalidOperationException("User identifier claim is not available.");
+      }
+
+      return Convert.ToInt32(userIdClaim.Value);
     }
 
     [NonAction]
     public int GetOrganizationId()
     {
-      ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
-      int organizationId = Convert.ToInt32(identity.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.OrganizationId)?.Value);
-      return organizationId;
+      var identity = User?.Identity as ClaimsIdentity;
+      if (identity == null)
+      {
+        throw new InvalidOperationException("User identity is not available.");
+      }
+
+      var organizationIdClaim = identity.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.OrganizationId);
+      if (organizationIdClaim == null)
+      {
+        throw new InvalidOperationException("Organization identifier claim is not available.");
+      }
+
+      return Convert.ToInt32(organizationIdClaim.Value);
     }
 
     [NonAction]
@@ -34,17 +53,37 @@ namespace Accounting.Controllers
     [NonAction]
     public string GetEmail()
     {
-      ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
-      string email = identity.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-      return email;
+      var identity = User?.Identity as ClaimsIdentity;
+      if (identity == null)
+      {
+        throw new InvalidOperationException("User identity is not available.");
+      }
+
+      var emailClaim = identity.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Email);
+      if (emailClaim == null || string.IsNullOrEmpty(emailClaim.Value))
+      {
+        throw new InvalidOperationException("Email claim is not available or invalid.");
+      }
+
+      return emailClaim.Value;
     }
 
-    [NonAction]
+
     public string GetDatabaseName()
     {
-      ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
-      string databaseName = identity.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.DatabaseName)?.Value;
-      return databaseName;
+      var identity = User?.Identity as ClaimsIdentity;
+      if (identity == null)
+      {
+        throw new InvalidOperationException("User identity is not available.");
+      }
+
+      var databaseNameClaim = identity.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.DatabaseName);
+      if (databaseNameClaim == null || string.IsNullOrEmpty(databaseNameClaim.Value))
+      {
+        throw new InvalidOperationException("Database name claim is not available or invalid.");
+      }
+
+      return databaseNameClaim.Value;
     }
   }
 }
