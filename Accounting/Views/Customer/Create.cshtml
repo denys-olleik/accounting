@@ -103,7 +103,7 @@
 				 v-model="selectedCustomerType"
 				 name="SelectedCustomerType" />
 
-	<div class="margin-bottom-5px background-color-antiquewhite padding-10px">
+	<div class="margin-bottom-5px background-color-antiquewhite">
 		<label class="font-Roboto font-size-16px">Customer Type:</label>
 		<div class="display-flex flex-direction-column margin-top-5px">
 			<div v-for="customerType in customerTypes" :key="customerType" class="margin-bottom-5px">
@@ -117,7 +117,7 @@
 		</div>
 	</div>
 
-	<div class="margin-bottom-5px background-color-antiquewhite padding-10px">
+	<div class="margin-bottom-5px background-color-antiquewhite">
 		<label class="font-Roboto font-size-16px">Business Entity Types:</label>
 		<div class="display-flex flex-direction-column margin-top-5px">
 			<div v-for="type in availableBusinessEntityTypesCsv.split(',')" :key="type" class="margin-bottom-5px">
@@ -132,26 +132,28 @@
 		</div>
 	</div>
 
-	<div class="display-flex flex-direction-column">
-		<label asp-for="CompanyName"></label>
-		<input asp-for="CompanyName" class="margin-bottom-5px font-size-20px" />
+	<div class="margin-bottom-5px background-color-antiquewhite">
+		<label class="font-Roboto font-size-16px">Company Name:</label>
+		<input asp-for="CompanyName" class="margin-bottom-5px font-size-20px width-100" />
 	</div>
-	<div class="display-flex">
-		<div class="display-flex flex-1 flex-direction-column">
-			<label asp-for="FirstName"></label>
-			<input asp-for="FirstName" class="margin-bottom-5px font-size-20px" />
-		</div>
-		<div class="width-5px"></div>
-		<div class="display-flex flex-1 flex-direction-column">
-			<label asp-for="LastName"></label>
-			<input asp-for="LastName" class="margin-bottom-5px font-size-20px" />
+
+	<div class="margin-bottom-5px background-color-antiquewhite">
+		<div class="display-flex">
+			<div class="display-flex flex-1 flex-direction-column margin-right-5px">
+				<label class="font-Roboto font-size-16px">First Name:</label>
+				<input asp-for="FirstName" class="margin-bottom-5px font-size-20px width-100" />
+			</div>
+			<div class="display-flex flex-1 flex-direction-column">
+				<label class="font-Roboto font-size-16px">Last Name:</label>
+				<input asp-for="LastName" class="margin-bottom-5px font-size-20px width-100" />
+			</div>
 		</div>
 	</div>
 
 	<input type="hidden" name="AddressesJson" :value="JSON.stringify(addresses)" />
 	<input type="hidden" name="SelectedBusinessEntityTypesCsv" :value="selectedBusinessEntityTypesCsv" />
 
-	<div class="margin-bottom-5px background-color-antiquewhite padding-10px">
+	<div class="margin-bottom-5px background-color-antiquewhite">
 		<label class="font-Roboto font-size-16px">Addresses:</label>
 		<div class="display-flex flex-direction-column margin-top-5px">
 			<customer-address v-for="address in addresses"
@@ -165,7 +167,7 @@
 		</div>
 	</div>
 
-	<div class="margin-bottom-5px background-color-antiquewhite padding-10px">
+	<div class="margin-bottom-5px background-color-antiquewhite">
 		<label class="font-Roboto font-size-16px">Payment Terms:</label>
 		<div class="display-flex flex-direction-column">
 			<select asp-for="SelectedPaymentTermId" asp-items="@(new SelectList(Model.AvailablePaymentTerms, "ID", "DisplayText"))" class="margin-bottom-5px font-size-20px">
