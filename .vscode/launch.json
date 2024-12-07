@@ -1,0 +1,23 @@
+{
+   "version": "0.2.0",
+   "configurations": [
+      {
+         "type": "coreclr",
+         "request": "launch",
+         "name": "Launch Accounting App",
+         "program": "${workspaceFolder}/Accounting/bin/Debug/net8.0/Accounting.dll",
+         "args": [],
+         "cwd": "${workspaceFolder}/Accounting",
+         "stopAtEntry": false,
+         "preLaunchTask": "Launch Chrome",
+         "serverReadyAction": {
+            "action": "openExternally",
+            "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+            "uriFormat": "%s"
+         },
+         "env": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+         }
+      }
+   ]
+}
