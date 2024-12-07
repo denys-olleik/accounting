@@ -470,7 +470,6 @@ namespace Accounting.Controllers
     public async Task<IActionResult> ProvisionTenant(
       ProvisionTenantViewModel model)
     {
-      model.OrganizationId = GetOrganizationId();
 
       ProvisionTenantViewModel.ProvisionTenantViewModelValidator validator
         = new ProvisionTenantViewModel.ProvisionTenantViewModelValidator(_tenantService, _secretService);

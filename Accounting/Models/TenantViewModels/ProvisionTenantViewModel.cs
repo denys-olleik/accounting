@@ -10,7 +10,6 @@ namespace Accounting.Models.TenantViewModels
     public string? Email { get; set; }
     public bool Shared { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
-    public int OrganizationId { get; set; }
 
     public ValidationResult? ValidationResult { get; set; }
 
@@ -45,11 +44,6 @@ namespace Accounting.Models.TenantViewModels
                   .WithMessage("A tenant with this email already exists.");
               });
           });
-
-        RuleFor(x => x)
-          .MustAsync(async (model, cancellation) =>
-              await HasRequiredSecretsAsync(model.OrganizationId, model.Shared))
-          .WithMessage("The required secret keys are not available for provisioning a tenant.");
 
         RuleFor(x => x.FullyQualifiedDomainName)
           .NotEmpty()
