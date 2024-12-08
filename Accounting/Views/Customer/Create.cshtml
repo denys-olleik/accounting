@@ -7,7 +7,7 @@
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-	string headerText = "Create Customer and or Vendor";
+	string headerText = "Create customer and or vendor";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
@@ -100,7 +100,7 @@
 	<input type="hidden" id="selectedCustomerType" v-model="selectedCustomerType" name="SelectedCustomerType" />
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Customer Type:</label>
+		<label class="font-Roboto font-size-16px">Customer type:</label>
 		<div class="display-flex flex-direction-column margin-top-5px">
 			<div v-for="customerType in customerTypes" :key="customerType" class="margin-bottom-5px">
 				<input type="radio" :id="'customerType_' + customerType" :value="customerType"
@@ -111,7 +111,7 @@
 	</div>
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Business Entity Types:</label>
+		<label class="font-Roboto font-size-16px">Business entity types:</label>
 		<div class="display-flex flex-direction-column margin-top-5px">
 			<div v-for="type in availableBusinessEntityTypesCsv.split(',')" :key="type" class="margin-bottom-5px">
 				<input type="checkbox" :id="'entityType_' + type" :value="type"
@@ -123,18 +123,18 @@
 	</div>
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Company Name:</label>
+		<label class="font-Roboto font-size-16px">Company name:</label>
 		<input asp-for="CompanyName" class="font-size-20px width-100" />
 	</div>
 
 	<div class="display-flex margin-bottom-5px">
 		<div class="display-flex flex-1 flex-direction-column">
-			<label asp-for="FirstName" class="font-Roboto font-size-16px background-color-antiquewhite"></label>
+			<label asp-for="FirstName" class="font-Roboto font-size-16px background-color-antiquewhite">First name:</label>
 			<input asp-for="FirstName" class="font-size-20px" />
 		</div>
 		<div class="width-5px"></div>
 		<div class="display-flex flex-1 flex-direction-column">
-			<label asp-for="LastName" class="font-Roboto font-size-16px background-color-antiquewhite"></label>
+			<label asp-for="LastName" class="font-Roboto font-size-16px background-color-antiquewhite">Last name:</label>
 			<input asp-for="LastName" class="font-size-20px" />
 		</div>
 	</div>
@@ -148,13 +148,13 @@
 				@@confirm-removal="handleConfirmRemoval">
 			</customer-address>
 			<div class="background-color-antiquewhite">
-				<a href="#" @@click.prevent="addAddress" class="margin-bottom-5px">Add Address</a>
+				<a href="#" @@click.prevent="addAddress" class="margin-bottom-5px">Add address</a>
 			</div>
 		</div>
 	</div>
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Payment Terms:</label>
+		<label class="font-Roboto font-size-16px">Payment terms:</label>
 		<div class="display-flex flex-direction-column">
 			<select asp-for="SelectedPaymentTermId"
 				asp-items="@(new SelectList(Model.AvailablePaymentTerms, "ID", "DisplayText"))" class="font-size-20px">

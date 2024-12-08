@@ -68,7 +68,7 @@ namespace Accounting.Controllers
       return emailClaim.Value;
     }
 
-
+    [NonAction]
     public string GetDatabaseName()
     {
       var identity = User?.Identity as ClaimsIdentity;
@@ -84,6 +84,12 @@ namespace Accounting.Controllers
       }
 
       return databaseNameClaim.Value;
+    }
+
+    [NonAction]
+    public string? GetReferrerUrl()
+    {
+      return HttpContext.Request.Headers["Referer"].ToString();
     }
   }
 }
