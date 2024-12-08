@@ -2,8 +2,8 @@
 
 namespace Accounting.Models.BusinessEntityViewModels
 {
-    public class EditBusinessEntityViewModel : BusinessEntityViewModelBase
-    {
-        public int ID { get; set; }
-    }
+  public class EditBusinessEntityViewModel : BusinessEntityViewModelBase
+  {
+    public int ID { get; set; }
+  }
 }

@@ -2,8 +2,8 @@
 
 namespace Accounting.Models.BusinessEntityViewModels
 {
-    public class CreateBusinessEntityViewModel : BusinessEntityViewModelBase
-    {
+  public class CreateBusinessEntityViewModel : BusinessEntityViewModelBase
+  {
 
-    }
+  }
 }

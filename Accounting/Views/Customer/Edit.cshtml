@@ -1,13 +1,13 @@
 ﻿@model Accounting.Models.BusinessEntityViewModels.EditBusinessEntityViewModel
 
 @{
-	ViewData["Title"] = "Edit Customer and or Vendor - " + ConfigurationSingleton.Instance.ApplicationName;
+	ViewData["Title"] = "Update customer and or vendor - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-	string headerText = "Edit Customer and or Vendor";
+	string headerText = "Update customer and or vendor";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
@@ -38,7 +38,8 @@
 				<a href="#" class="color-white text-decoration-none" @@click.prevent="confirmRemoval">Confirm Remove</a>
 			</div>
 			<div>
-				<a href="#" class="color-white text-decoration-none" @@click.prevent="toggleConfirmationVisibility">Cancel</a>
+				<a href="#" class="color-white text-decoration-none"
+					 @@click.prevent="toggleConfirmationVisibility">Cancel</a>
 			</div>
 		</div>
 	</div>
@@ -48,34 +49,34 @@
 	<div class="display-flex flex-direction-column background-color-antiquewhite margin-bottom-5px">
 		<div class="display-flex flex-1 flex-direction-column">
 			<div class="display-flex flex-direction-column">
-				<label>Line 1</label>
+				<label>Line 1:</label>
 				<input type="text" class="font-size-20px width-100" v-model="address.addressLine1" required />
 			</div>
 			<div class="display-flex flex-direction-column">
-				<label>Line 2 (optional)</label>
+				<label>Line 2 (optional):</label>
 				<input type="text" class="font-size-20px width-100" v-model="address.addressLine2" />
 			</div>
 			<div class="display-flex max-width-768-flex-direction-column">
 				<div class="display-flex">
 					<div class="display-flex flex-1 flex-direction-column">
-						<label>City</label>
+						<label>City:</label>
 						<input type="text" class="font-size-20px width-100" v-model="address.city" required />
 					</div>
 					<div class="width-5px"></div>
 					<div class="display-flex flex-1 flex-direction-column">
-						<label>State/Province</label>
+						<label>State/Province:</label>
 						<input type="text" class="font-size-20px width-100" v-model="address.stateProvince" required />
 					</div>
 				</div>
 				<div class="width-5px"></div>
 				<div class="display-flex">
 					<div class="display-flex flex-1 flex-direction-column">
-						<label>Postal Code</label>
+						<label>Postal code:</label>
 						<input type="text" class="font-size-20px width-100" v-model="address.postalCode" required />
 					</div>
 					<div class="width-5px"></div>
 					<div class="display-flex flex-1 flex-direction-column">
-						<label>Country</label>
+						<label>Country:</label>
 						<input type="text" class="font-size-20px width-100" v-model="address.country" required />
 					</div>
 				</div>
@@ -95,22 +96,21 @@
 <form id="app" asp-action="Edit" asp-controller="Customer" method="post"
 			class="display-flex flex-direction-column margin-bottom-5px">
 
-	<input type="hidden" asp-for="ID" />
 	<input type="hidden" id="selectedCustomerType" v-model="selectedCustomerType" name="SelectedCustomerType" />
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Customer Type:</label>
+		<label class="font-Roboto font-size-16px">Customer type:</label>
 		<div class="display-flex flex-direction-column margin-top-5px">
 			<div v-for="customerType in customerTypes" :key="customerType" class="margin-bottom-5px">
-				<input type="radio" :id="'customerType_' + customerType" :value="customerType" v-model="selectedCustomerType"
-							 class="margin-right-5px" />
+				<input type="radio" :id="'customerType_' + customerType" :value="customerType"
+							 v-model="selectedCustomerType" class="margin-right-5px" />
 				<label :for="'customerType_' + customerType" class="font-Roboto font-size-16px">{{ customerType }}</label>
 			</div>
 		</div>
 	</div>
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Business Entity Types:</label>
+		<label class="font-Roboto font-size-16px">Business entity types:</label>
 		<div class="display-flex flex-direction-column margin-top-5px">
 			<div v-for="type in availableBusinessEntityTypesCsv.split(',')" :key="type" class="margin-bottom-5px">
 				<input type="checkbox" :id="'entityType_' + type" :value="type"
@@ -122,20 +122,19 @@
 	</div>
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Company Name:</label>
+		<label class="font-Roboto font-size-16px">Company name:</label>
 		<input asp-for="CompanyName" class="font-size-20px width-100" />
 	</div>
 
-	<div class="margin-bottom-5px background-color-antiquewhite">
-		<div class="display-flex">
-			<div class="display-flex flex-1 flex-direction-column margin-right-5px">
-				<label class="font-Roboto font-size-16px">First Name:</label>
-				<input asp-for="FirstName" class="font-size-20px width-100" />
-			</div>
-			<div class="display-flex flex-1 flex-direction-column">
-				<label class="font-Roboto font-size-16px">Last Name:</label>
-				<input asp-for="LastName" class="font-size-20px width-100" />
-			</div>
+	<div class="display-flex margin-bottom-5px">
+		<div class="display-flex flex-1 flex-direction-column">
+			<label asp-for="FirstName" class="font-Roboto font-size-16px background-color-antiquewhite">First name:</label>
+			<input asp-for="FirstName" class="font-size-20px" />
+		</div>
+		<div class="width-5px"></div>
+		<div class="display-flex flex-1 flex-direction-column">
+			<label asp-for="LastName" class="font-Roboto font-size-16px background-color-antiquewhite">Last name:</label>
+			<input asp-for="LastName" class="font-size-20px" />
 		</div>
 	</div>
 
@@ -148,22 +147,22 @@
 												@@confirm-removal="handleConfirmRemoval">
 			</customer-address>
 			<div class="background-color-antiquewhite">
-				<a href="#" @@click.prevent="addAddress" class="margin-bottom-5px">Add Address</a>
+				<a href="#" @@click.prevent="addAddress" class="margin-bottom-5px">Add address</a>
 			</div>
 		</div>
 	</div>
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Payment Terms:</label>
+		<label class="font-Roboto font-size-16px">Payment terms:</label>
 		<div class="display-flex flex-direction-column">
 			<select asp-for="SelectedPaymentTermId"
 							asp-items="@(new SelectList(Model.AvailablePaymentTerms, "ID", "DisplayText"))" class="font-size-20px">
-				<option value="">Select payment terms</option>
+				<option>Select payment terms</option>
 			</select>
 		</div>
 	</div>
 
-	<button type="submit" class="full-width-regular-button">Update Customer and or Vendor</button>
+	<button type="submit" class="full-width-regular-button">Create Customer and or Vendor</button>
 </form>
 
 @if (Model != null && Model.ValidationResult != null)
@@ -181,21 +180,24 @@
 <script>
 	const { createApp } = Vue;
 
-		const CustomerAddress = {
-		name: 'CustomerAddress',
-		template: '#customer-address-template',
-		components: {
-			'address-removal': AddressRemoval
-		},
-		methods: {
-			confirmRemoval() {
-				this.$emit('remove-address', this.address);
+	const CustomerType = {
+		name: 'CustomerType',
+		template: '#customer-type-template',
+		props: ['customerType', 'selectedCustomerType'],
+		emits: ['select-customer-type'],
+		computed: {
+			isSelected() {
+				return this.customerType === this.selectedCustomerType;
 			}
 		},
-		props: ['address']
-	};
+		methods: {
+			selectCustomerType() {
+				this.$emit('select-customer-type', this.customerType);
+			}
+		}
+	}
 
-		const AddressRemoval = {
+	const AddressRemoval = {
 		name: 'AddressRemoval',
 		template: '#address-line-removal-template',
 		props: ['address'],
@@ -212,12 +214,43 @@
 				this.$emit('confirm-removal', this.address);
 			},
 		},
+	}
+
+	const CustomerAddress = {
+		name: 'CustomerAddress',
+		template: '#customer-address-template',
+		components: {
+			'address-removal': AddressRemoval
+		},
+		props: ['address'],
+		methods: {
+			confirmRemoval() {
+				this.$emit('remove-address', this.address);
+			}
+		}
+	}
+
+	const AvailableBusinessEntityTypesAndSelectedEntityType = {
+		name: 'AvailableBusinessEntityTypesAndSelectedEntityType',
+		template: '#available-business-entity-types-and-selected-entity-types-template',
+		props: ['availableBusinessEntityTypesCsv', 'selectedBusinessEntityTypesCsv'],
+		emits: ['type-selected'],
+		methods: {
+			selectType(type) {
+				this.$emit('type-selected', type);
+			},
+			isSelected(type) {
+				return this.selectedBusinessEntityTypesCsv.includes(type);
+			}
+		}
 	};
 
 	const app = createApp({
 		components: {
+			'customer-type': CustomerType,
 			'customer-address': CustomerAddress,
-			'address-removal': AddressRemoval
+			'address-removal': AddressRemoval,
+			'available-business-entity-types-and-selected-entity-types': AvailableBusinessEntityTypesAndSelectedEntityType,
 		},
 		data() {
 			return {
@@ -239,6 +272,10 @@
 				}
 
 				this.selectedBusinessEntityTypesCsv = selectedTypesArray.join(',');
+			},
+			selectType(customerType) {
+				console.log(customerType);
+				this.selectedCustomerType = customerType;
 			},
 			addAddress() {
 				this.addresses.push({
