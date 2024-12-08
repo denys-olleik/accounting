@@ -28,29 +28,25 @@
 </template>
 
 <template id="address-line-removal-template">
-	<div class="display-flex flex-direction-column background-color-red justify-content-space-around">
-		<div v-if="!isRemoveConfirmationVisible"
-			:class="{ 'border-bottom-2px-solid-white': isRemoveConfirmationVisible }">
-			<a href="#" class="color-white text-decoration-none"
-				:class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }"
-				@@click.prevent="toggleConfirmationVisibility">remove</a>
+	<div class="background-color-red text-align-center">
+		<div v-if="!isRemoveConfirmationVisible">
+			<a href="#" class="color-white text-decoration-none width-100 display-block"
+				@@click.prevent="toggleConfirmationVisibility">Remove</a>
 		</div>
-		<div v-if="isRemoveConfirmationVisible" class="display-flex flex-1 flex-direction-column">
-			<div class="flex-1"></div>
-			<div class="display-flex flex-direction-column">
-				<div class="text-align-center"><a class="text-decoration-none color-white" href="#"
-						@@click.prevent="confirmRemoval">remove</a></div>
-				<div class="height-5px"></div>
-				<div class="text-align-center"><a class="text-decoration-none color-white" href="#"
-						@@click.prevent="toggleConfirmationVisibility">cancel</a></div>
+		<div v-else>
+			<div class="margin-bottom-5px">
+				<a href="#" class="color-white text-decoration-none" @@click.prevent="confirmRemoval">Confirm Remove</a>
 			</div>
-			<div class="flex-1"></div>
+			<div>
+				<a href="#" class="color-white text-decoration-none"
+					@@click.prevent="toggleConfirmationVisibility">Cancel</a>
+			</div>
 		</div>
 	</div>
 </template>
 
 <template id="customer-address-template">
-	<div class="display-flex background-color-antiquewhite margin-bottom-5px">
+	<div class="display-flex flex-direction-column background-color-antiquewhite margin-bottom-5px">
 		<div class="display-flex flex-1 flex-direction-column">
 			<div class="display-flex flex-direction-column">
 				<label>Line 1</label>
@@ -74,7 +70,6 @@
 				</div>
 				<div class="width-5px"></div>
 				<div class="display-flex">
-					<div class="width-5px"></div>
 					<div class="display-flex flex-1 flex-direction-column">
 						<label>Postal Code</label>
 						<input type="text" class="font-size-20px width-100" v-model="address.postalCode" required />
@@ -87,11 +82,15 @@
 				</div>
 			</div>
 		</div>
-		<div class="width-5px">
+		<!-- Updated position of address-removal -->
+		<div class="display-flex">
+			<div class="flex-1"></div>
+			<div>
+				<address-removal :address="address" @@confirm-removal="$emit('confirm-removal', address)"
+					@@cancel-removal="$emit('cancel-removal', address)">
+				</address-removal>
+			</div>
 		</div>
-		<address-removal :address="address" @@confirm-removal="$emit('confirm-removal', address)"
-			@@cancel-removal="$emit('cancel-removal', address)">
-		</address-removal>
 	</div>
 </template>
 
