@@ -22,12 +22,12 @@
 
 <form asp-action="Create" asp-controller="PaymentTerm" method="post" class="display-flex flex-direction-column margin-bottom-5px">
   <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label asp-for="Description" class="font-Roboto font-size-16px background-color-antiquewhite"></label>
-    <input asp-for="Description" class="font-size-16px margin-bottom-5px" required />
+    <label asp-for="Description" class="font-Roboto font-size-16px background-color-antiquewhite">Description:</label>
+    <input asp-for="Description" class="font-size-20px" required />
   </div>
   <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label asp-for="DaysUntilDue" class="font-Roboto font-size-16px background-color-antiquewhite"></label>
-    <input asp-for="DaysUntilDue" class="font-size-16px margin-bottom-5px" required />
+    <label asp-for="DaysUntilDue" class="font-Roboto font-size-16px background-color-antiquewhite">Days until due:</label>
+    <input asp-for="DaysUntilDue" class="font-size-20px" required />
   </div>
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <button type="submit" class="full-width-regular-button">Create Payment Term</button>
