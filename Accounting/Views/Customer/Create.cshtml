@@ -50,8 +50,8 @@
 </template>
 
 <template id="customer-address-template">
-	<div class="display-flex margin-bottom-5px">
-		<div class="display-flex flex-1 flex-direction-column border-1px-solid-darkgray margin-bottom-5px">
+	<div class="display-flex">
+		<div class="display-flex flex-1 flex-direction-column margin-bottom-5px">
 			<div class="display-flex flex-direction-column">
 				<label>Line 1</label>
 				<input type="text" class="font-size-20px width-100" v-model="address.addressLine1" required />
@@ -134,18 +134,18 @@
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
 		<label class="font-Roboto font-size-16px">Company Name:</label>
-		<input asp-for="CompanyName" class="margin-bottom-5px font-size-20px width-100" />
+		<input asp-for="CompanyName" class="font-size-20px width-100" />
 	</div>
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
 		<div class="display-flex">
 			<div class="display-flex flex-1 flex-direction-column margin-right-5px">
 				<label class="font-Roboto font-size-16px">First Name:</label>
-				<input asp-for="FirstName" class="margin-bottom-5px font-size-20px width-100" />
+				<input asp-for="FirstName" class="font-size-20px width-100" />
 			</div>
 			<div class="display-flex flex-1 flex-direction-column">
 				<label class="font-Roboto font-size-16px">Last Name:</label>
-				<input asp-for="LastName" class="margin-bottom-5px font-size-20px width-100" />
+				<input asp-for="LastName" class="font-size-20px width-100" />
 			</div>
 		</div>
 	</div>
@@ -153,7 +153,7 @@
 	<input type="hidden" name="AddressesJson" :value="JSON.stringify(addresses)" />
 	<input type="hidden" name="SelectedBusinessEntityTypesCsv" :value="selectedBusinessEntityTypesCsv" />
 
-	<div class="margin-bottom-5px background-color-antiquewhite">
+	<div class="margin-bottom-5px">
 		<label class="font-Roboto font-size-16px">Addresses:</label>
 		<div class="display-flex flex-direction-column margin-top-5px">
 			<customer-address v-for="address in addresses"
@@ -170,7 +170,7 @@
 	<div class="margin-bottom-5px background-color-antiquewhite">
 		<label class="font-Roboto font-size-16px">Payment Terms:</label>
 		<div class="display-flex flex-direction-column">
-			<select asp-for="SelectedPaymentTermId" asp-items="@(new SelectList(Model.AvailablePaymentTerms, "ID", "DisplayText"))" class="margin-bottom-5px font-size-20px">
+			<select asp-for="SelectedPaymentTermId" asp-items="@(new SelectList(Model.AvailablePaymentTerms, "ID", "DisplayText"))" class="font-size-20px">
 				<option>Select payment terms</option>
 			</select>
 		</div>

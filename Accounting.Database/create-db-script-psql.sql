@@ -64,17 +64,17 @@ CREATE TABLE "LoginWithoutPassword"
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
-CREATE TABLE "Cloud"
-(
-	"CloudID" SERIAL PRIMARY KEY NOT NULL,
-	"Name" VARCHAR(100) NOT NULL,
-	"Description" TEXT NULL,
-	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-	"CreatedById" INT NOT NULL,
-	"OrganizationId" INT NOT NULL,
-	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
-);
+-- CREATE TABLE "Cloud"
+-- (
+-- 	"CloudID" SERIAL PRIMARY KEY NOT NULL,
+-- 	"Name" VARCHAR(100) NOT NULL,
+-- 	"Description" TEXT NULL,
+-- 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+-- 	"CreatedById" INT NOT NULL,
+-- 	"OrganizationId" INT NOT NULL,
+-- 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
+-- 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+-- );
 
 CREATE TABLE "Reconciliation"
 (

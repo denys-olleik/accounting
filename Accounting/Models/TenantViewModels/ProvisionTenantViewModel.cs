@@ -17,14 +17,12 @@ namespace Accounting.Models.TenantViewModels
      : AbstractValidator<ProvisionTenantViewModel>
     {
       private readonly TenantService _tenantService;
-      private readonly SecretService _secretService;
 
       public ProvisionTenantViewModelValidator(
           TenantService tenantService,
           SecretService secretService)
       {
         _tenantService = tenantService;
-        _secretService = secretService;
 
         RuleFor(x => x.Email)
           .NotEmpty()
@@ -49,25 +47,6 @@ namespace Accounting.Models.TenantViewModels
           .NotEmpty()
           .When(x => !x.Shared)
           .WithMessage("'Fully Qualified Domain Name' is required when 'Shared' is not selected.");
-      }
-
-      private async Task<bool> HasRequiredSecretsAsync(int organizationId, bool isShared)
-      {
-        var emailSecret = await _secretService.GetAsync(
-            Secret.SecretTypeConstants.Email,
-            organizationId);
-
-        if (isShared)
-        {
-          return emailSecret != null;
-        }
-        else
-        {
-          var cloudSecret = await _secretService.GetAsync(
-              Secret.SecretTypeConstants.Cloud,
-              organizationId);
-          return emailSecret != null && cloudSecret != null;
-        }
       }
     }
   }

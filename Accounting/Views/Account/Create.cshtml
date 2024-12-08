@@ -116,7 +116,7 @@
     props: ['accountTypes'],
     data() {
       return {
-        selectedAccountType: '@Model.SelectedAccountType' || '',
+        selectedAccountType: '@Model!.SelectedAccountType' || '',
       };
     },
   };
