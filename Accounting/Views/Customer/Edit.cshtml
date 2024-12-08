@@ -1,189 +1,167 @@
 ﻿@model Accounting.Models.BusinessEntityViewModels.EditBusinessEntityViewModel
 
 @{
-  ViewData["Title"] = "Update Customer and or Vendor - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Edit Customer and or Vendor - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-  string headerText = "Update Customer and or Vendor";
+  string headerText = "Edit Customer and or Vendor";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <template id="customer-type-template">
-  <a href=""
-     @@click.prevent="selectCustomerType"
-     :class="{ 'background-color-dodgerblue': isSelected, 'color-white': isSelected }"
-     class="text-decoration-none border-1px-solid-dodgerblue padding-2px">
+  <a href="" @@click.prevent="selectCustomerType"
+    :class="{ 'background-color-dodgerblue': isSelected, 'color-white': isSelected }"
+    class="text-decoration-none border-1px-solid-dodgerblue padding-2px">
     {{ customerType }}
   </a>
 </template>
 
 <template id="available-business-entity-types-and-selected-entity-types-template">
-  <a href="" v-for="type in availableBusinessEntityTypesCsv.split(',')"
-     @@click.prevent="selectType(type)"
-     :class="{ 'background-color-dodgerblue': isSelected(type), 'color-white': isSelected(type) }"
-     class="text-decoration-none border-1px-solid-dodgerblue padding-2px">
+  <a href="" v-for="type in availableBusinessEntityTypesCsv.split(',')" @@click.prevent="selectType(type)"
+    :class="{ 'background-color-dodgerblue': isSelected(type), 'color-white': isSelected(type) }"
+    class="text-decoration-none border-1px-solid-dodgerblue padding-2px">
     {{ type }}
   </a>
 </template>
 
 <template id="address-line-removal-template">
-  <div class="display-flex flex-direction-column background-color-red justify-content-space-around">
-    <div v-if="!isRemoveConfirmationVisible" :class="{ 'border-bottom-2px-solid-white': isRemoveConfirmationVisible }">
-      <a href="#" class="color-white text-decoration-none" :class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }" @@click.prevent="toggleConfirmationVisibility">remove</a>
+  <div class="background-color-red text-align-center">
+    <div v-if="!isRemoveConfirmationVisible">
+      <a href="#" class="color-white text-decoration-none width-100 display-block"
+        @@click.prevent="toggleConfirmationVisibility">Remove</a>
     </div>
-    <div v-if="isRemoveConfirmationVisible" class="display-flex flex-1 flex-direction-column">
-      <div class="flex-1"></div>
-      <div class="display-flex flex-direction-column">
-        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="confirmRemoval">remove</a></div>
-        <div class="height-5px"></div>
-        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="toggleConfirmationVisibility">cancel</a></div>
+    <div v-else>
+      <div class="margin-bottom-5px">
+        <a href="#" class="color-white text-decoration-none" @@click.prevent="confirmRemoval">Confirm Remove</a>
       </div>
-      <div class="flex-1"></div>
+      <div>
+        <a href="#" class="color-white text-decoration-none" @@click.prevent="toggleConfirmationVisibility">Cancel</a>
+      </div>
     </div>
   </div>
 </template>
 
 <template id="customer-address-template">
-  <div class="display-flex margin-bottom-5px">
-    <div class="display-flex flex-1 flex-direction-column border-1px-solid-darkgray margin-bottom-5px">
+  <div class="display-flex flex-direction-column background-color-antiquewhite margin-bottom-5px">
+    <div class="display-flex flex-1 flex-direction-column">
       <div class="display-flex flex-direction-column">
-        <label>Extra Above Address (optional)</label>
-        <textarea rows="2" class="font-size-20px width-100" v-model="address.extraAboveAddress"></textarea>
-      </div>
-      <div class="display-flex flex-direction-column">
-        <label class="background-color-lightblue">Line 1</label>
-        <input type="text" class="font-size-20px width-100 background-color-lightblue"
-               v-model="address.addressLine1" required />
+        <label>Line 1</label>
+        <input type="text" class="font-size-20px width-100" v-model="address.addressLine1" required />
       </div>
       <div class="display-flex flex-direction-column">
         <label>Line 2 (optional)</label>
         <input type="text" class="font-size-20px width-100" v-model="address.addressLine2" />
       </div>
-      <div class="display-flex flex-direction-column">
-        <label>Extra Below Address (optional)</label>
-        <textarea rows="2" class="font-size-20px width-100" v-model="address.extraBelowAddress"></textarea>
-      </div>
       <div class="display-flex max-width-768-flex-direction-column">
         <div class="display-flex">
           <div class="display-flex flex-1 flex-direction-column">
             <label>City</label>
-            <input type="text"
-                   class="font-size-20px width-100"
-                   v-model="address.city" required />
+            <input type="text" class="font-size-20px width-100" v-model="address.city" required />
           </div>
           <div class="width-5px"></div>
           <div class="display-flex flex-1 flex-direction-column">
             <label>State/Province</label>
-            <input type="text" class="font-size-20px width-100"
-                   v-model="address.stateProvince" required />
+            <input type="text" class="font-size-20px width-100" v-model="address.stateProvince" required />
           </div>
         </div>
         <div class="width-5px"></div>
         <div class="display-flex">
-          <div class="width-5px"></div>
           <div class="display-flex flex-1 flex-direction-column">
             <label>Postal Code</label>
-            <input type="text" class="font-size-20px width-100"
-                   v-model="address.postalCode" required />
+            <input type="text" class="font-size-20px width-100" v-model="address.postalCode" required />
           </div>
           <div class="width-5px"></div>
           <div class="display-flex flex-1 flex-direction-column">
             <label>Country</label>
-            <input type="text" class="font-size-20px width-100"
-                   v-model="address.country" required />
+            <input type="text" class="font-size-20px width-100" v-model="address.country" required />
           </div>
         </div>
       </div>
     </div>
-    <div class="width-5px">
+    <div class="display-flex">
+      <div class="flex-1"></div>
+      <div>
+        <address-removal :address="address" @@confirm-removal="$emit('confirm-removal', address)"
+          @@cancel-removal="$emit('cancel-removal', address)">
+        </address-removal>
+      </div>
     </div>
-    <address-removal :address="address"
-                     @@confirm-removal="$emit('confirm-removal', address)"
-                     @@cancel-removal="$emit('cancel-removal', address)">
-    </address-removal>
-  </div>
-</template>
-
-<template id="payment-term-and-available-payment-terms-template">
-  <div class="display-flex flex-direction-column">
-    <select name="PaymentTermId" v-model="paymentTermId" class="font-size-20px margin-bottom-5px">
-      <option value="">Select Payment Term</option>
-      <option v-for="paymentTerm in availablePaymentTerms" :value="paymentTerm.id" :key="paymentTerm.id">{{ paymentTerm.description }}</option>
-    </select>
   </div>
 </template>
 
 <form id="app" asp-action="Edit" asp-controller="Customer" method="post"
-      class="display-flex flex-direction-column margin-bottom-5px">
-  <input type="hidden"
-         id="selectedCustomerType"
-         v-model="selectedCustomerType"
-         name="SelectedCustomerType" />
+  class="display-flex flex-direction-column margin-bottom-5px">
 
-  <input type="hidden" name="SelectedPaymentTermId" v-bind:value="paymentTerm?.id ? paymentTerm.id : ''" />
+  <input type="hidden" asp-for="ID" />
+  <input type="hidden" id="selectedCustomerType" v-model="selectedCustomerType" name="SelectedCustomerType" />
 
-  <fieldset class="margin-bottom-5px">
-    <legend>Entity Type</legend>
-    <div class="display-flex justify-content-space-around">
-      <customer-type v-for="customerType in customerTypes"
-                     :key="customerType"
-                     :customer-type="customerType"
-                     :selected-customer-type="selectedCustomerType"
-                     @@select-customer-type="selectType">
-      </customer-type>
+  <div class="margin-bottom-5px background-color-antiquewhite">
+    <label class="font-Roboto font-size-16px">Customer Type:</label>
+    <div class="display-flex flex-direction-column margin-top-5px">
+      <div v-for="customerType in customerTypes" :key="customerType" class="margin-bottom-5px">
+        <input type="radio" :id="'customerType_' + customerType" :value="customerType" v-model="selectedCustomerType"
+          class="margin-right-5px" />
+        <label :for="'customerType_' + customerType" class="font-Roboto font-size-16px">{{ customerType }}</label>
+      </div>
     </div>
-  </fieldset>
-
-  <fieldset class="margin-bottom-5px">
-    <legend>Business Entity Types</legend>
-    <div class="display-flex justify-content-space-around">
-      <available-business-entity-types-and-selected-entity-types :available-business-entity-types-csv="availableBusinessEntityTypesCsv"
-                                                                 :selected-business-entity-types-csv="selectedBusinessEntityTypesCsv"
-                                                                 @@type-selected="typeSelected">
-      </available-business-entity-types-and-selected-entity-types>
-    </div>
-  </fieldset>
-
-  <div class="display-flex flex-direction-column">
-    <label asp-for="CompanyName"></label>
-    <input asp-for="CompanyName" class="margin-bottom-5px font-size-20px" />
   </div>
-  <div class="display-flex">
-    <div class="display-flex flex-1 flex-direction-column">
-      <label asp-for="FirstName"></label>
-      <input asp-for="FirstName" class="margin-bottom-5px font-size-20px" />
+
+  <div class="margin-bottom-5px background-color-antiquewhite">
+    <label class="font-Roboto font-size-16px">Business Entity Types:</label>
+    <div class="display-flex flex-direction-column margin-top-5px">
+      <div v-for="type in availableBusinessEntityTypesCsv.split(',')" :key="type" class="margin-bottom-5px">
+        <input type="checkbox" :id="'entityType_' + type" :value="type"
+          :checked="selectedBusinessEntityTypesCsv.includes(type)" @@change="typeSelected(type)"
+          class="margin-right-5px" />
+        <label :for="'entityType_' + type" class="font-Roboto font-size-16px">{{ type }}</label>
+      </div>
     </div>
-    <div class="width-5px"></div>
-    <div class="display-flex flex-1 flex-direction-column">
-      <label asp-for="LastName"></label>
-      <input asp-for="LastName" class="margin-bottom-5px font-size-20px" />
+  </div>
+
+  <div class="margin-bottom-5px background-color-antiquewhite">
+    <label class="font-Roboto font-size-16px">Company Name:</label>
+    <input asp-for="CompanyName" class="font-size-20px width-100" />
+  </div>
+
+  <div class="margin-bottom-5px background-color-antiquewhite">
+    <div class="display-flex">
+      <div class="display-flex flex-1 flex-direction-column margin-right-5px">
+        <label class="font-Roboto font-size-16px">First Name:</label>
+        <input asp-for="FirstName" class="font-size-20px width-100" />
+      </div>
+      <div class="display-flex flex-1 flex-direction-column">
+        <label class="font-Roboto font-size-16px">Last Name:</label>
+        <input asp-for="LastName" class="font-size-20px width-100" />
+      </div>
     </div>
   </div>
 
   <input type="hidden" name="AddressesJson" :value="JSON.stringify(addresses)" />
-  <input type="hidden" name="SelectedBusinessEntityTypesCSV" :value="selectedBusinessEntityTypesCsv" />
+  <input type="hidden" name="SelectedBusinessEntityTypesCsv" :value="selectedBusinessEntityTypesCsv" />
 
-  <fieldset class="margin-bottom-5px">
-    <legend>Addresses</legend>
-    <customer-address v-for="address in addresses"
-                      :key="address.id"
-                      :address="address"
-                      @@confirm-removal="handleConfirmRemoval">
-    </customer-address>
-    <div>
-      <a href="#" @@click.prevent="addAddress" class="margin-bottom-5px">Add Address</a>
+  <div class="margin-bottom-5px">
+    <div class="display-flex flex-direction-column">
+      <customer-address v-for="address in addresses" :key="address.id" :address="address"
+        @@confirm-removal="handleConfirmRemoval">
+      </customer-address>
+      <div class="background-color-antiquewhite">
+        <a href="#" @@click.prevent="addAddress" class="margin-bottom-5px">Add Address</a>
+      </div>
     </div>
-  </fieldset>
+  </div>
 
-  <fieldset class="margin-bottom-5px">
-    <legend>Payment Term</legend>
-    <payment-term-and-available-payment-terms v-model:payment-term="paymentTerm"
-                                              :available-payment-terms="availablePaymentTerms">
-    </payment-term-and-available-payment-terms>
-  </fieldset>
+  <div class="margin-bottom-5px background-color-antiquewhite">
+    <label class="font-Roboto font-size-16px">Payment Terms:</label>
+    <div class="display-flex flex-direction-column">
+      <select asp-for="SelectedPaymentTermId"
+        asp-items="@(new SelectList(Model.AvailablePaymentTerms, "ID", "DisplayText"))" class="font-size-20px">
+        <option>Select payment terms</option>
+      </select>
+    </div>
+  </div>
 
   <button type="submit" class="full-width-regular-button">Update Customer and or Vendor</button>
 </form>
@@ -203,103 +181,12 @@
 <script>
   const { createApp } = Vue;
 
-  const CustomerType = {
-    name: 'CustomerType',
-    template: '#customer-type-template',
-    props: ['customerType', 'selectedCustomerType'],
-    emits: ['select-customer-type'],
-    computed: {
-      isSelected() {
-        return this.customerType === this.selectedCustomerType;
-      }
-    },
-    methods: {
-      selectCustomerType() {
-        this.$emit('select-customer-type', this.customerType);
-      }
-    }
-  };
-
-  const AddressRemoval = {
-    name: 'AddressRemoval',
-    template: '#address-line-removal-template',
-    props: ['address'],
-    data() {
-      return {
-        isRemoveConfirmationVisible: false
-      }
-    },
-    methods: {
-      toggleConfirmationVisibility() {
-        this.isRemoveConfirmationVisible = !this.isRemoveConfirmationVisible;
-      },
-      confirmRemoval() {
-        this.$emit('confirm-removal', this.address);
-      },
-    },
-  };
-
-  const CustomerAddress = {
-    name: 'CustomerAddress',
-    template: '#customer-address-template',
-    components: {
-      'address-removal': AddressRemoval
-    },
-    props: ['address'],
-    methods: {
-      confirmRemoval() {
-        this.$emit('remove-address', this.address);
-      }
-    }
-  };
-
-  const PaymentTermAndAvailablePaymentTerms = {
-    name: 'PaymentTermAndAvailablePaymentTerms',
-    template: '#payment-term-and-available-payment-terms-template',
-    props: ['availablePaymentTerms', 'paymentTerm'],
-    computed: {
-      paymentTermId: {
-        get() {
-          return this.paymentTerm ? this.paymentTerm.id : "";
-        },
-        set(value) {
-          const selectedTerm = this.availablePaymentTerms.find(term => term.id == value);
-          this.$emit('update:paymentTerm', selectedTerm);
-        }
-      }
-    }
-  };
-
-  const AvailableBusinessEntityTypesAndSelectedEntityType = {
-    name: 'AvailableBusinessEntityTypesAndSelectedEntityType',
-    template: '#available-business-entity-types-and-selected-entity-types-template',
-    props: ['availableBusinessEntityTypesCsv', 'selectedBusinessEntityTypesCsv'],
-    emits: ['type-selected'],
-    methods: {
-      selectType(type) {
-        this.$emit('type-selected', type);
-      },
-      isSelected(type) {
-        return this.selectedBusinessEntityTypesCsv.includes(type);
-      }
-    }
-  };
-
   const app = createApp({
-    components: {
-      'customer-type': CustomerType,
-      'customer-address': CustomerAddress,
-      'address-removal': AddressRemoval,
-      'payment-term-and-available-payment-terms': PaymentTermAndAvailablePaymentTerms,
-      'available-business-entity-types-and-selected-entity-types': AvailableBusinessEntityTypesAndSelectedEntityType,
-    },
     data() {
       return {
         customerTypes: @Html.Raw(Json.Serialize(Model.CustomerTypes)),
         selectedCustomerType: '@(Model.SelectedCustomerType != null ? Model.SelectedCustomerType : "")',
-        addresses: @(Model.Addresses != null ? Json.Serialize(Model.Addresses) : "[]"),
-        paymentTerm: @Html.Raw(Json.Serialize(Model.PaymentTerm)),
-        availablePaymentTerms: @Html.Raw(Json.Serialize(Model.AvailablePaymentTerms)),
+        addresses: @Html.Raw(Model.AddressesJson ?? "[]"),
         availableBusinessEntityTypesCsv: '@Model.AvailableBusinessEntityTypesCsv',
         selectedBusinessEntityTypesCsv: '@Model.SelectedBusinessEntityTypesCsv',
       };
@@ -316,17 +203,11 @@
 
         this.selectedBusinessEntityTypesCsv = selectedTypesArray.join(',');
       },
-      selectType(customerType) {
-        console.log(customerType);
-        this.selectedCustomerType = customerType;
-      },
       addAddress() {
         this.addresses.push({
           id: Date.now().toString(),
-          extraAboveAddress: '',
           addressLine1: '',
           addressLine2: '',
-          extraBelowAddress: '',
           city: '',
           stateProvince: '',
           postalCode: '',
