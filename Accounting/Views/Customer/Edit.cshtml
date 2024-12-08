@@ -192,9 +192,29 @@
     props: ['address']
   };
 
+    const AddressRemoval = {
+    name: 'AddressRemoval',
+    template: '#address-line-removal-template',
+    props: ['address'],
+    data() {
+      return {
+        isRemoveConfirmationVisible: false
+      }
+    },
+    methods: {
+      toggleConfirmationVisibility() {
+        this.isRemoveConfirmationVisible = !this.isRemoveConfirmationVisible;
+      },
+      confirmRemoval() {
+        this.$emit('confirm-removal', this.address);
+      },
+    },
+  };
+
   const app = createApp({
     components: {
-      'customer-address': CustomerAddress
+      'customer-address': CustomerAddress,
+      'address-removal': AddressRemoval
     },
     data() {
       return {
