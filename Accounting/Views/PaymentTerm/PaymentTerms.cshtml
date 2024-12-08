@@ -1,62 +1,92 @@
 ﻿@model Accounting.Models.PaymentTermViewModels.PaymentTermsViewModel
 
 @{
-    ViewData["Title"] = "Payment Terms - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Payment Terms - " + ConfigurationSingleton.Instance.ApplicationName;
 }
-
-<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
   string headerText = "Payment Terms";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
-<template id="payment-term-template">
-    <div class="display-flex margin-bottom-5px"
-         :data-payment-term-id="paymentTerm.id">
-        <div class="display-flex flex-direction-column flex-1 padding-left-2px">
-            <a href="" @@click.prevent class="text-decoration-none background-color-dodgerblue padding-2px color-white border-radius-5px">
-                {{ paymentTerm.description }} {{ paymentTerm.daysUntilDue }}
-            </a>
-        </div>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div class="margin-left-20px">
+    <a asp-action="Create" asp-controller="PaymentTerm" class="font-Roboto font-size-16px color-blue">Create Payment Term</a>
+  </div>
+  <div class="margin-left-20px flex-1 text-align-right">
+    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue">Home</a>
+  </div>
+</div>
+
+<template id="payment-term-action-template">
+  <div class="display-flex padding-top-bottom-2px align-items-center">
+    <div class="flex-1">
+      <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ paymentTerm.Description }}</a>
     </div>
+    <div v-if="isExpanded" class="display-flex align-items-center">
+      <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px">
+        <a :href="'/payment-terms/delete/' + paymentTerm.ID" class="font-size-16px font-Roboto color-white text-decoration-none">
+          delete
+        </a>
+      </div>
+    </div>
+  </div>
 </template>
 
 <div id="app">
-    <payment-term v-for="paymentTerm in paymentTerms"
-                  :payment-term="paymentTerm"
-                  :key="paymentTerm.id">
-    </payment-term>
-
+  <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th class="text-align-left padding-right-20px">Payment Term</th>
+      </tr>
+    </thead>
+    <tbody class="font-Roboto-Mono">
+      <template v-for="paymentTerm in paymentTerms" :key="paymentTerm.ID">
+        <tr>
+          <td class="padding-right-20px">
+            <payment-term-action :payment-term="paymentTerm"
+                                 :is-expanded="paymentTerm.ID === expandedPaymentTermId"
+                                 @@expand="handlePaymentTermExpand(paymentTerm.ID)">
+            </payment-term-action>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
 </div>
 
 <script>
-    const { createApp } = Vue;
+  const { createApp } = Vue;
 
-    const PaymentTerm = {
-        name: 'PaymentTerm',
-        template: '#payment-term-template',
-        props: ['paymentTerm']
-    };
+  const PaymentTermAction = {
+    name: 'PaymentTermAction',
+    props: ['paymentTerm', 'isExpanded'],
+    template: '#payment-term-action-template',
+    methods: {
+      toggleAction() {
+        this.$emit('expand');
+      }
+    }
+  };
 
-    const app = createApp({
-        components: {
-            'payment-term': PaymentTerm
-        },
-        data() {
-            const paymentTerms = @Html.Raw(Json.Serialize(Model.PaymentTerms));
-            // Check that all payment terms have an id
-            paymentTerms.forEach(term => {
-                if (term.id === undefined) {
-                    console.error(`Missing id for term: ${JSON.stringify(term)}`);
-                }
-            });
-            return {
-                paymentTerms,
-                errors: []
-            }
-        }
-    });
+  const app = createApp({
+    components: {
+      'payment-term-action': PaymentTermAction,
+    },
+    data() {
+      return {
+        paymentTerms: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.PaymentTerms)),
+        expandedPaymentTermId: null,
+      };
+    },
+    methods: {
+      handlePaymentTermExpand(id) {
+        this.expandedPaymentTermId = this.expandedPaymentTermId === id ? null : id;
+      }
+    }
+  });
 
-    app.mount('#app');
+  app.mount("#app");
 </script>
