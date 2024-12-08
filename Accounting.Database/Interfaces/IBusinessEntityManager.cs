@@ -7,6 +7,6 @@ namespace Accounting.Database.Interfaces
     Task<List<BusinessEntity>> GetAllAsync();
     Task<(List<BusinessEntity> businessEntities, int? nextPage)> GetAllAsync(int page, int pageSize, int organizationId);
     Task<BusinessEntity> GetByIdAsync(int id, int organizationId);
-    Task<int> UpdateAsync(int id, string? firstName, string? lastName, string? companyName, string? selectedCustomerType, string? businessEntityTypesCsv);
+    Task<int> UpdateAsync(int id, string? firstName, string? lastName, string? companyName, string? selectedCustomerType, string? businessEntityTypesCsv, int? selectedPaymentTermId);
   }
 }

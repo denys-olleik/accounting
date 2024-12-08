@@ -36,10 +36,10 @@ namespace Accounting.Service
       return await factoryManager.GetBusinessEntityManager().GetByIdAsync(id, organizationId);
     }
 
-    public async Task<int> UpdateAsync(int id, string? firstName, string? lastName, string? companyName, string? selectedCustomerType, string selectedBusinessEntityTypes)
+    public async Task<int> UpdateAsync(int id, string? firstName, string? lastName, string? companyName, string? selectedCustomerType, string selectedBusinessEntityTypes, int? selectedPaymentTermId)
     {
       var factoryManager = new FactoryManager(_databaseName);
-      return await factoryManager.GetBusinessEntityManager().UpdateAsync(id, firstName, lastName, companyName, selectedCustomerType, selectedBusinessEntityTypes);
+      return await factoryManager.GetBusinessEntityManager().UpdateAsync(id, firstName, lastName, companyName, selectedCustomerType, selectedBusinessEntityTypes, selectedPaymentTermId);
     }
   }
 }

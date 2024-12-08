@@ -283,7 +283,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateAsync(int id, string? firstName, string? lastName, string? companyName, string? selectedCustomerType, string? businessEntityTypesCsv)
+      public async Task<int> UpdateAsync(int id, string? firstName, string? lastName, string? companyName, string? selectedCustomerType, string? businessEntityTypesCsv, int? selectedPaymentTermId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@BusinessEntityID", id);
@@ -292,6 +292,7 @@ namespace Accounting.Database
         p.Add("@CompanyName", companyName);
         p.Add("@CustomerType", selectedCustomerType);
         p.Add("@BusinessEntityTypesCsv", businessEntityTypesCsv);
+        p.Add("@PaymentTermId", selectedPaymentTermId);
 
         int rowsModified;
 
@@ -303,7 +304,8 @@ namespace Accounting.Database
               "LastName" = @LastName,
               "CompanyName" = @CompanyName,
               "CustomerType" = @CustomerType,
-              "BusinessEntityTypesCsv" = @BusinessEntityTypesCsv
+              "BusinessEntityTypesCsv" = @BusinessEntityTypesCsv,
+              "PaymentTermId" = @PaymentTermId
             WHERE "BusinessEntityID" = @BusinessEntityID
             """, p);
         }

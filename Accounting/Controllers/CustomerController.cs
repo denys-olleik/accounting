@@ -103,20 +103,21 @@ namespace Accounting.Controllers
         CustomerTypes = CustomerTypeConstants.All.ToList(),
         SelectedCustomerType = businessEntity.CustomerType,
         Addresses = businessEntity.Addresses != null
-              && businessEntity.Addresses.Count > 0
-              ? businessEntity.Addresses.Select(a => new AddressViewModel()
-              {
-                ID = a.AddressID.ToString(),
-                ExtraAboveAddress = a.ExtraAboveAddress,
-                AddressLine1 = a.AddressLine1,
-                AddressLine2 = a.AddressLine2,
-                ExtraBelowAddress = a.ExtraBelowAddress,
-                City = a.City,
-                StateProvince = a.StateProvince,
-                PostalCode = a.PostalCode,
-                Country = a.Country
-              }).ToList() : null,
+                && businessEntity.Addresses.Count > 0
+                ? businessEntity.Addresses.Select(a => new AddressViewModel()
+                {
+                  ID = a.AddressID.ToString(),
+                  ExtraAboveAddress = a.ExtraAboveAddress,
+                  AddressLine1 = a.AddressLine1,
+                  AddressLine2 = a.AddressLine2,
+                  ExtraBelowAddress = a.ExtraBelowAddress,
+                  City = a.City,
+                  StateProvince = a.StateProvince,
+                  PostalCode = a.PostalCode,
+                  Country = a.Country
+                }).ToList() : null,
         AvailablePaymentTerms = await GetPaymentTermsAsync(),
+        SelectedPaymentTermId = businessEntity.PaymentTermId,
         PaymentTerm = businessEntity.PaymentTerm != null ? new PaymentTermViewModel()
         {
           ID = businessEntity.PaymentTerm.PaymentTermID,
@@ -153,8 +154,18 @@ namespace Accounting.Controllers
 
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        await _customerService.UpdateAsync(model.ID, model.FirstName, model.LastName, model.CompanyName, model.SelectedCustomerType, model.SelectedBusinessEntityTypesCsv);
+        await _customerService.UpdateAsync(
+            model.ID,
+            model.FirstName,
+            model.LastName,
+            model.CompanyName,
+            model.SelectedCustomerType,
+            model.SelectedBusinessEntityTypesCsv,
+            model.SelectedPaymentTermId
+        );
+
         await _addressService.DeleteAsync(model.ID);
+
         foreach (var address in model.Addresses!)
         {
           await _addressService.CreateAsync(new Address()
