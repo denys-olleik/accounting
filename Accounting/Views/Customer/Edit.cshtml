@@ -181,7 +181,21 @@
 <script>
   const { createApp } = Vue;
 
+  const CustomerAddress = {
+    name: 'CustomerAddress',
+    template: '#customer-address-template',
+    methods: {
+      confirmRemoval() {
+        this.$emit('remove-address', this.address);
+      }
+    },
+    props: ['address']
+  };
+
   const app = createApp({
+    components: {
+      'customer-address': CustomerAddress
+    },
     data() {
       return {
         customerTypes: @Html.Raw(Json.Serialize(Model.CustomerTypes)),
