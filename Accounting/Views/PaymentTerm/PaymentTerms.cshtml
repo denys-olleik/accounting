@@ -21,16 +21,23 @@
 </div>
 
 <template id="payment-term-action-template">
-  <div class="display-flex padding-top-bottom-2px align-items-center">
-    <div class="flex-1">
+  <div class="display-flex padding-top-bottom-2px">
+    <div class="display-flex flex-1">
       <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ paymentTerm.Description }}</a>
-    </div>
-    <div v-if="isExpanded" class="display-flex align-items-center">
-      <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px">
-        <a :href="'/payment-terms/delete/' + paymentTerm.ID" class="font-size-16px font-Roboto color-white text-decoration-none">
-          delete
-        </a>
-      </div>
+      <span v-if="isExpanded" class="display-flex">
+        <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+          <div class="flex-1"></div>
+          <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/payment-terms/delete/' + paymentTerm.ID" class="font-size-16px font-Roboto color-white text-decoration-none">
+            delete
+          </a>
+          <div class="flex-1"></div>
+        </div>
+      </span>
     </div>
   </div>
 </template>
@@ -60,7 +67,7 @@
 <script>
   const { createApp } = Vue;
 
-  const PaymentTermAction = {
+    const PaymentTermAction = {
     name: 'PaymentTermAction',
     props: ['paymentTerm', 'isExpanded'],
     template: '#payment-term-action-template',
