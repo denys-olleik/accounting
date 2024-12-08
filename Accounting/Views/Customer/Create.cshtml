@@ -127,16 +127,15 @@
 		<input asp-for="CompanyName" class="font-size-20px width-100" />
 	</div>
 
-	<div class="margin-bottom-5px background-color-antiquewhite padding-5px">
-		<div class="display-flex">
-			<div class="display-flex flex-1 flex-direction-column margin-right-5px">
-				<label class="font-Roboto font-size-16px">First Name:</label>
-				<input asp-for="FirstName" class="font-size-20px width-100" />
-			</div>
-			<div class="display-flex flex-1 flex-direction-column">
-				<label class="font-Roboto font-size-16px">Last Name:</label>
-				<input asp-for="LastName" class="font-size-20px width-100" />
-			</div>
+	<div class="display-flex margin-bottom-5px">
+		<div class="display-flex flex-1 flex-direction-column">
+			<label asp-for="FirstName" class="font-Roboto font-size-16px background-color-antiquewhite"></label>
+			<input asp-for="FirstName" class="font-size-20px" />
+		</div>
+		<div class="width-5px"></div>
+		<div class="display-flex flex-1 flex-direction-column">
+			<label asp-for="LastName" class="font-Roboto font-size-16px background-color-antiquewhite"></label>
+			<input asp-for="LastName" class="font-size-20px" />
 		</div>
 	</div>
 
