@@ -103,19 +103,19 @@ namespace Accounting.Controllers
         CustomerTypes = CustomerTypeConstants.All.ToList(),
         SelectedCustomerType = businessEntity.CustomerType,
         Addresses = businessEntity.Addresses != null
-                && businessEntity.Addresses.Count > 0
-                ? businessEntity.Addresses.Select(a => new AddressViewModel()
-                {
-                  ID = a.AddressID.ToString(),
-                  ExtraAboveAddress = a.ExtraAboveAddress,
-                  AddressLine1 = a.AddressLine1,
-                  AddressLine2 = a.AddressLine2,
-                  ExtraBelowAddress = a.ExtraBelowAddress,
-                  City = a.City,
-                  StateProvince = a.StateProvince,
-                  PostalCode = a.PostalCode,
-                  Country = a.Country
-                }).ToList() : null,
+                  && businessEntity.Addresses.Count > 0
+                  ? businessEntity.Addresses.Select(a => new AddressViewModel()
+                  {
+                    ID = a.AddressID.ToString(),
+                    ExtraAboveAddress = a.ExtraAboveAddress,
+                    AddressLine1 = a.AddressLine1,
+                    AddressLine2 = a.AddressLine2,
+                    ExtraBelowAddress = a.ExtraBelowAddress,
+                    City = a.City,
+                    StateProvince = a.StateProvince,
+                    PostalCode = a.PostalCode,
+                    Country = a.Country
+                  }).ToList() : null,
         AvailablePaymentTerms = await GetPaymentTermsAsync(),
         SelectedPaymentTermId = businessEntity.PaymentTermId,
         PaymentTerm = businessEntity.PaymentTerm != null ? new PaymentTermViewModel()
@@ -125,6 +125,9 @@ namespace Accounting.Controllers
           DaysUntilDue = businessEntity.PaymentTerm.DaysUntilDue
         } : null
       };
+
+      model.AddressesJson = JsonConvert.SerializeObject(model.Addresses);
+
       InitializeEditViewModelAsync(model, businessEntity);
 
       return View(model);
