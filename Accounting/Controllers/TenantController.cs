@@ -39,6 +39,20 @@ namespace Accounting.Controllers
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
     }
 
+    [Route("delete-user/{tenantId}/{userId}")]
+    [HttpGet]
+    public IActionResult DeleteUser(string tenantId, string userId)
+    {
+      throw new NotImplementedException("Get method for deleting a user is not implemented yet.");
+    }
+
+    [Route("delete-user/{tenantId}/{userId}")]
+    [HttpPost]
+    public IActionResult DeleteUser(DeleteUserViewModel model, string tenantId, string userId)
+    {
+      throw new NotImplementedException("Post method for deleting a user is not implemented yet.");
+    }
+
     [Route("delete-organization/{tenantId}/{organizationId}")]
     [HttpGet]
     public async Task<IActionResult> DeleteOrganization(string tenantId, string organizationId)
