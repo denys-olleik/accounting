@@ -18,10 +18,10 @@ namespace Accounting.Service
       return await factoryManager.GetBusinessEntityManager().CreateAsync(businessEntity);
     }
 
-    public async Task<List<BusinessEntity>> GetAllAsync()
+    public async Task<List<BusinessEntity>> GetAllAsync(int organizationId)
     {
       var factoryManager = new FactoryManager(_databaseName);
-      return await factoryManager.GetBusinessEntityManager().GetAllAsync();
+      return await factoryManager.GetBusinessEntityManager().GetAllAsync(organizationId);
     }
 
     public async Task<(List<BusinessEntity> BusinessEntities, int? NextPageNumber)> GetAllAsync(int page, int pageSize, int organizationId)

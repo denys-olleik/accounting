@@ -606,7 +606,7 @@ namespace Accounting.Controllers
 
     private async Task<List<BusinessEntityViewModel>> GetAllCustomersWithAddresses()
     {
-      var customers = await _businessEntityService.GetAllAsync();
+      var customers = await _businessEntityService.GetAllAsync(GetOrganizationId());
 
       foreach (var customer in customers)
       {

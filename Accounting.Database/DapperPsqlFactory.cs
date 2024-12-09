@@ -212,15 +212,19 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<List<BusinessEntity>> GetAllAsync()
+      public async Task<List<BusinessEntity>> GetAllAsync(int organizationId)
       {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@OrganizationId", organizationId);
+
         IEnumerable<BusinessEntity> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<BusinessEntity>("""
             SELECT * FROM "BusinessEntity"
-            """);
+            WHERE "OrganizationId" = @OrganizationId
+            """, p);
         }
 
         return result.ToList();
