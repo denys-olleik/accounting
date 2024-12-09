@@ -28,18 +28,18 @@
 </template>
 
 <template id="address-line-removal-template">
-	<div class="background-color-red text-align-center">
+	<div class="text-align-center">
 		<div v-if="!isRemoveConfirmationVisible">
-			<a href="#" class="color-white text-decoration-none width-100 display-block"
+			<a href="#" class="color-white background-color-red width-100 display-block text-decoration-none"
 				 @@click.prevent="toggleConfirmationVisibility">Remove</a>
 		</div>
 		<div v-else>
-			<div class="margin-bottom-5px">
-				<a href="#" class="color-white text-decoration-none" @@click.prevent="confirmRemoval">Confirm Remove</a>
-			</div>
-			<div>
-				<a href="#" class="color-white text-decoration-none"
+			<div class="background-color-white">
+				<a href="#" class="text-decoration-none  color-darkslategray"
 					 @@click.prevent="toggleConfirmationVisibility">Cancel</a>
+			</div>
+			<div class="margin-bottom-5px background-color-red">
+				<a href="#" class="color-white text-decoration-none" @@click.prevent="confirmRemoval">Remove</a>
 			</div>
 		</div>
 	</div>
@@ -92,6 +92,14 @@
 		</div>
 	</div>
 </template>
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+	<div class="flex-1"></div>
+	<div class="margin-left-20px flex-1 text-align-right">
+		<a asp-action="Customers" asp-controller="Customer" class="font-Roboto font-size-16px color-blue">Customers</a>
+		<a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
+	</div>
+</div>
 
 <form id="app" asp-action="Edit" asp-controller="Customer" method="post"
 			class="display-flex flex-direction-column margin-bottom-5px">

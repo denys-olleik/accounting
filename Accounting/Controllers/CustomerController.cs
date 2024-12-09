@@ -78,14 +78,14 @@ namespace Accounting.Controllers
       return RedirectToAction("Customers");
     }
 
-    [HttpGet]
-    [Route("details/{id}")]
-    public async Task<IActionResult> Details(int id)
-    {
-      BusinessEntity customer = await _customerService.GetAsync(id, GetOrganizationId());
+    //[HttpGet]
+    //[Route("details/{id}")]
+    //public async Task<IActionResult> Details(int id)
+    //{
+    //  BusinessEntity customer = await _customerService.GetAsync(id, GetOrganizationId());
 
-      return View(customer);
-    }
+    //  return View(customer);
+    //}
 
     [HttpGet]
     [Route("edit/{id}")]
