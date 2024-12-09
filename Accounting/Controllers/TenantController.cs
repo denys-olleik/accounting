@@ -41,16 +41,50 @@ namespace Accounting.Controllers
 
     [Route("delete-user/{tenantId:int}/{userId:int}")]
     [HttpGet]
-    public IActionResult DeleteUser(int tenantId, int userId)
+    public async Task<IActionResult> DeleteUser(int tenantId, int userId)
     {
-      throw new NotImplementedException("Get method for deleting a user is not implemented yet.");
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      UserService userService = new UserService(tenant.DatabaseName);
+      User user = await userService.GetAsync(userId);
+      if (user == null)
+      {
+        return NotFound();
+      }
+
+      var model = new DeleteUserViewModel
+      {
+        TenantId = tenantId,
+        UserId = userId
+      };
+
+      return View(model);
     }
 
     [Route("delete-user/{tenantId:int}/{userId:int}")]
     [HttpPost]
-    public IActionResult DeleteUser(DeleteUserViewModel model, int tenantId, int userId)
+    public async Task<IActionResult> DeleteUser(DeleteUserViewModel model, int tenantId, int userId)
     {
-      throw new NotImplementedException("Post method for deleting a user is not implemented yet.");
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      UserService userService = new UserService(tenant.DatabaseName);
+      User user = await userService.GetAsync(userId);
+      if (user == null)
+      {
+        return NotFound();
+      }
+
+      await userService.DeleteAsync(userId);
+
+      return RedirectToAction("TenantUsers", new { tenantId = model.TenantId });
     }
 
     [Route("delete-organization/{tenantId}/{organizationId}")]

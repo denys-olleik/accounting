@@ -258,10 +258,10 @@ namespace Accounting.Database
         return (resultList, nextPage);
       }
 
-      public async Task<BusinessEntity> GetByIdAsync(int id, int organizationId)
+      public async Task<BusinessEntity> GetByIdAsync(int businessEntityId, int organizationId)
       {
         var p = new DynamicParameters();
-        p.Add("@BusinessEntityID", id);
+        p.Add("@BusinessEntityID", businessEntityId);
         p.Add("@OrganizationId", organizationId);
 
         BusinessEntity? result;
@@ -4529,6 +4529,24 @@ namespace Accounting.Database
               UPDATE "User" 
               SET "FirstName" = @FirstName, "LastName" = @LastName
               WHERE "Email" = @Email
+              """, p);
+        }
+
+        return rowsAffected;
+      }
+
+      public async Task<int> DeleteAsync(int userId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@UserID", userId);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+              DELETE FROM "User" 
+              WHERE "UserID" = @UserID
               """, p);
         }
 

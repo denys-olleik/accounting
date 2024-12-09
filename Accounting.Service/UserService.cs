@@ -64,5 +64,11 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetUserManager().UpdateAsync(email, firstName, lastName);
     }
+
+    public async Task<int> DeleteAsync(int userId)
+    {
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetUserManager().DeleteAsync(userId);
+    }
   }
 }

@@ -1,0 +1,46 @@
+﻿@model Accounting.Models.TenantViewModels.DeleteUserViewModel
+
+@{
+  ViewData["Title"] = "Delete User - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Delete User";
+}
+
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="DeleteUser" asp-controller="Tenant" method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
+
+  <input asp-for="TenantId" type="hidden" />
+  <input asp-for="UserId" type="hidden" />
+
+  <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite margin-bottom-5px">
+    <div class="display-flex flex-direction-column background-color-antiquewhite">
+      <label>User ID</label>
+      <input asp-for="UserId" class="font-size-20px" readonly />
+    </div>
+  </div>
+
+  <div class="display-flex">
+    <div class="flex-1">
+      <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("TenantUsers", "Tenant", new { tenantId = Model.TenantId })';">Cancel</button>
+    </div>
+    <div class="width-5px"></div>
+    <div class="flex-1">
+      <button type="submit" class="full-width-orange-red-button width-100">Delete</button>
+    </div>
+  </div>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+  <div class="margin-bottom-5px"></div>
+}
