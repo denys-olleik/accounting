@@ -21,16 +21,14 @@
 <form asp-action="ProvisionTenant" asp-controller="Tenant" method="post"
       class="display-flex flex-direction-column margin-bottom-5px">
 
-  <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label asp-for="Email" class="font-Roboto font-size-20px background-color-antiquewhite"></label>
+  <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
+    <label asp-for="Email" class="font-Roboto font-size-20px"></label>
     <input asp-for="Email" class="font-size-20px" required />
-  </div>
 
-  <div class="display-flex flex-direction-column margin-bottom-5px background-color-white">
-    <label asp-for="Shared" class="font-Roboto font-size-20px background-color-antiquewhite">Shared</label>
-    <div>
-      <input asp-for="Shared" type="checkbox" />
-    </div>
+    <span>
+      <input asp-for="Shared" type="checkbox" class="margin-bottom-5px" />
+      <label asp-for="Shared">Shared</label>
+    </span>
   </div>
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
