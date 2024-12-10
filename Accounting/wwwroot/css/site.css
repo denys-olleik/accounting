@@ -94,6 +94,10 @@ td.fitwidth, th.fitwidth {
   border-collapse: collapse;
 }
 
+.background-color-disabled {
+  background-color: lightslategray;
+}
+
 .background-color-333333 {
   background-color: #333333;
 }
