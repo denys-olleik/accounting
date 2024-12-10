@@ -1673,17 +1673,24 @@ namespace Accounting.Database
 
     public IInvoiceManager GetInvoiceManager()
     {
-      return new InvoiceManager();
+      return new InvoiceManager(_connectionString);
     }
 
     public class InvoiceManager : IInvoiceManager
     {
+      private readonly string _connectionString;
+
+      public InvoiceManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public async Task<string> CalculateInvoiceStatusAsync(int invoiceId, int organizationId)
       {
         decimal invoiceTotal = 0;
         decimal receivedAmount = 0;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           DynamicParameters p = new DynamicParameters();
           p.Add("@InvoiceId", invoiceId);
@@ -1736,7 +1743,7 @@ namespace Accounting.Database
       {
         int affectedRows = 0;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           string totalAmountQuery = """
             SELECT SUM("Quantity" * "Price")
@@ -1811,7 +1818,7 @@ namespace Accounting.Database
 
         IEnumerable<Invoice> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Invoice>("""
             INSERT INTO "Invoice" (
@@ -1860,7 +1867,7 @@ namespace Accounting.Database
 
         bool result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.ExecuteScalarAsync<bool>("""
             SELECT COUNT(*) > 0
@@ -1900,7 +1907,7 @@ namespace Accounting.Database
 
         IEnumerable<Invoice> paginatedResult;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           paginatedResult = await con.QueryAsync<Invoice>($"""
             SELECT * FROM (
@@ -1935,7 +1942,7 @@ namespace Accounting.Database
 
         IEnumerable<Invoice> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Invoice>("""
             SELECT * FROM "Invoice" 
@@ -1955,7 +1962,7 @@ namespace Accounting.Database
 
         IEnumerable<Invoice> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Invoice>("""
             SELECT * 
@@ -1973,7 +1980,7 @@ namespace Accounting.Database
         IEnumerable<Invoice> result;
         var invoiceIds = invoiceIdsCsv.Split(',').Select(id => int.Parse(id.Trim())).ToArray();
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Invoice>("""
             SELECT * FROM "Invoice" 
@@ -1993,7 +2000,7 @@ namespace Accounting.Database
 
         DateTime result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.ExecuteScalarAsync<DateTime>("""
             SELECT "LastUpdated" 
@@ -2013,7 +2020,7 @@ namespace Accounting.Database
         decimal unpaid = 0.0M;
         decimal paid = 0.0M;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           await con.OpenAsync();
 
@@ -2047,7 +2054,7 @@ namespace Accounting.Database
 
         string? voidReason;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           voidReason = await con.ExecuteScalarAsync<string>("""
             SELECT "VoidReason" 
@@ -2072,7 +2079,7 @@ namespace Accounting.Database
 
         var companyParts = company?.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
 
-        using (var con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (var con = new NpgsqlConnection(_connectionString))
         {
           var sql = """
                 SELECT i.* 
@@ -2132,7 +2139,7 @@ namespace Accounting.Database
 
         int rowsModified;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsModified = await con.ExecuteAsync("""
             UPDATE "Invoice" 
@@ -2154,7 +2161,7 @@ namespace Accounting.Database
 
         int rowsModified;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsModified = await con.ExecuteAsync("""
             UPDATE "Invoice"
@@ -2175,7 +2182,7 @@ namespace Accounting.Database
 
         int rowsModified;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsModified = await con.ExecuteAsync("""
             UPDATE "Invoice"
@@ -2196,7 +2203,7 @@ namespace Accounting.Database
         p.Add("@Status", Invoice.InvoiceStatusConstants.Void);
         p.Add("@OrganizationId", organizationId);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "Invoice"
