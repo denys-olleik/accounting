@@ -1128,11 +1128,18 @@ namespace Accounting.Database
 
     public IJournalManager GetJournalManager()
     {
-      return new JournalManager();
+      return new JournalManager(_connectionString);
     }
 
     public class JournalManager : IJournalManager
     {
+      private readonly string _connectionString;
+
+      public JournalManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public Journal Create(Journal entity)
       {
         throw new NotImplementedException();
@@ -1150,7 +1157,7 @@ namespace Accounting.Database
 
         IEnumerable<Journal> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Journal>("""
             INSERT INTO "Journal" 
@@ -1187,7 +1194,7 @@ namespace Accounting.Database
 
         Journal? result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QuerySingleOrDefaultAsync<Journal>("""
             SELECT * 
@@ -1209,7 +1216,7 @@ namespace Accounting.Database
 
         IEnumerable<Journal> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Journal>("""
             SELECT * 
@@ -1230,7 +1237,7 @@ namespace Accounting.Database
 
         int count;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           count = await con.ExecuteScalarAsync<int>("""
             SELECT COUNT(*) 
@@ -2805,11 +2812,18 @@ namespace Accounting.Database
 
     public IOrganizationManager GetOrganizationManager()
     {
-      return new OrganizationManager();
+      return new OrganizationManager(_connectionString);
     }
 
     public class OrganizationManager : IOrganizationManager
     {
+      private readonly string _connectionString;
+
+      public OrganizationManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public Organization Create(Organization entity)
       {
         throw new NotImplementedException();
@@ -2833,7 +2847,7 @@ namespace Accounting.Database
 
         IEnumerable<Organization> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = databaseName;
         string connectionString = builder.ConnectionString;
 
@@ -2852,7 +2866,7 @@ namespace Accounting.Database
 
         IEnumerable<Organization> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Organization>("""
             INSERT INTO "Organization" ("Name") 
@@ -2886,7 +2900,7 @@ namespace Accounting.Database
 
         IEnumerable<Organization>? result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = databaseName;
         string connectionString = builder.ConnectionString;
 
@@ -2909,7 +2923,7 @@ namespace Accounting.Database
 
         string? result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.ExecuteScalarAsync<string>("""
             SELECT "PaymentInstructions" 
@@ -2929,7 +2943,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "Organization" 
@@ -2949,7 +2963,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "Organization" 
@@ -2974,7 +2988,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "Organization" 
@@ -2992,7 +3006,7 @@ namespace Accounting.Database
         p.Add("@OrganizationId", organizationId);
         p.Add("@AccountsPayableEmail", accountsPayableEmail);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           return await con.ExecuteAsync("""
             UPDATE "Organization" 
@@ -3008,7 +3022,7 @@ namespace Accounting.Database
         p.Add("@OrganizationId", organizationId);
         p.Add("@AccountsPayablePhone", accountsPayablePhone);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           return await con.ExecuteAsync("""
             UPDATE "Organization" 
@@ -3024,7 +3038,7 @@ namespace Accounting.Database
         p.Add("@OrganizationId", organizationId);
         p.Add("@AccountsReceivableEmail", accountsReceivableEmail);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           return await con.ExecuteAsync("""
             UPDATE "Organization" 
@@ -3040,7 +3054,7 @@ namespace Accounting.Database
         p.Add("@OrganizationId", organizationId);
         p.Add("@AccountsReceivablePhone", accountsReceivablePhone);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           return await con.ExecuteAsync("""
             UPDATE "Organization" 
@@ -3056,7 +3070,7 @@ namespace Accounting.Database
         p.Add("@OrganizationId", organizationId);
         p.Add("@Website", website);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           return await con.ExecuteAsync($"""
             UPDATE "Organization" 
@@ -3071,7 +3085,7 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@Name", name);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           var organization = (await con.QueryAsync<Organization>("""
             SELECT * 
@@ -3088,7 +3102,7 @@ namespace Accounting.Database
           TenantManager tenantManager = new TenantManager();
           var tenants = await tenantManager.GetAllAsync();
 
-          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+          var builder = new NpgsqlConnectionStringBuilder(_connectionString);
 
           foreach (var tenant in tenants)
           {
@@ -3115,7 +3129,7 @@ namespace Accounting.Database
 
       public async Task<Organization> GetAsync(string name, string databaseName)
       {
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = databaseName;
 
         using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
@@ -3135,7 +3149,7 @@ namespace Accounting.Database
 
       public async Task<List<Organization>> GetAllAsync(string databaseName)
       {
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = databaseName;
 
         using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
@@ -3157,7 +3171,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = databaseName;
         string connectionString = builder.ConnectionString;
 
@@ -3180,7 +3194,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = databaseName;
         string connectionString = builder.ConnectionString;
 
@@ -5484,11 +5498,18 @@ namespace Accounting.Database
 
     public IJournalInvoiceInvoiceLineManager GetJournalInvoiceInvoiceLineManager()
     {
-      return new JournalInvoiceInvoiceLineManager();
+      return new JournalInvoiceInvoiceLineManager(_connectionString);
     }
 
     public class JournalInvoiceInvoiceLineManager : IJournalInvoiceInvoiceLineManager
     {
+      private readonly string _connectionString;
+
+      public JournalInvoiceInvoiceLineManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public JournalInvoiceInvoiceLine Create(JournalInvoiceInvoiceLine entity)
       {
         throw new NotImplementedException();
@@ -5507,7 +5528,7 @@ namespace Accounting.Database
 
         IEnumerable<JournalInvoiceInvoiceLine> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<JournalInvoiceInvoiceLine>("""
             INSERT INTO "JournalInvoiceInvoiceLine" 
@@ -5547,7 +5568,7 @@ namespace Accounting.Database
 
         throw new NotImplementedException();
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<JournalInvoiceInvoiceLine>("""
 
@@ -5563,7 +5584,7 @@ namespace Accounting.Database
 
         IEnumerable<InvoiceLine> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           string query;
           if (onlyCurrent)
@@ -5615,7 +5636,7 @@ namespace Accounting.Database
 
         if (loadChildren)
         {
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
             string query = """
               SELECT
@@ -5645,7 +5666,7 @@ namespace Accounting.Database
         }
         else
         {
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
             string query = """
               SELECT *
