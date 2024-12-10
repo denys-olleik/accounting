@@ -69,6 +69,10 @@ html[xmlns] .clearfix {
 }
 /*#endregion Clearfix*/
 
+input[readonly] {
+  background-color: lightgray;
+}
+
 .display-flex {
   display: flex;
 }
@@ -92,10 +96,6 @@ td.fitwidth, th.fitwidth {
 
 .border-collapse {
   border-collapse: collapse;
-}
-
-.background-color-disabled {
-  background-color: lightslategray;
 }
 
 .background-color-333333 {
