@@ -1517,11 +1517,18 @@ namespace Accounting.Database
 
     public IInvoiceLineManager GetInvoiceLineManager()
     {
-      return new InvoiceLineManager();
+      return new InvoiceLineManager(_connectionString);
     }
 
     public class InvoiceLineManager : IInvoiceLineManager
     {
+      private readonly string _connectionString;
+
+      public InvoiceLineManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public InvoiceLine Create(InvoiceLine entity)
       {
         throw new NotImplementedException();
@@ -1542,7 +1549,7 @@ namespace Accounting.Database
 
         IEnumerable<InvoiceLine> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<InvoiceLine>("""
             INSERT INTO "InvoiceLine" 
@@ -1569,7 +1576,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             DELETE FROM "InvoiceLine"
@@ -1599,7 +1606,7 @@ namespace Accounting.Database
 
         List<InvoiceLine> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = (await con.QueryAsync<InvoiceLine>("""
             SELECT * 
@@ -1629,7 +1636,7 @@ namespace Accounting.Database
 
         int rowsModified;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsModified = await con.ExecuteAsync("""
              UPDATE "InvoiceLine"
@@ -1654,7 +1661,7 @@ namespace Accounting.Database
           p.Add("@Description", line.Description);
           p.Add("@OrganizationId", organizationId);
 
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
             rowsModified += await con.ExecuteAsync("""
               UPDATE "InvoiceLine"
