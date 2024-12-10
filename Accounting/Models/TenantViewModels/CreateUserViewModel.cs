@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
+using System.Collections.Generic;
 
 namespace Accounting.Models.TenantViewModels
 {
@@ -11,9 +12,7 @@ namespace Accounting.Models.TenantViewModels
     public string LastName { get; set; }
     public string Password { get; set; }
     public string ConfirmPassword { get; set; }
-
     public string SelectedOrganizationIdsCsv { get; set; }
-
     public ValidationResult ValidationResult { get; set; } = new ValidationResult();
     public ExistingUserViewModel? ExistingUser { get; set; }
     public List<OrganizationViewModel> AvailableOrganizations { get; internal set; }
@@ -38,31 +37,37 @@ namespace Accounting.Models.TenantViewModels
       public CreateUserViewModelValidator()
       {
         RuleFor(x => x.Email)
-          .NotEmpty().WithMessage("Email is required.")
-          .EmailAddress().WithMessage("A valid email is required.");
+            .NotEmpty().WithMessage("Email is required.")
+            .EmailAddress().WithMessage("A valid email is required.");
 
         When(x => x.ExistingUser == null, () =>
         {
           RuleFor(x => x.FirstName)
-            .NotEmpty().WithMessage("First name is required.");
+              .NotEmpty().WithMessage("First name is required.");
 
           RuleFor(x => x.LastName)
-            .NotEmpty().WithMessage("Last name is required.");
+              .NotEmpty().WithMessage("Last name is required.");
 
           When(x => !string.IsNullOrEmpty(x.Password) || !string.IsNullOrEmpty(x.ConfirmPassword), () =>
           {
             RuleFor(x => x.Password)
-              .Equal(x => x.ConfirmPassword).WithMessage("Password and Confirm Password must match.");
+                .Equal(x => x.ConfirmPassword).WithMessage("Password and Confirm Password must match.");
           });
         });
 
         When(x => x.ExistingUser != null, () =>
         {
+          RuleFor(x => x.Password)
+              .Empty().WithMessage("Password must be empty when an existing user is linked.");
+
+          RuleFor(x => x.ConfirmPassword)
+              .Empty().WithMessage("Confirm Password must be empty when an existing user is linked.");
+
           RuleFor(x => x.FirstName)
-            .Empty().WithMessage("First name must be empty for an existing user.");
+              .Empty().WithMessage("First name must be empty for an existing user.");
 
           RuleFor(x => x.LastName)
-            .Empty().WithMessage("Last name must be empty for an existing user.");
+              .Empty().WithMessage("Last name must be empty for an existing user.");
         });
       }
     }
