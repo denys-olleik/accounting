@@ -319,10 +319,10 @@ namespace Accounting.Controllers
 
       var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
 
-      Models.TenantViewModels.CreateUserViewModel model = new Models.TenantViewModels.CreateUserViewModel
+      CreateUserViewModel model = new CreateUserViewModel
       {
         TenantId = tenant.TenantID,
-        AvailableOrganizations = organizations.Select(x => new Models.TenantViewModels.CreateUserViewModel.OrganizationViewModel
+        AvailableOrganizations = organizations.Select(x => new CreateUserViewModel.OrganizationViewModel
         {
           OrganizationID = x.OrganizationID,
           Name = x.Name
@@ -355,7 +355,7 @@ namespace Accounting.Controllers
       if (!string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
       {
         model.SelectedOrganizationIdsCsv = string.Join(',',
-          model.SelectedOrganizationIdsCsv.Split(',').Where(id => !string.IsNullOrEmpty(id)));
+            model.SelectedOrganizationIdsCsv.Split(',').Where(id => !string.IsNullOrEmpty(id)));
       }
 
       UserService _userService = new UserService(tenant.DatabaseName);
@@ -395,10 +395,16 @@ namespace Accounting.Controllers
         Email = model.Email,
         FirstName = model.ExistingUser?.FirstName ?? model.FirstName,
         LastName = model.ExistingUser?.LastName ?? model.LastName,
-        Password = !string.IsNullOrEmpty(model.Password)
-          ? PasswordStorage.CreateHash(model.Password)
-          : null
       }, tenant.DatabaseName!);
+
+      if (string.IsNullOrEmpty(model.Password))
+      {
+        user.Password = null;
+      }
+      else
+      {
+        user.Password = PasswordStorage.CreateHash(model.Password);
+      }
 
       if (!string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
       {
@@ -408,8 +414,6 @@ namespace Accounting.Controllers
           await _userOrganizationService.CreateAsync(user.UserID, organizationId, tenant.DatabaseName!);
         }
       }
-
-      await _userService.UpdatePasswordAllTenantsAsync(user.Email!, user.Password!);
 
       return RedirectToAction("Tenants");
     }
