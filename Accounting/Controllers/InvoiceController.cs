@@ -132,10 +132,14 @@ namespace Accounting.Controllers
     {
       int orgId = GetOrganizationId();
 
+      var paymentTerms = await GetAllPaymentTerms();
+      var defaultPaymentTerm = paymentTerms.FirstOrDefault();
+
       var model = new CreateInvoiceViewModel
       {
         Customers = await GetAllCustomersWithAddresses(),
-        PaymentTerms = await GetAllPaymentTerms(),
+        PaymentTerms = paymentTerms,
+        SelectedPaymentTerm = defaultPaymentTerm,
         InvoiceDate = DateTime.UtcNow,
         InvoiceStatuses = Invoice.InvoiceStatusConstants.All.ToList(),
         ProductsAndServices = await GetAllProductsAndServices(orgId),
