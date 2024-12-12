@@ -24,6 +24,18 @@ namespace Accounting.Models.TenantViewModels
         RuleFor(x => x.Email)
           .Must((model, email) =>
           {
+            if (model.ExistingTenant!.Email == email)
+            {
+              return false;
+            }
+            return true;
+          })
+          .WithMessage("The email is already the current email.")
+          .When(x => x.ExistingTenant != null);
+
+        RuleFor(x => x.Email)
+          .Must((model, email) =>
+          {
             bool noConflict = model.ExistingTenant == null;
             bool differentEmail = model.ExistingTenant?.Email != email;
             return noConflict || differentEmail;
