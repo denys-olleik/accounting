@@ -1,202 +1,200 @@
 ﻿@model Accounting.Models.Item.ItemsPaginatedViewModel
 
 @{
-  ViewData["Title"] = "Items - " + ConfigurationSingleton.Instance.ApplicationName;
+	ViewData["Title"] = "Items - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 @{
-  string headerText = "Items";
+	string headerText = "Items";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 <template id="item-template">
-  <div class="background-color-antiquewhite">
-    <div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
-      <div class="display-flex flex-direction-column flex-1 margin-right-2px margin-left-2px">
-        <a href="#" @@click.prevent="handleItemClick(item.itemID)">
-          {{ item.name }}
-        </a>
-        <div v-if="item.selectedItemID === item.itemID" class="display-flex flex-direction-column flex-1">
-          <div class="display-flex margin-bottom-2px">
-            <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
-              <div class="flex-1"></div>
-              <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
-              <div class="flex-1"></div>
-            </div>
-            <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
-              <div class="flex-1"></div>
-              <a class="font-size-16px font-Roboto color-white text-decoration-none"
-                 :href="`/item/update/${item.itemID}`">Update</a>
-              <div class="flex-1"></div>
-            </div>
-            <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
-              <div class="flex-1"></div>
-              <a class="font-size-16px font-Roboto color-white text-decoration-none"
-                 :href="`/item/create/${item.itemID}`">Add</a>
-              <div class="flex-1"></div>
-            </div>
-          </div>
-          <div class="display-flex margin-bottom-2px">
-            <div class="display-flex flex-direction-column background-color-darkcyan padding-left-5px padding-right-5px">
-              <div class="flex-1"></div>
-              <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">information:</a>
-              <div class="flex-1"></div>
-            </div>
-            <div v-if="itemHierarchyType(item)" class="display-flex flex-direction-column background-color-darkcyan padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
-              <div class="flex-1"></div>
-              <a class="font-size-16px font-Roboto color-white text-decoration-none">
-                {{ itemHierarchyType(item) }}
-              </a>
-              <div class="flex-1"></div>
-            </div>
-          </div>
-          <div class="display-flex">
-            <div class="display-flex flex-direction-column background-color-crimson padding-left-5px padding-right-5px">
-              <div class="flex-1"></div>
-              <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">inventories:</a>
-              <div class="flex-1"></div>
-            </div>
-            <div class="flex-1 display-flex flex-direction-column background-color-crimson padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
-              <table class="border-collapse width-100 background-color-crimson font-Roboto-Mono color-white">
-                <thead class="border-bottom-1px-solid-white">
-                  <tr>
-                    <th class="text-align-left padding-right-20px">Location</th>
-                    <th class="text-align-right">Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-if="item.inventories.length === 0">
-                    <td colspan="2" class="text-align-center">empty</td>
-                  </tr>
-                  <tr v-for="inventory in item.inventories" :key="inventory.inventoryID">
-                    <td class="padding-right-20px">{{ inventory.location.name }}</td>
-                    <td class="text-align-right">{{ inventory.quantity }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div>{{ item.price }}</div>
-    </div>
-    <div v-if="item.children && item.children.length" class="margin-left-25px">
-      <template v-for="childItem in item.children" :key="childItem.itemID">
-        <item :item="childItem" @@item-clicked="handleItemClick"></item>
-      </template>
-    </div>
-  </div>
+	<div class="background-color-antiquewhite">
+		<div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
+			<div class="display-flex flex-direction-column flex-1 margin-right-2px margin-left-2px">
+				<a href="#" @@click.prevent="handleItemClick(item.itemID)">
+					{{ item.name }}
+				</a>
+				<div v-if="item.selectedItemID === item.itemID" class="display-flex flex-direction-column flex-1">
+					<div class="display-flex margin-bottom-2px">
+						<div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+							<div class="flex-1"></div>
+							<a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+							<div class="flex-1"></div>
+						</div>
+						<div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+							<div class="flex-1"></div>
+							<a class="font-size-16px font-Roboto color-white text-decoration-none"
+								 :href="`/item/update/${item.itemID}`">Update</a>
+							<div class="flex-1"></div>
+						</div>
+						<div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+							<div class="flex-1"></div>
+							<a class="font-size-16px font-Roboto color-white text-decoration-none"
+								 :href="`/item/create/${item.itemID}`">Add</a>
+							<div class="flex-1"></div>
+						</div>
+					</div>
+					<div class="display-flex margin-bottom-2px">
+						<div class="display-flex flex-direction-column background-color-darkcyan padding-left-5px padding-right-5px">
+							<div class="flex-1"></div>
+							<a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">information:</a>
+							<div class="flex-1"></div>
+						</div>
+						<div v-if="itemHierarchyType(item)" class="display-flex flex-direction-column background-color-darkcyan padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
+							<div class="flex-1"></div>
+							<a class="font-size-16px font-Roboto color-white text-decoration-none">
+								{{ itemHierarchyType(item) }}
+							</a>
+							<div class="flex-1"></div>
+						</div>
+					</div>
+					<div class="display-flex">
+						<div class="display-flex flex-direction-column background-color-crimson padding-left-5px padding-right-5px">
+							<div class="flex-1"></div>
+							<a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">inventories:</a>
+							<div class="flex-1"></div>
+						</div>
+						<div class="flex-1 display-flex flex-direction-column background-color-crimson padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
+							<table class="border-collapse width-100 background-color-crimson font-Roboto-Mono color-white">
+								<thead class="border-bottom-1px-solid-white">
+									<tr>
+										<th class="text-align-left padding-right-20px">Location</th>
+										<th class="text-align-right">Quantity</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-if="item.inventories.length === 0">
+										<td colspan="2" class="text-align-center">empty</td>
+									</tr>
+									<tr v-for="inventory in item.inventories" :key="inventory.inventoryID">
+										<td class="padding-right-20px">{{ inventory.location.name }}</td>
+										<td class="text-align-right">{{ inventory.quantity }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div>{{ item.price }}</div>
+		</div>
+		<div v-if="item.children && item.children.length" class="margin-left-25px">
+			<template v-for="childItem in item.children" :key="childItem.itemID">
+				<item :item="childItem" @@item-clicked="handleItemClick"></item>
+			</template>
+		</div>
+	</div>
 </template>
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
-  <div class="margin-left-20px">
-    <a asp-action="Create" asp-controller="Item" class="font-Roboto font-size-16px color-blue">Create Product or Service</a>
-  </div>
-  <div class="flex-1 text-align-right">
-    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
-  </div>
+	<div class="margin-left-20px">
+		<a asp-action="Create" asp-controller="Item" class="font-Roboto font-size-16px color-blue">Create Product or Service</a>
+	</div>
+	<div class="flex-1 text-align-right">
+		<a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
+	</div>
 </div>
 
 <div id="app" class="display-flex flex-direction-column font-Roboto-Mono">
 
-  <div class="margin-bottom-5px display-flex font-Roboto font-size-20px background-color-antiquewhite">
-    <div>
-      <a :href="`/item/items?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-darkslategray text-decoration-none">prev</a>
-    </div>
-    <div class="flex-1 text-align-center">
-      <input type="text" v-model="pageSize" class="text-align-center" @@change="onPageSizeChange">
-    </div>
-    <div>
-      <a :href="`/item/items?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-darkslategray text-decoration-none">next</a>
-    </div>
-  </div>
+	<div class="margin-bottom-5px display-flex font-size-20px background-color-antiquewhite">
+		<div class="flex-1 text-align-left">
+			<a :href="`/item/items?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
+		</div>
+		<div class="display-flex flex-1">
+			<input type="text" v-model="pageSize" class="text-align-center width-100" @@change="onPageSizeChange">
+		</div>
+		<div class="flex-1 text-align-right">
+			<a :href="`/item/items?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
+		</div>
+	</div>
 
-
-  
-  <div class="margin-bottom-5px">
-    <template v-for="item in items" :key="item.itemID">
-      <item :item="item" @@item-clicked="onItemClicked"></item>
-    </template>
-  </div>
+	<div class="margin-bottom-5px">
+		<template v-for="item in items" :key="item.itemID">
+			<item :item="item" @@item-clicked="onItemClicked"></item>
+		</template>
+	</div>
 </div>
 
 <script>
-  const { createApp } = Vue;
+	const { createApp } = Vue;
 
-  const Item = {
-    name: 'item',
-    template: '#item-template',
-    props: ['item'],
-    methods: {
-      handleItemClick(itemID) {
-        console.log(itemID);
-        this.$emit('item-clicked', itemID);
-      },
-      itemHierarchyType(item) {
-        if (item.parentItemId && item.children && item.children.length) {
-          return 'component';
-        } else if (!item.parentItemId && item.children && item.children.length) {
-          return 'assembly';
-        } else {
-          return 'part';
-        }
-      }
-    }
-  };
+	const Item = {
+		name: 'item',
+		template: '#item-template',
+		props: ['item'],
+		methods: {
+			handleItemClick(itemID) {
+				console.log(itemID);
+				this.$emit('item-clicked', itemID);
+			},
+			itemHierarchyType(item) {
+				if (item.parentItemId && item.children && item.children.length) {
+					return 'component';
+				} else if (!item.parentItemId && item.children && item.children.length) {
+					return 'assembly';
+				} else {
+					return 'part';
+				}
+			}
+		}
+	};
 
-  const app = createApp({
-    components: {
-      'item': Item
-    },
-    data() {
-      return {
-        items: [],
-        selectedItemID: null,
-        page: @Model.Page,
-        pageSize: @Model.PageSize,
-        nextPage: null,
-      }
-    },
-    methods: {
-      fetchItems() {
-        fetch(`/api/inv/get-all-items?page=${this.page}&pageSize=${this.pageSize}&includeDescendants=true&includeInventories=true`)
-          .then(response => response.json())
-          .then(data => {
-            this.items = this.addSelectedItemID(data.items);
-            if (data.currentPage > 0) {
-              this.page = data.currentPage;
-            }
-            if (data.nextPage > 0) {
-              this.nextPage = data.nextPage;
-            }
-          });
-      },
-      onItemClicked(itemID) {
-        console.log('Item clicked:', itemID);
-        if (this.selectedItemID === itemID) {
-          this.selectedItemID = null;
-        } else {
-          this.selectedItemID = itemID;
-        }
-        this.items = this.items.map(item => this.resetSelectedItemID(item, this.selectedItemID));
-      },
-      addSelectedItemID(items) {
-        return items.map(item => this.resetSelectedItemID(item));
-      },
-      resetSelectedItemID(item, selectedID = null) {
-        const children = item.children ? item.children.map(child => this.resetSelectedItemID(child, selectedID)) : [];
-        return { ...item, children, selectedItemID: selectedID };
-      },
-      onPageSizeChange() {
-        this.fetchItems();
-      }
-    },
-    mounted() {
-      this.fetchItems();
-    }
-  });
+	const app = createApp({
+		components: {
+			'item': Item
+		},
+		data() {
+			return {
+				items: [],
+				selectedItemID: null,
+				page: @Model.Page,
+				pageSize: @Model.PageSize,
+				nextPage: null,
+			}
+		},
+		methods: {
+			fetchItems() {
+				fetch(`/api/inv/get-all-items?page=${this.page}&pageSize=${this.pageSize}&includeDescendants=true&includeInventories=true`)
+					.then(response => response.json())
+					.then(data => {
+						this.items = this.addSelectedItemID(data.items);
+						if (data.currentPage > 0) {
+							this.page = data.currentPage;
+						}
+						if (data.nextPage > 0) {
+							this.nextPage = data.nextPage;
+						}
+					});
+			},
+			onItemClicked(itemID) {
+				console.log('Item clicked:', itemID);
+				if (this.selectedItemID === itemID) {
+					this.selectedItemID = null;
+				} else {
+					this.selectedItemID = itemID;
+				}
+				this.items = this.items.map(item => this.resetSelectedItemID(item, this.selectedItemID));
+			},
+			addSelectedItemID(items) {
+				return items.map(item => this.resetSelectedItemID(item));
+			},
+			resetSelectedItemID(item, selectedID = null) {
+				const children = item.children ? item.children.map(child => this.resetSelectedItemID(child, selectedID)) : [];
+				return { ...item, children, selectedItemID: selectedID };
+			},
+			onPageSizeChange() {
+				this.fetchItems();
+			}
+		},
+		mounted() {
+			this.fetchItems();
+		}
+	});
 
-  app.mount('#app');
+	app.mount('#app');
 </script>
