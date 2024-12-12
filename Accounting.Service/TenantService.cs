@@ -44,6 +44,12 @@ namespace Accounting.Service
       return await factoryManager.GetTenantManager().GetAsync(tenantId);
     }
 
+    public async Task<int> UpdateEmailAsync(int tenantId, string email)
+    {
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetTenantManager().UpdateEmailAsync(tenantId, email);
+    }
+
     public async Task UpdateDatabaseName(int tenantID, string? databaseName)
     {
       var factoryManager = new FactoryManager(_databaseName);

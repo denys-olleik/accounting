@@ -6257,6 +6257,26 @@ namespace Accounting.Database
 
         return result.SingleOrDefault();
       }
+
+      public async Task<int> UpdateEmailAsync(int tenantId, string email)
+      {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("@TenantID", tenantId);
+        parameters.Add("@Email", email);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection connection = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        {
+          rowsAffected = await connection.ExecuteAsync("""
+            UPDATE "Tenant" 
+            SET "Email" = @Email
+            WHERE "TenantID" = @TenantID
+            """, parameters);
+        }
+
+        return rowsAffected;
+      }
     }
 
     public ISecretManager GetSecretManager(string databaseName)

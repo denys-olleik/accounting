@@ -39,6 +39,53 @@ namespace Accounting.Controllers
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
     }
 
+    [Route("update/{tenantId}")]
+    [HttpGet]
+    public async Task<IActionResult> UpdateTenant(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      var model = new UpdateTenantViewModel
+      {
+        TenantId = tenant.TenantID,
+        Email = tenant.Email
+      };
+
+      return View(model);
+    }
+
+    [Route("update/{tenantId}")]
+    [HttpPost]
+    public async Task<IActionResult> UpdateTenant(int tenantId, UpdateTenantViewModel model)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      model.ExistingTenant = tenant;
+
+      var validator = new UpdateTenantViewModel.UpdateTenantViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      await _tenantService.UpdateEmailAsync(tenantId, model.Email!);
+
+      return RedirectToAction("Tenants");
+    }
+
     [Route("delete-user/{tenantId:int}/{userId:int}")]
     [HttpGet]
     public async Task<IActionResult> DeleteUser(int tenantId, int userId)

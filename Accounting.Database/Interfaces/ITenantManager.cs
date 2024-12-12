@@ -8,21 +8,22 @@ namespace Accounting.Database.Interfaces
 
     Task<bool> ExistsAsync(string email);
     Task<(List<Tenant> tenants, int? nextPage)> GetAllAsync(
-      int page, 
+      int page,
       int pageSize);
     Task<int> UpdateDatabaseName(
-      int tenantID, 
+      int tenantID,
       string? databaseName);
     Task<int> UpdateDropletIdAsync(
-      int tenantId, 
+      int tenantId,
       long dropletId);
     Task<int> UpdateSshPrivateAsync(
-      int tenantId, 
+      int tenantId,
       string sshPrivate);
     Task<int> UpdateSshPublicAsync(
-      int tenantId, 
+      int tenantId,
       string sshPublic);
     Task<Tenant> GetAsync(int tenantId);
-    Task<int> DeleteAsync(int tenantID);    
+    Task<int> DeleteAsync(int tenantID);
+    Task<int> UpdateEmailAsync(int tenantId, string email);
   }
 }

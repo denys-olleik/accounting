@@ -1,0 +1,44 @@
+﻿@model Accounting.Models.TenantViewModels.UpdateTenantViewModel
+
+@{
+  ViewData["Title"] = "Update Tenant Email - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+@{
+  string headerText = "Update Tenant Email";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div class="margin-left-20px flex-1 text-align-right">
+    <a asp-action="Tenants" asp-controller="Tenant" class="font-Roboto font-size-16px color-blue">Tenants</a>
+    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
+  </div>
+</div>
+
+<form asp-action="UpdateTenant" asp-controller="Tenant" method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
+
+  <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
+    <label asp-for="Email" class="font-Roboto font-size-20px">Email</label>
+    <input asp-for="Email" class="font-size-20px" required />
+  </div>
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <button type="submit" class="full-width-regular-button">Update Email</button>
+  </div>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+  <div class="margin-bottom-5px">
+  </div>
+}
