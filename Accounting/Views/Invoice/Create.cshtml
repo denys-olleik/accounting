@@ -600,7 +600,7 @@
     }
   };
 
-  const app = createApp({
+    const app = createApp({
     components: {
       'invoice-detail': InvoiceDetail,
       'payment-term-selector': PaymentTermSelector,
@@ -744,6 +744,9 @@
         dueDate.setDate(dueDate.getDate() + this.selectedPaymentTerm.daysUntilDue);
         this.dueDate = dueDate.toISOString();
       },
+    },
+    mounted() {
+      this.calculateDueDate();
     }
   });
 
