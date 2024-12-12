@@ -24,11 +24,8 @@ namespace Accounting.Models.TenantViewModels
         RuleFor(x => x.Email)
           .Must((model, email) =>
           {
-            if (model.ExistingTenant!.Email == email)
-            {
-              return false;
-            }
-            return true;
+            bool isNewEmail = model.ExistingTenant!.Email != email;
+            return isNewEmail;
           })
           .WithMessage("The email is already the current email.")
           .When(x => x.ExistingTenant != null);
@@ -37,8 +34,8 @@ namespace Accounting.Models.TenantViewModels
           .Must((model, email) =>
           {
             bool noConflict = model.ExistingTenant == null;
-            bool differentEmail = model.ExistingTenant?.Email != email;
-            return noConflict || differentEmail;
+            bool isUniqueEmail = model.ExistingTenant?.Email != email;
+            return noConflict || isUniqueEmail;
           })
           .WithMessage("A tenant with this email already exists.")
           .When(x => x.ExistingTenant != null);
