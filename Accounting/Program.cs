@@ -67,6 +67,9 @@ builder.Services.AddTransient<EmailService>();
 builder.Services.AddTransient<LoginWithoutPasswordService>();
 builder.Services.AddTransient<InvitationService>();
 builder.Services.AddTransient<TagService>();
+builder.Services.AddTransient<UserTaskService>();
+builder.Services.AddTransient<ToDoService>();
+builder.Services.AddTransient<ToDoTagService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
