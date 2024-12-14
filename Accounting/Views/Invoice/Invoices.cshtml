@@ -114,18 +114,6 @@
   </div>
 </div>
 
-<div v-if="(page > 1 || nextPage) && !isFiltered" class="margin-bottom-5px display-flex font-size-20px background-color-antiquewhite">
-  <div class="flex-1 text-align-left">
-    <a :href="`/i/invoices?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
-  </div>
-  <div class="display-flex flex-1">
-    <input type="text" v-model="pageSize" class="text-align-center width-100" @@change="onPageSizeChange">
-  </div>
-  <div class="flex-1 text-align-right">
-    <a :href="`/i/invoices?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
-  </div>
-</div>
-
 <div id="app">
   <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
@@ -196,6 +184,16 @@
       </template>
     </tbody>
   </table>
+
+  <div v-if="(page > 1 || nextPage) && !isFiltered" class="margin-bottom-5px display-flex font-Roboto font-size-20px background-color-antiquewhite">
+    <div>
+      <a :href="`/i/invoices?page=${page - 1}`" v-if="page > 1" class="color-blue">prev</a>
+    </div>
+    <div class="flex-1"></div>
+    <div>
+      <a :href="`/i/invoices?page=${nextPage}`" v-if="nextPage" class="color-blue">next</a>
+    </div>
+  </div>
 
   <form asp-action="ReceivePaymentForInvoiceIds" asp-controller="AccountsReceivable" method="get" ref="form">
     <input type="hidden" name="invoiceIdsCsv" :value="selectedInvoices.join(',')">

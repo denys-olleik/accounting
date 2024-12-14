@@ -906,11 +906,18 @@ namespace Accounting.Database
 
     public IJournalInvoiceInvoiceLinePaymentManager GetJournalInvoiceInvoiceLinePaymentManager()
     {
-      return new JournalInvoiceInvoiceLinePaymentManager();
+      return new JournalInvoiceInvoiceLinePaymentManager(_connectionString);
     }
 
     public class JournalInvoiceInvoiceLinePaymentManager : IJournalInvoiceInvoiceLinePaymentManager
     {
+      private readonly string _connectionString;
+
+      public JournalInvoiceInvoiceLinePaymentManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public JournalInvoiceInvoiceLinePayment Create(JournalInvoiceInvoiceLinePayment entity)
       {
         throw new NotImplementedException();
@@ -928,7 +935,7 @@ namespace Accounting.Database
 
         IEnumerable<JournalInvoiceInvoiceLinePayment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           string insertQuery = """
             INSERT INTO "JournalInvoiceInvoiceLinePayment" ("JournalId", "InvoiceInvoiceLinePaymentId", "ReversedJournalInvoiceInvoiceLinePaymentId", "TransactionGuid", "CreatedById", "OrganizationId") 
@@ -970,7 +977,7 @@ namespace Accounting.Database
 
         IEnumerable<JournalInvoiceInvoiceLinePayment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<JournalInvoiceInvoiceLinePayment>($"""
             SELECT * 
@@ -991,7 +998,7 @@ namespace Accounting.Database
 
         IEnumerable<JournalInvoiceInvoiceLinePayment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           string query = $"""
             SELECT * 
@@ -1019,7 +1026,7 @@ namespace Accounting.Database
 
         List<JournalInvoiceInvoiceLinePayment> result = new List<JournalInvoiceInvoiceLinePayment>();
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           var query = $"""
             SELECT glilp.*, gl.*
@@ -1063,7 +1070,7 @@ namespace Accounting.Database
 
         if (loadChildren)
         {
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
             string query = """
                 SELECT giiilp.*, gl.*
@@ -1093,7 +1100,7 @@ namespace Accounting.Database
         }
         else
         {
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
             string query = """
                 SELECT *
@@ -2235,11 +2242,18 @@ namespace Accounting.Database
 
     public IInvoiceInvoiceLinePaymentManager GetInvoiceInvoiceLinePaymentManager()
     {
-      return new InvoiceInvoiceLinePaymentManager();
+      return new InvoiceInvoiceLinePaymentManager(_connectionString);
     }
 
     public class InvoiceInvoiceLinePaymentManager : IInvoiceInvoiceLinePaymentManager
     {
+      private readonly string _connectionString;
+
+      public InvoiceInvoiceLinePaymentManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public InvoiceInvoiceLinePayment Create(InvoiceInvoiceLinePayment entity)
       {
         throw new NotImplementedException();
@@ -2257,7 +2271,7 @@ namespace Accounting.Database
 
         IEnumerable<InvoiceInvoiceLinePayment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<InvoiceInvoiceLinePayment>("""
             INSERT INTO "InvoiceInvoiceLinePayment" 
@@ -2296,7 +2310,7 @@ namespace Accounting.Database
 
         IEnumerable<InvoiceInvoiceLinePayment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<InvoiceInvoiceLinePayment>("""
             SELECT * FROM (
@@ -2318,7 +2332,7 @@ namespace Accounting.Database
           nextPage = page + 1;
         }
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           foreach (var invoicePayment in resultList)
           {
@@ -2355,7 +2369,7 @@ namespace Accounting.Database
 
         IEnumerable<Invoice> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Invoice>("""
             SELECT i.* 
@@ -2378,7 +2392,7 @@ namespace Accounting.Database
 
         IEnumerable<Payment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Payment>("""
             SELECT DISTINCT p.* 
@@ -2401,7 +2415,7 @@ namespace Accounting.Database
 
         IEnumerable<InvoiceInvoiceLinePayment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<InvoiceInvoiceLinePayment>("""
             SELECT * 
@@ -2421,7 +2435,7 @@ namespace Accounting.Database
 
         decimal result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QuerySingleOrDefaultAsync<decimal>("""
             SELECT COALESCE(SUM(iilp."Amount"), 0) 
@@ -2444,7 +2458,7 @@ namespace Accounting.Database
 
         IEnumerable<InvoiceInvoiceLinePayment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<InvoiceInvoiceLinePayment>("""
             SELECT * 
@@ -2488,7 +2502,7 @@ namespace Accounting.Database
         string searchLogic = builder.BuildSearchLogic();
 
         IEnumerable<InvoiceInvoiceLinePayment> result;
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           string query = $"""
             SELECT * FROM (
@@ -2515,7 +2529,7 @@ namespace Accounting.Database
           nextPage = page + 1;
         }
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           foreach (var invoicePayment in resultList)
           {
@@ -2558,7 +2572,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "InvoicePayment"
@@ -3284,11 +3298,18 @@ namespace Accounting.Database
 
     public IPaymentManager GetPaymentManager()
     {
-      return new PaymentManager();
+      return new PaymentManager(_connectionString);
     }
 
     public class PaymentManager : IPaymentManager
     {
+      private readonly string _connectionString;
+
+      public PaymentManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public Payment Create(Payment entity)
       {
         throw new NotImplementedException();
@@ -3304,7 +3325,7 @@ namespace Accounting.Database
 
         IEnumerable<Payment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Payment>("""
             INSERT INTO "Payment" ("ReferenceNumber", "Amount", "CreatedById", "OrganizationId")
@@ -3339,7 +3360,7 @@ namespace Accounting.Database
 
         IEnumerable<Payment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Payment>("""
             SELECT DISTINCT p.* 
@@ -3361,7 +3382,7 @@ namespace Accounting.Database
 
         IEnumerable<Payment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Payment>("""
             SELECT * FROM "Payment" 
@@ -3385,7 +3406,7 @@ namespace Accounting.Database
         p.Add("@VoidReason", voidReason);
         p.Add("@OrganizationId", organizationId);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           await con.ExecuteAsync("""
             UPDATE "Payment"
