@@ -7,6 +7,12 @@ namespace Accounting.Service
   {
     private readonly string _databaseName;
 
+    public async Task<int> UpdateUserAsync(string email, string firstName, string lastName)
+    {
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetTenantManager().UpdateUserAsync(email, firstName, lastName);
+    }
+
     public TenantService(string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;

@@ -4567,27 +4567,6 @@ namespace Accounting.Database
         return rowsModified;
       }
 
-      public async Task<int> UpdateAsync(string email, string firstName, string lastName)
-      {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@FirstName", firstName);
-        p.Add("@LastName", lastName);
-        p.Add("@Email", email);
-
-        int rowsAffected;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
-        {
-          rowsAffected = await con.ExecuteAsync("""
-              UPDATE "User" 
-              SET "FirstName" = @FirstName, "LastName" = @LastName
-              WHERE "Email" = @Email
-              """, p);
-        }
-
-        return rowsAffected;
-      }
-
       public async Task<int> DeleteAsync(int userId)
       {
         DynamicParameters p = new DynamicParameters();
@@ -6019,6 +5998,37 @@ namespace Accounting.Database
       public Tenant Create(Tenant entity)
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<int> UpdateUserAsync(string email, string firstName, string lastName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@FirstName", firstName);
+        p.Add("@LastName", lastName);
+        p.Add("@Email", email);
+
+        int rowsAffected = 0;
+
+        TenantManager tenantManager = new TenantManager();
+        List<Tenant> tenants = await tenantManager.GetAllAsync();
+
+        foreach (var tenant in tenants)
+        {
+          NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql)
+          {
+            Database = tenant.DatabaseName
+          };
+          using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+          {
+            rowsAffected = await con.ExecuteAsync("""
+              UPDATE "User"
+              SET "FirstName" = @FirstName, "LastName" = @LastName
+              WHERE "Email" = @Email
+              """, p);
+          }
+        }
+
+        return rowsAffected;
       }
 
       public async Task<Tenant> CreateAsync(Tenant entity)

@@ -10,7 +10,7 @@ namespace Accounting.Database.Interfaces
     Task<User> CreateAsync(User entity);
     Task<int> UpdatePasswordAllTenantsAsync(string email, string password);
     Task<User> GetAsync(string email);
-    Task<int> UpdateAsync(string email, string firstName, string lastName);
+    
     Task<int> DeleteAsync(int userId);
   }
 }

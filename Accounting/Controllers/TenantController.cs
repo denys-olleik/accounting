@@ -338,7 +338,7 @@ namespace Accounting.Controllers
       user.FirstName = model.FirstName;
       user.LastName = model.LastName;
 
-      await _userService.UpdateAsync(user.Email, user.FirstName, user.LastName);
+      await _tenantService.UpdateUserAsync(user.Email!, user.FirstName, user.LastName);
 
       // Handle the case when no organizations are selected
       var selectedOrganizationIds = !string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv)

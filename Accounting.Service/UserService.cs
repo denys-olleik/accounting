@@ -59,12 +59,6 @@ namespace Accounting.Service
       return await factoryManager.GetUserManager().GetAsync(email);
     }
 
-    public async Task<int> UpdateAsync(string email, string firstName, string lastName)
-    {
-      var factoryManager = new FactoryManager(_databaseName);
-      return await factoryManager.GetUserManager().UpdateAsync(email, firstName, lastName);
-    }
-
     public async Task<int> DeleteAsync(int userId)
     {
       var factoryManager = new FactoryManager(_databaseName);
