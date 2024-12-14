@@ -31,7 +31,7 @@
     <label asp-for="Email" class="background-color-antiquewhite"></label>
     <input asp-for="Email"
            class="font-size-20px"
-           maxlength="100" />
+           maxlength="100" autocomplete="off"/>
   </div>
 
   <div class="display-flex">
@@ -39,14 +39,14 @@
       <label asp-for="FirstName" class="background-color-antiquewhite">First Name</label>
       <input asp-for="FirstName"
              class="font-size-20px"
-             maxlength="100" />
+             maxlength="100" autocomplete="off"/>
     </div>
     <div class="width-5px"></div>
     <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
       <label asp-for="LastName" class="background-color-antiquewhite">Last Name</label>
       <input asp-for="LastName"
              class="font-size-20px"
-             maxlength="100" />
+             maxlength="100" autocomplete="off"/>
     </div>
   </div>
 
@@ -54,14 +54,14 @@
     <label asp-for="Password" class="background-color-antiquewhite">Password</label>
     <input asp-for="Password"
            class="font-size-20px"
-           maxlength="100" />
+           maxlength="100" autocomplete="off" type="password"/>
   </div>
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label asp-for="ConfirmPassword" class="background-color-antiquewhite">Confirm Password</label>
     <input asp-for="ConfirmPassword"
            class="font-size-20px"
-           maxlength="100" />
+           maxlength="100" autocomplete="off" type="password" />
   </div>
 
   <div class="margin-bottom-5px background-color-antiquewhite">
