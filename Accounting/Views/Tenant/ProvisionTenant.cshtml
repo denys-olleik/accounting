@@ -1,13 +1,13 @@
 ﻿@model Accounting.Models.TenantViewModels.ProvisionTenantViewModel
 
 @{
-  ViewData["Title"] = "Provision Tenant - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Provision tenant - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-  string headerText = "Provision Tenant";
+  string headerText = "Provision tenant";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
