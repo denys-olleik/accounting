@@ -7,6 +7,7 @@ using FluentValidation;
 using Accounting.Models.TenantViewModels;
 using Accounting.CustomAttributes;
 using Accounting.Common;
+using static Accounting.Models.TenantViewModels.UpdateUserViewModel;
 
 namespace Accounting.Controllers
 {
@@ -325,6 +326,16 @@ namespace Accounting.Controllers
         OrganizationID = x.OrganizationID,
         Name = x.Name
       }).ToList();
+
+      var userOrganization = await _userOrganizationService.GetAsync(GetUserId(), GetOrganizationId(), GetDatabaseName());
+      var currentUserOrganization = new UserOrganizationViewModel
+      {
+        UserOrganizationID = userOrganization.UserOrganizationID,
+        UserId = user.UserID,
+        OrganizationId = userOrganization.OrganizationId
+      };
+
+      model.ExistingUserOrganization = currentUserOrganization;
 
       var validator = new UpdateUserViewModel.UpdateUserViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);
