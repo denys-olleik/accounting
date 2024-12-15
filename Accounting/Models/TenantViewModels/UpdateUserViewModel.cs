@@ -43,21 +43,15 @@ namespace Accounting.Models.TenantViewModels
 
         RuleFor(x => x)
             .Must(NotUnassociateCurrentUser)
-            .WithMessage("You cannot un-associate your own user-organization.");
+            .WithMessage("You cannot un-associate yourself from the organization you are logged into.");
       }
 
-      /// <summary>
-      /// Validates that the current user's organization association is not removed
-      /// during the update process by ensuring the user's organization ID remains
-      /// in the list of selected organization IDs.
-      /// </summary>
       private bool NotUnassociateCurrentUser(UpdateUserViewModel model)
       {
         if (model.ExistingUserOrganization != null && model.UserID == model.ExistingUserOrganization.UserId)
         {
           if (string.IsNullOrWhiteSpace(model.SelectedOrganizationIdsCsv))
           {
-            // If no IDs are selected, user is trying to un-associate from all organizations, which is not allowed.
             return false;
           }
 
