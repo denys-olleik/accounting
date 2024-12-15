@@ -312,6 +312,12 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
+      model.Tenant = new UpdateUserViewModel.TenantViewModel
+      {
+        TenantID = tenant.TenantID,
+        DatabaseName = tenant.DatabaseName
+      };
+
       UserService _userService = new UserService(tenant.DatabaseName);
 
       User user = await _userService.GetAsync(int.Parse(userId));
@@ -321,7 +327,7 @@ namespace Accounting.Controllers
       }
 
       var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
-      model.AvailableOrganizations = organizations.Select(x => new UpdateUserViewModel.OrganizationViewModel
+      model.AvailableOrganizations = organizations.Select(x => new OrganizationViewModel
       {
         OrganizationID = x.OrganizationID,
         Name = x.Name
@@ -337,7 +343,9 @@ namespace Accounting.Controllers
 
       model.ExistingUserOrganization = currentUserOrganization;
 
-      var validator = new UpdateUserViewModel.UpdateUserViewModelValidator();
+      model.CurrentUserDatabaseName = GetDatabaseName();
+
+      var validator = new UpdateUserViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -692,9 +700,9 @@ namespace Accounting.Controllers
           page,
           pageSize);
 
-      TenantViewModel ConvertToViewModel(Tenant tenant)
+      Models.TenantViewModels.TenantViewModel ConvertToViewModel(Tenant tenant)
       {
-        return new TenantViewModel
+        return new Models.TenantViewModels.TenantViewModel
         {
           TenantID = tenant.TenantID,
           RowNumber = tenant.RowNumber,

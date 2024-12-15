@@ -5,7 +5,9 @@ namespace Accounting.Models.TenantViewModels
 {
   public class UpdateUserViewModel
   {
+    public string CurrentUserDatabaseName { get; set; }
     public int TenantId { get; set; }
+    public TenantViewModel Tenant { get; set; }
     public int UserID { get; set; }
     public string Email { get; set; }
     public string FirstName { get; set; }
@@ -13,6 +15,12 @@ namespace Accounting.Models.TenantViewModels
     public List<OrganizationViewModel> AvailableOrganizations { get; set; } = new List<OrganizationViewModel>();
     public string SelectedOrganizationIdsCsv { get; set; }
     public UserOrganizationViewModel ExistingUserOrganization { get; set; }
+
+    public class TenantViewModel
+    {
+      public int TenantID { get; set; }
+      public string? DatabaseName { get; set; }
+    }
 
     public class UserOrganizationViewModel
     {
@@ -43,7 +51,8 @@ namespace Accounting.Models.TenantViewModels
 
         RuleFor(x => x)
             .Must(NotUnassociateCurrentUser)
-            .WithMessage("You cannot un-associate yourself from the organization you are logged into.");
+            .WithMessage("You cannot un-associate yourself from the organization you are logged into.")
+            .When(x => x.CurrentUserDatabaseName == x.Tenant.DatabaseName);
       }
 
       private bool NotUnassociateCurrentUser(UpdateUserViewModel model)
