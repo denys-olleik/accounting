@@ -55,6 +55,12 @@ namespace Accounting.Models.TenantViewModels
       {
         if (model.ExistingUserOrganization != null && model.UserID == model.ExistingUserOrganization.UserId)
         {
+          if (string.IsNullOrWhiteSpace(model.SelectedOrganizationIdsCsv))
+          {
+            // If no IDs are selected, user is trying to un-associate from all organizations, which is not allowed.
+            return false;
+          }
+
           var selectedOrgIds = model.SelectedOrganizationIdsCsv.Split(',')
               .Select(id => int.Parse(id.Trim()))
               .ToList();
