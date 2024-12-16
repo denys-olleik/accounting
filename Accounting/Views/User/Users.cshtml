@@ -8,9 +8,16 @@
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
-<div class="display-flex margin-bottom-5px">
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div>
-    <a asp-action="Create" asp-controller="User" class="font-Roboto">Create User</a>
+    <a asp-action="Create" asp-controller="User" class="font-Roboto font-size-16px color-blue margin-left-20px">
+      Create user
+    </a>
+  </div>
+  <div class="margin-left-20px flex-1 text-align-right">
+    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">
+      Home
+    </a>
   </div>
 </div>
 
