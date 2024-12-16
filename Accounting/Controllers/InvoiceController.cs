@@ -66,10 +66,13 @@ namespace Accounting.Controllers
     [HttpGet]
     public IActionResult Invoices(int page = 1, int pageSize = 2)
     {
+      var refererHeader = Request.Headers["Referer"];
+
       var vm = new InvoicesPaginatedViewModel
       {
         Page = page,
-        PageSize = pageSize
+        PageSize = pageSize,
+        RememberPageSize = string.IsNullOrEmpty(refererHeader),
       };
 
       return View(vm);
