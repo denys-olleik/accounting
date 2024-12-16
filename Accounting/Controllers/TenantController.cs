@@ -401,8 +401,8 @@ namespace Accounting.Controllers
     [Route("create-user/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> CreateUser(
-      CreateUserViewModel model,
-      string tenantId)
+    CreateUserViewModel model,
+    string tenantId)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
 
@@ -437,7 +437,7 @@ namespace Accounting.Controllers
 
       if (existingUser != null)
       {
-        model.ExistingUser = new CreateUserViewModel.ExistingUserViewModel()
+        model.ExistingUser = new CreateUserViewModel.UserViewModel()
         {
           UserID = existingUser.UserID,
           Email = existingUser.Email,
@@ -456,21 +456,16 @@ namespace Accounting.Controllers
         return View(model);
       }
 
+      string? hashedPassword = model.ExistingUser?.Password ??
+                               (model.Password != null ? PasswordStorage.CreateHash(model.Password) : null);
+
       user = await _userService.CreateAsync(new User()
       {
         Email = model.Email,
         FirstName = model.ExistingUser?.FirstName ?? model.FirstName,
         LastName = model.ExistingUser?.LastName ?? model.LastName,
+        Password = hashedPassword
       }, tenant.DatabaseName!);
-
-      if (string.IsNullOrEmpty(model.Password))
-      {
-        user.Password = null;
-      }
-      else
-      {
-        user.Password = PasswordStorage.CreateHash(model.Password);
-      }
 
       if (!string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
       {

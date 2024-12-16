@@ -14,7 +14,7 @@ namespace Accounting.Models.TenantViewModels
     public string ConfirmPassword { get; set; }
     public string SelectedOrganizationIdsCsv { get; set; }
     public ValidationResult ValidationResult { get; set; } = new ValidationResult();
-    public ExistingUserViewModel? ExistingUser { get; set; }
+    public UserViewModel? ExistingUser { get; set; }
     public List<OrganizationViewModel> AvailableOrganizations { get; internal set; }
 
     public class OrganizationViewModel
@@ -23,7 +23,7 @@ namespace Accounting.Models.TenantViewModels
       public string Name { get; set; }
     }
 
-    public class ExistingUserViewModel
+    public class UserViewModel
     {
       public int UserID { get; set; }
       public string Email { get; set; }

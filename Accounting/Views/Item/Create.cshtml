@@ -2,13 +2,13 @@
 @model Accounting.Models.Item.CreateItemViewModel
 
 @{
-  ViewData["Title"] = "Create Product or Service - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Create product or service - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-  string headerText = "Create Product or Service";
+  string headerText = "Create product or service";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
@@ -52,7 +52,7 @@
     <label asp-for="Name" class="background-color-antiquewhite"></label>
     <input asp-for="Name"
            class="font-size-20px"
-           maxlength="100" />
+           maxlength="100" autocomplete="off"/>
   </div>
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label asp-for="Description" class="background-color-antiquewhite"></label>
@@ -114,7 +114,7 @@
     </div>
   </div>
 
-  <button type="submit" class="full-width-regular-button">Create Product or Service</button>
+  <button type="submit" class="full-width-regular-button">Create product or service</button>
 </form>
 
 @if (Model != null && Model.ValidationResult != null)

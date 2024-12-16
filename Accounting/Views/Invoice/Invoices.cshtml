@@ -101,7 +101,7 @@
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div>
     <a asp-action="Create" asp-controller="Invoice" class="font-Roboto font-size-16px color-blue margin-left-20px">
-      Create Invoice
+      Create invoice
     </a>
   </div>
   <div class="margin-left-20px flex-1 text-align-right">
@@ -197,7 +197,7 @@
 
   <form asp-action="ReceivePaymentForInvoiceIds" asp-controller="AccountsReceivable" method="get" ref="form">
     <input type="hidden" name="invoiceIdsCsv" :value="selectedInvoices.join(',')">
-    <button type="button" class="full-width-regular-button width-100" @@click="submitForm" :disabled="selectedInvoices.length === 0">Receive Payment</button>
+    <button type="button" class="full-width-regular-button width-100" @@click="submitForm" :disabled="selectedInvoices.length === 0">Receive payment</button>
   </form>
 </div>
 
