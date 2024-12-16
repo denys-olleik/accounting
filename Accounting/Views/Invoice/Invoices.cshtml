@@ -185,13 +185,13 @@
     </tbody>
   </table>
 
-  <div v-if="(page > 1 || nextPage) && !isFiltered" class="margin-bottom-5px display-flex font-Roboto font-size-20px background-color-antiquewhite">
+  <div v-if="(page > 1 || nextPage) && !isFiltered" class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
     <div>
-      <a :href="`/i/invoices?page=${page - 1}`" v-if="page > 1" class="color-blue">prev</a>
+      <a :href="`/i/invoices?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
     </div>
     <div class="flex-1"></div>
     <div>
-      <a :href="`/i/invoices?page=${nextPage}`" v-if="nextPage" class="color-blue">next</a>
+      <a :href="`/i/invoices?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
     </div>
   </div>
 
