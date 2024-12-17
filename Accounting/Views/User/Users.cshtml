@@ -68,12 +68,11 @@
   <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
       <tr>
-        <th colspan="2" class="text-align-left">
+        <th class="text-align-left width-1px padding-right-20px">#</th>
+        <th colspan="3" class="text-align-left">
           <input type="text" v-model="userFilter" @@input="fetchUsers"
-            placeholder="Search" class="font-size-16px width-100" />
+                 placeholder="Search" class="font-size-16px width-100" />
         </th>
-        <th class="text-align-right width-1px padding-right-20px white-space-nowrap"></th>
-        <th class="text-align-right width-1px white-space-nowrap"></th>
       </tr>
       <tr>
         <th class="text-align-left width-1px padding-right-20px">#</th>
@@ -87,7 +86,7 @@
         <td class="padding-right-20px">{{ user.rowNumber }}</td>
         <td class="padding-right-20px">
           <user-action :user="user" :is-expanded="user.userID === expandedUserId"
-            @@expand="handleUserExpand(user.userID)"></user-action>
+                       @@expand="handleUserExpand(user.userID)"></user-action>
         </td>
         <td class="text-align-right padding-right-20px white-space-nowrap">{{ user.firstName }}</td>
         <td class="text-align-right white-space-nowrap">{{ user.lastName }}</td>
