@@ -53,12 +53,12 @@
         pageSize: @Model.PageSize,
         nextPage: null,
         rememberPageSize: @(Model.RememberPageSize ? "true" : "false"),
-        isFiltered: false
+        userFilter: ''
       };
     },
     computed: {
       isFiltered() {
-        return !!this.usersFilter;
+        return !!this.userFilter;
       }
     },
     methods: {
