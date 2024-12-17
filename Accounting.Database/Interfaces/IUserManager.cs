@@ -12,5 +12,6 @@ namespace Accounting.Database.Interfaces
     Task<User> GetAsync(string email);
     
     Task<int> DeleteAsync(int userId);
+    Task<(List<User> users, int? nextPageNumber)> GetAllAsync(int page, int pageSize);
   }
 }

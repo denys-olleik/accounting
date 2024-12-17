@@ -26,42 +26,62 @@
 
 <div id="app">
 
-	<div v-if="(page > 1 || nextPage) && !isFiltered"
-		class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
-		<div>
-			<a :href="`/i/invoices?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
-		</div>
-		<div class="flex-1"></div>
-		<div>
-			<a :href="`/i/invoices?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
-		</div>
-	</div>
+  <div v-if="(page > 1 || nextPage) && !isFiltered"
+       class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
+    <div>
+      <a :href="`/u/users?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
+    </div>
+    <div class="flex-1"></div>
+    <div>
+      <a :href="`/u/users?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
+    </div>
+  </div>
 
 </div>
 
 <script>
-	const { createApp } = Vue;
+  const { createApp } = Vue;
 
-	const app = createApp({
-		components: {
+  const app = createApp({
+    components: {
 
-		},
-		data() {
-			return {
-				users: [],
-				page: @Model.Page,
-				pageSize: @Model.PageSize,
-				nextPage: null,
-				rememberPageSize: @(Model.RememberPageSize ? "true" : "false"),
-				isFiltered: false 
-			};
-		},
-		computed: {
-			isFiltered() {
-				return !!this.invoicesFilter || !!this.companyFilter;
-			}
-		}
-	});
+    },
+    data() {
+      return {
+        users: [],
+        page: @Model.Page,
+        pageSize: @Model.PageSize,
+        nextPage: null,
+        rememberPageSize: @(Model.RememberPageSize ? "true" : "false"),
+        isFiltered: false
+      };
+    },
+    computed: {
+      isFiltered() {
+        return !!this.usersFilter;
+      }
+    },
+    methods: {
+      fetchUsers() {
+        let apiUrl = `/api/user/get-users?page=${this.page}&pageSize=${this.pageSize}`;
 
-	app.mount('#app');
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.users = data.users;
+            if (data.page > 0) {
+              this.page = data.page;
+            }
+            if (data.nextPage > 0) {
+              this.nextPage = data.nextPage;
+            }
+          });
+      }
+    },
+    mounted() {
+      this.fetchUsers();
+    }
+  });
+
+  app.mount('#app');
 </script>

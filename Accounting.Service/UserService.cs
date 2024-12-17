@@ -69,7 +69,8 @@ namespace Accounting.Service
       int page, 
       int pageSize)
     {
-      throw new NotImplementedException();
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetUserManager().GetAllAsync(page, pageSize);
     }
   }
 }

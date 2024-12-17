@@ -4584,6 +4584,38 @@ namespace Accounting.Database
 
         return rowsAffected;
       }
+
+      public async Task<(List<User> users, int? nextPageNumber)> GetAllAsync(int page, int pageSize)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Page", page);
+        p.Add("@PageSize", pageSize);
+
+        IEnumerable<User> paginatedResult;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          paginatedResult = await con.QueryAsync<User>($"""
+          SELECT * FROM (
+              SELECT *,
+                     ROW_NUMBER() OVER (ORDER BY "UserID" DESC) AS RowNumber
+              FROM "User"
+          ) AS NumberedUsers
+          WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
+          """, p);
+        }
+
+        var result = paginatedResult.ToList();
+        int? nextPageNumber = null;
+
+        if (result.Count > pageSize)
+        {
+          result.RemoveAt(result.Count - 1);
+          nextPageNumber = page + 1;
+        }
+
+        return (result, nextPageNumber);
+      }
     }
 
     public IUserOrganizationManager GetUserOrganizationManager()
