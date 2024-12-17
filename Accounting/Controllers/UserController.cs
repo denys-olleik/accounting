@@ -182,6 +182,7 @@ namespace Accounting.Controllers
         Users = users.Select(u => new GetUsersViewModel.UserViewModel()
         {
           UserID = u.UserID,
+          RowNumber = u.RowNumber,
           FirstName = u.FirstName,
           LastName = u.LastName,
           Email = u.Email

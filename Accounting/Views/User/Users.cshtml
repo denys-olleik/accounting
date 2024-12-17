@@ -68,6 +68,14 @@
   <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
       <tr>
+        <th colspan="2" class="text-align-left">
+          <input type="text" v-model="userFilter" @@input="fetchUsers"
+            placeholder="Search" class="font-size-16px width-100" />
+        </th>
+        <th class="text-align-right width-1px padding-right-20px white-space-nowrap"></th>
+        <th class="text-align-right width-1px white-space-nowrap"></th>
+      </tr>
+      <tr>
         <th class="text-align-left width-1px padding-right-20px">#</th>
         <th class="text-align-left padding-right-20px">Email</th>
         <th class="text-align-right width-1px padding-right-20px white-space-nowrap">First Name</th>
@@ -76,10 +84,10 @@
     </thead>
     <tbody class="font-Roboto-Mono">
       <tr v-for="user in users" :key="user.userID">
-        <td class="padding-right-20px">{{ user.userID }}</td>
+        <td class="padding-right-20px">{{ user.rowNumber }}</td>
         <td class="padding-right-20px">
           <user-action :user="user" :is-expanded="user.userID === expandedUserId"
-                       @@expand="handleUserExpand(user.userID)"></user-action>
+            @@expand="handleUserExpand(user.userID)"></user-action>
         </td>
         <td class="text-align-right padding-right-20px white-space-nowrap">{{ user.firstName }}</td>
         <td class="text-align-right white-space-nowrap">{{ user.lastName }}</td>
@@ -135,22 +143,27 @@
     },
     methods: {
       fetchUsers() {
-        let apiUrl = `/api/user/get-users?page=${this.page}&pageSize=${this.pageSize}`;
+        let apiUrl;
+
+        if (this.userFilter) {
+          apiUrl = `/api/user/get-users-filtered?search=${encodeURIComponent(this.userFilter)}`;
+        } else {
+          apiUrl = `/api/user/get-users?page=${this.page}&pageSize=${this.pageSize}`;
+        }
 
         fetch(apiUrl)
           .then(response => response.json())
           .then(data => {
             this.users = data.users;
-            if (data.page > 0) {
-              this.page = data.page;
-            }
-            if (data.nextPage > 0) {
-              this.nextPage = data.nextPage;
+            if (!this.userFilter) {
+              if (data.page > 0) {
+                this.page = data.page;
+              }
+              if (data.nextPage > 0) {
+                this.nextPage = data.nextPage;
+              }
             }
           });
-      },
-      handleUserExpand(id) {
-        this.expandedUserId = this.expandedUserId === id ? null : id;
       }
     },
     mounted() {

@@ -2,7 +2,7 @@
 
 namespace Accounting.Business
 {
-  public class User : IIdentifiable<int>
+  public class User : IIdentifiable<int>, IRowNumber
   {
     public int UserID { get; set; }
     public string? Email { get; set; }
@@ -12,8 +12,9 @@ namespace Accounting.Business
     public int CreatedById { get; set; }
     public DateTime Created { get; set; }
 
+    public List<Organization>? Organizations { get; set; } = new List<Organization>();
     public int Identifiable => UserID;
 
-    public List<Organization>? Organizations { get; set; } = new List<Organization>();
+    public int? RowNumber { get; set; }
   }
 }

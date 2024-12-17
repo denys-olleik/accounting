@@ -1,8 +1,9 @@
-﻿using Accounting.Models.BusinessEntityViewModels;
+﻿using Accounting.Common;
+using Accounting.Models.BusinessEntityViewModels;
 
 namespace Accounting.Models.InvoiceViewModels
 {
-  public class InvoiceViewModel
+  public class InvoiceViewModel : IRowNumber
   {
     public int InvoiceID { get; set; }
     public string? InvoiceNumber { get; set; }
@@ -13,7 +14,6 @@ namespace Accounting.Models.InvoiceViewModels
 
     public decimal? Total { get; set; }
     public decimal? Received { get; set; }
-
     public int? RowNumber { get; set; }
 
     public class PaymentViewModel
