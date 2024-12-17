@@ -27,7 +27,7 @@
 <div id="app">
 
 	<div v-if="(page > 1 || nextPage) && !isFiltered"
-			 class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
+		class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
 		<div>
 			<a :href="`/i/invoices?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
 		</div>
@@ -48,10 +48,12 @@
 		},
 		data() {
 			return {
+				users: [],
 				page: @Model.Page,
 				pageSize: @Model.PageSize,
 				nextPage: null,
-				rememberPageSize: @(Model.RememberPageSize ? "true" : "false")
+				rememberPageSize: @(Model.RememberPageSize ? "true" : "false"),
+				isFiltered: false 
 			};
 		},
 		computed: {
