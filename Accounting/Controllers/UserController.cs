@@ -1,6 +1,7 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
 using Accounting.CustomAttributes;
+using Accounting.Models.TenantViewModels;
 using Accounting.Models.UserViewModels;
 using Accounting.Service;
 using Accounting.Validators;
@@ -177,7 +178,11 @@ namespace Accounting.Controllers
           page,
           pageSize);
 
-      throw new NotImplementedException();
+      GetUsersViewModel getUsersViewModel = new GetUsersViewModel()
+      {
+        Users = users,
+        NextPageNumber = nextPageNumber
+      };
     }
   }
 }
