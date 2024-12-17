@@ -1,27 +1,67 @@
 ﻿@model Accounting.Models.UserViewModels.UsersPaginatedViewModel
 
 @{
-	ViewData["Title"] = "Users - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Users - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 @{
-	string headerText = "Users";
+  string headerText = "Users";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
+<template id="user-action-template">
+  <div class="display-flex padding-top-bottom-2px">
+    <div class="display-flex flex-1">
+      <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ user.email }}</a>
+      <span v-if="isExpanded" class="display-flex">
+        <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+          <div class="flex-1"></div>
+          <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex
+          flex-direction-column
+          background-color-333333
+          padding-right-5px
+          padding-left-5px
+          margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/u/update/' + user.userID" class="font-size-16px font-Roboto color-white text-decoration-none">
+            update
+          </a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex
+          flex-direction-column
+          background-color-333333
+          padding-right-5px
+          padding-left-5px
+          margin-left-2px">
+          <div class="flex-1"></div>
+          <a :href="'/u/delete/' + user.userID" class="font-size-16px font-Roboto color-white text-decoration-none">
+            delete
+          </a>
+          <div class="flex-1"></div>
+        </div>
+      </span>
+    </div>
+  </div>
+</template>
+
+
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
-	<div>
-		<a asp-action="Create" asp-controller="User" class="font-Roboto font-size-16px color-blue margin-left-20px">
-			Create user
-		</a>
-	</div>
-	<div class="margin-left-20px flex-1 text-align-right">
-		<a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">
-			Home
-		</a>
-	</div>
+  <div>
+    <a asp-action="Create" asp-controller="User" class="font-Roboto font-size-16px color-blue margin-left-20px">
+      Create user
+    </a>
+  </div>
+  <div class="margin-left-20px flex-1 text-align-right">
+    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">
+      Home
+    </a>
+  </div>
 </div>
 
 <div id="app">
@@ -37,15 +77,18 @@
     <tbody class="font-Roboto-Mono">
       <tr v-for="user in users" :key="user.userID">
         <td class="padding-right-20px">{{ user.userID }}</td>
-        <td class="padding-right-20px">{{ user.email }}</td>
+        <td class="padding-right-20px">
+          <user-action :user="user" :is-expanded="user.userID === expandedUserId"
+                       @@expand="handleUserExpand(user.userID)"></user-action>
+        </td>
         <td class="text-align-right padding-right-20px white-space-nowrap">{{ user.firstName }}</td>
-        <td class="text-align-right white-space-nowrap white-space-nowrap">{{ user.lastName }}</td>
+        <td class="text-align-right white-space-nowrap">{{ user.lastName }}</td>
       </tr>
     </tbody>
   </table>
 
   <div v-if="(page > 1 || nextPage) && !isFiltered"
-       class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
+    class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
     <div>
       <a :href="`/u/users?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
     </div>
@@ -59,13 +102,25 @@
 <script>
   const { createApp } = Vue;
 
+  const UserAction = {
+    name: 'UserAction',
+    props: ['user', 'isExpanded'],
+    template: '#user-action-template',
+    methods: {
+      toggleAction() {
+        this.$emit('expand');
+      }
+    }
+  };
+
   const app = createApp({
     components: {
-
+      'user-action': UserAction,
     },
     data() {
       return {
         users: [],
+        expandedUserId: null,
         page: @Model.Page,
         pageSize: @Model.PageSize,
         nextPage: null,
@@ -93,6 +148,9 @@
               this.nextPage = data.nextPage;
             }
           });
+      },
+      handleUserExpand(id) {
+        this.expandedUserId = this.expandedUserId === id ? null : id;
       }
     },
     mounted() {
