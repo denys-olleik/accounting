@@ -25,6 +25,24 @@
 </div>
 
 <div id="app">
+  <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th class="text-align-left width-1px padding-right-20px">#</th>
+        <th class="text-align-left padding-right-20px">Email</th>
+        <th class="text-align-right width-1px padding-right-20px white-space-nowrap">First Name</th>
+        <th class="text-align-right width-1px white-space-nowrap">Last Name</th>
+      </tr>
+    </thead>
+    <tbody class="font-Roboto-Mono">
+      <tr v-for="user in users" :key="user.userID">
+        <td class="padding-right-20px">{{ user.userID }}</td>
+        <td class="padding-right-20px">{{ user.email }}</td>
+        <td class="text-align-right padding-right-20px white-space-nowrap">{{ user.firstName }}</td>
+        <td class="text-align-right white-space-nowrap white-space-nowrap">{{ user.lastName }}</td>
+      </tr>
+    </tbody>
+  </table>
 
   <div v-if="(page > 1 || nextPage) && !isFiltered"
        class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
@@ -36,7 +54,6 @@
       <a :href="`/u/users?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
     </div>
   </div>
-
 </div>
 
 <script>
