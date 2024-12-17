@@ -238,6 +238,4 @@ CREATE TABLE "JournalReconciliationTransaction"
 5. Create invoice.
 6. Receive payment.
 
-![](david-vs-goliath.png)
-
 3-24 months.
