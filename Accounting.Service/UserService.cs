@@ -64,5 +64,12 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetUserManager().DeleteAsync(userId);
     }
+
+    public async Task<(List<User> users, int? nextPageNumber)> GetAllAsync(
+      int page, 
+      int pageSize)
+    {
+      throw new NotImplementedException();
+    }
   }
 }

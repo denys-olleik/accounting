@@ -1,7 +1,6 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
 using Accounting.CustomAttributes;
-using Accounting.Models;
 using Accounting.Models.UserViewModels;
 using Accounting.Service;
 using Accounting.Validators;
@@ -154,6 +153,31 @@ namespace Accounting.Controllers
       await _userService.UpdatePasswordAllTenantsAsync(GetEmail(), PasswordStorage.CreateHash(model.NewPassword));
 
       return RedirectToAction("Users");
+    }
+  }
+
+  [AuthorizeWithOrganizationId]
+  [ApiController]
+  [Route("api/user")]
+  public class  UserApiController : BaseController
+  {
+    private readonly UserService _userService;
+
+    public UserApiController(RequestContext requestContext, UserService userService)
+    {
+      _userService = new UserService(requestContext.DatabaseName);
+    }
+
+    [HttpGet("get-users")]
+    public async Task<IActionResult> GetUsers(
+      int page = 1,
+      int pageSize = 10)
+    {
+      var (users, nextPageNumber) = await _userService.GetAllAsync(
+          page,
+          pageSize);
+
+      throw new NotImplementedException();
     }
   }
 }
