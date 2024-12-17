@@ -141,6 +141,9 @@
       }
     },
     methods: {
+			handleUserExpand(userId) {
+				this.expandedUserId = this.expandedUserId === userId ? null : userId;
+			},
       fetchUsers() {
         let apiUrl;
 
