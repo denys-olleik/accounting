@@ -2,7 +2,6 @@
 using Accounting.Common;
 using Accounting.CustomAttributes;
 using Accounting.Models;
-using Accounting.Models.User;
 using Accounting.Models.UserViewModels;
 using Accounting.Service;
 using Accounting.Validators;
@@ -40,7 +39,7 @@ namespace Accounting.Controllers
     {
       var refererHeader = Request.Headers["Referer"];
 
-      var usersViewModel = new PaginatedViewModel()
+      var usersViewModel = new UsersPaginatedViewModel()
       {
         Page = page,
         PageSize = pageSize,

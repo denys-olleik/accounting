@@ -1,7 +1,4 @@
-﻿using Accounting.Database;
-using Accounting.Service;
-using FluentValidation;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 
 namespace Accounting.Models.UserViewModels
 {

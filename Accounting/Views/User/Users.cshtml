@@ -1,4 +1,4 @@
-﻿@model Accounting.Models.UserViewModels.UsersViewModel
+﻿@model Accounting.Models.UserViewModels.UsersPaginatedViewModel
 
 @{
 	ViewData["Title"] = "Users - " + ConfigurationSingleton.Instance.ApplicationName;
@@ -23,27 +23,6 @@
 </div>
 
 <div id="app">
-	<table class="border-collapse background-color-white width-100">
-		<thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
-			<tr>
-				<th class="text-align-left">Email</th>
-				<th class="text-align-left">First Name</th>
-				<th class="text-align-left">Last Name</th>
-				<th class="text-align-left"></th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var user in Model.Users)
-			{
-				<tr class="font-Roboto-Mono">
-					<td><a asp-action="Details" asp-controller="User" asp-area="" asp-route-id="@user.UserID">@user.Email</a></td>
-					<td>@user.FirstName</td>
-					<td>@user.LastName</td>
-					<td class="text-align-right"><a asp-action="Remove" asp-controller="User" asp-area="" asp-route-id="@user.UserID" class="font-Roboto">Remove</a></td>
-				</tr>
-			}
-		</tbody>
-	</table>
 
 	<div v-if="(page > 1 || nextPage) && !isFiltered"
 			 class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
@@ -57,3 +36,28 @@
 	</div>
 
 </div>
+
+<script>
+	const { createApp } = Vue;
+
+	const app = createApp({
+		components: {
+
+		},
+		data() {
+			return {
+				page: @Model.Page,
+				pageSize: @Model.PageSize,
+				nextPage: null,
+				rememberPageSize: @(Model.RememberPageSize ? "true" : "false")
+			};
+		},
+		computed: {
+			isFiltered() {
+				return !!this.invoicesFilter || !!this.companyFilter;
+			}
+		}
+	});
+
+	app.mount('#app');
+</script>

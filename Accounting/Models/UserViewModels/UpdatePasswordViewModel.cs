@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 
-namespace Accounting.Models.User
+namespace Accounting.Models.UserViewModels
 {
   public class UpdatePasswordViewModel
   {
