@@ -1,6 +1,6 @@
 ﻿namespace Accounting.Models.TenantViewModels
 {
-  public class GetUsersViewModel
+  public class GetUsersViewModel : PaginatedViewModel
   {
     public List<UserViewModel> Users { get; set; } = new List<UserViewModel>();
 

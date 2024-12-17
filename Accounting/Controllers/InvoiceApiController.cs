@@ -50,7 +50,7 @@ namespace Accounting.Controllers
       string inStatus = $"{Invoice.InvoiceStatusConstants.Unpaid},{Invoice.InvoiceStatusConstants.PartiallyPaid},{Invoice.InvoiceStatusConstants.Paid}",
       bool includeVoidInvoices = false)
     {
-      var (invoices, nextPageNumber) = await _invoiceService.GetAllAsync(
+      var (invoices, nextPage) = await _invoiceService.GetAllAsync(
           page,
           pageSize,
           inStatus.Split(","),
@@ -111,7 +111,7 @@ namespace Accounting.Controllers
           Status = i.Status,
         }).ToList(),
         Page = page,
-        NextPage = nextPageNumber,
+        NextPage = nextPage,
       };
 
       return Ok(getInvoicesViewModel);

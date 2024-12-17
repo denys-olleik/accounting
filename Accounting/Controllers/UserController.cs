@@ -1,7 +1,6 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
 using Accounting.CustomAttributes;
-using Accounting.Models.TenantViewModels;
 using Accounting.Models.UserViewModels;
 using Accounting.Service;
 using Accounting.Validators;
@@ -174,15 +173,24 @@ namespace Accounting.Controllers
       int page = 1,
       int pageSize = 10)
     {
-      var (users, nextPageNumber) = await _userService.GetAllAsync(
+      var (users, nextPage) = await _userService.GetAllAsync(
           page,
           pageSize);
 
       GetUsersViewModel getUsersViewModel = new GetUsersViewModel()
       {
-        Users = users,
-        NextPageNumber = nextPageNumber
+        Users = users.Select(u => new GetUsersViewModel.UserViewModel()
+        {
+          UserID = u.UserID,
+          FirstName = u.FirstName,
+          LastName = u.LastName,
+          Email = u.Email
+        }).ToList(),
+        Page = page,
+        NextPage = nextPage
       };
+
+      return Ok(getUsersViewModel);
     }
   }
 }
