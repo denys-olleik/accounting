@@ -1,43 +1,59 @@
 ﻿@model Accounting.Models.UserViewModels.UsersViewModel
 
 @{
-  ViewData["Title"] = "Users - " + ConfigurationSingleton.Instance.ApplicationName;
+	ViewData["Title"] = "Users - " + ConfigurationSingleton.Instance.ApplicationName;
 }
+
 @{
-  string headerText = "Users";
+	string headerText = "Users";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
-  <div>
-    <a asp-action="Create" asp-controller="User" class="font-Roboto font-size-16px color-blue margin-left-20px">
-      Create user
-    </a>
-  </div>
-  <div class="margin-left-20px flex-1 text-align-right">
-    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">
-      Home
-    </a>
-  </div>
+	<div>
+		<a asp-action="Create" asp-controller="User" class="font-Roboto font-size-16px color-blue margin-left-20px">
+			Create user
+		</a>
+	</div>
+	<div class="margin-left-20px flex-1 text-align-right">
+		<a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">
+			Home
+		</a>
+	</div>
 </div>
-<table class="border-collapse background-color-white width-100">
-  <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
-    <tr>
-      <th class="text-align-left">Email</th>
-      <th class="text-align-left">First Name</th>
-      <th class="text-align-left">Last Name</th>
-      <th class="text-align-left"></th>
-    </tr>
-  </thead>
-  <tbody>
-    @foreach (var user in Model.Users)
-    {
-      <tr class="font-Roboto-Mono">
-        <td><a asp-action="Details" asp-controller="User" asp-area="" asp-route-id="@user.UserID">@user.Email</a></td>
-        <td>@user.FirstName</td>
-        <td>@user.LastName</td>
-        <td class="text-align-right"><a asp-action="Remove" asp-controller="User" asp-area="" asp-route-id="@user.UserID" class="font-Roboto">Remove</a></td>
-      </tr>
-    }
-  </tbody>
-</table>
+
+<div id="app">
+	<table class="border-collapse background-color-white width-100">
+		<thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+			<tr>
+				<th class="text-align-left">Email</th>
+				<th class="text-align-left">First Name</th>
+				<th class="text-align-left">Last Name</th>
+				<th class="text-align-left"></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var user in Model.Users)
+			{
+				<tr class="font-Roboto-Mono">
+					<td><a asp-action="Details" asp-controller="User" asp-area="" asp-route-id="@user.UserID">@user.Email</a></td>
+					<td>@user.FirstName</td>
+					<td>@user.LastName</td>
+					<td class="text-align-right"><a asp-action="Remove" asp-controller="User" asp-area="" asp-route-id="@user.UserID" class="font-Roboto">Remove</a></td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+	<div v-if="(page > 1 || nextPage) && !isFiltered"
+			 class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
+		<div>
+			<a :href="`/i/invoices?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
+		</div>
+		<div class="flex-1"></div>
+		<div>
+			<a :href="`/i/invoices?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
+		</div>
+	</div>
+
+</div>
