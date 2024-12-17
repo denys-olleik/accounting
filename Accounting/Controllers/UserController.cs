@@ -1,6 +1,7 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
 using Accounting.CustomAttributes;
+using Accounting.Models;
 using Accounting.Models.User;
 using Accounting.Models.UserViewModels;
 using Accounting.Service;
@@ -35,22 +36,16 @@ namespace Accounting.Controllers
 
     [HttpGet]
     [Route("users")]
-    public async Task<IActionResult> Users()
+    public IActionResult Users(int page = 1, int pageSize = 2)
     {
-      List<User> users = await _userService.GetAllAsync(GetOrganizationId());
+      var refererHeader = Request.Headers["Referer"];
 
-      UsersViewModel usersViewModel = new UsersViewModel();
-      usersViewModel.Users = new List<UserViewModel>();
-      foreach (var user in users)
+      var usersViewModel = new PaginatedViewModel()
       {
-        UserViewModel userViewModel = new UserViewModel();
-        userViewModel.UserID = user.UserID;
-        userViewModel.Email = user.Email;
-        userViewModel.FirstName = user.FirstName;
-        userViewModel.LastName = user.LastName;
-        userViewModel.Claims = new List<Models.ClaimViewModels.ClaimViewModel>();
-        usersViewModel.Users.Add(userViewModel);
-      }
+        Page = page,
+        PageSize = pageSize,
+        RememberPageSize = string.IsNullOrEmpty(refererHeader)
+      };
 
       return View(usersViewModel);
     }
