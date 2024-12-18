@@ -4619,27 +4619,40 @@ namespace Accounting.Database
 
       public async Task<List<User>> GetFilteredAsync(string search)
       {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@Search", search);
+        if (string.IsNullOrWhiteSpace(search))
+        {
+          return new List<User>();
+        }
 
-        IEnumerable<User> result;
+        var searchParts = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        if (!searchParts.Any())
+        {
+          return new List<User>();
+        }
+
+        var parameters = new DynamicParameters();
+        var conditions = new List<string>();
+
+        for (int i = 0; i < searchParts.Length; i++)
+        {
+          string paramName = $"@Search{i}";
+          parameters.Add(paramName, $"%{searchParts[i]}%");
+          conditions.Add($@"""Email"" ILIKE {paramName} OR ""FirstName"" ILIKE {paramName} OR ""LastName"" ILIKE {paramName}");
+        }
+
+        string query = $"""
+          SELECT *
+          FROM "User"
+          WHERE {string.Join(" OR ", conditions)}
+          LIMIT 100
+          """;
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
-          result = await con.QueryAsync<User>($"""
-            SELECT * FROM (
-              SELECT *,
-                     ROW_NUMBER() OVER (ORDER BY "UserID" DESC) AS RowNumber
-              FROM "User"
-              WHERE "Email" ILIKE '%' || @Search || '%'
-              OR "FirstName" ILIKE '%' || @Search || '%'
-              OR "LastName" ILIKE '%' || @Search || '%'
-            ) AS NumberedUsers
-            WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
-            """, p);
+          var result = await con.QueryAsync<User>(query, parameters);
+          return result.ToList();
         }
-
-        return result.ToList();
       }
     }
 
