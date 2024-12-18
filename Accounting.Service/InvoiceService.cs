@@ -69,7 +69,7 @@ namespace Accounting.Service
       return await factoryManager.GetInvoiceManager().UpdateStatusAsync(invoiceId, inPaymentStatus);
     }
 
-    public async Task<List<Invoice>> SearchInvoicesAsync(string[] inPaymentStatus, string invoiceNumbersSpaceSeparated, string company, int organizationId)
+    public async Task<List<Invoice>> GetFilteredAsync(string[] inPaymentStatus, string invoiceNumbersSpaceSeparated, string company, int organizationId)
     {
       var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetInvoiceManager().SearchInvoicesAsync(inPaymentStatus, invoiceNumbersSpaceSeparated, company, organizationId);

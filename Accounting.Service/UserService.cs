@@ -72,5 +72,11 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(_databaseName);
       return await factoryManager.GetUserManager().GetAllAsync(page, pageSize);
     }
+
+    public async Task<List<User>> GetFilteredAsync(string search)
+    {
+      FactoryManager factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetUserManager().GetFilteredAsync(search);
+    }
   }
 }

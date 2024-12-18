@@ -20,10 +20,10 @@ namespace Accounting.Controllers
     private readonly InvitationService _invitationService;
 
     public UserController(
-      RequestContext requestContext, 
-      UserOrganizationService userOrganizationService, 
-      UserService userService, 
-      SecretService secretService, 
+      RequestContext requestContext,
+      UserOrganizationService userOrganizationService,
+      UserService userService,
+      SecretService secretService,
       InvitationService invitationService)
     {
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
@@ -140,7 +140,7 @@ namespace Accounting.Controllers
     [Route("update-password")]
     public async Task<IActionResult> UpdatePassword(UpdatePasswordViewModel model)
     {
-      UpdatePasswordViewModel.UpdatePasswordViewModelValidator validator 
+      UpdatePasswordViewModel.UpdatePasswordViewModelValidator validator
         = new UpdatePasswordViewModel.UpdatePasswordViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
@@ -159,7 +159,7 @@ namespace Accounting.Controllers
   [AuthorizeWithOrganizationId]
   [ApiController]
   [Route("api/user")]
-  public class  UserApiController : BaseController
+  public class UserApiController : BaseController
   {
     private readonly UserService _userService;
 
@@ -189,6 +189,29 @@ namespace Accounting.Controllers
         }).ToList(),
         Page = page,
         NextPage = nextPage
+      };
+
+      return Ok(getUsersViewModel);
+    }
+
+    [HttpGet("get-users-filtered")]
+    public async Task<IActionResult> GetUsersFiltered(
+      string search = null,
+      int page = 1,
+      int pageSize = 10)
+    {
+      var users = await _userService.GetFilteredAsync(search);
+
+      GetUsersViewModel getUsersViewModel = new GetUsersViewModel()
+      {
+        Users = users.Select(u => new GetUsersViewModel.UserViewModel()
+        {
+          UserID = u.UserID,
+          RowNumber = u.RowNumber,
+          FirstName = u.FirstName,
+          LastName = u.LastName,
+          Email = u.Email
+        }).ToList()
       };
 
       return Ok(getUsersViewModel);

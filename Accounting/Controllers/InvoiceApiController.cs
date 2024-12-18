@@ -124,7 +124,7 @@ namespace Accounting.Controllers
         string company = null)
     {
       InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, _requestContext.DatabaseName);
-      List<Invoice> invoices = await invoiceService.SearchInvoicesAsync(inStatus?.Split(","), invoiceNumbers, company, GetOrganizationId());
+      List<Invoice> invoices = await invoiceService.GetFilteredAsync(inStatus?.Split(","), invoiceNumbers, company, GetOrganizationId());
 
       foreach (var invoice in invoices)
       {

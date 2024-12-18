@@ -4616,6 +4616,31 @@ namespace Accounting.Database
 
         return (result, nextPageNumber);
       }
+
+      public async Task<List<User>> GetFilteredAsync(string search)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Search", search);
+
+        IEnumerable<User> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = await con.QueryAsync<User>($"""
+            SELECT * FROM (
+              SELECT *,
+                     ROW_NUMBER() OVER (ORDER BY "UserID" DESC) AS RowNumber
+              FROM "User"
+              WHERE "Email" ILIKE '%' || @Search || '%'
+              OR "FirstName" ILIKE '%' || @Search || '%'
+              OR "LastName" ILIKE '%' || @Search || '%'
+            ) AS NumberedUsers
+            WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
+            """, p);
+        }
+
+        return result.ToList();
+      }
     }
 
     public IUserOrganizationManager GetUserOrganizationManager()
