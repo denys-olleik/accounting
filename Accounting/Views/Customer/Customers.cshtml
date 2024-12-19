@@ -1,18 +1,18 @@
 ﻿@model Accounting.Models.BusinessEntityViewModels.BusinessEntitiesViewModel
 
 @{
-  ViewData["Title"] = "Customers - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Customers and vendors - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-  string headerText = "Customers";
+  string headerText = "Customers and vendors";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <template id="customer-actions-template">
-  <div class="display-flex padding-top-bottom-2px">
+  <div class="display-flex">
     <div class="display-flex flex-1">
       <a href="#" @@click.prevent="toggleActions" class="margin-right-5px">
         <business-entity-name-display :business-entity="customer"></business-entity-name-display>
