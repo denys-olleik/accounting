@@ -1,11 +1,11 @@
 ﻿@model Accounting.Models.UserViewModels.CreateUserViewModel
 
 @{
-  ViewData["Title"] = "Create User - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Create user - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 @{
-  string headerText = "Create User";
+  string headerText = "Create user";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
@@ -18,27 +18,27 @@
 
 <form asp-action="Create" asp-controller="User" method="post" class="display-flex flex-direction-column">
   <div class="display-flex flex-direction-column">
-    <label asp-for="Email"></label>
+    <label asp-for="Email" class="background-color-antiquewhite"></label>
     <input asp-for="Email" class="margin-bottom-5px font-size-20px" />
   </div>
   <div class="display-flex max-width-768-flex-direction-column">
     <div class="flex-1 display-flex flex-direction-column">
-      <label asp-for="FirstName"></label>
+      <label asp-for="FirstName" class="background-color-antiquewhite"></label>
       <input asp-for="FirstName" class="margin-bottom-5px font-size-20px" />
     </div>
     <div class="width-5px"></div>
     <div class="flex-1 display-flex flex-direction-column">
-      <label asp-for="LastName"></label>
+      <label asp-for="LastName" class="background-color-antiquewhite"></label>
       <input asp-for="LastName" class="margin-bottom-5px font-size-20px" />
     </div>
   </div>
-  <div class="display-flex flex-direction-column margin-bottom-5px">
-    <div>
-      <input asp-for="SendInvitationEmail" type="checkbox" />
-      <label asp-for="SendInvitationEmail">Send Invitation Email</label>
+  <div class="display-flex flex-direction-column background-color-antiquewhite margin-bottom-5px">
+    <div class="display-flex align-items-center">
+      <input asp-for="SendInvitationEmail" type="checkbox" id="send-invitation-email" />
+      <label for="send-invitation-email" class="margin-left-5px">Send invitation email</label>
     </div>
   </div>
-  <button type="submit" class="full-width-regular-button">Create User</button>
+  <button type="submit" class="full-width-regular-button">Create user</button>
 </form>
 
 @if (Model != null && Model.ValidationResult != null)
