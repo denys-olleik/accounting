@@ -9,6 +9,13 @@
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div class="margin-left-20px flex-1 text-align-right">
+    <a asp-action="Users" asp-controller="User" class="font-Roboto font-size-16px color-blue">Users</a>
+    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
+  </div>
+</div>
+
 <form asp-action="Create" asp-controller="User" method="post" class="display-flex flex-direction-column">
   <div class="display-flex flex-direction-column">
     <label asp-for="Email"></label>
