@@ -194,9 +194,8 @@
 	</table>
 
 	<pagination-component :prev-page-url="`/i/invoices?page=${page - 1}&pageSize=${pageSize}`"
-												:next-page-url="nextPage ? `/i/invoices?page=${nextPage}&pageSize=${pageSize}` : ''"
-												:is-filtered="isFiltered"
-												:page="page">
+		:next-page-url="nextPage ? `/i/invoices?page=${nextPage}&pageSize=${pageSize}` : ''" :is-filtered="isFiltered"
+		:page="page">
 	</pagination-component>
 
 	<form asp-action="ReceivePaymentForInvoiceIds" asp-controller="AccountsReceivable" method="get" ref="form">
@@ -254,19 +253,17 @@
 			}
 		},
 		template: `
-			<template>
-				<div v-if="(prevPageUrl || nextPageUrl) && !isFiltered && (page > 1 || nextPageUrl)"
-						 class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
-					<div>
-						<a :href="prevPageUrl" v-if="page > 1" class="color-blue">prev</a>
-					</div>
-					<div class="flex-1">dev</div>
-					<div>
-						<a :href="nextPageUrl" v-if="nextPageUrl" class="color-blue">next</a>
-					</div>
+			<div v-if="(prevPageUrl || nextPageUrl) && !isFiltered && (page > 1 || nextPageUrl)"
+					 class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
+				<div>
+					<a :href="prevPageUrl" v-if="page > 1" class="color-blue">prev</a>
 				</div>
-			</template>
-			`
+				<div class="flex-1"></div>
+				<div>
+					<a :href="nextPageUrl" v-if="nextPageUrl" class="color-blue">next</a>
+				</div>
+			</div>
+		`
 	};
 
 	const app = createApp({
@@ -337,6 +334,8 @@
 						}
 						if (data.nextPage > 0) {
 							this.nextPage = data.nextPage;
+						} else {
+							this.nextPage = null;
 						}
 					});
 			},
