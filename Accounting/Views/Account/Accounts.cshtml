@@ -28,7 +28,7 @@
           {{ account.name }}
         </a>
         <span>&nbsp;</span>
-        <div v-if="account.selectedAccountID === account.accountID" class="display-flex flex-direction-column">
+        <div v-if="account.expanded" class="display-flex flex-direction-column">
           <div class="display-flex margin-bottom-2px">
             <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
               <div class="flex-1"></div>
@@ -43,7 +43,7 @@
               margin-left-2px">
               <div class="flex-1"></div>
               <a class="font-size-16px font-Roboto color-white text-decoration-none"
-                :href="`/a/create/${account.accountID}`">Add</a>
+                 :href="`/a/create/${account.accountID}`">Add</a>
               <div class="flex-1"></div>
             </div>
             <div class="display-flex
@@ -54,7 +54,7 @@
               margin-left-2px">
               <div class="flex-1"></div>
               <a class="font-size-16px font-Roboto color-white text-decoration-none"
-                :href="`/a/update/${account.accountID}`">Update</a>
+                 :href="`/a/update/${account.accountID}`">Update</a>
               <div class="flex-1"></div>
             </div>
             <div class="display-flex
@@ -65,13 +65,12 @@
               margin-left-2px">
               <div class="flex-1"></div>
               <a class="font-size-16px font-Roboto color-white text-decoration-none"
-                :href="`/a/delete/${account.accountID}`">Delete</a>
+                 :href="`/a/delete/${account.accountID}`">Delete</a>
               <div class="flex-1"></div>
             </div>
           </div>
           <div class="display-flex">
-            <div
-              class="display-flex flex-direction-column background-color-darkcyan padding-left-5px padding-right-5px">
+            <div class="display-flex flex-direction-column background-color-darkcyan padding-left-5px padding-right-5px">
               <div class="flex-1"></div>
               <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">information:</a>
               <div class="flex-1"></div>
@@ -94,7 +93,7 @@
       </div>
       <div>{{ account.type }}</div>
     </div>
-    <div v-if="account.children && account.children.length" class="margin-left-25px">
+    <div v-if="account.expanded && account.children && account.children.length" class="margin-left-25px">
       <template v-for="childAccount in account.children" :key="childAccount.accountID">
         <account :account="childAccount" @@account-clicked="handleAccountClick"></account>
       </template>
@@ -150,6 +149,21 @@
       }
     },
     methods: {
+      updateAccountExpansion(account, selectedID, ancestors = []) {
+        const isSelected = account.accountID === selectedID;
+        const children = account.children ? account.children.map(child =>
+          this.updateAccountExpansion(child, selectedID, isSelected ? [account.accountID, ...ancestors] : ancestors)
+        ) : [];
+
+        const shouldExpand = isSelected || ancestors.includes(account.accountID) || account.children.some(child => child.expanded);
+
+        return {
+          ...account,
+          children,
+          expanded: shouldExpand,
+          selectedAccountID: selectedID,
+        };
+      },
       fetchAccounts() {
         const storedPageSize = parseInt(localStorage.getItem('pageSize'));
         if (storedPageSize) {
@@ -184,7 +198,7 @@
           this.selectedAccountID = accountID;
         }
 
-        this.accounts = this.accounts.map(account => this.resetSelectedAccountID(account, this.selectedAccountID));
+        this.accounts = this.accounts.map(account => this.updateAccountExpansion(account, this.selectedAccountID));
       },
       addSelectedAccountID(accounts) {
         return accounts.map(account => this.resetSelectedAccountID(account));
