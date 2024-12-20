@@ -64,15 +64,17 @@ namespace Accounting.Controllers
 
     [Route("invoices")]
     [HttpGet]
-    public IActionResult Invoices(int page = 1, int pageSize = 2)
+    public IActionResult Invoices(
+      int page = 1, 
+      int pageSize = 2)
     {
-      var refererHeader = Request.Headers["Referer"];
+      var referer = Request.Headers["Referer"].ToString() ?? string.Empty;
 
       var vm = new InvoicesPaginatedViewModel
       {
         Page = page,
         PageSize = pageSize,
-        RememberPageSize = string.IsNullOrEmpty(refererHeader),
+        RememberPageSize = string.IsNullOrEmpty(referer),
       };
 
       return View(vm);

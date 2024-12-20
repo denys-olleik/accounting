@@ -36,7 +36,7 @@
             margin-left-2px">
 					<div class="flex-1"></div>
 					<a :href="'/p/void/' + payment.paymentID"
-						class="font-size-16px font-Roboto color-white text-decoration-none">
+						 class="font-size-16px font-Roboto color-white text-decoration-none">
 						void
 					</a>
 					<div class="flex-1"></div>
@@ -64,7 +64,7 @@
             margin-left-2px">
 					<div class="flex-1"></div>
 					<a :href="'/i/update/' + invoice.invoiceID"
-						class="font-size-16px font-Roboto color-white text-decoration-none">
+						 class="font-size-16px font-Roboto color-white text-decoration-none">
 						update
 					</a>
 					<div class="flex-1"></div>
@@ -77,7 +77,7 @@
             margin-left-2px">
 					<div class="flex-1"></div>
 					<a :href="'/r/view-invoice/' + invoice.invoiceID"
-						class="font-size-16px font-Roboto color-white text-decoration-none">
+						 class="font-size-16px font-Roboto color-white text-decoration-none">
 						view
 					</a>
 					<div class="flex-1"></div>
@@ -90,7 +90,7 @@
             margin-left-2px">
 					<div class="flex-1"></div>
 					<a :href="'/i/void/' + invoice.invoiceID"
-						class="font-size-16px font-Roboto color-white text-decoration-none">
+						 class="font-size-16px font-Roboto color-white text-decoration-none">
 						void
 					</a>
 					<div class="flex-1"></div>
@@ -108,12 +108,8 @@
 	</div>
 	<div class="margin-left-20px flex-1 text-align-right">
 		<a asp-action="Customers" asp-controller="Customer"
-			class="font-Roboto font-size-16px color-blue margin-left-20px">
-			Customers
-		</a>
-		<a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">
-			Home
-		</a>
+			 class="font-Roboto font-size-16px color-blue margin-left-20px">Customers</a>
+		<a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
 	</div>
 </div>
 
@@ -125,11 +121,11 @@
 				<th></th>
 				<th class="text-align-left">
 					<input type="text" v-model="invoicesFilter" @@input="filterInvoice" placeholder="Invoice"
-						class="font-size-16px width-100" />
+								 class="font-size-16px width-100" />
 				</th>
 				<th class="text-align-left">
 					<input type="text" v-model="companyFilter" @@input="filterCompany" placeholder="Customer"
-						class="font-size-16px width-100" />
+								 class="font-size-16px width-100" />
 				</th>
 				<th class="text-align-right"></th>
 				<th class="text-align-right"></th>
@@ -154,11 +150,10 @@
 					<td class="padding-right-20px">{{invoice.rowNumber}}</td>
 					<td class="padding-right-20px">
 						<invoice-action :invoice="invoice" :is-expanded="invoice.invoiceID === expandedInvoiceId"
-							@@expand="handleInvoiceExpand(invoice.invoiceID)"></invoice-action>
+														@@expand="handleInvoiceExpand(invoice.invoiceID)"></invoice-action>
 					</td>
 					<td class="padding-right-20px">
-						<business-entity-name-display
-							:business-entity="invoice.businessEntity"></business-entity-name-display>
+						<business-entity-name-display :business-entity="invoice.businessEntity"></business-entity-name-display>
 					</td>
 					<td class="text-align-right padding-right-20px">{{invoice.total}}</td>
 					<td class="text-align-right padding-right-20px">{{invoice.received}}</td>
@@ -181,7 +176,7 @@
 								<tr v-for="payment in invoice.payments" :key="payment.paymentID">
 									<td>
 										<payment-action :payment="payment" :is-expanded="payment.paymentID === expandedPaymentId"
-											@@expand="handlePaymentExpand(payment.paymentID)"></payment-action>
+																		@@expand="handlePaymentExpand(payment.paymentID)"></payment-action>
 									</td>
 									<td class="text-align-right">{{ payment.amount }}</td>
 								</tr>
@@ -194,14 +189,16 @@
 	</table>
 
 	<pagination-component :prev-page-url="`/i/invoices?page=${page - 1}&pageSize=${pageSize}`"
-		:next-page-url="nextPage ? `/i/invoices?page=${nextPage}&pageSize=${pageSize}` : ''" :is-filtered="isFiltered"
-		:page="page">
+												:next-page-url="nextPage ? `/i/invoices?page=${nextPage}&pageSize=${pageSize}` : ''" :is-filtered="isFiltered"
+												:page="page">
 	</pagination-component>
 
 	<form asp-action="ReceivePaymentForInvoiceIds" asp-controller="AccountsReceivable" method="get" ref="form">
 		<input type="hidden" name="invoiceIdsCsv" :value="selectedInvoices.join(',')">
 		<button type="button" class="full-width-regular-button width-100" @@click="submitForm"
-			:disabled="selectedInvoices.length === 0">Receive payment</button>
+						:disabled="selectedInvoices.length === 0">
+			Receive payment
+		</button>
 	</form>
 </div>
 

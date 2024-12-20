@@ -32,10 +32,13 @@ namespace Accounting.Controllers
       int page = 1, 
       int pageSize = 2)
     {
+      var referer = Request.Headers["Referer"].ToString() ?? string.Empty;
+
       var vm = new AccountsPaginatedViewModel
       {
         Page = page,
         PageSize = pageSize,
+        RememberPageSize = string.IsNullOrEmpty(referer),
       };
 
       return View(vm);

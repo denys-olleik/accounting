@@ -13,12 +13,10 @@
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div class="margin-left-20px">
-    <a asp-action="Create" asp-controller="Account"
-       class="font-Roboto font-size-16px color-blue">Create account</a>
+    <a asp-action="Create" asp-controller="Account" class="font-Roboto font-size-16px color-blue">Create account</a>
   </div>
   <div class="margin-left-20px flex-1 text-align-right">
-    <a asp-action="Index" asp-controller="Home"
-       class="font-Roboto font-size-16px color-blue">Home</a>
+    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue">Home</a>
   </div>
 </div>
 
@@ -45,7 +43,7 @@
               margin-left-2px">
               <div class="flex-1"></div>
               <a class="font-size-16px font-Roboto color-white text-decoration-none"
-                 :href="`/a/create/${account.accountID}`">Add</a>
+                :href="`/a/create/${account.accountID}`">Add</a>
               <div class="flex-1"></div>
             </div>
             <div class="display-flex
@@ -56,7 +54,7 @@
               margin-left-2px">
               <div class="flex-1"></div>
               <a class="font-size-16px font-Roboto color-white text-decoration-none"
-                 :href="`/a/update/${account.accountID}`">Update</a>
+                :href="`/a/update/${account.accountID}`">Update</a>
               <div class="flex-1"></div>
             </div>
             <div class="display-flex
@@ -67,12 +65,13 @@
               margin-left-2px">
               <div class="flex-1"></div>
               <a class="font-size-16px font-Roboto color-white text-decoration-none"
-                 :href="`/a/delete/${account.accountID}`">Delete</a>
+                :href="`/a/delete/${account.accountID}`">Delete</a>
               <div class="flex-1"></div>
             </div>
           </div>
           <div class="display-flex">
-            <div class="display-flex flex-direction-column background-color-darkcyan padding-left-5px padding-right-5px">
+            <div
+              class="display-flex flex-direction-column background-color-darkcyan padding-left-5px padding-right-5px">
               <div class="flex-1"></div>
               <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">information:</a>
               <div class="flex-1"></div>
@@ -147,9 +146,35 @@
         page: @Model.Page,
         pageSize: @Model.PageSize,
         nextPage: null,
+        rememberPageSize: @(Model.RememberPageSize ? "true" : "false")
       }
     },
     methods: {
+      fetchAccounts() {
+        const storedPageSize = parseInt(localStorage.getItem('pageSize'));
+        if (storedPageSize) {
+          this.pageSize = storedPageSize;
+        }
+
+        let apiUrl = `/api/a/get-all-accounts?page=${this.page}&pageSize=${this.pageSize}&includeDescendants=true&includeJournalEntriesCount=true`;
+
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.accounts = data.accounts;
+            if (data.page > 0) {
+              this.page = data.page;
+            }
+            if (data.nextPage > 0) {
+              this.nextPage = data.nextPage;
+            } else {
+              this.nextPage = null;
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching accounts:', error);
+          });
+      },
       onAccountClicked(accountID) {
         console.log('Account clicked:', accountID);
 
@@ -170,13 +195,10 @@
       },
     },
     mounted() {
-      fetch(`/api/a/get-all-accounts?page=${this.page}&pageSize=${this.pageSize}&includeDescendants=true&includeJournalEntriesCount=true`)
-        .then(response => response.json())
-        .then(data => {
-          this.accounts = this.addSelectedAccountID(data.accounts);
-          this.page = data.page;
-          this.nextPage = data.nextPage;
-        });
+      if (this.rememberPageSize) {
+        localStorage.setItem('pageSize', this.pageSize);
+      }
+      this.fetchAccounts();
     },
   });
 
