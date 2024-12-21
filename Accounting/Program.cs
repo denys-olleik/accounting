@@ -6,6 +6,7 @@ using Accounting.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
 using static Accounting.Business.Claim;
+using System.Runtime.InteropServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,8 +76,16 @@ ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["Applica
 ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
 ConfigurationSingleton.Instance.ConnectionStringAdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
 ConfigurationSingleton.Instance.InvitationExpirationMinutes = Convert.ToInt32(builder.Configuration["InvitationExpirationMinutes"]);
-ConfigurationSingleton.Instance.TempPath = builder.Configuration["TempPath"];
-ConfigurationSingleton.Instance.PermPath = builder.Configuration["PermPath"];
+
+#region Configure Paths
+bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+string tempPath = isWindows ? builder.Configuration["TempPathWindows"]! : builder.Configuration["TempPathLinux"]!;
+string permPath = isWindows ? builder.Configuration["PermPathWindows"]! : builder.Configuration["PermPathLinux"]!;
+
+ConfigurationSingleton.Instance.TempPath = tempPath;
+ConfigurationSingleton.Instance.PermPath = permPath;
+#endregion
 
 var app = builder.Build();
 
