@@ -25,10 +25,10 @@
     <div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
       <div class="display-flex flex-1 align-items-center">
         <span v-if="account.children && account.children.length && account.expanded" class="margin-right-5px">➖</span>
-        <span v-if="account.children && account.children.length && !account.expanded" class="margin-right-5px">➕</span>
         <a href="#" @@click.prevent="handleAccountClick(account.accountID)">
           {{ account.name }}
         </a>
+        <span v-if="account.children && account.children.length && !account.expanded" class="margin-left-5px">➕</span>
         <span>&nbsp;</span>
         <div v-if="account.optionsExpanded" class="display-flex flex-direction-column">
           <div class="display-flex margin-bottom-2px">
