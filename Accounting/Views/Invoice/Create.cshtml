@@ -102,7 +102,6 @@
 
 <template id="total-template">
   <div class="display-flex margin-bottom-5px">
-    <div class="flex-1 max-width-768-display-none"></div>
     <div class="flex-1 background-color-antiquewhite">
       <table class="width-100 border-collapse">
         <tbody>
@@ -206,6 +205,15 @@
       class="display-flex flex-direction-column margin-bottom-5px"
       autocomplete="off">
 
+  <input type="hidden" name="InvoiceLinesJson" :value="JSON.stringify(invoiceLines)" />
+  <input type="hidden" name="SelectedPaymentTermJSON" :value="JSON.stringify(selectedPaymentTerm)" />
+  <input type="hidden" name="InvoiceDate" value="@Model.InvoiceDate!.Value.ToString("o")" />
+  <input type="hidden" name="DueDate" :value="dueDate" />
+  <input type="hidden" name="SelectedBillingAddressId" :value="selectedBillingAddress?.id" />
+  <input type="hidden" name="SelectedShippingAddressId" :value="selectedShippingAddress?.id" />
+  <input type="hidden" name="SelectedCustomerId" :value="selectedCustomer?.id" />
+  <input type="hidden" name="InvoiceAttachmentsJSON" :value="JSON.stringify(attachments)" />
+
   <customer-selection :customers="customers"
                       :selected-customer="selectedCustomer"
                       @@update:selected-customer="updateSelectedCustomer"></customer-selection>
@@ -266,15 +274,6 @@
   </div>
 
   <total :invoice-lines="invoiceLines"></total>
-
-  <input type="hidden" name="InvoiceLinesJson" :value="JSON.stringify(invoiceLines)" />
-  <input type="hidden" name="SelectedPaymentTermJSON" :value="JSON.stringify(selectedPaymentTerm)" />
-  <input type="hidden" name="InvoiceDate" value="@Model.InvoiceDate!.Value.ToString("o")" />
-  <input type="hidden" name="DueDate" :value="dueDate" />
-  <input type="hidden" name="SelectedBillingAddressId" :value="selectedBillingAddress?.id" />
-  <input type="hidden" name="SelectedShippingAddressId" :value="selectedShippingAddress?.id" />
-  <input type="hidden" name="SelectedCustomerId" :value="selectedCustomer?.id" />
-  <input type="hidden" name="InvoiceAttachmentsJSON" :value="JSON.stringify(attachments)" />
 
   <div class="display-flex margin-bottom-5px">
     <div class="flex-1">
