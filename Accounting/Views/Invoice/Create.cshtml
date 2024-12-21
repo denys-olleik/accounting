@@ -1,13 +1,13 @@
 ﻿@model Accounting.Models.InvoiceViewModels.CreateInvoiceViewModel
 
 @{
-  ViewData["Title"] = "Create Invoice - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Create invoice - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-  string headerText = "Create Invoice";
+  string headerText = "Create invoice";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
@@ -135,7 +135,7 @@
   <table>
     <thead>
       <tr>
-        <th colspan="2">Invoice Details</th>
+        <th colspan="2">Invoice details</th>
       </tr>
     </thead>
     <tbody>
@@ -259,7 +259,7 @@
   </invoice-line>
 
   <div class="background-color-antiquewhite margin-bottom-5px">
-    <label>Payment Terms Selector</label>
+    <label>Payment terms</label>
     <payment-term-selector :payment-terms="paymentTerms"
                            v-model:selected-payment-term="selectedPaymentTerm">
     </payment-term-selector>
@@ -293,7 +293,7 @@
   <div class="display-flex">
     <div class="flex-1">
       <div class="display-flex flex-direction-column">
-        <label class="background-color-antiquewhite">Payment Instructions</label>
+        <label class="background-color-antiquewhite">Payment instructions</label>
         <div class="display-flex flex-direction-column">
           <textarea asp-for="PaymentInstructions" class="font-size-20px width-100" rows="5"></textarea>
         </div>
