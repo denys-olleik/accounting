@@ -201,7 +201,7 @@ namespace Accounting.Controllers
         await _organizationService.UpdatePaymentInstructions(model.OrganizationId, model.PaymentInstructions);
       }
 
-      List<InvoiceAttachment> invoiceAttachments = new List<InvoiceAttachment>(); //await _invoiceAttachmentService.GetAllAsync(model.InvoiceAttachments.Select(x => x.InvoiceAttachmentID).ToArray(), GetOrganizationId());
+      List<InvoiceAttachment> invoiceAttachments = await _invoiceAttachmentService.GetAllAsync(model.InvoiceAttachments.Select(x => x.InvoiceAttachmentID).ToArray(), GetOrganizationId());
 
       foreach (var invoiceAttachment in invoiceAttachments)
       {
@@ -319,8 +319,8 @@ namespace Accounting.Controllers
 
     private async Task MoveFileFromTempToPermDirectory(InvoiceAttachment invoiceAttachment)
     {
-      string tempFilePath = Path.Combine(ConfigurationSingleton.Instance.TempPath, invoiceAttachment.StoredFileName);
-      string permFilePath = Path.Combine(ConfigurationSingleton.Instance.PermPath, invoiceAttachment.StoredFileName);
+      string tempFilePath = Path.Combine(ConfigurationSingleton.Instance.TempPath, invoiceAttachment.OriginalFileName);
+      string permFilePath = Path.Combine(ConfigurationSingleton.Instance.PermPath, invoiceAttachment.OriginalFileName);
 
       if (System.IO.File.Exists(tempFilePath))
       {

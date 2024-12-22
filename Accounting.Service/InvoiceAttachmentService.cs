@@ -21,7 +21,7 @@ namespace Accounting.Service
 
     public async Task<int> MoveAndUpdateInvoiceAttachmentPathAsync(InvoiceAttachment invoiceAttachment, string path, int organizationId)
     {
-      string newPath = Path.Combine(path, invoiceAttachment.StoredFileName);
+      string newPath = Path.Combine(path, invoiceAttachment.FilePath);
       System.IO.File.Move(invoiceAttachment.FilePath, newPath);
 
       var factoryManager = new FactoryManager(_databaseName);
@@ -60,8 +60,7 @@ namespace Accounting.Service
 
       var attachment = new InvoiceAttachment
       {
-        FileName = fileUpload.FileName,
-        StoredFileName = nameOnDisk,
+        OriginalFileName = fileUpload.FileName,
         FilePath = fullPath,
         CreatedById = userId,
         OrganizationId = organizationId

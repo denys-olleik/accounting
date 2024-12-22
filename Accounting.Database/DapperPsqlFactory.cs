@@ -1378,7 +1378,7 @@ namespace Accounting.Database
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@InvoiceId", entity.InvoiceId);
-        p.Add("@OriginalFileName", entity.FileName);
+        p.Add("@OriginalFileName", entity.OriginalFileName);
         p.Add("@FilePath", entity.FilePath);
         p.Add("@CreatedById", entity.CreatedById);
         p.Add("@OrganizationId", entity.OrganizationId);
