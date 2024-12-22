@@ -205,10 +205,10 @@ namespace Accounting.Controllers
 
       foreach (var invoiceAttachment in invoiceAttachments)
       {
-        //await _invoiceAttachmentService.UpdateInvoiceIdAsync(invoiceAttachment.InvoiceAttachmentID, invoice.InvoiceID, GetOrganizationId());
-        //await _invoiceAttachmentService.MoveAndUpdateInvoiceAttachmentPathAsync(invoiceAttachment, ConfigurationSingleton.Instance.PermPath, GetOrganizationId());
+        await _invoiceAttachmentService.UpdateInvoiceIdAsync(invoiceAttachment.InvoiceAttachmentID, invoice.InvoiceID, GetOrganizationId());
+        await _invoiceAttachmentService.MoveAndUpdateInvoiceAttachmentPathAsync(invoiceAttachment, ConfigurationSingleton.Instance.PermPath, GetOrganizationId());
 
-        //await MoveFileFromTempToPermDirectory(invoiceAttachment);
+        await MoveFileFromTempToPermDirectory(invoiceAttachment);
       }
 
       foreach (var invoiceLine in model.InvoiceLines)

@@ -1364,11 +1364,18 @@ namespace Accounting.Database
 
     public IInvoiceAttachmentManager GetInvoiceAttachmentManager()
     {
-      return new InvoiceAttachmentManager();
+      return new InvoiceAttachmentManager(_connectionString);
     }
 
     public class InvoiceAttachmentManager : IInvoiceAttachmentManager
     {
+      private readonly string _connectionString;
+
+      public InvoiceAttachmentManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public InvoiceAttachment Create(InvoiceAttachment entity)
       {
         throw new NotImplementedException();
@@ -1385,7 +1392,7 @@ namespace Accounting.Database
 
         IEnumerable<InvoiceAttachment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<InvoiceAttachment>("""
             INSERT INTO "InvoiceAttachment" 
@@ -1423,7 +1430,7 @@ namespace Accounting.Database
 
         IEnumerable<InvoiceAttachment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<InvoiceAttachment>("""
             SELECT * 
@@ -1443,7 +1450,7 @@ namespace Accounting.Database
 
         IEnumerable<InvoiceAttachment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<InvoiceAttachment>("""
             SELECT * 
@@ -1470,7 +1477,7 @@ namespace Accounting.Database
 
         int rowsModified;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsModified = await con.ExecuteAsync("""
             UPDATE "InvoiceAttachment" 
@@ -1492,7 +1499,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "InvoiceAttachment"
@@ -1514,7 +1521,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "InvoiceAttachment"
