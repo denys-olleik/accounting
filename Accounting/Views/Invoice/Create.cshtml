@@ -101,7 +101,7 @@
 </template>
 
 <template id="total-template">
-  <div class="display-flex margin-bottom-5px">
+  <div class="display-flex">
     <div class="flex-1 background-color-antiquewhite">
       <table class="width-100 border-collapse">
         <tbody>
@@ -273,14 +273,13 @@
     </payment-term-selector>
   </div>
 
-  <total :invoice-lines="invoiceLines"></total>
+  <div class="margin-bottom-5px">
+    <total :invoice-lines="invoiceLines"></total>
+  </div>
 
-  <div class="display-flex margin-bottom-5px">
-    <div class="flex-1">
+  <div class="display-flex">
+    <div class="flex-1 padding-5px background-color-antiquewhite">
       <input type="file" @@change="uploadFile" ref="fileInput" />
-    </div>
-    <div class="flex-1">
-      <button type="submit" class="full-width-regular-button width-100">Create Invoice</button>
     </div>
   </div>
 
@@ -289,7 +288,7 @@
     @@remove-attachment="removeAttachment"
     @@update-attachment-print-order="updateAttachmentPrintOrder"></attachments> *@
   </div>
-  <div class="display-flex">
+  <div class="display-flex margin-bottom-5px">
     <div class="flex-1">
       <div class="display-flex flex-direction-column">
         <label class="background-color-antiquewhite">Payment instructions</label>
@@ -302,10 +301,9 @@
         </div>
       </div>
     </div>
-    <div class="width-5px"></div>
-    <div class="flex-1">
-    </div>
   </div>
+
+  <button type="submit" class="full-width-regular-button width-100">Create Invoice</button>
 </form>
 
 @if (Model != null && Model.ValidationResult != null)

@@ -1378,8 +1378,7 @@ namespace Accounting.Database
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@InvoiceId", entity.InvoiceId);
-        p.Add("@FileName", entity.FileName);
-        p.Add("@StoredFileName", entity.StoredFileName);
+        p.Add("@OriginalFileName", entity.FileName);
         p.Add("@FilePath", entity.FilePath);
         p.Add("@CreatedById", entity.CreatedById);
         p.Add("@OrganizationId", entity.OrganizationId);
@@ -1390,9 +1389,9 @@ namespace Accounting.Database
         {
           result = await con.QueryAsync<InvoiceAttachment>("""
             INSERT INTO "InvoiceAttachment" 
-            ("InvoiceId", "FileName", "StoredFileName", "FilePath", "CreatedById", "OrganizationId") 
+            ("InvoiceId", "OriginalFileName", "FilePath", "CreatedById", "OrganizationId") 
             VALUES 
-            (@InvoiceId, @FileName, @StoredFileName, @FilePath, @CreatedById, @OrganizationId)
+            (@InvoiceId, @OriginalFileName, @FilePath, @CreatedById, @OrganizationId)
             RETURNING *;
             """, p);
         }
