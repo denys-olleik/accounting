@@ -14,27 +14,20 @@
 <template id="customer-selection-template">
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label for="customerSearch" class="background-color-antiquewhite">Customer search</label>
-    <input id="customerSearch"
-           ref="customerSearchInput"
-           v-model="searchQuery"
-           @@input="filterCustomers"
-           @@keydown="handleKeyDown"
-           @@keydown.left="onLeftArrowPress"
-           class="font-size-20px margin-bottom-2px"
-           :disabled="!!selectedCustomer"
-           autofocus />
+    <input id="customerSearch" ref="customerSearchInput" v-model="searchQuery" @@input="filterCustomers"
+      @@keydown="handleKeyDown" @@keydown.left="onLeftArrowPress" class="font-size-20px margin-bottom-2px"
+      :disabled="!!selectedCustomer" autofocus />
     <div v-if="filteredCustomers.length > 0 && !selectedCustomer"
-         class="background-color-black color-white padding-5px max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono box-shadow">
-      <div v-for="(customer, index) in filteredCustomers"
-           :key="customer.id"
-           @@click="selectCustomer(customer)"
-           class="font-size-16px">
+      class="background-color-black color-white padding-5px max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono box-shadow">
+      <div v-for="(customer, index) in filteredCustomers" :key="customer.id" @@click="selectCustomer(customer)"
+        class="font-size-16px">
         <span v-if="index === selectedIndex" class="blinking-cursor margin-right-10px">█</span>
         <business-entity-name-display :business-entity="customer"></business-entity-name-display>
       </div>
     </div>
     <div v-if="selectedCustomer" class="display-flex text-align-center">
-      <a href="#" class="width-100 color-white border-1px-solid-white background-color-cornflowerblue" @@click.prevent="clearSelection">clear</a>
+      <a href="#" class="width-100 color-white border-1px-solid-white background-color-cornflowerblue"
+        @@click.prevent="clearSelection">clear</a>
     </div>
   </div>
 </template>
@@ -42,14 +35,18 @@
 <template id="invoice-line-removal-template">
   <div class="display-flex flex-direction-column background-color-red justify-content-space-around">
     <div v-if="!isRemoveConfirmationVisible" :class="{ 'border-bottom-2px-solid-white': isRemoveConfirmationVisible }">
-      <a href="#" class="color-white text-decoration-none" :class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }" @@click.prevent="toggleConfirmationVisibility">remove</a>
+      <a href="#" class="color-white text-decoration-none"
+        :class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }"
+        @@click.prevent="toggleConfirmationVisibility">remove</a>
     </div>
     <div v-if="isRemoveConfirmationVisible" class="display-flex flex-1 flex-direction-column">
       <div class="flex-1"></div>
       <div class="display-flex flex-direction-column">
-        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="confirmRemoval">remove</a></div>
+        <div class="text-align-center"><a class="text-decoration-none color-white" href="#"
+            @@click.prevent="confirmRemoval">remove</a></div>
         <div class="height-5px"></div>
-        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="toggleConfirmationVisibility">cancel</a></div>
+        <div class="text-align-center"><a class="text-decoration-none color-white" href="#"
+            @@click.prevent="toggleConfirmationVisibility">cancel</a></div>
       </div>
       <div class="flex-1"></div>
     </div>
@@ -62,22 +59,20 @@
       <div class="display-flex max-width-768-flex-direction-column">
         <div class="display-flex flex-2 flex-direction-column">
           <label>Title</label>
-          <input type="text"
-                 ref="titleInput"
-                 class="font-size-20px font-Roboto-Mono width-100"
-                 v-model="invoiceLine.title"
-                 @@click="handleTitleClick"
-                 @@blur="handleTitleBlur" />
+          <input type="text" ref="titleInput" class="font-size-20px font-Roboto-Mono width-100"
+            v-model="invoiceLine.title" @@click="handleTitleClick" @@blur="handleTitleBlur" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-2 flex-direction-column">
           <label>Quantity</label>
-          <input type="number" ref="quantityInput" class="font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.quantity" />
+          <input type="number" ref="quantityInput" class="font-size-20px font-Roboto-Mono width-100"
+            v-model="invoiceLine.quantity" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-2 flex-direction-column">
           <label>Price</label>
-          <input type="number" step="0.01" class="font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.price" />
+          <input type="number" step="0.01" class="font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.price"
+            @@blur="handlePriceBlur" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-1 flex-direction-column text-align-right">
@@ -93,9 +88,8 @@
       </div>
     </div>
     <div class="width-5px"></div>
-    <invoice-line-removal :invoice-line="invoiceLine"
-                          @@confirm-removal="$emit('confirm-removal', invoiceLine)"
-                          @@cancel-removal="$emit('cancel-removal', invoiceLine)">
+    <invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)"
+      @@cancel-removal="$emit('cancel-removal', invoiceLine)">
     </invoice-line-removal>
   </div>
 </template>
@@ -117,13 +111,9 @@
 
 <template id="payment-term-selector-template">
   <div class="display-flex flex-direction-column">
-    <select class="font-size-20px"
-            v-model="selectedPaymentTermId"
-            name="SelectedPaymentTermId">
+    <select class="font-size-20px" v-model="selectedPaymentTermId" name="SelectedPaymentTermId">
       <option value="">Select Payment Term</option>
-      <option v-for="paymentTerm in paymentTerms"
-              :value="paymentTerm.id"
-              :key="paymentTerm.id">
+      <option v-for="paymentTerm in paymentTerms" :value="paymentTerm.id" :key="paymentTerm.id">
         {{ paymentTerm.displayText }}
       </option>
     </select>
@@ -158,7 +148,9 @@
 
 <template id="addresses-and-selected-address-template">
   <div v-if="selectedAddress" class="margin-bottom-5px">
-    <div class="border-bottom-1px-solid-1a3b56">{{ addressType === 'billing' ? 'Selected billing address' : 'Selected shipping address' }}</div>
+    <div class="border-bottom-1px-solid-1a3b56">
+      {{ addressType === 'billing' ? 'Selected billing address' : 'Selected shipping address' }}
+    </div>
     <div class="display-flex">
       <div class="font-Roboto-Mono">
         <div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -202,8 +194,7 @@
 <partial name="_AttachmentsVueTemplate" />
 
 <form id="app" asp-action="Create" asp-controller="Invoice" method="post"
-      class="display-flex flex-direction-column margin-bottom-5px"
-      autocomplete="off">
+  class="display-flex flex-direction-column margin-bottom-5px" autocomplete="off">
 
   <input type="hidden" name="InvoiceLinesJson" :value="JSON.stringify(invoiceLines)" />
   <input type="hidden" name="SelectedPaymentTermJSON" :value="JSON.stringify(selectedPaymentTerm)" />
@@ -214,12 +205,12 @@
   <input type="hidden" name="SelectedCustomerId" :value="selectedCustomer?.id" />
   <input type="hidden" name="InvoiceAttachmentsJSON" :value="JSON.stringify(attachments)" />
 
-  <customer-selection :customers="customers"
-                      :selected-customer="selectedCustomer"
-                      @@update:selected-customer="updateSelectedCustomer"></customer-selection>
+  <customer-selection :customers="customers" :selected-customer="selectedCustomer"
+    @@update:selected-customer="updateSelectedCustomer"></customer-selection>
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-    <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
+    <div
+      class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
       <div class="display-flex margin-1px-2px-2px-2px" v-if="selectedCustomer">
         <business-entity-name-display :business-entity="selectedCustomer"></business-entity-name-display>
       </div>
@@ -229,33 +220,32 @@
     </div>
     <div class="width-5px"></div>
     <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
-      <invoice-detail :invoice-date="invoiceDate"
-                      :selected-payment-term="selectedPaymentTerm">
+      <invoice-detail :invoice-date="invoiceDate" :selected-payment-term="selectedPaymentTerm">
       </invoice-detail>
     </div>
   </div>
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-    <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
+    <div
+      class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
       <addresses-and-selected-address :selected-address="selectedBillingAddress"
-                                      @@update:selected-address="handleSelectedAddress($event, 'billing')"
-                                      :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-                                      :selected-customer="selectedCustomer"
-                                      address-type="billing">
+        @@update:selected-address="handleSelectedAddress($event, 'billing')"
+        :addresses="selectedCustomer ? selectedCustomer.addresses : []" :selected-customer="selectedCustomer"
+        address-type="billing">
       </addresses-and-selected-address>
     </div>
     <div class="width-5px"></div>
     <div class="display-flex flex-direction-column flex-1 background-color-antiquewhite">
       <addresses-and-selected-address :selected-address="selectedShippingAddress"
-                                      @@update:selected-address="handleSelectedAddress($event, 'shipping')"
-                                      :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-                                      :selected-customer="selectedCustomer"
-                                      address-type="shipping">
+        @@update:selected-address="handleSelectedAddress($event, 'shipping')"
+        :addresses="selectedCustomer ? selectedCustomer.addresses : []" :selected-customer="selectedCustomer"
+        address-type="shipping">
       </addresses-and-selected-address>
     </div>
   </div>
 
-  <products-and-services-search :products-or-services="productsOrServices"
+  <products-and-services-search ref="productsAndServicesSearch"
+                                :products-or-services="productsOrServices"
                                 :selected-customer="selectedCustomer"
                                 @@product-or-service-selected="handleProductOrServiceSelected">
   </products-and-services-search>
@@ -263,13 +253,13 @@
   <invoice-line v-for="invoiceLine in invoiceLines"
                 :key="invoiceLine.id"
                 :invoice-line="invoiceLine"
-                @@confirm-removal="handleConfirmRemoval">
+                @@confirm-removal="handleConfirmRemoval"
+                @@focus-search-input="focusSearchInput">
   </invoice-line>
 
   <div class="background-color-antiquewhite margin-bottom-5px">
     <label>Payment terms</label>
-    <payment-term-selector :payment-terms="paymentTerms"
-                           v-model:selected-payment-term="selectedPaymentTerm">
+    <payment-term-selector :payment-terms="paymentTerms" v-model:selected-payment-term="selectedPaymentTerm">
     </payment-term-selector>
   </div>
 
@@ -395,6 +385,9 @@
       handleTitleBlur() {
         this.$emit('title-blur');
       },
+      handlePriceBlur() {
+        this.$emit('focus-search-input');
+      },
     },
     computed: {
       lineTotal() {
@@ -402,6 +395,7 @@
       }
     }
   };
+
 
   const CustomerSelection = {
     name: 'CustomerSelection',
@@ -603,7 +597,7 @@
     }
   };
 
-    const app = createApp({
+  const app = createApp({
     components: {
       'invoice-detail': InvoiceDetail,
       'payment-term-selector': PaymentTermSelector,
@@ -648,6 +642,9 @@
       selectedPaymentTerm: 'calculateDueDate',
     },
     methods: {
+      focusSearchInput() {
+        this.$refs.productsAndServicesSearch.focusInput();
+      },
       handleSelectedAddress(eventData, type) {
         if (type === 'billing') {
           this.selectedBillingAddress = eventData.address;
