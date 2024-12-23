@@ -32,7 +32,7 @@ namespace Accounting.Controllers
 
       InvoiceAttachment attachment = await _invoiceAttachmentService.UploadInvoiceAttachmentAsync(fileUpload, GetUserId(), GetOrganizationId());
 
-      return Ok(new { Id = attachment.InvoiceAttachmentID, FileName = attachment.OriginalFileName });
+      return Ok(new { InvoiceAttachmentID = attachment.InvoiceAttachmentID, FileName = attachment.OriginalFileName });
     }
 
     [Route("update-print-order")]

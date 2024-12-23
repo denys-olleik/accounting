@@ -1468,10 +1468,10 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateFilePathAsync(int id, string newPath, int organizationId)
+      public async Task<int> UpdateFilePathAsync(int invoiceAttachmentId, string newPath, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@FilePathID", id);
+        p.Add("@InvoiceAttachmentID", invoiceAttachmentId);
         p.Add("@FilePath", newPath);
         p.Add("@OrganizationId", organizationId);
 
@@ -1482,7 +1482,7 @@ namespace Accounting.Database
           rowsModified = await con.ExecuteAsync("""
             UPDATE "InvoiceAttachment" 
             SET "FilePath" = @FilePath 
-            WHERE "FilePathID" = @FilePathID 
+            WHERE "InvoiceAttachmentID" = @InvoiceAttachmentID 
             AND "OrganizationId" = @OrganizationId
             """, p);
         }
