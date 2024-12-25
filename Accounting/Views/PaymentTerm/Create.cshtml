@@ -1,18 +1,18 @@
 ﻿@model Accounting.Models.PaymentTermViewModels.CreatePaymentTermsViewModel
 
 @{
-  ViewData["Title"] = "Create Payment Term - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Create payment term - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 @{
-  string headerText = "Create Payment Term";
+  string headerText = "Create payment term";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div>
     <a asp-action="Index" asp-controller="PaymentTerm"
-       class="font-Roboto font-size-16px color-blue margin-left-20px">Payment Terms</a>
+       class="font-Roboto font-size-16px color-blue margin-left-20px">Payment terms</a>
   </div>
   <div class="margin-left-20px flex-1 text-align-right">
     <a asp-action="Index" asp-controller="Home"
@@ -22,15 +22,15 @@
 
 <form asp-action="Create" asp-controller="PaymentTerm" method="post" class="display-flex flex-direction-column margin-bottom-5px">
   <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label asp-for="Description" class="font-Roboto font-size-16px background-color-antiquewhite">Description:</label>
+    <label asp-for="Description" class="font-Roboto font-size-16px background-color-antiquewhite">Description</label>
     <input asp-for="Description" class="font-size-20px" required />
   </div>
   <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label asp-for="DaysUntilDue" class="font-Roboto font-size-16px background-color-antiquewhite">Days until due:</label>
+    <label asp-for="DaysUntilDue" class="font-Roboto font-size-16px background-color-antiquewhite">Days until due</label>
     <input asp-for="DaysUntilDue" class="font-size-20px" required />
   </div>
   <div class="display-flex flex-direction-column margin-bottom-5px">
-    <button type="submit" class="full-width-regular-button">Create Payment Term</button>
+    <button type="submit" class="full-width-regular-button">Create payment term</button>
   </div>
 </form>
 

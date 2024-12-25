@@ -395,6 +395,7 @@
 			},
 			focusSearchAfterPriceEnter(event) {
 				if (event.key === 'Enter') {
+					event.preventDefault();
 					this.$emit('focus-search-input');
 				}
 			},

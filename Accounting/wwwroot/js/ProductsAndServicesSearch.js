@@ -32,7 +32,11 @@
         event.preventDefault();
       } else if (event.key === 'Enter') {
         event.preventDefault();
-        this.selectProductOrService(this.filteredProductsOrServices[this.selectedIndex]);
+        if (this.searchQuery.trim() === '') {
+          this.submitForm();
+        } else {
+          this.selectProductOrService(this.filteredProductsOrServices[this.selectedIndex]);
+        }
       }
     },
     resetSelectedIndex() {
@@ -40,6 +44,9 @@
     },
     focusInput() {
       this.$refs.searchInput.focus();
+    },
+    submitForm() {
+      document.querySelector('form#app').submit();
     }
   },
   watch: {
