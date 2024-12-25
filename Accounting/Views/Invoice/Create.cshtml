@@ -76,7 +76,7 @@
 				<div class="display-flex flex-2 flex-direction-column">
 					<label>Price</label>
 					<input type="number" step="0.01" class="font-size-20px font-Roboto-Mono width-100"
-						v-model="invoiceLine.price" @@blur="handlePriceBlur" />
+						v-model="invoiceLine.price" @@keydown="focusSearchAfterPriceEnter" />
 				</div>
 				<div class="width-5px"></div>
 				<div class="display-flex flex-1 flex-direction-column text-align-right">
@@ -393,8 +393,10 @@
 			handleTitleBlur() {
 				this.$emit('title-blur');
 			},
-			handlePriceBlur() {
-				this.$emit('focus-search-input');
+			focusSearchAfterPriceEnter(event) {
+				if (event.key === 'Enter') {
+					this.$emit('focus-search-input');
+				}
 			},
 		},
 		computed: {
@@ -403,7 +405,6 @@
 			}
 		}
 	};
-
 
 	const CustomerSelection = {
 		name: 'CustomerSelection',
