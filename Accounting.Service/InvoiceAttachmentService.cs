@@ -19,9 +19,10 @@ namespace Accounting.Service
       return await factoryManager.GetInvoiceAttachmentManager().GetAllAsync(ids, organizationId);
     }
 
-    public async Task<int> MoveAndUpdateInvoiceAttachmentPathAsync(InvoiceAttachment invoiceAttachment, string path, int organizationId)
+    public async Task<int> MoveAndUpdateInvoiceAttachmentPathAsync(InvoiceAttachment invoiceAttachment, string destinationPath, int organizationId)
     {
-      string newPath = Path.Combine(path, invoiceAttachment.FilePath);
+      string fileName = Path.GetFileName(invoiceAttachment.FilePath);
+      string newPath = Path.Combine(destinationPath, fileName);
       System.IO.File.Move(invoiceAttachment.FilePath, newPath);
 
       var factoryManager = new FactoryManager(_databaseName);
