@@ -194,17 +194,20 @@
   </div>
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-    <div
-      class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
-      <addresses-and-selected-address :addresses="customer ? customer.addresses : []"
-        v-model:selected-address="selectedAddress" :customer="customer">
+    <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
+      <addresses-and-selected-address :selected-address="selectedBillingAddress"
+                                      @@update:selected-address="handleSelectedAddress($event, 'billing')"
+                                      :addresses="customer ? customer.addresses : []" :selected-customer="customer"
+                                      address-type="billing">
       </addresses-and-selected-address>
-
     </div>
     <div class="width-5px"></div>
-    <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
-      <invoice-detail :invoice-date="invoiceDate" :selected-payment-term="selectedPaymentTerm" :due-date="dueDate">
-      </invoice-detail>
+    <div class="display-flex flex-direction-column flex-1 background-color-antiquewhite">
+      <addresses-and-selected-address :selected-address="selectedShippingAddress"
+                                      @@update:selected-address="handleSelectedAddress($event, 'shipping')"
+                                      :addresses="customer ? customer.addresses : []" :selected-customer="customer"
+                                      address-type="shipping">
+      </addresses-and-selected-address>
     </div>
   </div>
 
