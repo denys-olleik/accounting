@@ -207,15 +207,17 @@
 		</thead>
 		<tbody>
 			<tr v-for="(attachment, index) in attachments" :key="index">
-				<td>{{ attachment.fileName }}</td>
+				<td>
+					<a href="#" @@click.prevent="toggleOptions(index)" class="color-blue">{{ attachment.fileName }}</a>
+					<div v-if="expandedAttachmentIndex === index" class="background-color-333333 color-white padding-5px">
+						<a href="#" @@click.prevent="removeAttachment(attachment)" class="color-white">Remove</a>
+					</div>
+				</td>
 				<td class="fitwidth">
-					<input type="number" v-model="attachment.PrintOrder"
-								 @@change="updatePrintOrder(attachment)"
-								 class="font-size-20px width-100 text-align-right" />
+					<input type="number" v-model="attachment.PrintOrder" @@change="updatePrintOrder(attachment)"
+						class="font-size-20px width-100 text-align-right" />
 				</td>
-				<td class="text-align-right fitwidth">
-					<a href="#" @@click.prevent="removeAttachment(attachment)">Remove</a>
-				</td>
+				<td class="text-align-right fitwidth"></td>
 			</tr>
 		</tbody>
 	</table>
@@ -301,9 +303,10 @@
 		</div>
 	</div>
 
-	<div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite" v-if="attachments.length > 0">
+	<div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite"
+		v-if="attachments.length > 0">
 		<attachments :attachments="attachments" @@remove-attachment="removeAttachment"
-								 @@update-attachment-print-order="updateAttachmentPrintOrder"></attachments>
+			@@update-attachment-print-order="updateAttachmentPrintOrder"></attachments>
 	</div>
 	<div class="display-flex margin-bottom-5px">
 		<div class="flex-1">
@@ -619,7 +622,15 @@
 		name: 'Attachments',
 		template: '#attachments-template',
 		props: ['attachments'],
+		data() {
+			return {
+				expandedAttachmentIndex: null
+			};
+		},
 		methods: {
+			toggleOptions(index) {
+				this.expandedAttachmentIndex = this.expandedAttachmentIndex === index ? null : index;
+			},
 			removeAttachment(attachment) {
 				this.$emit('remove-attachment', attachment);
 			},
