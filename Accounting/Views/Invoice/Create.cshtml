@@ -207,26 +207,28 @@
 		</thead>
 		<tbody>
 			<tr v-for="(attachment, index) in attachments" :key="index">
-				<td>
+				<td class="padding-right-20px white-space-nowrap">
 					<div class="display-flex padding-top-bottom-2px">
-						<a href="#" @@click.prevent="toggleOptions(index)" class="margin-right-5px color-blue">{{
-							attachment.fileName }}</a>
-						<span v-if="expandedAttachmentIndex === index" class="display-flex margin-left-2px">
-							<div
-								class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
-								<div class="flex-1"></div>
-								<a
-									class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
-								<div class="flex-1"></div>
-							</div>
-							<div
-								class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
-								<div class="flex-1"></div>
-								<a href="#" @@click.prevent="removeAttachment(attachment)"
-									class="font-size-16px font-Roboto color-white text-decoration-none">remove</a>
-								<div class="flex-1"></div>
-							</div>
-						</span>
+						<div class="display-flex flex-1">
+							<a href="#" @@click.prevent="toggleOptions(index)" class="margin-right-5px color-blue">{{
+								attachment.fileName }}</a>
+							<span v-if="expandedAttachmentIndex === index" class="display-flex margin-left-2px">
+								<div
+									class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+									<div class="flex-1"></div>
+									<a
+										class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+									<div class="flex-1"></div>
+								</div>
+								<div
+									class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+									<div class="flex-1"></div>
+									<a href="#" @@click.prevent="removeAttachment(attachment)"
+										class="font-size-16px font-Roboto color-white text-decoration-none">remove</a>
+									<div class="flex-1"></div>
+								</div>
+							</span>
+						</div>
 					</div>
 				</td>
 				<td class="fitwidth">
