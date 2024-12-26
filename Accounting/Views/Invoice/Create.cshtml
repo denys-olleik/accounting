@@ -196,51 +196,6 @@
 	</div>
 </template>
 
-<template id="attachments-template">
-	<table class="border-collapse width-100">
-		<thead class="border-bottom-1px-solid-1a3b56">
-			<tr>
-				<th class="text-align-left">File name</th>
-				<th class="text-align-right fitwidth white-space-nowrap">Print order</th>
-				<th class="fitwidth"></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr v-for="(attachment, index) in attachments" :key="index">
-				<td class="padding-right-20px white-space-nowrap">
-					<div class="display-flex padding-top-bottom-2px">
-						<div class="display-flex flex-1">
-							<a href="#" @@click.prevent="toggleOptions(index)" class="margin-right-5px color-blue">{{
-								attachment.fileName }}</a>
-							<span v-if="expandedAttachmentIndex === index" class="display-flex margin-left-2px">
-								<div
-									class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
-									<div class="flex-1"></div>
-									<a
-										class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
-									<div class="flex-1"></div>
-								</div>
-								<div
-									class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
-									<div class="flex-1"></div>
-									<a href="#" @@click.prevent="removeAttachment(attachment)"
-										class="font-size-16px font-Roboto color-white text-decoration-none">remove</a>
-									<div class="flex-1"></div>
-								</div>
-							</span>
-						</div>
-					</div>
-				</td>
-				<td class="fitwidth">
-					<input type="number" v-model="attachment.PrintOrder" @@change="updatePrintOrder(attachment)"
-						class="font-size-20px width-100 text-align-right" />
-				</td>
-				<td class="text-align-right fitwidth"></td>
-			</tr>
-		</tbody>
-	</table>
-</template>
-
 <form id="app" asp-action="Create" asp-controller="Invoice" method="post"
 	class="display-flex flex-direction-column margin-bottom-5px" autocomplete="off">
 
@@ -642,19 +597,11 @@
 		props: ['attachments'],
 		data() {
 			return {
-				expandedAttachmentIndex: null
+
 			};
 		},
 		methods: {
-			toggleOptions(index) {
-				this.expandedAttachmentIndex = this.expandedAttachmentIndex === index ? null : index;
-			},
-			removeAttachment(attachment) {
-				this.$emit('remove-attachment', attachment);
-			},
-			updatePrintOrder(attachment) {
-				this.$emit('update-attachment-print-order', attachment);
-			}
+
 		}
 	};
 
