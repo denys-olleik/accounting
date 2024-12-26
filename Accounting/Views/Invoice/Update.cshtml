@@ -180,6 +180,23 @@
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
     <div
       class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
+      <div class="display-flex margin-1px-2px-2px-2px">
+        <business-entity-name-display :business-entity="customer"></business-entity-name-display>
+      </div>
+      <div class="display-flex margin-1px-2px-2px-2px">
+        {{ customer.website }}
+      </div>
+    </div>
+    <div class="width-5px"></div>
+    <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
+      <invoice-detail :invoice-date="invoiceDate" :selected-payment-term="selectedPaymentTerm">
+      </invoice-detail>
+    </div>
+  </div>
+
+  <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
+    <div
+      class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
       <addresses-and-selected-address :addresses="customer ? customer.addresses : []"
         v-model:selected-address="selectedAddress" :customer="customer">
       </addresses-and-selected-address>
@@ -239,6 +256,7 @@
 }
 
 <script src="~/js/ProductsAndServicesSearch.js" asp-append-version="true"></script>
+<script src="~/js/BusinessEntityNameDisplay.js" asp-append-version="true"></script>
 
 <script>
   const { createApp } = Vue;
@@ -404,6 +422,7 @@
       'total': Total,
       'addresses-and-selected-address': AddressesAndSelectedAddress,
       'products-and-services-search': ProductsAndServicesSearch,
+      'business-entity-name-display': BusinessEntityNameDisplay,
     },
     data() {
       return {
