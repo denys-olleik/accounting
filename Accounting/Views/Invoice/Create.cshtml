@@ -272,15 +272,15 @@
 		</div>
 	</div>
 
-	<div class="display-flex">
+	<div class="display-flex margin-bottom-5px">
 		<div class="flex-1 padding-5px background-color-antiquewhite">
 			<input type="file" @@change="uploadFile" ref="fileInput" />
 		</div>
 	</div>
 
-	<div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
+	<div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite" v-if="attachments.length > 0">
 		<attachments :attachments="attachments" @@remove-attachment="removeAttachment"
-			@@update-attachment-print-order="updateAttachmentPrintOrder"></attachments>
+								 @@update-attachment-print-order="updateAttachmentPrintOrder"></attachments>
 	</div>
 	<div class="display-flex margin-bottom-5px">
 		<div class="flex-1">
