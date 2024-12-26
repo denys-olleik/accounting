@@ -196,6 +196,27 @@
 	</div>
 </template>
 
+<template id="attachment-action-template">
+	<div class="display-flex padding-top-bottom-2px">
+		<div class="display-flex flex-1">
+			<a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ attachment.fileName }}</a>
+			<span v-if="isExpanded" class="display-flex margin-left-2px">
+				<div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+					<div class="flex-1"></div>
+					<a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+					<div class="flex-1"></div>
+				</div>
+				<div
+					class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+					<div class="flex-1"></div>
+					<a href="#" @@click.prevent="$emit('remove', attachment.invoiceAttachmentID)"
+						class="font-size-16px font-Roboto color-white text-decoration-none">remove</a>
+					<div class="flex-1"></div>
+				</div>
+		</div>
+	</div>
+</template>
+
 <form id="app" asp-action="Create" asp-controller="Invoice" method="post"
 	class="display-flex flex-direction-column margin-bottom-5px" autocomplete="off">
 
@@ -275,6 +296,24 @@
 			<input type="file" @@change="uploadFile" ref="fileInput" />
 		</div>
 	</div>
+
+	<table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
+		<thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+			<tr>
+				<th class="text-align-left width-1px padding-right-20px">File name</th>
+			</tr>
+		</thead>
+		<tbody class="font-Roboto-Mono">
+			<tr v-for="attachment in attachments" :key="attachment.invoiceAttachmentID">
+				<td class="padding-right-20px white-space-nowrap">
+					<attachment-action :attachment='attachment'
+						:is-expanded="attachment.invoiceAttachmentID === expandedAttachmentId"
+						@@expand="handleAttachmentExpand(attachment.invoiceAttachmentID)"
+						@@remove="removeAttachment"></attachment-action>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 
 	<div class="display-flex margin-bottom-5px">
 		<div class="flex-1">
@@ -586,6 +625,20 @@
 		},
 	};
 
+	const AttachmentAction = {
+		name: 'AttachmentAction',
+		props: ['attachment', 'isExpanded'],
+		template: '#attachment-action-template',
+		methods: {
+			toggleAction() {
+				this.$emit('expand');
+			},
+			removeAttachment() {
+				this.$emit('remove', this.attachment.invoiceAttachmentID);
+			}
+		}
+	};
+
 	const app = createApp({
 		components: {
 			'invoice-detail': InvoiceDetail,
@@ -597,6 +650,7 @@
 			'addresses-and-selected-address': AddressesAndSelectedAddress,
 			'products-and-services-search': ProductsAndServicesSearch,
 			'business-entity-name-display': BusinessEntityNameDisplay,
+			'attachment-action': AttachmentAction,
 		},
 		data() {
 			return {
@@ -611,6 +665,7 @@
 				dueDate: @Html.Raw(Json.Serialize(Model.DueDate).ToString() ?? "null"),
 				productsOrServices: @Html.Raw(Json.Serialize(Model.ProductsAndServices).ToString() ?? "[]"),
 				attachments: @Html.Raw(Model?.InvoiceAttachments != null ? Json.Serialize(Model.InvoiceAttachments) : "[]"),
+				expandedAttachmentId: null,
 				searchQuery: '',
 				isSearchActive: false,
 			};
@@ -630,6 +685,12 @@
 			selectedPaymentTerm: 'calculateDueDate',
 		},
 		methods: {
+			removeAttachment(id) {
+				this.attachments = this.attachments.filter(attachment => attachment.invoiceAttachmentID !== id);
+			},
+			handleAttachmentExpand(id) {
+				this.expandedAttachmentId = this.expandedAttachmentId === id ? null : id;
+			},
 			focusSearchInput() {
 				this.$refs.productsAndServicesSearch.focusInput();
 			},
@@ -639,32 +700,6 @@
 				} else if (type === 'shipping') {
 					this.selectedShippingAddress = eventData.address;
 				}
-			},
-			updateAttachmentPrintOrder(updatedAttachment) {
-				fetch('/api/invoice-attachment/update-print-order', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						id: updatedAttachment.id,
-						newPrintOrder: updatedAttachment.PrintOrder
-					})
-				})
-					.then(response => {
-						if (response.ok) {
-							return response.json();
-						}
-						throw new Error('Network response was not ok.');
-					})
-					.then(data => {
-						if (data.Status === 'Success') {
-							console.log('Print order updated successfully.');
-						}
-					})
-					.catch(error => {
-						console.log('There was a problem with the fetch operation: ', error);
-					});
 			},
 			uploadFile(event) {
 				const file = event.target.files[0];
