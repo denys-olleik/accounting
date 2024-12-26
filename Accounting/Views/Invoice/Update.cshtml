@@ -14,14 +14,18 @@
 <template id="invoice-line-removal-template">
   <div class="display-flex flex-direction-column background-color-red justify-content-space-around">
     <div v-if="!isRemoveConfirmationVisible" :class="{ 'border-bottom-2px-solid-white': isRemoveConfirmationVisible }">
-      <a href="#" class="color-white text-decoration-none" :class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }" @@click.prevent="toggleConfirmationVisibility">remove</a>
+      <a href="#" class="color-white text-decoration-none"
+        :class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }"
+        @@click.prevent="toggleConfirmationVisibility">remove</a>
     </div>
     <div v-if="isRemoveConfirmationVisible" class="display-flex flex-1 flex-direction-column">
       <div class="flex-1"></div>
       <div class="display-flex flex-direction-column">
-        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="confirmRemoval">remove</a></div>
+        <div class="text-align-center"><a class="text-decoration-none color-white" href="#"
+            @@click.prevent="confirmRemoval">remove</a></div>
         <div class="height-5px"></div>
-        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="toggleConfirmationVisibility">cancel</a></div>
+        <div class="text-align-center"><a class="text-decoration-none color-white" href="#"
+            @@click.prevent="toggleConfirmationVisibility">cancel</a></div>
       </div>
       <div class="flex-1"></div>
     </div>
@@ -34,20 +38,20 @@
       <div class="display-flex max-width-768-flex-direction-column">
         <div class="display-flex flex-2 flex-direction-column">
           <label>Title</label>
-          <input type="text"
-                 ref="titleInput"
-                 class="font-size-20px font-Roboto-Mono width-100"
-                 v-model="invoiceLine.title" />
+          <input type="text" ref="titleInput" class="font-size-20px font-Roboto-Mono width-100"
+            v-model="invoiceLine.title" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-2 flex-direction-column">
           <label>Quantity</label>
-          <input type="number" ref="quantityInput" class="font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.quantity" />
+          <input type="number" ref="quantityInput" class="font-size-20px font-Roboto-Mono width-100"
+            v-model="invoiceLine.quantity" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-2 flex-direction-column">
           <label>Price</label>
-          <input type="number" step="0.01" class="font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.price" />
+          <input type="number" step="0.01" class="font-size-20px font-Roboto-Mono width-100"
+            v-model="invoiceLine.price" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-1 flex-direction-column text-align-right">
@@ -63,9 +67,8 @@
       </div>
     </div>
     <div class="width-5px"></div>
-    <invoice-line-removal :invoice-line="invoiceLine"
-                          @@confirm-removal="$emit('confirm-removal', invoiceLine)"
-                          @@cancel-removal="$emit('cancel-removal', invoiceLine)">
+    <invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)"
+      @@cancel-removal="$emit('cancel-removal', invoiceLine)">
     </invoice-line-removal>
   </div>
 </template>
@@ -93,13 +96,9 @@
 
 <template id="payment-term-selector-template">
   <div class="display-flex flex-direction-column">
-    <select class="font-size-20px"
-            v-model="selectedPaymentTermId"
-            name="SelectedPaymentTermId">
+    <select class="font-size-20px" v-model="selectedPaymentTermId" name="SelectedPaymentTermId">
       <option value="">Select Payment Term</option>
-      <option v-for="paymentTerm in paymentTerms"
-              :value="paymentTerm.id"
-              :key="paymentTerm.id">
+      <option v-for="paymentTerm in paymentTerms" :value="paymentTerm.id" :key="paymentTerm.id">
         {{ paymentTerm.displayText }}
       </option>
     </select>
@@ -134,7 +133,8 @@
 
 <template id="addresses-and-selected-address-template">
   <div v-if="selectedAddress" class="margin-bottom-5px">
-    <div class="border-bottom-1px-solid-1a3b56">{{ addressType === 'billing' ? 'Selected Billing Address' : 'Selected Shipping Address' }}</div>
+    <div class="border-bottom-1px-solid-1a3b56">{{ addressType === 'billing' ? 'Selected Billing Address' : 'Selected
+      Shipping Address' }}</div>
     <div class="display-flex">
       <div class="font-Roboto-Mono">
         <div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -175,40 +175,35 @@
 </template>
 
 <form id="app" asp-action="Update" asp-controller="Invoice" method="post"
-      class="display-flex flex-direction-column margin-bottom-5px">
+  class="display-flex flex-direction-column margin-bottom-5px">
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-    <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
+    <div
+      class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
       <addresses-and-selected-address :addresses="customer ? customer.addresses : []"
-                                      v-model:selected-address="selectedAddress"
-                                      :customer="customer">
+        v-model:selected-address="selectedAddress" :customer="customer">
       </addresses-and-selected-address>
 
     </div>
     <div class="width-5px"></div>
     <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
-      <invoice-detail :invoice-date="invoiceDate"
-                      :selected-payment-term="selectedPaymentTerm"
-                      :due-date="dueDate">
+      <invoice-detail :invoice-date="invoiceDate" :selected-payment-term="selectedPaymentTerm" :due-date="dueDate">
       </invoice-detail>
     </div>
   </div>
 
-  <products-and-services-search class="background-color-black color-white border-radius-5px border-5px-dashed-dodgerblue padding-5px max-height-250px overflow-auto margin-bottom-5px"
-                                :products-or-services="productsOrServices"
-                                @@product-or-service-selected="handleProductOrServiceSelected">
+  <products-and-services-search
+    class="background-color-black color-white border-radius-5px border-5px-dashed-dodgerblue padding-5px max-height-250px overflow-auto margin-bottom-5px"
+    :products-or-services="productsOrServices" @@product-or-service-selected="handleProductOrServiceSelected">
   </products-and-services-search>
 
-  <invoice-line v-for="invoiceLine in invoiceLines"
-                :key="invoiceLine.id"
-                :invoice-line="invoiceLine"
-                @@confirm-removal="handleConfirmRemoval">
+  <invoice-line v-for="invoiceLine in invoiceLines" :key="invoiceLine.id" :invoice-line="invoiceLine"
+    @@confirm-removal="handleConfirmRemoval">
   </invoice-line>
 
   <div class="background-color-antiquewhite margin-bottom-5px">
     <label>Payment Terms Selector</label>
-    <payment-term-selector :payment-terms="paymentTerms"
-                           v-model:selected-payment-term="selectedPaymentTerm">
+    <payment-term-selector :payment-terms="paymentTerms" v-model:selected-payment-term="selectedPaymentTerm">
     </payment-term-selector>
   </div>
 
@@ -443,7 +438,7 @@
         const index = this.invoiceLines.indexOf(invoiceLine);
         if (index !== -1) {
           this.deletedInoiceLines.push(this.invoiceLines[index]);
-      
+
           this.invoiceLines.splice(index, 1);
         }
       },
@@ -477,5 +472,5 @@
 
 @if (Context.RequestServices.GetService<IWebHostEnvironment>()!.IsDevelopment())
 {
- 
+
 }
