@@ -37,7 +37,6 @@
 		<div v-if="!isRemoveConfirmationVisible"
 			:class="{ 'border-bottom-2px-solid-white': isRemoveConfirmationVisible }">
 			<a href="#" class="color-white text-decoration-none"
-				:class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }"
 				@@click.prevent="toggleConfirmationVisibility">remove</a>
 		</div>
 		<div v-if="isRemoveConfirmationVisible" class="display-flex flex-1 flex-direction-column">
@@ -58,43 +57,42 @@
 </template>
 
 <template id="invoice-line-template">
-	<div class="display-flex margin-bottom-5px background-color-antiquewhite">
-		<div class="display-flex flex-1 flex-direction-column">
-			<div class="display-flex max-width-768-flex-direction-column">
-				<div class="display-flex flex-2 flex-direction-column">
-					<label>Title</label>
-					<input type="text" ref="titleInput" class="font-size-20px font-Roboto-Mono width-100"
-						v-model="invoiceLine.title" @@click="handleTitleClick" @@blur="handleTitleBlur" />
-				</div>
-				<div class="width-5px"></div>
-				<div class="display-flex flex-2 flex-direction-column">
-					<label>Quantity</label>
-					<input type="number" ref="quantityInput" class="font-size-20px font-Roboto-Mono width-100"
-						v-model="invoiceLine.quantity" />
-				</div>
-				<div class="width-5px"></div>
-				<div class="display-flex flex-2 flex-direction-column">
-					<label>Price</label>
-					<input type="number" step="0.01" class="font-size-20px font-Roboto-Mono width-100"
-						v-model="invoiceLine.price" @@keydown="focusSearchAfterPriceEnter" />
-				</div>
-				<div class="width-5px"></div>
-				<div class="display-flex flex-1 flex-direction-column text-align-right">
-					<label>Total</label>
-					<div class="font-size-20px font-Roboto-Mono width-100 background-color-lightgray">{{ lineTotal }}</div>
-				</div>
+	<div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
+		<div class="display-flex max-width-768-flex-direction-column">
+			<div class="display-flex flex-2 flex-direction-column">
+				<label>Title</label>
+				<input type="text" ref="titleInput" class="font-size-20px font-Roboto-Mono width-100"
+							 v-model="invoiceLine.title" @@click="handleTitleClick" @@blur="handleTitleBlur" />
 			</div>
-			<div class="display-flex">
-				<div class="display-flex flex-1 flex-direction-column">
-					<label>Description</label>
-					<textarea v-model="invoiceLine.description" class="font-size-20px font-Roboto-Mono width-100"></textarea>
-				</div>
+			<div class="width-5px"></div>
+			<div class="display-flex flex-2 flex-direction-column">
+				<label>Quantity</label>
+				<input type="number" ref="quantityInput" class="font-size-20px font-Roboto-Mono width-100"
+							 v-model="invoiceLine.quantity" />
+			</div>
+			<div class="width-5px"></div>
+			<div class="display-flex flex-2 flex-direction-column">
+				<label>Price</label>
+				<input type="number" step="0.01" class="font-size-20px font-Roboto-Mono width-100"
+							 v-model="invoiceLine.price" @@keydown="focusSearchAfterPriceEnter" />
+			</div>
+			<div class="width-5px"></div>
+			<div class="display-flex flex-1 flex-direction-column text-align-right">
+				<label>Total</label>
+				<div class="font-size-20px font-Roboto-Mono width-100 background-color-lightgray">{{ lineTotal }}</div>
 			</div>
 		</div>
-		<div class="width-5px"></div>
-		<invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)"
-			@@cancel-removal="$emit('cancel-removal', invoiceLine)">
-		</invoice-line-removal>
+		<div class="display-flex">
+			<div class="display-flex flex-1 flex-direction-column">
+				<label>Description</label>
+				<textarea v-model="invoiceLine.description" class="font-size-20px font-Roboto-Mono width-100"></textarea>
+			</div>
+		</div>
+		<div class="display-flex justify-content-center margin-top-5px">
+			<invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)"
+														@@cancel-removal="$emit('cancel-removal', invoiceLine)">
+			</invoice-line-removal>
+		</div>
 	</div>
 </template>
 
