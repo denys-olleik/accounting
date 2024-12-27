@@ -1,13 +1,13 @@
 ﻿@model Accounting.Models.InvoiceViewModels.UpdateInvoiceViewModel
 
 @{
-  ViewData["Title"] = "Update Invoice - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Update invoice - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-  string headerText = "Update Invoice";
+  string headerText = "Update invoice";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
@@ -212,8 +212,8 @@
     </div>
   </div>
 
-  <products-and-services-search
-    :products-or-services="productsOrServices" @@product-or-service-selected="handleProductOrServiceSelected">
+  <products-and-services-search :products-or-services="productsOrServices"
+    @@product-or-service-selected="handleProductOrServiceSelected">
   </products-and-services-search>
 
   <invoice-line v-for="invoiceLine in invoiceLines" :key="invoiceLine.id" :invoice-line="invoiceLine"
@@ -240,7 +240,7 @@
     <div class="flex-1">
     </div>
     <div class="flex-1">
-      <button type="submit" class="full-width-regular-button width-100">Update Invoice</button>
+      <button type="submit" class="full-width-regular-button width-100">Update invoice</button>
     </div>
   </div>
 </form>
