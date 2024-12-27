@@ -82,7 +82,7 @@
 				<textarea v-model="invoiceLine.description" class="font-size-20px font-Roboto-Mono width-100"></textarea>
 			</div>
 		</div>
-		<div class="display-flex margin-top-5px">
+		<div class="display-flex">
 			<invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)"
 				@@cancel-removal="$emit('cancel-removal', invoiceLine)">
 			</invoice-line-removal>
