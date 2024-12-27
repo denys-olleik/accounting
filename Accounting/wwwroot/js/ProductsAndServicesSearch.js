@@ -67,7 +67,7 @@
          @focus="isSearchActive = true"
          @keydown="handleKeyDown">
 
-  <div v-if="filteredProductsOrServices.length" class="background-color-black padding-5px box-shadow">
+  <div v-if="searchQuery && filteredProductsOrServices.length > 0" class="background-color-black padding-5px">
     <div v-for="(productOrService, index) in filteredProductsOrServices"
          :key="productOrService.id"
          class="font-size-16px"
