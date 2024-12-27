@@ -125,7 +125,7 @@
 					Invoice date
 				</td>
 				<td class="text-align-right">
-						{{ formatDate(invoiceDate) }}
+					{{ formatDate(invoiceDate) }}
 				</td>
 			</tr>
 			<tr>
@@ -219,8 +219,7 @@
 		@@update:selected-customer="updateSelectedCustomer"></customer-selection>
 
 	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-		<div
-			class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
+		<div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
 			<div class="display-flex margin-1px-2px-2px-2px" v-if="selectedCustomer">
 				<business-entity-name-display :business-entity="selectedCustomer"></business-entity-name-display>
 			</div>
