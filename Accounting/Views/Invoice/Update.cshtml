@@ -133,7 +133,7 @@
 
 <template id="addresses-and-selected-address-template">
   <div v-if="selectedAddress" class="margin-bottom-5px">
-    <div class="border-bottom-1px-solid-1a3b56">
+    <div>
       {{ addressType === 'billing' ? 'Selected billing address' : 'Selected shipping address' }}
     </div>
     <div class="display-flex">
@@ -168,9 +168,6 @@
     <span v-if="dropdownVisible">Close Addresses</span>
     <span v-else>{{ addressType === 'billing' ? 'Open Billing Addresses' : 'Open Shipping Addresses' }}</span>
   </a>
-  <div v-if="!customer" class="text-align-center color-darkslategray">
-    select customer to see addresses
-  </div>
 </template>
 
 <form id="app" asp-action="Update" asp-controller="Invoice" method="post"

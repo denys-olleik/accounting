@@ -190,9 +190,6 @@
 		<span v-if="dropdownVisible">Close addresses</span>
 		<span v-else>{{ addressType === 'billing' ? 'Open billing addresses' : 'Open shipping addresses' }}</span>
 	</a>
-	<div v-if="!selectedCustomer" class="text-align-center color-darkslategray">
-		select customer to see addresses
-	</div>
 </template>
 
 <template id="attachment-action-template">
