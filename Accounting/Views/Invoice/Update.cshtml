@@ -133,7 +133,9 @@
 
 <template id="addresses-and-selected-address-template">
   <div v-if="selectedAddress" class="margin-bottom-5px">
-    <div class="border-bottom-1px-solid-1a3b56">{{ addressType === 'billing' ? 'Selected billing address' : 'Selected shipping address' }}</div>
+    <div class="border-bottom-1px-solid-1a3b56">
+      {{ addressType === 'billing' ? 'Selected billing address' : 'Selected shipping address' }}
+    </div>
     <div class="display-flex">
       <div class="font-Roboto-Mono">
         <div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -194,19 +196,18 @@
   </div>
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-    <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
+    <div
+      class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
       <addresses-and-selected-address :selected-address="selectedBillingAddress"
-                                      @@update:selected-address="handleSelectedAddress($event, 'billing')"
-                                      :addresses="customer ? customer.addresses : []" :selected-customer="customer"
-                                      address-type="billing">
+        @@update:selected-address="handleSelectedAddress($event, 'billing')"
+        :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="billing">
       </addresses-and-selected-address>
     </div>
     <div class="width-5px"></div>
     <div class="display-flex flex-direction-column flex-1 background-color-antiquewhite">
       <addresses-and-selected-address :selected-address="selectedShippingAddress"
-                                      @@update:selected-address="handleSelectedAddress($event, 'shipping')"
-                                      :addresses="customer ? customer.addresses : []" :selected-customer="customer"
-                                      address-type="shipping">
+        @@update:selected-address="handleSelectedAddress($event, 'shipping')"
+        :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="shipping">
       </addresses-and-selected-address>
     </div>
   </div>

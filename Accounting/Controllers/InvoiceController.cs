@@ -362,6 +362,7 @@ namespace Accounting.Controllers
           FirstName = invoice.BusinessEntity.FirstName,
           LastName = invoice.BusinessEntity.LastName,
           CompanyName = invoice.BusinessEntity.CompanyName,
+          Website = invoice.BusinessEntity.Website,
           PaymentTermId = invoice.BusinessEntity.PaymentTermId,
           CreatedById = invoice.BusinessEntity.CreatedById,
           Created = invoice.BusinessEntity.Created,
