@@ -109,7 +109,7 @@
 <template id="payment-term-selector-template">
 	<div class="display-flex flex-direction-column">
 		<select class="font-size-20px" v-model="selectedPaymentTermId" name="SelectedPaymentTermId">
-			<option value="">Select Payment Term</option>
+			<option value="">Select payment term</option>
 			<option v-for="paymentTerm in paymentTerms" :value="paymentTerm.id" :key="paymentTerm.id">
 				{{ paymentTerm.displayText }}
 			</option>
@@ -665,7 +665,7 @@
 				selectedShippingAddress: @Html.Raw(Json.Serialize(Model.SelectedShippingAddress).ToString() ?? "null"),
 				invoiceLines: @Html.Raw(Model.InvoiceLinesJson ?? "[]"),
 				paymentTerms: @Html.Raw(Json.Serialize(Model.PaymentTerms).ToString() ?? "[]"),
-				selectedPaymentTerm: @Html.Raw(Json.Serialize(Model.SelectedPaymentTerm).ToString() ?? "null"),
+				selectedPaymentTerm: '',
 				invoiceDate: @Html.Raw(Json.Serialize(Model.InvoiceDate).ToString() ?? "null"),
 				dueDate: @Html.Raw(Json.Serialize(Model.DueDate).ToString() ?? "null"),
 				productsOrServices: @Html.Raw(Json.Serialize(Model.ProductsAndServices).ToString() ?? "[]"),

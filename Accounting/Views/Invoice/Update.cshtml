@@ -97,7 +97,7 @@
 <template id="payment-term-selector-template">
   <div class="display-flex flex-direction-column">
     <select class="font-size-20px" v-model="selectedPaymentTermId" name="SelectedPaymentTermId">
-      <option value="">Select Payment Term</option>
+      <option value="">Select payment term</option>
       <option v-for="paymentTerm in paymentTerms" :value="paymentTerm.id" :key="paymentTerm.id">
         {{ paymentTerm.displayText }}
       </option>

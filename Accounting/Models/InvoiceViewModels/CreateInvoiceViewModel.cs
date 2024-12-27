@@ -74,7 +74,7 @@ namespace Accounting.Models.InvoiceViewModels
 
         RuleFor(x => x.DueDate)
             .NotNull()
-            .WithMessage("'Due date' is required. Select payment terms.");
+            .WithMessage("'Due date' is required. Select a payment term.");
       }
     }
   }
