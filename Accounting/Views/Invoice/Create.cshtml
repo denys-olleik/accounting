@@ -118,26 +118,19 @@
 </template>
 
 <template id="invoice-detail-template">
-	<table>
-		<thead>
-			<tr>
-				<th colspan="2">Invoice details</th>
-			</tr>
-		</thead>
+	<table class="border-bottom-1px-solid-1a3b56">
 		<tbody>
 			<tr>
-				<td class="text-align-right">
-					Invoice Date:
+				<td class="text-align-right white-space-nowrap width-1px">
+					Invoice date
 				</td>
-				<td>
-					<strong>
+				<td class="text-align-right">
 						{{ formatDate(invoiceDate) }}
-					</strong>
 				</td>
 			</tr>
 			<tr>
-				<td class="text-align-right">Due Date:</td>
-				<td>{{ formatDate(dueDate) }}</td>
+				<td class="text-align-left white-space-nowrap">Due date</td>
+				<td class="text-align-right">{{ formatDate(dueDate) }}</td>
 			</tr>
 		</tbody>
 	</table>
@@ -182,7 +175,7 @@
 	</div>
 	<a href="#" v-if="selectedCustomer" class="" @@click.prevent="dropdownVisible = !dropdownVisible">
 		<span v-if="dropdownVisible">Close Addresses</span>
-		<span v-else>{{ addressType === 'billing' ? 'Open Billing Addresses' : 'Open Shipping Addresses' }}</span>
+		<span v-else>{{ addressType === 'billing' ? 'Open billing addresses' : 'Open shipping addresses' }}</span>
 	</a>
 	<div v-if="!selectedCustomer" class="text-align-center color-darkslategray">
 		select customer to see addresses
