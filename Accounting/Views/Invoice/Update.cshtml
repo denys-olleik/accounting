@@ -107,25 +107,18 @@
 
 <template id="invoice-detail-template">
   <table>
-    <thead>
-      <tr>
-        <th colspan="2">Invoice Details</th>
-      </tr>
-    </thead>
     <tbody>
       <tr>
-        <td class="text-align-right">
-          Invoice Date:
+        <td class="text-align-right white-space-nowrap width-1px">
+          Invoice date
         </td>
-        <td>
-          <strong>
-            {{ formatDate(invoiceDate) }}
-          </strong>
+        <td class="text-align-right">
+          {{ formatDate(invoiceDate) }}
         </td>
       </tr>
       <tr>
-        <td class="text-align-right">Due Date:</td>
-        <td>{{ formatDate(dueDate) }}</td>
+        <td class="text-align-left white-space-nowrap">Due date</td>
+        <td class="text-align-right">{{ formatDate(dueDate) }}</td>
       </tr>
     </tbody>
   </table>
@@ -174,17 +167,12 @@
   class="display-flex flex-direction-column margin-bottom-5px">
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-    <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
-      <div class="display-flex margin-1px-2px-2px-2px">
-        <business-entity-name-display :business-entity="customer"></business-entity-name-display>
-      </div>
-      <div class="display-flex margin-1px-2px-2px-2px">
-        {{ customer.website }}
-      </div>
+    <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
+      <customer-detail :customer="customer" v-if="customer"></customer-detail>
     </div>
     <div class="width-5px"></div>
     <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
-      <invoice-detail :invoice-date="invoiceDate" :selected-payment-term="selectedPaymentTerm" :due-date="dueDate">
+      <invoice-detail :invoice-date="invoiceDate" :selected-payment-term="selectedPaymentTerm">
       </invoice-detail>
     </div>
   </div>
@@ -362,14 +350,24 @@
   const InvoiceDetail = {
     name: 'InvoiceDetail',
     template: '#invoice-detail-template',
-    props: ['invoiceDate', 'selectedPaymentTerm', 'dueDate'],
+    props: ['invoiceDate', 'selectedPaymentTerm'],
+    computed: {
+      dueDate() {
+        if (!this.selectedPaymentTerm) {
+          return null;
+        }
+        let dueDate = new Date(this.invoiceDate);
+        dueDate.setDate(dueDate.getDate() + this.selectedPaymentTerm.daysUntilDue);
+        return dueDate;
+      }
+    },
     methods: {
       formatDate(date) {
         if (!date) {
           return '';
         }
         let d = new Date(date),
-          localDate = new Date(d.getTime() - d.getTimezoneOffset() * 60000), // convert to local date
+          localDate = new Date(d.getTime() - d.getTimezoneOffset() * 60000),
           month = '' + (localDate.getMonth() + 1),
           day = '' + localDate.getDate(),
           year = localDate.getFullYear();
@@ -409,6 +407,15 @@
     },
   };
 
+  const CustomerDetail = {
+    name: 'CustomerDetail',
+    props: ['customer'],
+    template: '#customer-detail-template',
+    components: {
+      'business-entity-name-display': BusinessEntityNameDisplay
+    }
+  };
+
   const app = createApp({
     components: {
       'invoice-detail': InvoiceDetail,
@@ -419,6 +426,7 @@
       'addresses-and-selected-address': AddressesAndSelectedAddress,
       'products-and-services-search': ProductsAndServicesSearch,
       'business-entity-name-display': BusinessEntityNameDisplay,
+			'customer-detail': CustomerDetail,
     },
     data() {
       return {
