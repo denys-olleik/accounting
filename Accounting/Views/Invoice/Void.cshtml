@@ -1,19 +1,19 @@
 ﻿@model Accounting.Models.InvoiceViewModels.VoidInvoiceViewModel
 
 @{
-  ViewData["Title"] = "Void Invoice - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Void invoice - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@next"></script>
 
 @{
-  string headerText = "Void Invoice";
+  string headerText = "Void invoice";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <form asp-action="Void" asp-controller="Invoice" method="post" class="display-flex flex-direction-column margin-bottom-5px">
   <div class="display-flex flex-direction-column">
-    <label asp-for="InvoiceNumber" class="background-color-antiquewhite">Invoice Number</label>
+    <label asp-for="InvoiceNumber" class="background-color-antiquewhite">Invoice number</label>
     <input asp-for="InvoiceNumber" class="margin-bottom-5px font-size-20px" disabled />
   </div>
   <div class="display-flex flex-direction-column">
@@ -26,9 +26,10 @@
 
   <div class="display-flex">
     <div class="flex-1">
+      <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Invoices", "Invoice")';">Cancel</button>
     </div>
     <div class="flex-1">
-      <button type="submit" class="full-width-regular-button width-100">Void Invoice</button>
+      <button type="submit" class="full-width-regular-button width-100">Void invoice</button>
     </div>
   </div>
 </form>
