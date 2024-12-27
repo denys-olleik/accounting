@@ -54,12 +54,12 @@ namespace Accounting.Controllers
       _invoiceAttachmentService = new InvoiceAttachmentService(requestContext.DatabaseName);
       _invoiceLineService = new InvoiceLineService(requestContext.DatabaseName);
       _invoicePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName);
       _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName);
       _itemService = new ItemService(requestContext.DatabaseName);
       _organizationService = new OrganizationService(requestContext.DatabaseName);
       _paymentTermsService = new PaymentTermsService(requestContext.DatabaseName);
       _accountService = new AccountService(requestContext.DatabaseName);
-      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName);
     }
 
     [Route("invoices")]
