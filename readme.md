@@ -12,7 +12,7 @@
 
 ## Screenshots
 
-![1](chrome_1YoniUtAt3.gif)
+![1](chrome_lBfrV7azwI.gif)
 ---
 ![2](chrome_gp6bHABAqw.png)
 ---

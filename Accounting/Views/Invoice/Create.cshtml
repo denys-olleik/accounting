@@ -118,7 +118,7 @@
 </template>
 
 <template id="invoice-detail-template">
-	<table class="border-bottom-1px-solid-1a3b56">
+	<table>
 		<tbody>
 			<tr>
 				<td class="text-align-right white-space-nowrap width-1px">
@@ -137,7 +137,7 @@
 </template>
 
 <template id="customer-detail-template">
-	<table class="border-bottom-1px-solid-1a3b56">
+	<table>
 		<tbody>
 			<tr>
 				<td class="text-align-left">
@@ -239,7 +239,7 @@
 		</div>
 	</div>
 
-	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
+	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column" v-if="selectedCustomer">
 		<div
 			class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
 			<addresses-and-selected-address :selected-address="selectedBillingAddress"
