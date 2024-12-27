@@ -83,6 +83,7 @@
 			</div>
 		</div>
 		<div class="display-flex">
+			<div class="flex-1"></div>
 			<invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)"
 				@@cancel-removal="$emit('cancel-removal', invoiceLine)">
 			</invoice-line-removal>
