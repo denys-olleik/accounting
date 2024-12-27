@@ -136,6 +136,21 @@
 	</table>
 </template>
 
+<template id="customer-detail-template">
+	<table class="border-bottom-1px-solid-1a3b56">
+		<tbody>
+			<tr>
+				<td class="text-align-left">
+					<business-entity-name-display :business-entity="customer"></business-entity-name-display>
+				</td>
+			</tr>
+			<tr>
+				<td class="text-align-left">{{ customer.website }}</td>
+			</tr>
+		</tbody>
+	</table>
+</template>
+
 <template id="addresses-and-selected-address-template">
 	<div v-if="selectedAddress" class="margin-bottom-5px">
 		<div class="border-bottom-1px-solid-1a3b56">
@@ -174,7 +189,7 @@
 		</div>
 	</div>
 	<a href="#" v-if="selectedCustomer" class="" @@click.prevent="dropdownVisible = !dropdownVisible">
-		<span v-if="dropdownVisible">Close Addresses</span>
+		<span v-if="dropdownVisible">Close addresses</span>
 		<span v-else>{{ addressType === 'billing' ? 'Open billing addresses' : 'Open shipping addresses' }}</span>
 	</a>
 	<div v-if="!selectedCustomer" class="text-align-center color-darkslategray">
@@ -219,13 +234,8 @@
 		@@update:selected-customer="updateSelectedCustomer"></customer-selection>
 
 	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-		<div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
-			<div class="display-flex margin-1px-2px-2px-2px" v-if="selectedCustomer">
-				<business-entity-name-display :business-entity="selectedCustomer"></business-entity-name-display>
-			</div>
-			<div class="display-flex margin-1px-2px-2px-2px" v-if="selectedCustomer">
-				{{ selectedCustomer.website }}
-			</div>
+		<div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
+			<customer-detail :customer="selectedCustomer" v-if="selectedCustomer"></customer-detail>
 		</div>
 		<div class="width-5px"></div>
 		<div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
@@ -624,6 +634,15 @@
 		}
 	};
 
+	const CustomerDetail = {
+		name: 'CustomerDetail',
+		props: ['customer'],
+		template: '#customer-detail-template',
+		components: {
+			'business-entity-name-display': BusinessEntityNameDisplay
+		}
+	};
+
 	const app = createApp({
 		components: {
 			'invoice-detail': InvoiceDetail,
@@ -636,6 +655,7 @@
 			'products-and-services-search': ProductsAndServicesSearch,
 			'business-entity-name-display': BusinessEntityNameDisplay,
 			'attachment-action': AttachmentAction,
+			'customer-detail': CustomerDetail
 		},
 		data() {
 			return {
