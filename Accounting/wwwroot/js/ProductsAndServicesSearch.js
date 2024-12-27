@@ -58,24 +58,24 @@
     }
   },
   template: `
-<div class="color-white max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono">
-  <input type="text"
-         ref="searchInput"
-         class="font-size-20px width-100"
-         placeholder="Search products and services"
-         v-model="searchQuery"
-         @focus="isSearchActive = true"
-         @keydown="handleKeyDown">
-
-  <div v-if="searchQuery && filteredProductsOrServices.length > 0" class="background-color-black padding-5px">
-    <div v-for="(productOrService, index) in filteredProductsOrServices"
-         :key="productOrService.id"
-         class="font-size-16px"
-         @click="selectProductOrService(productOrService)">
-      <span v-if="index === selectedIndex" class="blinking-cursor margin-right-10px">█</span>
-      <span>{{ productOrService.name }}</span>
+    <div class="display-flex flex-direction-column margin-bottom-5px">
+      <input type="text"
+             ref="searchInput"
+             class="font-size-20px width-100"
+             placeholder="Search products and services"
+             v-model="searchQuery"
+             @focus="isSearchActive = true"
+             @keydown="handleKeyDown">
+    
+      <div v-if="searchQuery && filteredProductsOrServices.length > 0" class="background-color-black color-white padding-5px max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono box-shadow">
+        <div v-for="(productOrService, index) in filteredProductsOrServices"
+             :key="productOrService.id"
+             class="font-size-16px"
+             @click="selectProductOrService(productOrService)">
+          <span v-if="index === selectedIndex" class="blinking-cursor margin-right-10px">█</span>
+          <span>{{ productOrService.name }}</span>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
   `
 }
