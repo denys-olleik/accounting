@@ -389,7 +389,8 @@ namespace Accounting.Controllers
           RevenueAccountId = x.RevenueAccountId,
           AssetsAccountId = x.AssetsAccountId,
         }).ToList(),
-        SelectedAddress = JsonConvert.DeserializeObject<AddressViewModel>(invoice.BillingAddressJSON),
+        BillingAddress = JsonConvert.DeserializeObject<AddressViewModel>(invoice.BillingAddressJSON),
+        ShippingAddress = JsonConvert.DeserializeObject<AddressViewModel>(invoice.ShippingAddressJSON),
       };
 
       return View(model);
@@ -434,7 +435,7 @@ namespace Accounting.Controllers
           Country = x.Country,
         }).ToList(),
       };
-      model.SelectedAddress = await GetSelectedAddress(model.SelectedAddressId);
+      model.BillingAddress = await GetSelectedAddress(model.SelectedAddressId);
       model.ExistingInvoiceLines = JsonConvert.DeserializeObject<List<InvoiceLineViewModel>>(model.InvoiceLinesJson!)!.Where(x => x.ID > 0).ToList();
       model.NewInvoiceLines = JsonConvert.DeserializeObject<List<InvoiceLineViewModel>>(model.InvoiceLinesJson!)!.Where(x => x.ID < 0).ToList();
       model.DeletedInvoiceLines = JsonConvert.DeserializeObject<List<InvoiceLineViewModel>>(model.DeletedInvoiceLinesJson!);

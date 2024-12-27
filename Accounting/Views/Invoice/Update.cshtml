@@ -180,14 +180,14 @@
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
     <div
       class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
-      <addresses-and-selected-address :selected-address="selectedBillingAddress"
+      <addresses-and-selected-address :selected-address="billingAddress"
         @@update:selected-address="handleSelectedAddress($event, 'billing')"
         :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="billing">
       </addresses-and-selected-address>
     </div>
     <div class="width-5px"></div>
     <div class="display-flex flex-direction-column flex-1 background-color-antiquewhite">
-      <addresses-and-selected-address :selected-address="selectedShippingAddress"
+      <addresses-and-selected-address :selected-address="shippingAddress"
         @@update:selected-address="handleSelectedAddress($event, 'shipping')"
         :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="shipping">
       </addresses-and-selected-address>
@@ -431,7 +431,8 @@
     data() {
       return {
         customer: @Html.Raw(Json.Serialize(Model.Customer).ToString() ?? "null"),
-        selectedAddress: @Html.Raw(Json.Serialize(Model.SelectedAddress).ToString() ?? "null"),
+        billingAddress: @Html.Raw(Json.Serialize(Model.BillingAddress).ToString() ?? "null"),
+				shippingAddress: @Html.Raw(Json.Serialize(Model.ShippingAddress).ToString() ?? "null"),
         invoiceLines: @Html.Raw(Json.Serialize(Model.ExistingInvoiceLines).ToString() ?? "[]"),
         deletedInoiceLines: [],
         paymentTerms: @Html.Raw(Json.Serialize(Model.PaymentTerms).ToString() ?? "[]"),
@@ -446,15 +447,7 @@
       };
     },
     watch: {
-      customer(newCustomer) {
-        if (newCustomer && newCustomer.addresses && newCustomer.addresses.length > 0) {
-          this.selectedAddress = newCustomer.addresses[0];
-        } else {
-          this.selectedAddress = null;
-        }
-      },
-      invoiceDate: 'calculateDueDate',
-      selectedPaymentTerm: 'calculateDueDate',
+    
     },
     methods: {
       removeInvoiceLine(invoiceLine) {

@@ -14,7 +14,8 @@ namespace Accounting.Models.InvoiceViewModels
     public string? InvoiceNumber { get; set; }
     public int? SelectedCustomerId { get; set; }
     public int? SelectedAddressId { get; set; }
-    public AddressViewModel? SelectedAddress { get; set; }
+    public AddressViewModel? BillingAddress { get; set; }
+    public AddressViewModel? ShippingAddress { get; set; }
     public List<string>? InvoiceStatuses { get; set; }
     public string? InvoiceLinesJson { get; set; }
     public string? DeletedInvoiceLinesJson { get; set; }
