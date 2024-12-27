@@ -31,15 +31,15 @@
 	<div class="background-color-red text-align-center">
 		<div v-if="!isRemoveConfirmationVisible">
 			<a href="#" class="color-white text-decoration-none width-100 display-block"
-				@@click.prevent="toggleConfirmationVisibility">Remove</a>
+				@@click.prevent="toggleConfirmationVisibility">remove</a>
 		</div>
 		<div v-else>
 			<div class="margin-bottom-5px">
-				<a href="#" class="color-white text-decoration-none" @@click.prevent="confirmRemoval">Confirm Remove</a>
+				<a href="#" class="color-white text-decoration-none" @@click.prevent="confirmRemoval">remove</a>
 			</div>
 			<div>
 				<a href="#" class="color-white text-decoration-none"
-					@@click.prevent="toggleConfirmationVisibility">Cancel</a>
+					@@click.prevent="toggleConfirmationVisibility">cancel</a>
 			</div>
 		</div>
 	</div>

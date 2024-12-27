@@ -12,7 +12,7 @@
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <template id="invoice-line-removal-template">
-  <div class="display-flex flex-direction-column background-color-red justify-content-space-around">
+  <div class="display-flex flex-direction-column background-color-red">
     <div v-if="!isRemoveConfirmationVisible" :class="{ 'border-bottom-2px-solid-white': isRemoveConfirmationVisible }">
       <a href="#" class="color-white text-decoration-none"
         :class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }"
