@@ -215,7 +215,7 @@
 <template id="select-address-template">
 	<div>
 		<input type="text" class="font-size-20px width-100" v-model="searchQuery"
-			placeholder="Search or select an address" />
+			placeholder="Search or select an address" @@click="handleInputClick"/>
 		<div v-if="!dropdownVisible && selectedAddress" class="background-color-black color-white">
 			<div class="font-Roboto-Mono">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -692,7 +692,9 @@
 			}
 		},
 		methods: {
-
+			handleInputClick() {
+				this.dropdownVisible = true;
+			}
 		}
 	};
 
