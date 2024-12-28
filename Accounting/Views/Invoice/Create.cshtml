@@ -15,7 +15,7 @@
 	<div class="display-flex flex-direction-column margin-bottom-5px">
 		<label for="customerSearch" class="background-color-antiquewhite">Customer search</label>
 		<input id="customerSearch" ref="customerSearchInput" v-model="searchQuery" @@input="filterCustomers"
-			@@keydown="handleKeyDown" @@keydown.left="onLeftArrowPress" class="font-size-20px margin-bottom-2px"
+			@@keydown="handleKeyDown" @@keydown.left="onLeftArrowPress" class="font-size-20px"
 			:disabled="!!selectedCustomer" autofocus />
 		<div v-if="filteredCustomers.length > 0 && !selectedCustomer"
 			class="background-color-black color-white padding-5px max-height-250px overflow-auto margin-bottom-5px font-Roboto-Mono box-shadow">
