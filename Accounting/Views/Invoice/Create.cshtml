@@ -213,6 +213,10 @@
 	</div>
 </template>
 
+<template id="select-address-template">
+
+</template>
+
 <form id="app" asp-action="Create" asp-controller="Invoice" method="post"
 	class="display-flex flex-direction-column margin-bottom-5px" autocomplete="off">
 
@@ -236,6 +240,23 @@
 		<div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
 			<invoice-detail :invoice-date="invoiceDate" :selected-payment-term="selectedPaymentTerm">
 			</invoice-detail>
+		</div>
+	</div>
+
+	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column" v-if="selectedCustomer">
+		<div
+			class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
+			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
+				:selected-address="selectedBillingAddress" :selected-customer="selectedCustomer"
+				@@update:selected-address="handleSelectedAddress($event, 'billing')">
+			</select-address>
+		</div>
+		<div class="width-5px"></div>
+		<div class="display-flex flex-direction-column flex-1 background-color-antiquewhite">
+			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
+				:selected-address="selectedShippingAddress" :selected-customer="selectedCustomer"
+				@@update:selected-address="handleSelectedAddress($event, 'shipping')">
+			</select-address>
 		</div>
 	</div>
 
@@ -638,6 +659,23 @@
 		}
 	};
 
+	const SelectAddress = {
+		name: 'SelectAddress',
+		template: '#select-address-template',
+		props: [],
+		data: function () {
+			return {
+				dropdownVisible: false
+			};
+		},
+		methods: {
+			selectAddress(address) {
+				this.dropdownVisible = false;
+				this.$emit('update:selected-address', { address });
+			},
+		},
+	};
+
 	const app = createApp({
 		components: {
 			'invoice-detail': InvoiceDetail,
@@ -675,10 +713,12 @@
 				if (newCustomer) {
 					this.selectedBillingAddress = newCustomer.addresses[0] || null;
 					this.selectedShippingAddress = newCustomer.addresses[0] || null;
+
+					this.selectedPaymentTerm = this.paymentTerms.find(term => term.id === newCustomer.paymentTermId) || null;
 				} else {
-					// Clear addresses when customer is cleared
 					this.selectedBillingAddress = null;
 					this.selectedShippingAddress = null;
+					this.selectedPaymentTerm = null;
 				}
 			},
 			invoiceDate: 'calculateDueDate',
