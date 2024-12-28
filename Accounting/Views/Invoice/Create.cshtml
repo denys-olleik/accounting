@@ -216,8 +216,8 @@
 	<div>
 		<input type="text" class="font-size-20px width-100" v-model="searchQuery" @@focus="dropdownVisible = true"
 			@@blur="dropdownVisible = false" placeholder="Search or select an address" />
-		<ul v-if="dropdownVisible">
-			<li v-for="address in addresses" :key="address.id" @@mousedown.prevent="selectAddress(address)">
+		<div v-if="dropdownVisible">
+			<div v-for="address in addresses" :key="address.id" @@mousedown.prevent="selectAddress(address)">
 				<div class="flex-1 font-Roboto-Mono">
 					<div>{{ address.extraAboveAddress }}</div>
 					<div>{{ address.addressLine1 }}</div>
@@ -226,8 +226,8 @@
 					<div>{{ address.city }}, {{ address.stateProvince }} {{ address.postalCode }}</div>
 					<div>{{ address.country }}</div>
 				</div>
-			</li>
-		</ul>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -274,7 +274,7 @@
 		</div>
 	</div>
 
-	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column" v-if="selectedCustomer">
+@* 	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column" v-if="selectedCustomer">
 		<div
 			class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
 			<addresses-and-selected-address :selected-address="selectedBillingAddress"
@@ -291,7 +291,7 @@
 				address-type="shipping">
 			</addresses-and-selected-address>
 		</div>
-	</div>
+	</div> *@
 
 	<products-and-services-search ref="productsAndServicesSearch" :products-or-services="productsOrServices"
 		:selected-customer="selectedCustomer" @@product-or-service-selected="handleProductOrServiceSelected">
