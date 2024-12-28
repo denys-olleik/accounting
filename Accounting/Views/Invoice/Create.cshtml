@@ -215,7 +215,7 @@
 <template id="select-address-template">
 	<div>
 		<input type="text" class="font-size-20px width-100" v-model="searchQuery" @@focus="dropdownVisible = true"
-			@@input="dropdownVisible = !!searchQuery" placeholder="Search or select an address" />
+			@@input="dropdownVisible = !!searchQuery" @@blur="handleBlur" placeholder="Search or select an address" />
 		<div v-if="!dropdownVisible && selectedAddress">
 			<div class="font-Roboto-Mono">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -711,6 +711,9 @@
 			selectAddress(address) {
 				this.dropdownVisible = false;
 				this.$emit('update:selected-address', address);
+			},
+			handleBlur() {
+				this.dropdownVisible = !!this.searchQuery;
 			},
 		},
 	};
