@@ -214,8 +214,8 @@
 
 <template id="select-address-template">
 	<div>
-		<input type="text" class="font-size-20px width-100" v-model="searchQuery" @@focus="dropdownVisible = true"
-			@@input="dropdownVisible = !!searchQuery" @@blur="handleBlur" placeholder="Search or select an address" />
+		<input type="text" class="font-size-20px width-100" v-model="searchQuery" @@focus="handleFocus"
+			@@input="handleInput" @@blur="handleBlur" placeholder="Search or select an address" />
 		<div v-if="!dropdownVisible && selectedAddress">
 			<div class="font-Roboto-Mono">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -227,14 +227,28 @@
 			</div>
 		</div>
 		<div v-if="dropdownVisible">
-			<div v-for="address in filteredAddresses" :key="address.id" @@mousedown.prevent="selectAddress(address)">
-				<div class="flex-1 font-Roboto-Mono">
-					<div>{{ address.extraAboveAddress }}</div>
-					<div>{{ address.addressLine1 }}</div>
-					<div>{{ address.addressLine2 }}</div>
-					<div>{{ address.extraBelowAddress }}</div>
-					<div>{{ address.city }}, {{ address.stateProvince }} {{ address.postalCode }}</div>
-					<div>{{ address.country }}</div>
+			<div v-if="searchQuery">
+				<div v-for="address in filteredAddresses" :key="address.id" @@mousedown.prevent="selectAddress(address)">
+					<div class="flex-1 font-Roboto-Mono">
+						<div>{{ address.extraAboveAddress }}</div>
+						<div>{{ address.addressLine1 }}</div>
+						<div>{{ address.addressLine2 }}</div>
+						<div>{{ address.extraBelowAddress }}</div>
+						<div>{{ address.city }}, {{ address.stateProvince }} {{ address.postalCode }}</div>
+						<div>{{ address.country }}</div>
+					</div>
+				</div>
+			</div>
+			<div v-else>
+				<div v-for="address in addresses" :key="address.id" @@mousedown.prevent="selectAddress(address)">
+					<div class="flex-1 font-Roboto-Mono">
+						<div>{{ address.extraAboveAddress }}</div>
+						<div>{{ address.addressLine1 }}</div>
+						<div>{{ address.addressLine2 }}</div>
+						<div>{{ address.extraBelowAddress }}</div>
+						<div>{{ address.city }}, {{ address.stateProvince }} {{ address.postalCode }}</div>
+						<div>{{ address.country }}</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -283,25 +297,6 @@
 			</select-address>
 		</div>
 	</div>
-
-@* 	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column" v-if="selectedCustomer">
-		<div
-			class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
-			<addresses-and-selected-address :selected-address="selectedBillingAddress"
-				@@update:selected-address="handleSelectedAddress($event, 'billing')"
-				:addresses="selectedCustomer ? selectedCustomer.addresses : []" :selected-customer="selectedCustomer"
-				address-type="billing">
-			</addresses-and-selected-address>
-		</div>
-		<div class="width-5px"></div>
-		<div class="display-flex flex-direction-column flex-1 background-color-antiquewhite">
-			<addresses-and-selected-address :selected-address="selectedShippingAddress"
-				@@update:selected-address="handleSelectedAddress($event, 'shipping')"
-				:addresses="selectedCustomer ? selectedCustomer.addresses : []" :selected-customer="selectedCustomer"
-				address-type="shipping">
-			</addresses-and-selected-address>
-		</div>
-	</div> *@
 
 	<products-and-services-search ref="productsAndServicesSearch" :products-or-services="productsOrServices"
 		:selected-customer="selectedCustomer" @@product-or-service-selected="handleProductOrServiceSelected">
@@ -710,10 +705,18 @@
 		methods: {
 			selectAddress(address) {
 				this.dropdownVisible = false;
-				this.$emit('update:selected-address', address);
+				this.$emit('update:selected-address', { address });
+			},
+			handleInput() {
+				this.dropdownVisible = true;
+			},
+			handleFocus() {
+				this.dropdownVisible = true;
 			},
 			handleBlur() {
-				this.dropdownVisible = !!this.searchQuery;
+				if (!this.searchQuery) {
+					this.dropdownVisible = false;
+				}
 			},
 		},
 	};
