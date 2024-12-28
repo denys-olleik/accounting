@@ -214,8 +214,8 @@
 
 <template id="select-address-template">
 	<div>
-		<input type="text" class="font-size-20px width-100" v-model="searchQuery" @@focus="handleFocus"
-			@@input="handleInput" @@blur="handleBlur" placeholder="Search or select an address" />
+		<input type="text" class="font-size-20px width-100" v-model="searchQuery"
+			placeholder="Search or select an address" />
 		<div v-if="!dropdownVisible && selectedAddress" class="background-color-black color-white">
 			<div class="font-Roboto-Mono">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -228,7 +228,7 @@
 		</div>
 		<div v-if="dropdownVisible">
 			<div v-if="searchQuery">
-				<div v-for="address in filteredAddresses" :key="address.id" @@mousedown.prevent="selectAddress(address)" class="margin-bottom-2px">
+				<div v-for="address in filteredAddresses" :key="address.id" class="margin-bottom-2px">
 					<div class="flex-1 font-Roboto-Mono color-white background-color-black">
 						<div>{{ address.extraAboveAddress }}</div>
 						<div>{{ address.addressLine1 }}</div>
@@ -240,7 +240,8 @@
 				</div>
 			</div>
 			<div v-else>
-				<div v-for="address in addresses" :key="address.id" @@mousedown.prevent="selectAddress(address)" class="margin-bottom-2px">
+				<div v-for="address in addresses" :key="address.id"
+					@@mousedown.prevent="selectAddress(address, addressType)" class="margin-bottom-2px">
 					<div class="flex-1 font-Roboto-Mono color-white background-color-black">
 						<div>{{ address.extraAboveAddress }}</div>
 						<div>{{ address.addressLine1 }}</div>
@@ -282,18 +283,15 @@
 	</div>
 
 	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column" v-if="selectedCustomer">
-		<div
-			class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px">
+		<div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-				:selected-address="selectedBillingAddress" :selected-customer="selectedCustomer"
-				@@update:selected-address="handleSelectedAddress($event, 'billing')">
+				:selected-address="selectedBillingAddress" :selected-customer="selectedCustomer">
 			</select-address>
 		</div>
 		<div class="width-5px"></div>
 		<div class="display-flex flex-direction-column flex-1">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-				:selected-address="selectedShippingAddress" :selected-customer="selectedCustomer"
-				@@update:selected-address="handleSelectedAddress($event, 'shipping')">
+				:selected-address="selectedShippingAddress" :selected-customer="selectedCustomer">
 			</select-address>
 		</div>
 	</div>
@@ -690,35 +688,12 @@
 		},
 		computed: {
 			filteredAddresses() {
-				if (!this.searchQuery) {
-					return this.addresses;
-				}
-				const query = this.searchQuery.toLowerCase();
-				return this.addresses.filter(address =>
-					(address.addressLine1 && address.addressLine1.toLowerCase().includes(query)) ||
-					(address.city && address.city.toLowerCase().includes(query)) ||
-					(address.stateProvince && address.stateProvince.toLowerCase().includes(query)) ||
-					(address.postalCode && address.postalCode.includes(query))
-				);
+
 			}
 		},
 		methods: {
-			selectAddress(address) {
-				this.dropdownVisible = false;
-				this.$emit('update:selected-address', { address });
-			},
-			handleInput() {
-				this.dropdownVisible = true;
-			},
-			handleFocus() {
-				this.dropdownVisible = true;
-			},
-			handleBlur() {
-				if (!this.searchQuery) {
-					this.dropdownVisible = false;
-				}
-			},
-		},
+
+		}
 	};
 
 	const app = createApp({
