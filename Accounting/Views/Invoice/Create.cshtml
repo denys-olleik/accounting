@@ -215,7 +215,7 @@
 <template id="select-address-template">
 	<div>
 		<input type="text" class="font-size-20px width-100" v-model="searchQuery" @@focus="dropdownVisible = true"
-			@@blur="dropdownVisible = false" placeholder="Search or select an address" />
+			@@input="dropdownVisible = !!searchQuery" placeholder="Search or select an address" />
 		<div v-if="!dropdownVisible && selectedAddress">
 			<div class="font-Roboto-Mono">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -227,7 +227,7 @@
 			</div>
 		</div>
 		<div v-if="dropdownVisible">
-			<div v-for="address in addresses" :key="address.id" @@mousedown.prevent="selectAddress(address)">
+			<div v-for="address in filteredAddresses" :key="address.id" @@mousedown.prevent="selectAddress(address)">
 				<div class="flex-1 font-Roboto-Mono">
 					<div>{{ address.extraAboveAddress }}</div>
 					<div>{{ address.addressLine1 }}</div>
@@ -692,6 +692,20 @@
 				dropdownVisible: false,
 				searchQuery: '',
 			};
+		},
+		computed: {
+			filteredAddresses() {
+				if (!this.searchQuery) {
+					return this.addresses;
+				}
+				const query = this.searchQuery.toLowerCase();
+				return this.addresses.filter(address =>
+					(address.addressLine1 && address.addressLine1.toLowerCase().includes(query)) ||
+					(address.city && address.city.toLowerCase().includes(query)) ||
+					(address.stateProvince && address.stateProvince.toLowerCase().includes(query)) ||
+					(address.postalCode && address.postalCode.includes(query))
+				);
+			}
 		},
 		methods: {
 			selectAddress(address) {
