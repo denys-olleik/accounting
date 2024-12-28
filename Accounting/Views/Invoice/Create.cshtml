@@ -216,7 +216,7 @@
 	<div>
 		<input type="text" class="font-size-20px width-100" v-model="searchQuery" @@focus="handleFocus"
 			@@input="handleInput" @@blur="handleBlur" placeholder="Search or select an address" />
-		<div v-if="!dropdownVisible && selectedAddress">
+		<div v-if="!dropdownVisible && selectedAddress" class="background-color-black color-white">
 			<div class="font-Roboto-Mono">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
 				<div>{{ selectedAddress.addressLine1 }}</div>
@@ -228,8 +228,8 @@
 		</div>
 		<div v-if="dropdownVisible">
 			<div v-if="searchQuery">
-				<div v-for="address in filteredAddresses" :key="address.id" @@mousedown.prevent="selectAddress(address)">
-					<div class="flex-1 font-Roboto-Mono">
+				<div v-for="address in filteredAddresses" :key="address.id" @@mousedown.prevent="selectAddress(address)" class="margin-bottom-2px">
+					<div class="flex-1 font-Roboto-Mono color-white background-color-black">
 						<div>{{ address.extraAboveAddress }}</div>
 						<div>{{ address.addressLine1 }}</div>
 						<div>{{ address.addressLine2 }}</div>
@@ -240,8 +240,8 @@
 				</div>
 			</div>
 			<div v-else>
-				<div v-for="address in addresses" :key="address.id" @@mousedown.prevent="selectAddress(address)">
-					<div class="flex-1 font-Roboto-Mono">
+				<div v-for="address in addresses" :key="address.id" @@mousedown.prevent="selectAddress(address)" class="margin-bottom-2px">
+					<div class="flex-1 font-Roboto-Mono color-white background-color-black">
 						<div>{{ address.extraAboveAddress }}</div>
 						<div>{{ address.addressLine1 }}</div>
 						<div>{{ address.addressLine2 }}</div>
@@ -283,14 +283,14 @@
 
 	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column" v-if="selectedCustomer">
 		<div
-			class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
+			class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
 				:selected-address="selectedBillingAddress" :selected-customer="selectedCustomer"
 				@@update:selected-address="handleSelectedAddress($event, 'billing')">
 			</select-address>
 		</div>
 		<div class="width-5px"></div>
-		<div class="display-flex flex-direction-column flex-1 background-color-antiquewhite">
+		<div class="display-flex flex-direction-column flex-1">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
 				:selected-address="selectedShippingAddress" :selected-customer="selectedCustomer"
 				@@update:selected-address="handleSelectedAddress($event, 'shipping')">
