@@ -274,13 +274,13 @@
 	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column" v-if="selectedCustomer">
 		<div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-				:selected-address="selectedBillingAddress">
+				:selected-address="selectedBillingAddress" :type="'billing'" @@address-selected="updateAddress">
 			</select-address>
 		</div>
 		<div class="width-5px"></div>
 		<div class="display-flex flex-direction-column flex-1">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-				:selected-address="selectedShippingAddress">
+				:selected-address="selectedShippingAddress" :type="'shipping'" @@address-selected="updateAddress">
 			</select-address>
 		</div>
 	</div>
@@ -668,7 +668,7 @@
 	const SelectAddress = {
 		name: 'SelectAddress',
 		template: '#select-address-template',
-		props: ['addresses', 'selectedAddress'],
+		props: ['addresses', 'selectedAddress', 'type'],
 		data() {
 			return {
 				dropdownVisible: false,
@@ -705,7 +705,8 @@
 				}
 			},
 			addressClicked(address) {
-				this.dropdownVisible = false;
+			    this.dropdownVisible = false;
+			    this.$emit('address-selected', { address, type: this.type });
 			}
 		}
 	};
