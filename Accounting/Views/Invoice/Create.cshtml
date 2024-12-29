@@ -217,7 +217,7 @@
 		<input type="text" class="font-size-20px width-100" v-model="searchQuery"
 			placeholder="Search or select an address" @@click="handleInputClick" @@blur="handleInputBlur" />
 		<div v-if="!dropdownVisible && selectedAddress" class="background-color-black color-white">
-			<div class="font-Roboto-Mono">
+			<div class="font-Roboto-Mono padding-5px">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
 				<div>{{ selectedAddress.addressLine1 }}</div>
 				<div>{{ selectedAddress.addressLine2 }}</div>
@@ -229,10 +229,13 @@
 		<div v-if="dropdownVisible">
 			<div v-if="searchQuery">
 				<div v-for="address in filteredAddresses" :key="address.id" class="margin-bottom-2px">
-					<div class="flex-1 font-Roboto-Mono color-white background-color-black"
+					<div class="flex-1 font-Roboto-Mono color-white background-color-black padding-5px"
 						@@click="onAddressSelect(address)">
 						<div>{{ address.extraAboveAddress }}</div>
-						<div>{{ address.addressLine1 }}</div>
+						<div>
+							<span class="margin-right-10px">█</span>
+          				<span>{{ address.addressLine1 }}</span>
+						</div>
 						<div>{{ address.addressLine2 }}</div>
 						<div>{{ address.extraBelowAddress }}</div>
 						<div>{{ address.city }}, {{ address.stateProvince }} {{ address.postalCode }}</div>
@@ -243,9 +246,12 @@
 			<div v-else>
 				<div v-for="address in addresses" :key="address.id" class="margin-bottom-2px"
 					@@click="onAddressSelect(address)">
-					<div class="flex-1 font-Roboto-Mono color-white background-color-black">
+					<div class="flex-1 font-Roboto-Mono color-white background-color-black padding-5px">
 						<div>{{ address.extraAboveAddress }}</div>
-						<div>{{ address.addressLine1 }}</div>
+							<div>
+							<span class="margin-right-10px">█</span>
+          				<span>{{ address.addressLine1 }}</span>
+						</div>
 						<div>{{ address.addressLine2 }}</div>
 						<div>{{ address.extraBelowAddress }}</div>
 						<div>{{ address.city }}, {{ address.stateProvince }} {{ address.postalCode }}</div>
