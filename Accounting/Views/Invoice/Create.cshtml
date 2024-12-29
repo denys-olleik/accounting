@@ -214,9 +214,9 @@
 
 <template id="select-address-template">
 	<div>
-		<input ref="searchInput" type="text" class="font-size-20px width-100" placeholder="Search or select an address"
+		<input ref="searchInput" type="text" class="font-size-20px width-100" :placeholder="placeholderText"
 			@@click="handleInputClick" @@blur="handleInputBlur" @@keydown="handleKeyDown" @@focus="handleAddressFocus" />
-		<div v-if="!dropdownVisible && selectedAddress" class="background-color-black color-white">
+		<div v-if="!dropdownVisible && selectedAddress" class="background-color-black color-white box-shadow">
 			<div class="font-Roboto-Mono padding-5px">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
 				<div>
@@ -230,7 +230,7 @@
 			</div>
 		</div>
 		<div v-if="dropdownVisible">
-			<div v-for="(address, index) in addresses" :key="address.id" class="margin-bottom-2px">
+			<div v-for="(address, index) in addresses" :key="address.id" class="margin-bottom-2px box-shadow">
 				<div class="flex-1 font-Roboto-Mono color-white background-color-black padding-5px"
 					@@click="addressClicked(address)">
 					<div>{{ address.extraAboveAddress }}</div>
@@ -263,7 +263,7 @@
 	<input type="hidden" name="InvoiceAttachmentsJSON" :value="JSON.stringify(attachments)" />
 
 	<customer-selection :customers="customers" :selected-customer="selectedCustomer"
-		@@update:selected-customer="updateSelectedCustomer"></customer-selection>
+		@@update:selected-customer="updateSelectedCustomer" @@focus-billing-address="handleBillingAddress"></customer-selection>
 
 	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
 		<div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
@@ -537,6 +537,7 @@
 					if (this.selectedIndex !== -1) {
 						this.selectCustomer(this.filteredCustomers[this.selectedIndex]);
 					}
+					this.$emit('focus-billing-address');
 				} else if (event.key === 'Escape') {
 					this.filteredCustomers = [];
 					this.selectedIndex = -1;
@@ -686,6 +687,9 @@
 		computed: {
 			filteredAddresses() {
 
+			},
+			placeholderText() {
+				return this.type === 'billing' ? 'Billing address' : 'Shipping address';
 			}
 		},
 		methods: {
@@ -786,6 +790,9 @@
 			focusSearchInput() {
 				this.$refs.productsAndServicesSearch.focusInput();
 			},
+			focusBillingAddress() {
+				this.$refs.billingAddressSearch.focusInput();
+			},
 			focusShippingAddress() {
 				this.$refs.shippingAddressSearch.focusInput();
 			},
@@ -832,6 +839,13 @@
 				if (index !== -1) {
 					this.invoiceLines.splice(index, 1);
 				}
+			},
+			handleBillingAddress() {
+				setTimeout(() => {
+   			    if (this.$refs.billingAddressSearch) {
+   			        this.$refs.billingAddressSearch.focusInput();
+   			    }
+   			}, 200);
 			},
 			handleConfirmRemoval(invoiceLine) {
 				this.removeInvoiceLine(invoiceLine);
