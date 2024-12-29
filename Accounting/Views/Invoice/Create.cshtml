@@ -215,7 +215,7 @@
 <template id="select-address-template">
 	<div>
 		<input type="text" class="font-size-20px width-100" v-model="searchQuery"
-			placeholder="Search or select an address" @@click="handleInputClick" />
+			placeholder="Search or select an address" @@click="handleInputClick" @@blur="handleInputBlur" />
 		<div v-if="!dropdownVisible && selectedAddress" class="background-color-black color-white">
 			<div class="font-Roboto-Mono">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -286,15 +286,15 @@
 	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column" v-if="selectedCustomer">
 		<div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-				:selected-address="selectedBillingAddress" :selected-customer="selectedCustomer"
-			@@address-selected="(address) => updateAddress({ address, type: 'billing' })">
+				:selected-address="selectedBillingAddress"
+				@@address-selected="(address) => updateAddress({ address, type: 'billing' })">
 			</select-address>
 		</div>
 		<div class="width-5px"></div>
 		<div class="display-flex flex-direction-column flex-1">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-				:selected-address="selectedShippingAddress" :selected-customer="selectedCustomer"
-			@@address-selected="(address) => updateAddress({ address, type: 'shipping' })">
+				:selected-address="selectedShippingAddress"
+				@@address-selected="(address) => updateAddress({ address, type: 'shipping' })">
 			</select-address>
 		</div>
 	</div>
@@ -702,6 +702,9 @@
 				this.$emit('address-selected', address);
 				this.dropdownVisible = false;
 				this.searchQuery = '';
+			},
+			handleInputBlur() {
+				this.dropdownVisible = false;
 			}
 		}
 	};
