@@ -214,7 +214,7 @@
 
 <template id="select-address-template">
 	<div>
-		<input type="text" class="font-size-20px width-100" placeholder="Search or select an address"
+		<input ref="searchInput" type="text" class="font-size-20px width-100" placeholder="Search or select an address"
 			@@click="handleInputClick" @@blur="handleInputBlur" @@keydown="handleKeyDown" @@focus="handleAddressFocus" />
 		<div v-if="!dropdownVisible && selectedAddress" class="background-color-black color-white">
 			<div class="font-Roboto-Mono padding-5px">
@@ -279,13 +279,13 @@
 	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column" v-if="selectedCustomer">
 		<div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-				:selected-address="selectedBillingAddress" :type="'billing'" @@address-selected="updateAddress">
+				:selected-address="selectedBillingAddress" :type="'billing'" @@address-selected="updateAddress" @@focus-shipping-address="focusShippingAddress">
 			</select-address>
 		</div>
 		<div class="width-5px"></div>
 		<div class="display-flex flex-direction-column flex-1">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-				:selected-address="selectedShippingAddress" :type="'shipping'" @@address-selected="updateAddress">
+				:selected-address="selectedShippingAddress" :type="'shipping'" @@address-selected="updateAddress" ref="shippingAddressSearch">
 			</select-address>
 		</div>
 	</div>
@@ -687,6 +687,9 @@
 			}
 		},
 		methods: {
+			focusInput() {
+				this.$refs.searchInput.focus();
+			},
 			handleInputClick() {
 				this.dropdownVisible = true;
 			},
@@ -707,6 +710,9 @@
 				} else if (event.key === 'Enter') {
 					event.preventDefault();
 					this.addressClicked(this.addresses[this.preselectedIndex]);
+					if (this.type === 'billing') {
+						this.$emit('focus-shipping-address');
+					}
 				}
 			},
 			addressClicked(address) {
@@ -774,6 +780,9 @@
 			},
 			focusSearchInput() {
 				this.$refs.productsAndServicesSearch.focusInput();
+			},
+			focusShippingAddress() {
+				this.$refs.shippingAddressSearch.focusInput();
 			},
 			updateAddress(eventData) {
 				if (eventData.type === 'billing') {
