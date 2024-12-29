@@ -229,10 +229,11 @@
 		<div v-if="dropdownVisible">
 			<div v-for="address in addresses" :key="address.id" class="margin-bottom-2px">
 				<div class="flex-1 font-Roboto-Mono color-white background-color-black padding-5px"
-				@@click="addressClicked(address)">
+					@@click="addressClicked(address)">
 					<div>{{ address.extraAboveAddress }}</div>
 					<div>
-						<span :class="{ 'blinking-cursor': address.id === selectedAddress.id }" class="margin-right-10px">█</span>
+						<span :class="{ 'blinking-cursor': address.id === selectedAddress.id }"
+							class="margin-right-10px">█</span>
 						<span>{{ address.addressLine1 }}</span>
 					</div>
 					<div>{{ address.addressLine2 }}</div>
@@ -673,7 +674,7 @@
 			return {
 				dropdownVisible: false,
 				searchQuery: '',
-				selectedIndex: -1
+				preselectedIndex: 0
 			};
 		},
 		computed: {
@@ -684,22 +685,28 @@
 		methods: {
 			handleInputClick() {
 				this.dropdownVisible = true;
-				this.selectedIndex = 1;
 			},
 			handleAddressFocus() {
 				this.dropdownVisible = true;
-				this.selectedIndex = 1;
 			},
 			handleInputBlur() {
-			    setTimeout(() => {
-			        this.dropdownVisible = false;
-			    }, 200);
-			    this.selectedIndex = -1;
+				setTimeout(() => {
+					this.dropdownVisible = false;
+				}, 200);
 			},
-			handleKeyDown(event) {			},
+			handleKeyDown(event) {
+			    console.log(event.key);
+			    if (event.key === 'ArrowDown' && this.preselectedIndex < this.addresses.length - 1) {
+			        this.preselectedIndex += 1;
+			    } else if (event.key === 'ArrowUp' && this.preselectedIndex > 0) {
+			        this.preselectedIndex -= 1;
+			    } else if (event.key === 'Enter') {
+			        this.addressClicked(this.addresses[this.preselectedIndex]);
+			    }
+			},
 			addressClicked(address) {
-			    this.dropdownVisible = false;
-			    this.$emit('address-selected', { address, type: this.type });
+				this.dropdownVisible = false;
+				this.$emit('address-selected', { address, type: this.type });
 			}
 		}
 	};
