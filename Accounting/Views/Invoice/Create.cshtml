@@ -279,13 +279,15 @@
 	<div class="display-flex margin-bottom-5px max-width-768-flex-direction-column" v-if="selectedCustomer">
 		<div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-				:selected-address="selectedBillingAddress" :type="'billing'" @@address-selected="updateAddress" @@focus-shipping-address="focusShippingAddress">
+				:selected-address="selectedBillingAddress" :type="'billing'" @@address-selected="updateAddress"
+				@@focus-shipping-address="focusShippingAddress" ref="billingAddressSearch">
 			</select-address>
 		</div>
 		<div class="width-5px"></div>
 		<div class="display-flex flex-direction-column flex-1">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
-				:selected-address="selectedShippingAddress" :type="'shipping'" @@address-selected="updateAddress" ref="shippingAddressSearch">
+				:selected-address="selectedShippingAddress" :type="'shipping'" @@address-selected="updateAddress"
+				ref="shippingAddressSearch">
 			</select-address>
 		</div>
 	</div>
