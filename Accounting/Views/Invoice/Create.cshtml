@@ -214,9 +214,8 @@
 
 <template id="select-address-template">
 	<div>
-		<input type="text" class="font-size-20px width-100"
-			placeholder="Search or select an address" @@click="handleInputClick" @@blur="handleInputBlur"
-			@@keydown="handleKeyDown" @@focus="handleAddressFocus" />
+		<input type="text" class="font-size-20px width-100" placeholder="Search or select an address"
+			@@click="handleInputClick" @@blur="handleInputBlur" @@keydown="handleKeyDown" @@focus="handleAddressFocus" />
 		<div v-if="!dropdownVisible && selectedAddress" class="background-color-black color-white">
 			<div class="font-Roboto-Mono padding-5px">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -229,7 +228,8 @@
 		</div>
 		<div v-if="dropdownVisible">
 			<div v-for="address in addresses" :key="address.id" class="margin-bottom-2px">
-				<div class="flex-1 font-Roboto-Mono color-white background-color-black padding-5px">
+				<div class="flex-1 font-Roboto-Mono color-white background-color-black padding-5px"
+				@@click="addressClicked(address)">
 					<div>{{ address.extraAboveAddress }}</div>
 					<div>
 						<span class="margin-right-10px">█</span>
@@ -691,8 +691,10 @@
 				this.selectedIndex = 1;
 			},
 			handleInputBlur() {
-				this.dropdownVisible = false;
-				this.selectedIndex = -1;
+			    setTimeout(() => {
+			        this.dropdownVisible = false;
+			    }, 200);
+			    this.selectedIndex = -1;
 			},
 			handleKeyDown(event) {
 				if (event.key === 'ArrowDown') {
@@ -701,6 +703,9 @@
 				if (event.key === 'ArrowUp') {
 					this.selectedIndex -= 1;
 				}
+			},
+			addressClicked(address) {
+				this.dropdownVisible = false;
 			}
 		}
 	};
