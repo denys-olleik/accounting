@@ -287,7 +287,7 @@
 		<div class="display-flex flex-direction-column flex-1">
 			<select-address :addresses="selectedCustomer ? selectedCustomer.addresses : []"
 				:selected-address="selectedShippingAddress" :type="'shipping'" @@address-selected="updateAddress"
-				ref="shippingAddressSearch">
+				@@focus-products-and-services-search="focusSearchInput" ref="shippingAddressSearch">
 			</select-address>
 		</div>
 	</div>
@@ -714,6 +714,9 @@
 					this.addressClicked(this.addresses[this.preselectedIndex]);
 					if (this.type === 'billing') {
 						this.$emit('focus-shipping-address');
+					}
+					if (this.type === 'shipping') {
+						this.$emit('focus-products-and-services-search');
 					}
 				}
 			},
