@@ -219,7 +219,10 @@
 		<div v-if="!dropdownVisible && selectedAddress" class="background-color-black color-white">
 			<div class="font-Roboto-Mono padding-5px">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
-				<div>{{ selectedAddress.addressLine1 }}</div>
+				<div>
+					<span class="margin-right-10px color-lawngreen">█</span>
+					<span>{{ selectedAddress.addressLine1 }}</span>
+				</div>
 				<div>{{ selectedAddress.addressLine2 }}</div>
 				<div>{{ selectedAddress.extraBelowAddress }}</div>
 				<div>{{ selectedAddress.city }}, {{ selectedAddress.stateProvince }} {{ selectedAddress.postalCode }}</div>
@@ -702,6 +705,7 @@
 				} else if (event.key === 'ArrowUp' && this.preselectedIndex > 0) {
 					this.preselectedIndex -= 1;
 				} else if (event.key === 'Enter') {
+					event.preventDefault();
 					this.addressClicked(this.addresses[this.preselectedIndex]);
 				}
 			},
