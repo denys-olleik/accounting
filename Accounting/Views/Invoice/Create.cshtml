@@ -227,12 +227,13 @@
 			</div>
 		</div>
 		<div v-if="dropdownVisible">
-			<div v-for="address in addresses" :key="address.id" class="margin-bottom-2px">
+			<div v-for="(address, index) in addresses" :key="address.id" class="margin-bottom-2px">
 				<div class="flex-1 font-Roboto-Mono color-white background-color-black padding-5px"
 					@@click="addressClicked(address)">
 					<div>{{ address.extraAboveAddress }}</div>
 					<div>
-						<span :class="{ 'blinking-cursor': address.id === selectedAddress.id }"
+						<span
+							:class="{ 'blinking-cursor': index === preselectedIndex, 'color-lawngreen': address.id === selectedAddress?.id }"
 							class="margin-right-10px">█</span>
 						<span>{{ address.addressLine1 }}</span>
 					</div>
@@ -695,14 +696,14 @@
 				}, 200);
 			},
 			handleKeyDown(event) {
-			    console.log(event.key);
-			    if (event.key === 'ArrowDown' && this.preselectedIndex < this.addresses.length - 1) {
-			        this.preselectedIndex += 1;
-			    } else if (event.key === 'ArrowUp' && this.preselectedIndex > 0) {
-			        this.preselectedIndex -= 1;
-			    } else if (event.key === 'Enter') {
-			        this.addressClicked(this.addresses[this.preselectedIndex]);
-			    }
+				console.log(event.key);
+				if (event.key === 'ArrowDown' && this.preselectedIndex < this.addresses.length - 1) {
+					this.preselectedIndex += 1;
+				} else if (event.key === 'ArrowUp' && this.preselectedIndex > 0) {
+					this.preselectedIndex -= 1;
+				} else if (event.key === 'Enter') {
+					this.addressClicked(this.addresses[this.preselectedIndex]);
+				}
 			},
 			addressClicked(address) {
 				this.dropdownVisible = false;
