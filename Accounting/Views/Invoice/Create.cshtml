@@ -232,7 +232,7 @@
 				@@click="addressClicked(address)">
 					<div>{{ address.extraAboveAddress }}</div>
 					<div>
-						<span class="margin-right-10px">█</span>
+						<span :class="{ 'blinking-cursor': address.id === selectedAddress.id }" class="margin-right-10px">█</span>
 						<span>{{ address.addressLine1 }}</span>
 					</div>
 					<div>{{ address.addressLine2 }}</div>
@@ -696,14 +696,7 @@
 			    }, 200);
 			    this.selectedIndex = -1;
 			},
-			handleKeyDown(event) {
-				if (event.key === 'ArrowDown') {
-					this.selectedIndex += 1;
-				}
-				if (event.key === 'ArrowUp') {
-					this.selectedIndex -= 1;
-				}
-			},
+			handleKeyDown(event) {			},
 			addressClicked(address) {
 			    this.dropdownVisible = false;
 			    this.$emit('address-selected', { address, type: this.type });
