@@ -215,7 +215,8 @@
 <template id="select-address-template">
 	<div>
 		<input type="text" class="font-size-20px width-100" v-model="searchQuery"
-			placeholder="Search or select an address" @@click="handleInputClick" @@blur="handleInputBlur" />
+			placeholder="Search or select an address" @@click="handleInputClick" @@blur="handleInputBlur"
+			@@keydown="handleKeyDown" />
 		<div v-if="!dropdownVisible && selectedAddress" class="background-color-black color-white">
 			<div class="font-Roboto-Mono padding-5px">
 				<div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -234,7 +235,7 @@
 						<div>{{ address.extraAboveAddress }}</div>
 						<div>
 							<span class="margin-right-10px">█</span>
-          				<span>{{ address.addressLine1 }}</span>
+							<span>{{ address.addressLine1 }}</span>
 						</div>
 						<div>{{ address.addressLine2 }}</div>
 						<div>{{ address.extraBelowAddress }}</div>
@@ -248,9 +249,9 @@
 					@@click="onAddressSelect(address)">
 					<div class="flex-1 font-Roboto-Mono color-white background-color-black padding-5px">
 						<div>{{ address.extraAboveAddress }}</div>
-							<div>
+						<div>
 							<span class="margin-right-10px">█</span>
-          				<span>{{ address.addressLine1 }}</span>
+							<span>{{ address.addressLine1 }}</span>
 						</div>
 						<div>{{ address.addressLine2 }}</div>
 						<div>{{ address.extraBelowAddress }}</div>
@@ -689,10 +690,11 @@
 		name: 'SelectAddress',
 		template: '#select-address-template',
 		props: ['addresses', 'selectedAddress'],
-		data: function () {
+		data() {
 			return {
 				dropdownVisible: false,
 				searchQuery: '',
+				selectedIndex: -1
 			};
 		},
 		computed: {
@@ -703,6 +705,7 @@
 		methods: {
 			handleInputClick() {
 				this.dropdownVisible = true;
+				this.selectedIndex = 1;
 			},
 			onAddressSelect(address) {
 				this.$emit('address-selected', address);
@@ -711,6 +714,14 @@
 			},
 			handleInputBlur() {
 				this.dropdownVisible = false;
+			},
+			handleKeyDown(event) {
+				if (event.key === 'ArrowDown') {
+					this.selectedIndex += 1;
+				}
+				if (event.key === 'ArrowUp') {
+					this.selectedIndex -= 1;
+				}
 			}
 		}
 	};
