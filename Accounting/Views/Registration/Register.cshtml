@@ -13,7 +13,7 @@
 <form asp-action="Register" asp-controller="Registration" method="post" class="display-flex flex-direction-column">
    <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
       <label asp-for="Email" class="background-color-antiquewhite"></label>
-      <input asp-for="Email" class="margin-bottom-5px font-size-20px font-Roboto-Mono" />
+      <input asp-for="Email" class="margin-bottom-5px font-size-20px font-Roboto-Mono" autocomplete="off" />
 
       <span>
          <input asp-for="Shared" type="checkbox" class="margin-bottom-5px" />
