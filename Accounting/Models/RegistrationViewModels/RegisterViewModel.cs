@@ -1,4 +1,5 @@
-﻿using FluentValidation.Results;
+﻿using FluentValidation;
+using FluentValidation.Results;
 
 namespace Accounting.Models.RegistrationViewModels
 {
@@ -9,5 +10,14 @@ namespace Accounting.Models.RegistrationViewModels
     public bool Shared { get; set; }
 
     public ValidationResult ValidationResult { get; set; } = new();
+
+    public class RegisterViewModelValidator : AbstractValidator<RegisterViewModel>
+    {
+      public RegisterViewModelValidator()
+      {
+        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+        RuleFor(x => x.Password).NotEmpty();
+      }
+    }
   }
 }
