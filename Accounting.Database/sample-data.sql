@@ -78,7 +78,13 @@ VALUES
 ('individual', 'customer', 'John', 'Smith', NULL, 'www.john-smith.com', 1, 1, 1),
 ('individual', 'customer', 'Jane', 'Doe', NULL, 'www.jane-doe.com', 1, 1, 1),
 ('company', 'customer', NULL, NULL, 'Acme Inc.', 'www.acmeinc.com', 1, 1, 1),
-('company', 'customer', NULL, NULL, 'Globex Corp.', 'www.globex.com', 1, 1, 1);
+('company', 'customer', NULL, NULL, 'Globex Corp.', 'www.globex.com', 1, 1, 1),
+('company', 'customer', NULL, NULL, 'Initech', 'www.initech.com', 1, 1, 1),
+('company', 'customer', NULL, NULL, 'Umbrella Corp.', 'www.umbrellacorp.com', 1, 1, 1),
+('company', 'customer', 'Bruce', 'Wayne', 'Wayne Enterprises', 'www.wayneenterprises.com', 1, 1, 1),
+('company', 'customer', NULL, NULL, 'Stark Industries', 'www.starkindustries.com', 1, 1, 1),
+('company', 'customer', NULL, NULL, 'LexCorp', 'www.lexcorp.com', 1, 1, 1),
+('company', 'customer', NULL, NULL, 'Tyrell Corp.', 'www.tyrellcorp.com', 1, 1, 1);
 
 insert into "Address" ("ExtraAboveAddress", "AddressLine1", "City", "StateProvince", "PostalCode", "Country", "BusinessEntityId", "CreatedById", "OrganizationId")
 values
@@ -89,7 +95,19 @@ values
 ('Attention Imaging', '456 Main St.', 'Anytown', 'CA', '12345', 'USA', 3, 1, 1),
 ('Attention Shipping', '789 Main St.', 'Anytown', 'CA', '12345', 'USA', 3, 1, 1),
 ('Attention Imaging', '123 Main St.', 'Anytown', 'CA', '12345', 'USA', 4, 1, 1),
-('Attention Shipping', '456 Main St.', 'Anytown', 'CA', '12345', 'USA', 4, 1, 1);
+('Attention Shipping', '456 Main St.', 'Anytown', 'CA', '12345', 'USA', 4, 1, 1),
+('Attention Imaging', '789 Main St.', 'Anytown', 'CA', '12345', 'USA', 5, 1, 1),
+('Attention Shipping', '123 Main St.', 'Anytown', 'CA', '12345', 'USA', 5, 1, 1),
+('Attention Imaging', '456 Main St.', 'Anytown', 'CA', '12345', 'USA', 6, 1, 1),
+('Attention Shipping', '789 Main St.', 'Anytown', 'CA', '12345', 'USA', 6, 1, 1),
+('Attention Imaging', '123 Main St.', 'Anytown', 'CA', '12345', 'USA', 7, 1, 1),
+('Attention Shipping', '456 Main St.', 'Anytown', 'CA', '12345', 'USA', 7, 1, 1),
+('Attention Imaging', '789 Main St.', 'Anytown', 'CA', '12345', 'USA', 8, 1, 1),
+('Attention Shipping', '123 Main St.', 'Anytown', 'CA', '12345', 'USA', 8, 1, 1),
+('Attention Imaging', '456 Main St.', 'Anytown', 'CA', '12345', 'USA', 9, 1, 1),
+('Attention Shipping', '789 Main St.', 'Anytown', 'CA', '12345', 'USA', 9, 1, 1),
+('Attention Imaging', '123 Main St.', 'Anytown', 'CA', '12345', 'USA', 10, 1, 1),
+('Attention Shipping', '456 Main St.', 'Anytown', 'CA', '12345', 'USA', 10, 1, 1);
 
  -- Inserting realistic Products for a manufacturing company
 INSERT INTO "Item" ("Name", "Description", "ItemType", "RevenueAccountId", "AssetsAccountId", "CreatedById", "OrganizationId") VALUES
