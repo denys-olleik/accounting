@@ -24,6 +24,12 @@ namespace Accounting.Service
       return await factoryManager.GetOrganizationManager().CreateAsync(organizationName, databaseName);
     }
 
+    public async Task InsertSampleOrganizationDataAsync(string sampleSqlDataToInsert)
+    {
+      var factoryManager = new FactoryManager(_databaseName);
+      await factoryManager.GetOrganizationManager().InsertSampleOrganizationDataAsync(sampleSqlDataToInsert);
+    }
+
     public async Task<int> DeleteAsync(int organizationId, string databaseName)
     {
       var factoryManager = new FactoryManager(databaseName);

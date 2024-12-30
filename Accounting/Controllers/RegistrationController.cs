@@ -53,18 +53,24 @@ namespace Accounting.Controllers
 
         User user = new()
         {
-          Email = model.Email,
-          TenantId = tenant.TenantID
+          Email = model.Email
         };
-        user = await _userService.CreateAsync(user);
-        UserOrganization userOrganization = new()
-        {
-          OrganizationId = tenant.OrganizationId,
-          UserId = user.UserID
-        };
-        await _userOrganizationService.CreateAsync(userOrganization);
+
+        UserService userService = new(tenant.DatabaseName);
+
+        user = await userService.CreateAsync(user);
+
+        OrganizationService organizationService = new(tenant.DatabaseName);
+
+        string sampleDataPath = Path.Combine(AppContext.BaseDirectory, "sample-data-production.sql");
+        string sampleDataScript = System.IO.File.ReadAllText(sampleDataPath);
+
+        await organizationService.InsertSampleOrganizationDataAsync(sampleDataScript);
+
         scope.Complete();
       }
+
+      throw new NotImplementedException();
     }
   }
 }

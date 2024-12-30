@@ -6,6 +6,7 @@ namespace Accounting.Database.Interfaces
   {
     Task<Organization> CreateAsync(string organizationName);
     Task<Organization> CreateAsync(string organizationName, string databaseName);
+    Task InsertSampleOrganizationDataAsync(string sampleSqlDataToInsert);
     Task<int> DeleteAsync(int organizationId, string databaseName);
     Task<List<Organization>> GetAllAsync(string databaseName);
     Task<Organization> GetAsync(int organizationId, string databaseName);

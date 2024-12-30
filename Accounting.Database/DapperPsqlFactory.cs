@@ -3228,6 +3228,14 @@ namespace Accounting.Database
 
         return rowsAffected;
       }
+
+      public async Task InsertSampleOrganizationDataAsync(string sampleSqlDataToInsert)
+      {
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          await con.ExecuteAsync(sampleSqlDataToInsert);
+        }
+      }
     }
 
     public IPaymentInstructionManager GetPaymentInstructionManager()
