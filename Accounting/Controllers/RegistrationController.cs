@@ -8,6 +8,7 @@ namespace Accounting.Controllers
   [Route("registration")]
   public class RegistrationController : BaseController
   {
+    [AllowAnonymous]
     [HttpGet]
     [Route("register")]
     public IActionResult Register()
@@ -15,6 +16,7 @@ namespace Accounting.Controllers
       return View();
     }
 
+    [AllowAnonymous]
     [HttpPost]
     [Route("register")]
     public IActionResult Register(RegisterViewModel model)
