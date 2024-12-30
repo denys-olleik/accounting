@@ -20,12 +20,27 @@
          <label asp-for="Shared">Shared</label>
       </span>
    </div>
+  <div class="display-flex">
+    <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
+      <label asp-for="FirstName" class="background-color-antiquewhite">First name</label>
+      <input asp-for="FirstName"
+             class="font-size-20px"
+             maxlength="100" autocomplete="off" tabindex="2" />
+    </div>
+    <div class="width-5px"></div>
+    <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
+      <label asp-for="LastName" class="background-color-antiquewhite">Last name</label>
+      <input asp-for="LastName"
+             class="font-size-20px"
+             maxlength="100" autocomplete="off" tabindex="3" />
+    </div>
+  </div>
    <div class="display-flex flex-direction-column">
       <label asp-for="Password" class="background-color-antiquewhite">Password</label>
-      <input asp-for="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" tabindex="2" />
+      <input asp-for="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" tabindex="4" />
    </div>
 
-   <button type="submit" class="full-width-regular-button">Next</button>
+   <button type="submit" class="full-width-regular-button">Register</button>
 </form>
 
 @if (Model != null && Model.ValidationResult != null)

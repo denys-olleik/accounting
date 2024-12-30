@@ -1,20 +1,20 @@
 ﻿@model Accounting.Models.TenantViewModels.CreateUserViewModel
 
 @{
-  ViewData["Title"] = "Create User - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Create user - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-  string headerText = "Create User";
+  string headerText = "Create user";
 }
 
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div>
-    <a asp-action="TenantUsers" asp-controller="Tenant" asp-route-tenantId="@Model.TenantId" class="font-Roboto font-size-16px color-blue margin-left-20px">Tenant Users</a>
+    <a asp-action="TenantUsers" asp-controller="Tenant" asp-route-tenantId="@Model.TenantId" class="font-Roboto font-size-16px color-blue margin-left-20px">Tenant users</a>
   </div>
 </div>
 
@@ -36,14 +36,14 @@
 
   <div class="display-flex">
     <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
-      <label asp-for="FirstName" class="background-color-antiquewhite">First Name</label>
+      <label asp-for="FirstName" class="background-color-antiquewhite">First name</label>
       <input asp-for="FirstName"
              class="font-size-20px"
              maxlength="100" autocomplete="off"/>
     </div>
     <div class="width-5px"></div>
     <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
-      <label asp-for="LastName" class="background-color-antiquewhite">Last Name</label>
+      <label asp-for="LastName" class="background-color-antiquewhite">Last name</label>
       <input asp-for="LastName"
              class="font-size-20px"
              maxlength="100" autocomplete="off"/>
@@ -58,7 +58,7 @@
   </div>
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label asp-for="ConfirmPassword" class="background-color-antiquewhite">Confirm Password</label>
+    <label asp-for="ConfirmPassword" class="background-color-antiquewhite">Confirm password</label>
     <input asp-for="ConfirmPassword"
            class="font-size-20px"
            maxlength="100" autocomplete="off" type="password" />
@@ -78,7 +78,7 @@
     </div>
   </div>
 
-  <button type="submit" class="full-width-regular-button">Create User</button>
+  <button type="submit" class="full-width-regular-button">Create user</button>
 </form>
 
 @if (Model != null && Model.ValidationResult != null)

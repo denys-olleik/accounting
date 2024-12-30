@@ -58,6 +58,8 @@ namespace Accounting.Controllers
         User user = new()
         {
           Email = model.Email,
+          FirstName = model.FirstName,
+          LastName = model.LastName,
           Password = PasswordStorage.CreateHash(model.Password!)
         };
 
@@ -75,7 +77,7 @@ namespace Accounting.Controllers
         scope.Complete();
       }
 
-      throw new NotImplementedException();
+      return RedirectToAction("ThankYou", "Home");
     }
 
     private async Task<Tenant> ProvisionDatabase(Tenant tenant)
