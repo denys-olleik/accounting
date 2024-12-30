@@ -4,7 +4,7 @@
 	"PublicId" VARCHAR(10) NOT NULL UNIQUE,
 	"DatabaseName" VARCHAR(100) NULL,
 	"FullyQualifiedDomainName" VARCHAR(100) NULL, -- accounting.example.com
-	"Email" VARCHAR(100) NOT NULL,
+	"Email" VARCHAR(100) NOT NULL UNIQUE,
 	"DropletId" BIGINT NULL,
 	"Ipv4" VARCHAR(15) NULL,
 	"SshPublic" TEXT NULL,
