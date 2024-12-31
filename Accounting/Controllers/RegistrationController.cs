@@ -80,6 +80,10 @@ namespace Accounting.Controllers
 
         await organizationService.InsertSampleOrganizationDataAsync(sampleDataScript);
 
+        UserOrganizationService userOrganizationService = new(tenant.DatabaseName!);
+
+        await userOrganizationService.CreateAsync(user.UserID, 1, tenant.DatabaseName!);
+
         scope.Complete();
       }
 
