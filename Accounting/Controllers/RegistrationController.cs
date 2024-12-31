@@ -83,7 +83,15 @@ namespace Accounting.Controllers
         scope.Complete();
       }
 
-      return RedirectToAction("ThankYou", "Home");
+      return RedirectToAction("RegistrationComplete", "Registration");
+    }
+
+    [AllowAnonymous]
+    [HttpGet]
+    [Route("registration-complete")]
+    public IActionResult RegistrationComplete()
+    {
+      return View();
     }
 
     private async Task<Tenant> ProvisionDatabase(Tenant tenant)

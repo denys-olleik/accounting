@@ -370,6 +370,10 @@ td.fitwidth, th.fitwidth {
   padding: 15px;
 }
 
+.padding-20px {
+  padding: 20px;
+}
+
 .padding-top-5px {
   padding-top: 5px;
 }

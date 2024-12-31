@@ -1,0 +1,21 @@
+﻿@model Accounting.Models.RegistrationViewModels.RegisterViewModel
+
+@{
+	ViewData["Title"] = "Registration complete - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+	string headerText = "Registration complete";
+}
+
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<div class="background-color-antiquewhite padding-20px font-size-20px">
+	Thank you for registering. You will receive an email once your resources have been provisioned. Shared is provisioned instantly, dedicated takes a few moments.
+	<span>
+		<a asp-action="Index" asp-controller="Home">Home</a>
+	</span>
+	<span>
+		<a asp-action="Login" asp-controller="UserAccount">Log in</a>
+	</span>
+</div>

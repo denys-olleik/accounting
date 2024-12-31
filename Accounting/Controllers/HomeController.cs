@@ -15,10 +15,6 @@ namespace Accounting.Controllers
       return View();
     }
 
-    [Route("registration-complete")]
-    public IActionResult RegistrationComplete()
-    {
-      return View();
-    }
+    
   }
 }
