@@ -46,6 +46,12 @@ namespace Accounting.Controllers
         return View(model);
       }
 
+      if (await _tenantService.ExistsAsync(model.Email!))
+      {
+        model.ValidationResult.Errors.Add(new ValidationFailure("Email", "Email already exists"));
+        return View(model);
+      }
+
       Tenant tenant = new()
       {
         Email = model.Email
