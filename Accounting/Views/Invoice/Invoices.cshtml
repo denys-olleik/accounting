@@ -145,7 +145,7 @@
 			<template v-for="invoice in invoices" :key="invoice.invoiceID">
 				<tr>
 					<td class="padding-right-20px">
-						<input type="checkbox" v-model="selectedInvoices" :value="invoice.invoiceID" :disabled="invoice.status === 'void'">
+						<input type="checkbox" v-model="selectedInvoices" :value="invoice.invoiceID" :disabled="invoice.status === '@Accounting.Business.Invoice.InvoiceStatusConstants.Void'">
 					</td>
 					<td class="padding-right-20px">{{invoice.rowNumber}}</td>
 					<td class="padding-right-20px">
