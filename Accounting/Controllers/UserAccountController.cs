@@ -101,7 +101,7 @@ namespace Accounting.Controllers
         {
           model.ValidationResult = new ValidationResult(new List<ValidationFailure>()
           {
-              new ValidationFailure("Email", "Passwordless login requires an API key and 'no-reply' secrets to be set up.")
+              new ValidationFailure("Email", "Password-less login requires an API key and 'no-reply' secrets to be set up.")
           });
           return View(model);
         }
