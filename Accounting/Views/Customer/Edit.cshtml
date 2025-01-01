@@ -34,8 +34,8 @@
 				 @@click.prevent="toggleConfirmationVisibility">Remove</a>
 		</div>
 		<div v-else>
-			<div class="background-color-white">
-				<a href="#" class="text-decoration-none  color-darkslategray"
+			<div class="background-color-red">
+				<a href="#" class="text-decoration-none color-white"
 					 @@click.prevent="toggleConfirmationVisibility">Cancel</a>
 			</div>
 			<div class="margin-bottom-5px background-color-red">
@@ -49,34 +49,34 @@
 	<div class="display-flex flex-direction-column background-color-antiquewhite margin-bottom-5px">
 		<div class="display-flex flex-1 flex-direction-column">
 			<div class="display-flex flex-direction-column">
-				<label>Line 1:</label>
+				<label>Line 1</label>
 				<input type="text" class="font-size-20px width-100" v-model="address.AddressLine1" required />
 			</div>
 			<div class="display-flex flex-direction-column">
-				<label>Line 2 (optional):</label>
+				<label>Line 2 (optional)</label>
 				<input type="text" class="font-size-20px width-100" v-model="address.AddressLine2" />
 			</div>
 			<div class="display-flex max-width-768-flex-direction-column">
 				<div class="display-flex">
 					<div class="display-flex flex-1 flex-direction-column">
-						<label>City:</label>
+						<label>City</label>
 						<input type="text" class="font-size-20px width-100" v-model="address.City" required />
 					</div>
 					<div class="width-5px"></div>
 					<div class="display-flex flex-1 flex-direction-column">
-						<label>State/Province:</label>
+						<label>State/Province</label>
 						<input type="text" class="font-size-20px width-100" v-model="address.StateProvince" required />
 					</div>
 				</div>
 				<div class="width-5px"></div>
 				<div class="display-flex">
 					<div class="display-flex flex-1 flex-direction-column">
-						<label>Postal code:</label>
+						<label>Postal code</label>
 						<input type="text" class="font-size-20px width-100" v-model="address.PostalCode" required />
 					</div>
 					<div class="width-5px"></div>
 					<div class="display-flex flex-1 flex-direction-column">
-						<label>Country:</label>
+						<label>Country</label>
 						<input type="text" class="font-size-20px width-100" v-model="address.Country" required />
 					</div>
 				</div>
@@ -107,7 +107,7 @@
 	<input type="hidden" id="selectedCustomerType" v-model="selectedCustomerType" name="SelectedCustomerType" />
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Customer type:</label>
+		<label class="font-Roboto font-size-16px">Customer type</label>
 		<div class="display-flex flex-direction-column margin-top-5px">
 			<div v-for="customerType in customerTypes" :key="customerType" class="margin-bottom-5px">
 				<input type="radio" :id="'customerType_' + customerType" :value="customerType"
@@ -118,7 +118,7 @@
 	</div>
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Business entity types:</label>
+		<label class="font-Roboto font-size-16px">Business entity type</label>
 		<div class="display-flex flex-direction-column margin-top-5px">
 			<div v-for="type in availableBusinessEntityTypesCsv.split(',')" :key="type" class="margin-bottom-5px">
 				<input type="checkbox" :id="'entityType_' + type" :value="type"
@@ -130,18 +130,18 @@
 	</div>
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Company name:</label>
+		<label class="font-Roboto font-size-16px">Company name</label>
 		<input asp-for="CompanyName" class="font-size-20px width-100" />
 	</div>
 
 	<div class="display-flex margin-bottom-5px">
 		<div class="display-flex flex-1 flex-direction-column">
-			<label asp-for="FirstName" class="font-Roboto font-size-16px background-color-antiquewhite">First name:</label>
+			<label asp-for="FirstName" class="font-Roboto font-size-16px background-color-antiquewhite">First name</label>
 			<input asp-for="FirstName" class="font-size-20px" />
 		</div>
 		<div class="width-5px"></div>
 		<div class="display-flex flex-1 flex-direction-column">
-			<label asp-for="LastName" class="font-Roboto font-size-16px background-color-antiquewhite">Last name:</label>
+			<label asp-for="LastName" class="font-Roboto font-size-16px background-color-antiquewhite">Last name</label>
 			<input asp-for="LastName" class="font-size-20px" />
 		</div>
 	</div>
@@ -161,7 +161,7 @@
 	</div>
 
 	<div class="margin-bottom-5px background-color-antiquewhite">
-		<label class="font-Roboto font-size-16px">Payment terms:</label>
+		<label class="font-Roboto font-size-16px">Payment terms</label>
 		<div class="display-flex flex-direction-column">
 			<select asp-for="SelectedPaymentTermId"
 							asp-items="@(new SelectList(Model.AvailablePaymentTerms, "ID", "DisplayText"))" class="font-size-20px">
