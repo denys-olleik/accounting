@@ -306,70 +306,7 @@ namespace Accounting.Controllers
       string userId,
       UpdateUserViewModel model)
     {
-      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
-      if (tenant == null)
-      {
-        return NotFound();
-      }
-
-      model.Tenant = new UpdateUserViewModel.TenantViewModel
-      {
-        TenantID = tenant.TenantID,
-        DatabaseName = tenant.DatabaseName
-      };
-
-      UserService _userService = new UserService(tenant.DatabaseName);
-
-      User user = await _userService.GetAsync(int.Parse(userId));
-      if (user == null)
-      {
-        return NotFound();
-      }
-
-      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
-      model.AvailableOrganizations = organizations.Select(x => new OrganizationViewModel
-      {
-        OrganizationID = x.OrganizationID,
-        Name = x.Name
-      }).ToList();
-
-      var userOrganization = await _userOrganizationService.GetAsync(GetUserId(), GetOrganizationId(), GetDatabaseName());
-      var currentUserOrganization = new UserOrganizationViewModel
-      {
-        UserOrganizationID = userOrganization.UserOrganizationID,
-        UserId = user.UserID,
-        OrganizationId = userOrganization.OrganizationId
-      };
-
-      model.ExistingUserOrganization = currentUserOrganization;
-
-      model.CurrentUserDatabaseName = GetDatabaseName();
-
-      var validator = new UpdateUserViewModelValidator();
-      ValidationResult validationResult = await validator.ValidateAsync(model);
-
-      if (!validationResult.IsValid)
-      {
-        model.ValidationResult = validationResult;
-        return View(model);
-      }
-
-      user.FirstName = model.FirstName;
-      user.LastName = model.LastName;
-
-      await _tenantService.UpdateUserAsync(user.Email!, user.FirstName, user.LastName);
-
-      // Handle the case when no organizations are selected
-      var selectedOrganizationIds = !string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv)
-          ? model.SelectedOrganizationIdsCsv
-              .Split(',', StringSplitOptions.RemoveEmptyEntries)
-              .Select(int.Parse)
-              .ToList()
-          : new List<int>();
-
-      await _userOrganizationService.UpdateUserOrganizationsAsync(user.UserID, selectedOrganizationIds, tenant.DatabaseName!);
-
-      return RedirectToAction("TenantUsers", new { tenantId = tenant.TenantID });
+      
     }
 
     [Route("create-user/{tenantId}")]
