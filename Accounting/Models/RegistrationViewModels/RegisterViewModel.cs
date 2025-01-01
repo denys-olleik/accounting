@@ -17,8 +17,8 @@ namespace Accounting.Models.RegistrationViewModels
     {
       public RegisterViewModelValidator()
       {
-        RuleFor(x => x.Email).NotEmpty().EmailAddress();
-        RuleFor(x => x.Password).NotEmpty();
+        RuleFor(x => x.Email).NotEmpty().EmailAddress().WithMessage("Valid email is required");
+        RuleFor(x => x.Password).NotEmpty().WithMessage("Password is required");
       }
     }
   }
