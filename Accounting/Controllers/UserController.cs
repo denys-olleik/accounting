@@ -86,8 +86,8 @@ namespace Accounting.Controllers
         User user = await _userService.CreateAsync(new User()
         {
           Email = model.Email,
-          FirstName = existingUser2.FirstName,
-          LastName = existingUser2.LastName,
+          FirstName = existingUser2?.FirstName,
+          LastName = existingUser2?.LastName,
           CreatedById = GetUserId()
         });
 
