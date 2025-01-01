@@ -6575,7 +6575,7 @@ namespace Accounting.Database
         return result.SingleOrDefault();
       }
 
-      public async Task<Secret> GetAsync(string type)
+      public async Task<Secret?> GetAsync(string type)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Type", type);
@@ -6591,7 +6591,7 @@ namespace Accounting.Database
             """, p);
         }
 
-        return result.Single();
+        return result.SingleOrDefault();
       }
 
       public async Task<Secret?> GetMasterAsync(int organizationId)

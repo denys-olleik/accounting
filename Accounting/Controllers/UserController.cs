@@ -17,19 +17,19 @@ namespace Accounting.Controllers
     private readonly UserOrganizationService _userOrganizationService;
     private readonly UserService _userService;
     private readonly SecretService _secretService;
-    private readonly InvitationService _invitationService;
+    private readonly TenantService _tenantService;
 
     public UserController(
       RequestContext requestContext,
       UserOrganizationService userOrganizationService,
       UserService userService,
       SecretService secretService,
-      InvitationService invitationService)
+      TenantService tenantService)
     {
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
       _userService = new UserService(requestContext.DatabaseName);
       _secretService = new SecretService(requestContext.DatabaseName);
-      _invitationService = new InvitationService(requestContext.DatabaseName);
+      _tenantService = new TenantService(requestContext.DatabaseName);
     }
 
     [HttpGet]
@@ -59,7 +59,7 @@ namespace Accounting.Controllers
     [Route("create")]
     public async Task<ActionResult> Create(CreateUserViewModel model)
     {
-      CreateUserViewModelValidator validator = new CreateUserViewModelValidator();
+      CreateUserViewModel.CreateUserViewModelValidator validator = new CreateUserViewModel.CreateUserViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -68,14 +68,26 @@ namespace Accounting.Controllers
         return View(model);
       }
 
+      User existingUser = await _userService.GetAsync(model.Email);
+      if (existingUser != null)
+      {
+        model.ValidationResult = new ValidationResult(new List<ValidationFailure>()
+        {
+          new ValidationFailure("Email", "Email already exists.")
+        });
+        return View(model);
+      }
+
+      var (existingUser2, tenant) = await _userService.GetFirstOfAnyTenantAsync(model.Email);
+
       EmailService emailService = new EmailService(_secretService);
       using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
         User user = await _userService.CreateAsync(new User()
         {
           Email = model.Email,
-          FirstName = model.FirstName,
-          LastName = model.LastName,
+          FirstName = existingUser2.FirstName,
+          LastName = existingUser2.LastName,
           CreatedById = GetUserId()
         });
 
@@ -84,23 +96,6 @@ namespace Accounting.Controllers
           OrganizationId = GetOrganizationId(),
           UserId = user.UserID
         });
-
-        if (model.SendInvitationEmail)
-        {
-          Invitation invitation = await _invitationService.CreatAsync(new Invitation()
-          {
-            Email = user.Email,
-            Guid = Guid.NewGuid(),
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            UserId = user.UserID,
-            CreatedById = GetUserId(),
-            OrganizationId = GetOrganizationId(),
-            Expiration = DateTime.UtcNow + TimeSpan.FromMinutes(ConfigurationSingleton.Instance.InvitationExpirationMinutes)
-          });
-
-          await emailService.SendInvitationEmailAsync(invitation, GetBaseUrl());
-        }
 
         scope.Complete();
       }

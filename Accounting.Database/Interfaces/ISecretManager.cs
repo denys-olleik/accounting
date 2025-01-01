@@ -10,7 +10,7 @@ namespace Accounting.Database.Interfaces
     Task<List<Secret>> GetAllAsync(int organizationId);
     Task<Secret> GetAsync(int id, int organizationId);
     Task<Secret?> GetAsync(string key, int? organizationId);
-    Task<Secret> GetAsync(string type);
+    Task<Secret?> GetAsync(string type);
     Task<Secret?> GetMasterAsync(int organizationId);
   }
 }
