@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Accounting.Database.Interfaces
 {
-    public interface IInvitationManager : IGenericRepository<Invitation, int>
-    {
-        Task<int> DeleteAsync(Guid guid);
-        Task<Invitation> GetAsync(Guid guid);
-    }
+    //public interface IInvitationManager : IGenericRepository<Invitation, int>
+    //{
+    //    Task<int> DeleteAsync(Guid guid);
+    //    Task<Invitation> GetAsync(Guid guid);
+    //}
 }

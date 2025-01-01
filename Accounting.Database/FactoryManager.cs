@@ -31,11 +31,6 @@ namespace Accounting.Database
       return databaseFactoryDefinition.GetJournalManager();
     }
 
-    public IInvitationManager GetInvitationManager()
-    {
-      return databaseFactoryDefinition.GetInvitationManager();
-    }
-
     public IInvoiceLineManager GetInvoiceLineManager()
     {
       return databaseFactoryDefinition.GetInvoiceLineManager();

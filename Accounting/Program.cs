@@ -66,7 +66,6 @@ builder.Services.AddTransient<CloudServices>();
 builder.Services.AddTransient<DatabaseService>();
 builder.Services.AddTransient<EmailService>();
 builder.Services.AddTransient<LoginWithoutPasswordService>();
-builder.Services.AddTransient<InvitationService>();
 builder.Services.AddTransient<TagService>();
 builder.Services.AddTransient<UserTaskService>();
 builder.Services.AddTransient<ToDoService>();

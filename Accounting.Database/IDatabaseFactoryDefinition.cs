@@ -7,7 +7,6 @@ namespace Accounting.Database
     IUserManager GetUserManager();
     IToDoManager GetTaskManager();
     IUserToDoManager GetUserToDoManager();
-    IInvitationManager GetInvitationManager();
     ITagManager GetTagManager();
     IToDoTagManager GetToDoTagManager();
     IBusinessEntityManager GetBusinessEntityManager();
