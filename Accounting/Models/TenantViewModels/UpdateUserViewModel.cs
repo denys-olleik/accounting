@@ -12,7 +12,7 @@ namespace Accounting.Models.TenantViewModels
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public List<OrganizationViewModel> AvailableOrganizations { get; set; } = new List<OrganizationViewModel>();
-    public string SelectedOrganizationIdsCsv { get; set; }
+    public string? SelectedOrganizationIdsCsv { get; set; }
 
     public class TenantViewModel
     {
@@ -20,19 +20,12 @@ namespace Accounting.Models.TenantViewModels
       public string? DatabaseName { get; set; }
     }
 
-    public class UserOrganizationViewModel
-    {
-      public int UserOrganizationID { get; set; }
-      public int UserId { get; set; }
-      public int OrganizationId { get; set; }
-    }
-
     public ValidationResult? ValidationResult { get; set; } = new ValidationResult();
 
     public class OrganizationViewModel
     {
       public int OrganizationID { get; set; }
-      public string Name { get; set; }
+      public string? Name { get; set; }
     }
 
     public class UpdateUserViewModelValidator : AbstractValidator<UpdateUserViewModel>

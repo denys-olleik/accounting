@@ -306,7 +306,29 @@ namespace Accounting.Controllers
       string userId,
       UpdateUserViewModel model)
     {
-      
+      Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
+
+      UserService userService = new UserService(tenant.DatabaseName!);
+      User user = await userService.GetAsync(int.Parse(userId));
+
+      if (tenant == null || user == null)
+      {
+        return NotFound();
+      }
+
+      UserOrganizationService userOrganizationService = new UserOrganizationService(tenant.DatabaseName);
+      List<UserOrganization> userOrganizations = await userOrganizationService.GetAllAsync(tenant.TenantID);
+
+      UpdateUserViewModelValidator validator = new UpdateUserViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      throw new NotImplementedException();
     }
 
     [Route("create-user/{tenantId}")]
