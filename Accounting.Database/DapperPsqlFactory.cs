@@ -6213,9 +6213,24 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public Task<int> UpdateSshPublicAsync(int tenantId, string sshPublic)
+      public async Task<int> UpdateSshPublicAsync(int tenantId, string sshPublic)
       {
-        throw new NotImplementedException();
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantID", tenantId);
+        p.Add("@SshPublic", sshPublic);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            UPDATE "Tenant" 
+            SET "SshPublic" = @SshPublic
+            WHERE "TenantID" = @TenantID
+            """, p);
+        }
+
+        return rowsAffected;
       }
 
       public async Task<Tenant> GetAsync(int tenantId)
