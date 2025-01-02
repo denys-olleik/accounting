@@ -345,7 +345,11 @@ namespace Accounting.Controllers
 
       await _tenantService.UpdateUserAsync(user.Email!, user.FirstName!, user.LastName!);
 
-      await userOrganizationService.UpdateUserOrganizationsAsync(user.UserID, model.SelectedOrganizationIdsCsv.Split(',').Select(int.Parse).ToList(), tenant.DatabaseName!);
+      await userOrganizationService.UpdateUserOrganizationsAsync(
+        user.UserID,
+        (model.SelectedOrganizationIdsCsv ?? "").Split(',').Where(s => !string.IsNullOrEmpty(s)).Select(int.Parse).ToList(),
+        tenant.DatabaseName!
+      );
 
       return RedirectToAction("TenantUsers", new { tenantId });
     }
