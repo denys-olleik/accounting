@@ -47,6 +47,14 @@ namespace Accounting.Events
       if (organizationId > 0)
       {
         var userOrganization = await _userOrganizationService.GetAsync(userId!.Value, organizationId, databaseName!);
+
+        if (userOrganization == null)
+        {
+          context.RejectPrincipal();
+          await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+          return;
+        }
+
         user = userOrganization.User!;
         organization = userOrganization.Organization!;
       }
@@ -60,6 +68,7 @@ namespace Accounting.Events
       {
         context.RejectPrincipal();
         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return;
       }
     }
   }
