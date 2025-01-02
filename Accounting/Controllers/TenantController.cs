@@ -302,9 +302,9 @@ namespace Accounting.Controllers
     [Route("update-user/{tenantId}/{userId}")]
     [HttpPost]
     public async Task<IActionResult> UpdateUser(
-  string tenantId,
-  string userId,
-  UpdateUserViewModel model)
+      string tenantId,
+      string userId,
+      UpdateUserViewModel model)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
       UserService userService = new UserService(tenant.DatabaseName!);
@@ -316,20 +316,20 @@ namespace Accounting.Controllers
       UserOrganizationService userOrganizationService = new UserOrganizationService(tenant.DatabaseName);
       List<UserOrganization> userOrganizations = await userOrganizationService.GetAllAsync(tenant.TenantID);
 
-      // Get the current organization ID using the BaseController method
-      int currentOrganizationId = GetOrganizationId();
+      string currentDatabaseName = GetDatabaseName();
 
-      // Parse the CSV of selected organization IDs
-      var selectedOrganizationIds = model.SelectedOrganizationIdsCsv
-          .Split(',')
+      if (tenant.DatabaseName == currentDatabaseName && !(user.UserID != GetUserId()))
+      {
+        int currentOrganizationId = GetOrganizationId();
+
+        var selectedOrganizationIds = (model.SelectedOrganizationIdsCsv?.Split(',') ?? Array.Empty<string>())
           .Select(id => int.Parse(id.Trim()))
           .ToList();
 
-      // Check if the current organization is not in the list of selected organizations
-      if (!selectedOrganizationIds.Contains(currentOrganizationId))
-      {
-        // Logic to handle the user trying to unassociate from the current organization
-        return Unauthorized("Cannot unassociate from the current organization.");
+        if (!selectedOrganizationIds.Contains(currentOrganizationId))
+        {
+          return Unauthorized("Cannot unassociate from the current organization.");
+        }
       }
 
       UpdateUserViewModelValidator validator = new UpdateUserViewModelValidator();
@@ -339,7 +339,15 @@ namespace Accounting.Controllers
         model.ValidationResult = validationResult;
         return View(model);
       }
-      throw new NotImplementedException();
+
+      user.FirstName = model.FirstName;
+      user.LastName = model.LastName;
+
+      await _tenantService.UpdateUserAsync(user.Email!, user.FirstName!, user.LastName!);
+
+      await userOrganizationService.UpdateUserOrganizationsAsync(user.UserID, model.SelectedOrganizationIdsCsv.Split(',').Select(int.Parse).ToList(), tenant.DatabaseName!);
+
+      return RedirectToAction("TenantUsers", new { tenantId });
     }
 
 
