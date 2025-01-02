@@ -302,34 +302,46 @@ namespace Accounting.Controllers
     [Route("update-user/{tenantId}/{userId}")]
     [HttpPost]
     public async Task<IActionResult> UpdateUser(
-      string tenantId,
-      string userId,
-      UpdateUserViewModel model)
+  string tenantId,
+  string userId,
+  UpdateUserViewModel model)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
-
       UserService userService = new UserService(tenant.DatabaseName!);
       User user = await userService.GetAsync(int.Parse(userId));
-
       if (tenant == null || user == null)
       {
         return NotFound();
       }
-
       UserOrganizationService userOrganizationService = new UserOrganizationService(tenant.DatabaseName);
       List<UserOrganization> userOrganizations = await userOrganizationService.GetAllAsync(tenant.TenantID);
 
+      // Get the current organization ID using the BaseController method
+      int currentOrganizationId = GetOrganizationId();
+
+      // Parse the CSV of selected organization IDs
+      var selectedOrganizationIds = model.SelectedOrganizationIdsCsv
+          .Split(',')
+          .Select(id => int.Parse(id.Trim()))
+          .ToList();
+
+      // Check if the current organization is not in the list of selected organizations
+      if (!selectedOrganizationIds.Contains(currentOrganizationId))
+      {
+        // Logic to handle the user trying to unassociate from the current organization
+        return Unauthorized("Cannot unassociate from the current organization.");
+      }
+
       UpdateUserViewModelValidator validator = new UpdateUserViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);
-
       if (!validationResult.IsValid)
       {
         model.ValidationResult = validationResult;
         return View(model);
       }
-
       throw new NotImplementedException();
     }
+
 
     [Route("create-user/{tenantId}")]
     [HttpGet]
