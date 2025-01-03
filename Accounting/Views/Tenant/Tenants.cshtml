@@ -24,48 +24,57 @@
   <div class="display-flex padding-top-bottom-2px">
     <div class="display-flex flex-1">
       <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ tenant.email }}</a>
-      <span v-if="isExpanded" class="display-flex">
-        <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
-          <div class="flex-1"></div>
-          <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
-          <div class="flex-1"></div>
-        </div>
-        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
-          <div class="flex-1"></div>
-          <a :href="'/tenant/update/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
-            update
-          </a>
-          <div class="flex-1"></div>
-        </div>
-        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
-          <div class="flex-1"></div>
-          <a :href="'/tenant/users/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
-            users
-          </a>
-          <div class="flex-1"></div>
-        </div>
-        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
-          <div class="flex-1"></div>
-          <a :href="'/tenant/organizations/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
-            organizations
-          </a>
-          <div class="flex-1"></div>
-        </div>
-        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
-          <div class="flex-1"></div>
-          <a :href="'/tenant/delete/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
-            delete
-          </a>
-          <div class="flex-1"></div>
-        </div>
-        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
-          <div class="flex-1"></div>
-          <a :href="'/tenant/delete/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none white-space-nowrap">
-            test ssh
-          </a>
-          <div class="flex-1"></div>
-        </div>
-      </span>
+      <div>
+        <span v-if="isExpanded" class="display-flex margin-bottom-2px">
+          <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+            <div class="flex-1"></div>
+            <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+            <div class="flex-1"></div>
+          </div>
+          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+            <div class="flex-1"></div>
+            <a :href="'/tenant/update/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
+              update
+            </a>
+            <div class="flex-1"></div>
+          </div>
+          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+            <div class="flex-1"></div>
+            <a :href="'/tenant/users/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
+              users
+            </a>
+            <div class="flex-1"></div>
+          </div>
+          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+            <div class="flex-1"></div>
+            <a :href="'/tenant/organizations/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
+              organizations
+            </a>
+            <div class="flex-1"></div>
+          </div>
+          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+            <div class="flex-1"></div>
+            <a :href="'/tenant/delete/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
+              delete
+            </a>
+            <div class="flex-1"></div>
+          </div>
+        </span>
+        <span v-if="isExpanded" class="display-flex">
+          <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+            <div class="flex-1"></div>
+            <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">debug:</a>
+            <div class="flex-1"></div>
+          </div>
+          <div class="display-flex flex-direction-column background-color-lightgreen padding-right-5px padding-left-5px margin-left-2px">
+            <div class="flex-1"></div>
+            <a href="#" @@click.prevent="test" class="font-size-16px font-Roboto color-darkslategray text-decoration-none font-weight-500">
+              test
+            </a>
+            <div class="flex-1"></div>
+          </div>
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -148,7 +157,10 @@
     methods: {
       toggleAction() {
         this.$emit('expand');
-      }
+      },
+			test() {
+				console.log('test');
+			}
     }
   };
 
