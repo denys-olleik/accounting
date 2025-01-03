@@ -776,6 +776,11 @@ namespace Accounting.Controllers
       var cloudServices = new CloudServices(_secretService, _tenantService);
 
       string ipAddress = tenant.Ipv4;
+      if (string.IsNullOrEmpty(ipAddress))
+      {
+        return BadRequest("IP is null");
+      }
+
       string privateKey = tenant.SshPrivate;
 
       if (string.IsNullOrEmpty(ipAddress) || string.IsNullOrEmpty(privateKey))

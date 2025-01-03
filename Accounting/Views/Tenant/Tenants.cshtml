@@ -78,7 +78,7 @@
           <div
             class="display-flex flex-direction-column background-color-lightgreen padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
-            <a href="#" @@click.prevent="test"
+            <a href="#" @@click.prevent="testSshConnectivity"
               class="font-size-16px font-Roboto color-darkslategray text-decoration-none font-weight-500">
               test
             </a>
@@ -161,7 +161,6 @@
   </div>
 </div>
 
-
 <script>
   const { createApp } = Vue;
 
@@ -174,7 +173,16 @@
         this.$emit('expand');
       },
       testSshConnectivity() {
-        console.log(`Testing SSH connectivity for tenant: ${this.tenant.name}`);
+				fetch(`/api/tenant/${this.tenant.tenantID}/test-ssh`, {
+					method: 'GET'
+				})
+					.then(response => response.text())
+					.then(data => {
+						console.log(data);
+					})
+					.catch(error => {
+						console.error('Error testing SSH connectivity:', error);
+					});
       }
     }
   };
