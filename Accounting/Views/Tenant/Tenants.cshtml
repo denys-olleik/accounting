@@ -80,7 +80,7 @@
             <div class="flex-1"></div>
             <a href="#" @@click.prevent="testSshConnectivity"
               class="font-size-16px font-Roboto color-darkslategray text-decoration-none font-weight-500">
-              test
+              {{ status }}
             </a>
             <div class="flex-1"></div>
           </div>
@@ -168,21 +168,26 @@
     name: 'TenantAction',
     props: ['tenant', 'isExpanded'],
     template: '#tenant-action-template',
+    data() {
+      return {
+        status: 'test'
+      };
+    },
     methods: {
       toggleAction() {
         this.$emit('expand');
       },
       testSshConnectivity() {
-				fetch(`/api/tenant/${this.tenant.tenantID}/test-ssh`, {
-					method: 'GET'
-				})
-					.then(response => response.text())
-					.then(data => {
-						console.log(data);
-					})
-					.catch(error => {
-						console.error('Error testing SSH connectivity:', error);
-					});
+        fetch(`/api/tenant/${this.tenant.tenantID}/test-ssh`, {
+          method: 'POST'
+        })
+          .then(response => response.text())
+          .then(data => {
+            console.log(data);
+          })
+          .catch(error => {
+            console.error('Error testing SSH connectivity:', error);
+          });
       }
     }
   };
