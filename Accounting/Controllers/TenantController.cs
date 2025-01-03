@@ -611,10 +611,8 @@ namespace Accounting.Controllers
             FullyQualifiedDomainName = model.FullyQualifiedDomainName
           });
 
-          await _cloudServices.GetDigitalOceanService(
-            _secretService,
-            _tenantService,
-            GetOrganizationId()).CreateDropletAsync(tenant);
+          var cloudServices = new CloudServices(_secretService, _tenantService);
+          await cloudServices.GetDigitalOceanService().CreateDropletAsync(tenant, GetOrganizationId());
 
           scope.Complete();
         }
@@ -775,7 +773,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      var cloudServices = new CloudServices(_secretService, _tenantService, GetOrganizationId());
+      var cloudServices = new CloudServices(_secretService, _tenantService);
 
       string ipAddress = tenant.Ipv4;
       string privateKey = tenant.SshPrivate;

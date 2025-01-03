@@ -8,10 +8,16 @@ namespace Accounting.Service
   public class CloudServices
   {
     private readonly DigitalOceanService _digitalOceanService;
+    private readonly SecretService _secretService;
+    private readonly string _databaseName;
 
-    public CloudServices(SecretService secretService, TenantService tenantService, int organizationId)
+    public CloudServices(
+      SecretService secretService, 
+      TenantService tenantService,
+      string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
-      _digitalOceanService = new DigitalOceanService(secretService, tenantService, organizationId);
+      _digitalOceanService = new DigitalOceanService(secretService, tenantService);
+      _databaseName = databaseName;
     }
 
     public bool TestSshConnectionAsync(string ipAddress, string privateKey, string username = "root")
@@ -60,18 +66,16 @@ namespace Accounting.Service
     {
       private readonly SecretService _secretService;
       private readonly TenantService _tenantService;
-      private readonly int _organizationId;
 
-      public DigitalOceanService(SecretService secretService, TenantService tenantService, int organizationId)
+      public DigitalOceanService(SecretService secretService, TenantService tenantService)
       {
         _secretService = secretService;
         _tenantService = tenantService;
-        _organizationId = organizationId;
       }
 
-      public async Task CreateDropletAsync(Tenant tenant)
+      public async Task CreateDropletAsync(Tenant tenant, int organizationId)
       {
-        Secret? cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, _organizationId);
+        Secret? cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, organizationId);
         if (cloudSecret == null)
         {
           throw new InvalidOperationException("Cloud secret not found");
