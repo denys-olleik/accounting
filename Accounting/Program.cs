@@ -23,14 +23,14 @@ builder.Services.AddControllersWithViews(options =>
 });
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-      options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-      options.SlidingExpiration = true;
-      options.EventsType = typeof(CustomCookieAuthenticationEventsHandler);
-      options.LoginPath = new PathString("/user-account/login");
-      options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    });
+  .AddCookie(options =>
+  {
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    options.SlidingExpiration = true;
+    options.EventsType = typeof(CustomCookieAuthenticationEventsHandler);
+    options.LoginPath = new PathString("/user-account/login");
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+  });
 
 builder.Services.AddScoped<CustomCookieAuthenticationEventsHandler>();
 builder.Services.AddScoped<RequestContext>();

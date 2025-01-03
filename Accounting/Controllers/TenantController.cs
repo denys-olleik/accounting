@@ -657,15 +657,18 @@ namespace Accounting.Controllers
     private readonly TenantService _tenantService;
     private readonly UserOrganizationService _userOrganizationService;
     private readonly UserService _userService;
+    private readonly SecretService _secretService;
 
     public TenantApiController(
       TenantService tenantService,
       UserOrganizationService userOrganizationService,
-      UserService userService)
+      UserService userService,
+      SecretService secretService)
     {
       _tenantService = tenantService;
       _userOrganizationService = userOrganizationService;
       _userService = userService;
+      _secretService = secretService;
     }
 
     [HttpGet("get-all-tenants")]
@@ -761,6 +764,37 @@ namespace Accounting.Controllers
       };
 
       return Ok(model);
+    }
+
+    [HttpPost("{tenantId}/test-ssh")]
+    public async Task<IActionResult> TestSsh(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      var cloudServices = new CloudServices(_secretService, _tenantService, GetOrganizationId());
+
+      string ipAddress = tenant.Ipv4;
+      string privateKey = tenant.SshPrivate;
+
+      if (string.IsNullOrEmpty(ipAddress) || string.IsNullOrEmpty(privateKey))
+      {
+        return BadRequest("Tenant does not have a valid IP address or SSH private key.");
+      }
+
+      bool success = cloudServices.TestSshConnectionAsync(ipAddress, privateKey);
+
+      if (success)
+      {
+        return Ok("SSH connection successful.");
+      }
+      else
+      {
+        return StatusCode(500, "SSH connection failed.");
+      }
     }
   }
 }

@@ -2,13 +2,58 @@
 using DigitalOcean.API;
 using Renci.SshNet;
 using System.Text;
+
 namespace Accounting.Service
 {
   public class CloudServices
   {
-    public DigitalOceanService GetDigitalOceanService(SecretService secretService, TenantService tenantService, int organizationId)
+    private readonly DigitalOceanService _digitalOceanService;
+
+    public CloudServices(SecretService secretService, TenantService tenantService, int organizationId)
     {
-      return new DigitalOceanService(secretService, tenantService, organizationId);
+      _digitalOceanService = new DigitalOceanService(secretService, tenantService, organizationId);
+    }
+
+    public bool TestSshConnectionAsync(string ipAddress, string privateKey, string username = "root")
+    {
+      bool success = false;
+
+      try
+      {
+        using (var privateKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(privateKey)))
+        using (var client = new SshClient(ipAddress, username, new PrivateKeyFile(privateKeyStream)))
+        {
+          client.Connect();
+          if (client.IsConnected)
+          {
+            var result = client.RunCommand("echo 'The quick brown fox jumped over the lazy dog!'");
+            if (result.Result.Contains("The quick brown fox jumped over the lazy dog!"))
+            {
+              success = true;
+            }
+            else
+            {
+              Console.WriteLine("Failed to establish SSH connection.");
+            }
+          }
+          else
+          {
+            Console.WriteLine("Failed to establish SSH connection.");
+          }
+          client.Disconnect();
+        }
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine($"An error occurred while testing SSH connection: {ex.Message}");
+      }
+
+      return success;
+    }
+
+    public DigitalOceanService GetDigitalOceanService()
+    {
+      return _digitalOceanService;
     }
 
     public class DigitalOceanService
@@ -54,57 +99,10 @@ namespace Accounting.Service
 
         var dropletResponse = await client.Droplets.Create(dropletRequest);
 
-        //await Task.Delay(120000);
-
-        //var droplet = await client.Droplets.Get(dropletResponse.Id);
-        //string ipAddress = droplet.Networks.V4.First(n => n.Type == "public").IpAddress;
-
-        //bool success = TestSshConnectionAsync(ipAddress, keygen.ToPrivateKey(), "root");
-
-        //tenant.Ipv4 = ipAddress;
         await _tenantService.UpdateDropletIdAsync(tenant.Identifiable, dropletResponse.Id);
         await _tenantService.UpdateSshPublicAsync(tenant.Identifiable, keygen.ToRfcPublicKey(tenant.FullyQualifiedDomainName));
         await _tenantService.UpdateSshPrivateAsync(tenant.Identifiable, keygen.ToPrivateKey());
-        //tenant.SshPrivate = keygen.ToPrivateKey();
-        //await _tenantService.UpdateAsync(tenant);
       }
-    }
-
-    private bool TestSshConnectionAsync(string ipAddress, string privateKey, string username = "root")
-    {
-      bool success = false;
-
-      try
-      {
-        using (var privateKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(privateKey)))
-        using (var client = new SshClient(ipAddress, username, new PrivateKeyFile(privateKeyStream)))
-        {
-          client.Connect();
-          if (client.IsConnected)
-          {
-            var result = client.RunCommand("echo 'The quick brown fox jumped over the lazy dog!'");
-            if (result.Result.Contains("The quick brown fox jumped over the lazy dog!"))
-            {
-              success = true;
-            }
-            else
-            {
-              Console.WriteLine("Failed to establish SSH connection.");
-            }
-          }
-          else
-          {
-            Console.WriteLine("Failed to establish SSH connection.");
-          }
-          client.Disconnect();
-        }
-      }
-      catch (Exception ex)
-      {
-        Console.WriteLine($"An error occurred while testing SSH connection: {ex.Message}");
-      }
-
-      return success;
     }
   }
 }

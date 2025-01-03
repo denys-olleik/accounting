@@ -13,7 +13,8 @@
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div class="margin-left-20px">
-    <a asp-action="ProvisionTenant" asp-controller="Tenant" class="font-Roboto font-size-16px color-blue">Provision tenant</a>
+    <a asp-action="ProvisionTenant" asp-controller="Tenant" class="font-Roboto font-size-16px color-blue">Provision
+      tenant</a>
   </div>
   <div class="flex-1 text-align-right">
     <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue">Home</a>
@@ -31,30 +32,38 @@
             <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
             <div class="flex-1"></div>
           </div>
-          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div
+            class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
-            <a :href="'/tenant/update/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
+            <a :href="'/tenant/update/' + tenant.tenantID"
+              class="font-size-16px font-Roboto color-white text-decoration-none">
               update
             </a>
             <div class="flex-1"></div>
           </div>
-          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div
+            class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
-            <a :href="'/tenant/users/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
+            <a :href="'/tenant/users/' + tenant.tenantID"
+              class="font-size-16px font-Roboto color-white text-decoration-none">
               users
             </a>
             <div class="flex-1"></div>
           </div>
-          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div
+            class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
-            <a :href="'/tenant/organizations/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
+            <a :href="'/tenant/organizations/' + tenant.tenantID"
+              class="font-size-16px font-Roboto color-white text-decoration-none">
               organizations
             </a>
             <div class="flex-1"></div>
           </div>
-          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div
+            class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
-            <a :href="'/tenant/delete/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
+            <a :href="'/tenant/delete/' + tenant.tenantID"
+              class="font-size-16px font-Roboto color-white text-decoration-none">
               delete
             </a>
             <div class="flex-1"></div>
@@ -66,9 +75,11 @@
             <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">debug:</a>
             <div class="flex-1"></div>
           </div>
-          <div class="display-flex flex-direction-column background-color-lightgreen padding-right-5px padding-left-5px margin-left-2px">
+          <div
+            class="display-flex flex-direction-column background-color-lightgreen padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
-            <a href="#" @@click.prevent="test" class="font-size-16px font-Roboto color-darkslategray text-decoration-none font-weight-500">
+            <a href="#" @@click.prevent="test"
+              class="font-size-16px font-Roboto color-darkslategray text-decoration-none font-weight-500">
               test
             </a>
             <div class="flex-1"></div>
@@ -93,10 +104,12 @@
       <tr>
         <th></th>
         <th class="text-align-left">
-          <input type="text" v-model="urlFilter" @@input="filterURL" placeholder="URL" class="font-size-16px width-100" />
+          <input type="text" v-model="urlFilter" @@input="filterURL" placeholder="URL"
+            class="font-size-16px width-100" />
         </th>
         <th class="text-align-left">
-          <input type="text" v-model="emailFilter" @@input="filterEmail" placeholder="Email" class="font-size-16px width-100" />
+          <input type="text" v-model="emailFilter" @@input="filterEmail" placeholder="Email"
+            class="font-size-16px width-100" />
         </th>
         <th class="text-align-center" colspan="4">
           or
@@ -106,7 +119,8 @@
         <th class="text-align-left width-1px padding-right-20px">#</th>
         <th class="text-align-left width-1px padding-right-20px white-space-nowrap">URL</th>
         <th class="text-align-left padding-right-20px">Email</th>
-        <th class="text-align-left width-1px padding-right-20px white-space-nowrap background-color-lightpink">Droplet ID</th>
+        <th class="text-align-left width-1px padding-right-20px white-space-nowrap background-color-lightpink">Droplet
+          ID</th>
         <th class="text-align-left width-1px padding-right-20px background-color-lightpink">IP</th>
         <th class="text-align-left width-1px padding-right-20px background-color-lightpink">Public</th>
         <th class="text-align-left width-1px white-space-nowrap background-color-lightpink">Private</th>
@@ -118,7 +132,8 @@
           <td class="padding-right-20px">{{ tenant.rowNumber }}</td>
           <td class="padding-right-20px">{{ tenant.fullyQualifiedDomainName }}</td>
           <td class="padding-right-20px">
-            <tenant-action :tenant="tenant" :is-expanded="tenant.tenantID === expandedTenantId" @@expand="handleTenantExpand(tenant.tenantID)"></tenant-action>
+            <tenant-action :tenant="tenant" :is-expanded="tenant.tenantID === expandedTenantId"
+              @@expand="handleTenantExpand(tenant.tenantID)"></tenant-action>
           </td>
           <td v-if="tenant.databaseName" class="background-color-lightblue text-align-center" colspan="4">
             {{ tenant.databaseName }}
@@ -158,9 +173,9 @@
       toggleAction() {
         this.$emit('expand');
       },
-			test() {
-				console.log('test');
-			}
+      testSshConnectivity() {
+        console.log(`Testing SSH connectivity for tenant: ${this.tenant.name}`);
+      }
     }
   };
 
