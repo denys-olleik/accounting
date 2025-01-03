@@ -183,6 +183,7 @@
         })
           .then(response => response.text())
           .then(data => {
+            this.status = data;
             console.log(data);
           })
           .catch(error => {
