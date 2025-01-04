@@ -799,5 +799,33 @@ namespace Accounting.Controllers
         return StatusCode(500, "SSH connection failed.");
       }
     }
+
+    [HttpPost("{tenantId}/discover")]
+    public async Task<IActionResult> Discover(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      var cloudServices = new CloudServices(_secretService, _tenantService);
+     
+      string privateKey = tenant.SshPrivate;
+
+      if (string.IsNullOrEmpty(privateKey))
+      {
+        return BadRequest("No SSH key.");
+      }
+
+      string? ipAddress = await cloudServices.GetDigitalOceanService().DiscoverIpAsync(tenant.DropletId, tenant, privateKey, GetOrganizationId());
+
+      if (string.IsNullOrEmpty(ipAddress))
+      {
+        return BadRequest();
+      }
+
+      return Ok(ipAddress);
+    }
   }
 }

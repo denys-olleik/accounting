@@ -1,5 +1,7 @@
 ﻿using Accounting.Business;
 using DigitalOcean.API;
+using DigitalOcean.API.Exceptions;
+using DigitalOcean.API.Models.Responses;
 using Renci.SshNet;
 using System.Text;
 
@@ -12,7 +14,7 @@ namespace Accounting.Service
     private readonly string _databaseName;
 
     public CloudServices(
-      SecretService secretService, 
+      SecretService secretService,
       TenantService tenantService,
       string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
@@ -106,6 +108,25 @@ namespace Accounting.Service
         await _tenantService.UpdateDropletIdAsync(tenant.Identifiable, dropletResponse.Id);
         await _tenantService.UpdateSshPublicAsync(tenant.Identifiable, keygen.ToRfcPublicKey(tenant.FullyQualifiedDomainName));
         await _tenantService.UpdateSshPrivateAsync(tenant.Identifiable, keygen.ToPrivateKey());
+      }
+
+      public async Task<string?> DiscoverIpAsync(long? dropletId, Tenant tenant, string privateKey, int organizationId)
+      {
+        if (dropletId == null)
+        {
+          throw new ArgumentNullException(nameof(dropletId));
+        }
+
+        Secret cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, organizationId);
+        var client = new DigitalOceanClient(cloudSecret!.Value);
+
+        Droplet? droplet;
+
+        droplet = await client.Droplets.Get(dropletId.Value);
+
+        var ipAddress = droplet.Networks.V4.FirstOrDefault(n => n.Type == "public")?.IpAddress;
+
+        return ipAddress;
       }
     }
   }
