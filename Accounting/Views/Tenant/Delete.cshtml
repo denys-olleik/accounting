@@ -1,11 +1,11 @@
 ﻿@model Accounting.Models.TenantViewModels.DeleteTenantViewModel
 
 @{
-  ViewData["Title"] = "Delete Tenant - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Delete tenant - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 @{
-  string headerText = "Delete Tenant";
+  string headerText = "Delete tenant";
 }
 
 <partial name="_H1HeaderPartial" model="@headerText" />
@@ -18,7 +18,7 @@
   <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite margin-bottom-5px">
     <span>
       <input asp-for="DeleteDatabase" class="font-size-20px" readonly />
-      <label asp-for="DeleteDatabase">Delete Database</label>
+      <label asp-for="DeleteDatabase">Delete database</label>
     </span>
   </div>
 

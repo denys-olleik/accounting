@@ -6308,6 +6308,26 @@ namespace Accounting.Database
 
         return rowsAffected;
       }
+
+      public async Task<int> UpdateIpv4Async(int tenantId, string ipAddress)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantId", tenantId);
+        p.Add("@IpAddress", ipAddress);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            UPDATE "Tenant" 
+            SET "Ipv4" = @IpAddress
+            WHERE "TenantID" = @TenantId
+            """, p);
+        }
+
+        return rowsAffected;
+      }
     }
 
     public ISecretManager GetSecretManager(string databaseName)

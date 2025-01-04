@@ -79,5 +79,11 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(_databaseName);
       await factoryManager.GetTenantManager().UpdateSshPublicAsync(tenantId, sshPublicKey);
     }
+
+    public async Task<int> UpdateIpv4Async(int tenantId, string ipAddress)
+    {
+      var factoryManager = new FactoryManager(_databaseName);
+      return await factoryManager.GetTenantManager().UpdateIpv4Async(tenantId, ipAddress);
+    }
   }
 }

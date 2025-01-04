@@ -1,5 +1,4 @@
-﻿using Accounting.Business;
-using Accounting.Service;
+﻿using Accounting.Service;
 using FluentValidation;
 using FluentValidation.Results;
 
@@ -11,7 +10,7 @@ namespace Accounting.Models.TenantViewModels
     public bool Shared { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
 
-    public ValidationResult? ValidationResult { get; set; }
+    public ValidationResult? ValidationResult { get; set; } = new();
 
     public class ProvisionTenantViewModelValidator
      : AbstractValidator<ProvisionTenantViewModel>

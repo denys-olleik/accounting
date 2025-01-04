@@ -601,6 +601,14 @@ namespace Accounting.Controllers
       }
       else
       {
+        Secret cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, GetOrganizationId());
+
+        if (cloudSecret == null)
+        {
+          model.ValidationResult.Errors.Add(new ValidationFailure("Shared", "Cloud secret not found."));
+          return View(model);
+        }
+
         using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
           Tenant tenant;
@@ -824,6 +832,8 @@ namespace Accounting.Controllers
       {
         return BadRequest();
       }
+
+      await _tenantService.UpdateIpv4Async(tenant.TenantID, ipAddress);
 
       return Ok(ipAddress);
     }

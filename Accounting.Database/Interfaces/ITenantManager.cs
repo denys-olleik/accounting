@@ -26,5 +26,6 @@ namespace Accounting.Database.Interfaces
     Task<int> DeleteAsync(int tenantID);
     Task<int> UpdateEmailAsync(int tenantId, string email);
     Task<int> UpdateUserAsync(string email, string firstName, string lastName);
+    Task<int> UpdateIpv4Async(int tenantId, string ipAddress);
   }
 }
