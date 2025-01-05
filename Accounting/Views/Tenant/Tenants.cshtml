@@ -87,11 +87,8 @@
           </div>
           <div v-if="tenant.ipv4" class="position-relative display-flex flex-1 margin-left-2px">
             <span class="blinking-cursor position-absolute color-lawngreen left-2px">█</span>
-            <input
-              type="text"
-              class="font-size-16px width-100 font-Roboto-Mono background-color-black color-white"
-              @@click.prevent="removeBlinkingCursor"
-            />
+            <input type="text" class="font-size-16px width-100 font-Roboto-Mono background-color-black color-white"
+              @@click.prevent="removeBlinkingCursor" @@keydown="handleKeyDown" />
           </div>
         </span>
       </div>
@@ -175,9 +172,16 @@
     props: ['tenant', 'isExpanded'],
     template: '#tenant-action-template',
     methods: {
+      handleKeyDown(event) {
+        if (event.key === 'Enter') {
+          console.log('Enter key pressed');
+        }
+      },
       removeBlinkingCursor() {
         const blinkingCursor = document.querySelector('.blinking-cursor');
-        blinkingCursor.remove();
+        if (blinkingCursor) {
+          blinkingCursor.remove();
+        }
       },
       discover() {
         fetch(`/api/tenant/${this.tenant.tenantID}/discover`, {
