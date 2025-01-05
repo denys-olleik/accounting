@@ -69,13 +69,13 @@
             <div class="flex-1"></div>
           </div>
         </span>
-        <span v-if="isExpanded" class="display-flex">
+        <span v-if="isExpanded && tenant.dropletId" class="display-flex">
           <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
             <div class="flex-1"></div>
             <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">debug:</a>
             <div class="flex-1"></div>
           </div>
-          <div
+          <div v-if="!tenant.ipv4"
             class="display-flex flex-direction-column background-color-lightgreen padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
             <a href="#" @@click.prevent="discover"
@@ -83,6 +83,9 @@
               discover
             </a>
             <div class="flex-1"></div>
+          </div>
+          <div v-if="tenant.ipv4" class="margin-left-2px">
+            <input type="text" class="font-size-16px width-100 font-Roboto-Mono background-color-black color-white" />
           </div>
         </span>
       </div>
@@ -117,7 +120,6 @@
       </tr>
       <tr>
         <th class="text-align-left width-1px padding-right-20px">#</th>
-        <th class="text-align-left width-1px padding-right-20px white-space-nowrap">URL</th>
         <th class="text-align-left padding-right-20px">Email</th>
         <th class="text-align-left width-1px padding-right-20px white-space-nowrap background-color-lightpink">
           Droplet ID
@@ -131,7 +133,7 @@
       <template v-for="tenant in tenants" :key="tenant.tenantID">
         <tr>
           <td class="padding-right-20px">{{ tenant.rowNumber }}</td>
-          <td class="padding-right-20px">{{ tenant.fullyQualifiedDomainName }}</td>
+          @* <td class="padding-right-20px">{{ tenant.fullyQualifiedDomainName }}</td> *@
           <td class="padding-right-20px">
             <tenant-action :tenant="tenant" :is-expanded="tenant.tenantID === expandedTenantId"
               @@expand="handleTenantExpand(tenant.tenantID)"></tenant-action>
