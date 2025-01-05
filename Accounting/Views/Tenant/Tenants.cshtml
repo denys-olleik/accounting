@@ -23,8 +23,9 @@
 
 <template id="tenant-action-template">
   <div class="display-flex padding-top-bottom-2px">
-    <div class="display-flex flex-1">
+    <div class="display-flex flex-direction-column flex-1">
       <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ tenant.email }}</a>
+      <a href="#" @@click.prevent="toggleAction" class="font-size-12px">{{ tenant.fullyQualifiedDomainName }}</a>
       <div>
         <span v-if="isExpanded" class="display-flex margin-bottom-2px">
           <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
@@ -72,7 +73,7 @@
         <span v-if="isExpanded && tenant.dropletId" class="display-flex">
           <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
             <div class="flex-1"></div>
-            <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">debug:</a>
+            <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">terminal:</a>
             <div class="flex-1"></div>
           </div>
           <div v-if="!tenant.ipv4"
@@ -84,7 +85,8 @@
             </a>
             <div class="flex-1"></div>
           </div>
-          <div v-if="tenant.ipv4" class="margin-left-2px">
+          <div v-if="tenant.ipv4" class="position-relative display-flex flex-1 margin-left-2px">
+            <span class="blinking-cursor position-absolute color-lawngreen left-2px">█</span>
             <input type="text" class="font-size-16px width-100 font-Roboto-Mono background-color-black color-white" />
           </div>
         </span>
@@ -99,17 +101,12 @@
       <tr>
         <th></th>
         <th></th>
-        <th></th>
         <th colspan="4" class="background-color-lightblue">
           Local database on shared infrastructure
         </th>
       </tr>
       <tr>
         <th></th>
-        <th class="text-align-left">
-          <input type="text" v-model="urlFilter" @@input="filterURL" placeholder="URL"
-            class="font-size-16px width-100" />
-        </th>
         <th class="text-align-left">
           <input type="text" v-model="emailFilter" @@input="filterEmail" placeholder="Email"
             class="font-size-16px width-100" />

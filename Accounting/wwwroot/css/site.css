@@ -234,6 +234,10 @@ td.fitwidth, th.fitwidth {
   background-color: #A62626;
 }
 
+.left-2px {
+  left: 2px;
+}
+
 .container {
   margin-right: auto;
   margin-left: auto;
@@ -246,6 +250,14 @@ td.fitwidth, th.fitwidth {
 
 .filter-blur-1px {
   filter: blur(1px);
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
 }
 
 .border-sides-5px-solid-black {
