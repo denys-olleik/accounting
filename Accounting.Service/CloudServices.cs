@@ -64,6 +64,34 @@ namespace Accounting.Service
       return _digitalOceanService;
     }
 
+    public async Task<string> ExecuteCommandAsync(string ipAddress, string privateKey, string command)
+    {
+      string result = string.Empty;
+      try
+      {
+        using (var privateKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(privateKey)))
+        using (var client = new SshClient(ipAddress, "root", new PrivateKeyFile(privateKeyStream)))
+        {
+          client.Connect();
+          if (client.IsConnected)
+          {
+            var sshCommand = client.RunCommand(command);
+            result = sshCommand.Result;
+          }
+          else
+          {
+            Console.WriteLine("Failed to establish SSH connection.");
+          }
+          client.Disconnect();
+        }
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine($"An error occurred while executing command: {ex.Message}");
+      }
+      return result;
+    }
+
     public class DigitalOceanService
     {
       private readonly SecretService _secretService;
