@@ -1,4 +1,4 @@
-![0](yt-thumb.png)
+![0](terminal.gif)
 
 ## It doesn't have to be this confusing...
 
