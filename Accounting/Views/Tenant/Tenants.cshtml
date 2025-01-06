@@ -70,7 +70,7 @@
             <div class="flex-1"></div>
           </div>
         </span>
-        <span v-if="isExpanded && tenant.dropletId" class="display-flex">
+        <span v-if="isExpanded && tenant.dropletId" class="display-flex margin-bottom-2px">
           <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
             <div class="flex-1"></div>
             <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">terminal:</a>
@@ -85,11 +85,14 @@
             </a>
             <div class="flex-1"></div>
           </div>
-          <div v-if="tenant.ipv4" class="position-relative display-flex flex-1 margin-left-2px">
+          <div v-if="tenant.ipv4" class="position-relative display-flex flex-direction-column flex-1 margin-left-2px">
             <span class="blinking-cursor position-absolute color-lawngreen left-2px">█</span>
             <input type="text" class="font-size-16px width-100 font-Roboto-Mono background-color-black color-white"
               @@click.prevent="removeBlinkingCursor" @@keydown="handleKeyDown" />
           </div>
+        </span>
+        <span v-if="isExpanded && tenant.dropletId" class="display-flex background-color-black color-white font-Roboto-Mono">
+          {{ tenant.terminalResponse }}
         </span>
       </div>
     </div>
@@ -185,7 +188,8 @@
           })
             .then(response => response.text())
             .then(data => {
-              console.log(data);
+              this.tenant.terminalResponse = data;
+              event.target.value = '';
             })
             .catch(error => {
               console.error('Error executing command:', error);
