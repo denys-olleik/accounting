@@ -40,6 +40,22 @@ namespace Accounting.Controllers
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
     }
 
+    [Route("download-private-key/{tenantId}")]
+    [HttpGet]
+    public async Task<IActionResult> DownloadPrivateKey(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
+      {
+        return NotFound();
+      }
+
+      var privateKeyContent = tenant.SshPrivate;
+      var fileName = $"private_key_{tenantId}.txt";
+
+      return File(System.Text.Encoding.UTF8.GetBytes(privateKeyContent), "text/plain", fileName);
+    }
+
     [Route("update/{tenantId}")]
     [HttpGet]
     public async Task<IActionResult> UpdateTenant(int tenantId)

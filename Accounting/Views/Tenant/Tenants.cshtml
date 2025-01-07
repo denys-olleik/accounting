@@ -91,8 +91,17 @@
               @@click.prevent="removeBlinkingCursor" @@keydown="handleKeyDown" />
           </div>
         </span>
-        <span v-if="isExpanded && tenant.dropletId" class="display-flex background-color-black color-white font-Roboto-Mono">
+        <span v-if="isExpanded && tenant.dropletId"
+          class="display-flex background-color-black color-white font-Roboto-Mono">
           {{ tenant.terminalResponse }}
+        </span>
+        <span  v-if="isExpanded && tenant.dropletId">
+          <div class="display-flex flex-direction-column">
+            checklist
+          </div>
+          <div class="display-flex">
+            <a href="#" @@click.prevent="updateApt">update apt</a>
+          </div>
         </span>
       </div>
     </div>
@@ -147,8 +156,10 @@
             <td class="padding-right-20px background-color-lightpink">
               {{ tenant.ipv4 }}
             </td>
-            <td class="padding-right-20px background-color-lightpink">{{ tenant.sshPublic ? 'yes' : 'no' }}</td>
-            <td class="white-space-nowrap background-color-lightpink">{{ tenant.sshPrivate ? 'yes' : 'no' }}</td>
+            <td class="padding-right-20px background-color-lightpink">{{ tenant.sshPublic ? 'set' : 'no' }}</td>
+            <td class="white-space-nowrap background-color-lightpink">
+              <a :href="'/tenant/download-private-key/' + tenant.tenantID" class="color-blue">get</a>
+            </td>
           </template>
         </tr>
       </template>
@@ -175,6 +186,18 @@
     props: ['tenant', 'isExpanded'],
     template: '#tenant-action-template',
     methods: {
+      updateApt() {
+        fetch(`/api/tenant/${this.tenant.tenantID}/update-apt`, {
+          method: 'POST'
+        })
+          .then(response => response.text())
+          .then(data => {
+            console.log(data);
+          })
+          .catch(error => {
+            console.error('Error updating apt:', error);
+          });
+      },
       handleKeyDown(event) {
         if (event.key === 'Enter') {
           fetch(`/api/tenant/${this.tenant.tenantID}/execute-command`, {
