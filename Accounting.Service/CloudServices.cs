@@ -92,6 +92,11 @@ namespace Accounting.Service
       return result;
     }
 
+    public async Task<string> UpdateAptAsync(string ipAddress, string privateKey)
+    {
+      return await ExecuteCommandAsync(ipAddress, privateKey, "nohup apt update > /var/log/apt-update.log 2>&1 &");
+    }
+
     public class DigitalOceanService
     {
       private readonly SecretService _secretService;

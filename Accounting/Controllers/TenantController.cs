@@ -693,6 +693,35 @@ namespace Accounting.Controllers
       _secretService = secretService;
     }
 
+    [HttpPost("{tenantId}/update-apt")]
+    public async Task<IActionResult> UpdateApt(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      var cloudServices = new CloudServices(_secretService, _tenantService);
+
+      string ipAddress = tenant.Ipv4;
+      if (string.IsNullOrEmpty(ipAddress))
+      {
+        return BadRequest("IP is null");
+      }
+
+      string privateKey = tenant.SshPrivate;
+
+      if (string.IsNullOrEmpty(ipAddress) || string.IsNullOrEmpty(privateKey))
+      {
+        return BadRequest("Tenant does not have a valid IP address or SSH private key.");
+      }
+
+      string result = await cloudServices.UpdateAptAsync(ipAddress, privateKey);
+
+      return Ok(result);
+    }
+
     [HttpPost("{tenantId}/execute-command")]
     public async Task<IActionResult> ExecuteCommand(int tenantId, [FromBody] ExecuteCommandViewModel model)
     {
