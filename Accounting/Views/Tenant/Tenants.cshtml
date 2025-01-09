@@ -95,7 +95,7 @@
           class="display-flex background-color-black color-white font-Roboto-Mono">
           {{ tenant.terminalResponse }}
         </span>
-        <span  v-if="isExpanded && tenant.dropletId">
+        <span v-if="isExpanded && tenant.dropletId">
           <div class="display-flex flex-direction-column">
             checklist
           </div>
@@ -285,10 +285,16 @@
         page: @Model.Page,
         pageSize: @Model.PageSize,
         nextPage: null,
+        rememberPageSize: @(Model.RememberPageSize ? "true" : "false")
       };
     },
     methods: {
       fetchTenants() {
+				const storedPageSize = parseInt(localStorage.getItem('pageSize'));
+				if (storedPageSize) {
+					this.pageSize = storedPageSize;
+				}
+
         fetch(`/api/tenant/get-all-tenants?page=${this.page}&pageSize=${this.pageSize}`)
           .then(response => response.json())
           .then(data => {
@@ -308,6 +314,9 @@
       }
     },
     mounted() {
+      if (this.rememberPageSize) {
+        localStorage.setItem('pageSize', this.pageSize);
+      }
       this.fetchTenants();
     }
   });

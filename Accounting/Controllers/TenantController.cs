@@ -672,10 +672,13 @@ namespace Accounting.Controllers
       int page = 1,
       int pageSize = 2)
     {
+      var refferer = Request.Headers["Referer"].ToString() ?? string.Empty;
+
       var vm = new TenantsPaginatedViewModel()
       {
         Page = page,
         PageSize = pageSize,
+        RememberPageSize = string.IsNullOrEmpty(refferer)
       };
 
       return View(vm);

@@ -87,7 +87,7 @@ namespace Accounting.Controllers
     }
 
     [NonAction]
-    public string? GetReferrerUrl()
+    public string? GetRefererUrl()
     {
       return HttpContext.Request.Headers["Referer"].ToString();
     }
