@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#pragma warning disable CS8604
+#pragma warning disable CS8601
+#pragma warning disable CS8600
+#pragma warning disable CS8602
+using Microsoft.AspNetCore.Mvc;
 using Accounting.Service;
 using FluentValidation.Results;
 using System.Transactions;
@@ -361,7 +365,7 @@ namespace Accounting.Controllers
 
         if (!selectedOrganizationIds.Contains(currentOrganizationId))
         {
-          return Unauthorized("Cannot unassociate from the current organization.");
+          return Unauthorized("Cannot un-associate from the current organization.");
         }
       }
 
@@ -932,7 +936,7 @@ namespace Accounting.Controllers
       }
 
       var cloudServices = new CloudServices(_secretService, _tenantService);
-     
+
       string privateKey = tenant.SshPrivate;
 
       if (string.IsNullOrEmpty(privateKey))
