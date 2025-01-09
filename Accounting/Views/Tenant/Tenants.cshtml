@@ -102,7 +102,9 @@
           <div class="display-flex flex-direction-column">
             <div class="display-flex">
               <div class="flex-1"><a href="#" @@click.prevent="updateApt">update apt</a></div>
-              <div class="flex-1"><a href="#" @@click.prevent="updateApt">result</a></div>
+              <div class="flex-1 text-align-right">
+                <a :href="'/tenant/download-update-apt-output/' + tenant.tenantID" class="color-blue">get output</a>
+              </div>
             </div>
             <a href="#" @@click.prevent="installDotnet">install dotnet</a>
           </div>

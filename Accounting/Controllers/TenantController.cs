@@ -40,6 +40,23 @@ namespace Accounting.Controllers
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
     }
 
+    [Route("download-update-apt-output/{tenantId}")]
+    [HttpGet]
+    public async Task<IActionResult> DownloadUpdateAptOutput(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
+      {
+        return NotFound();
+      }
+
+      string fileContent = await _cloudServices.UpdateAptResultAsync(tenant.Ipv4, tenant.SshPrivate);
+
+      var fileName = $"update-apt-output_{tenantId}.txt";
+
+      return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
+    }
+
     [Route("download-private-key/{tenantId}")]
     [HttpGet]
     public async Task<IActionResult> DownloadPrivateKey(int tenantId)
