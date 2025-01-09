@@ -99,8 +99,12 @@
           <div class="display-flex flex-direction-column">
             checklist
           </div>
-          <div class="display-flex">
-            <a href="#" @@click.prevent="updateApt">update apt</a>
+          <div class="display-flex flex-direction-column">
+            <div class="display-flex">
+              <div class="flex-1"><a href="#" @@click.prevent="updateApt">update apt</a></div>
+              <div class="flex-1"><a href="#" @@click.prevent="updateApt">result</a></div>
+            </div>
+            <a href="#" @@click.prevent="installDotnet">install dotnet</a>
           </div>
         </span>
       </div>
@@ -186,6 +190,18 @@
     props: ['tenant', 'isExpanded'],
     template: '#tenant-action-template',
     methods: {
+      installDotnet() {
+        fetch(`/api/tenant/${this.tenant.tenantID}/install-dotnet`, {
+          method: 'POST'
+        })
+          .then(response => response.text())
+          .then(data => {
+            console.log(data);
+          })
+          .catch(error => {
+            console.error('Error installing dotnet:', error);
+          });
+      },
       updateApt() {
         fetch(`/api/tenant/${this.tenant.tenantID}/update-apt`, {
           method: 'POST'
