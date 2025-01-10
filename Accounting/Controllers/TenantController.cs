@@ -45,6 +45,23 @@ namespace Accounting.Controllers
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
     }
 
+    [Route("download-clone-repo-output/{tenantId}")]
+    [HttpGet]
+    public async Task<IActionResult> DownloadCloneRepoOutput(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
+      {
+        return NotFound();
+      }
+
+      string fileContent = await _cloudServices.CloneRepositoryResultAsync(tenant.Ipv4, tenant.SshPrivate);
+
+      var fileName = $"clone-repo-output_{tenantId}.txt";
+
+      return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
+    }
+
     [Route("download-install-dotnet-output/{tenantId}")]
     [HttpGet]
     public async Task<IActionResult> DownloadInstallDotnetOutput(int tenantId)
@@ -772,7 +789,7 @@ namespace Accounting.Controllers
         return BadRequest("Tenant does not have a valid SSH private key.");
       }
 
-      string result = await cloudServices.CloneRepositoryAsync(ipAddress, privateKey);
+      string result = await cloudServices.CloneRepositoryAsync(ipAddress, privateKey, "https://github.com/denys-olleik/accounting");
 
       return Ok(result);
     }
