@@ -102,9 +102,14 @@ namespace Accounting.Service
       return await ExecuteCommandAsync(ipAddress, privateKey, "cat /var/log/apt-update.log");
     }
 
-    public async Task<string> InstallDotnetAsync(string ipAddress, string privateKey)
+    public async Task<string> InstallDotnetSdkAsync(string ipAddress, string privateKey)
     {
-      return await ExecuteCommandAsync(ipAddress, privateKey, "sudo snap install dotnet-runtime-80");
+      return await ExecuteCommandAsync(ipAddress, privateKey, "nohup sudo snap install dotnet-sdk --channel=8.0/stable --classic > /var/log/install-dotnet.log 2>&1 &");
+    }
+
+    public async Task<string> InstallDotnetResultAsync(string? ipv4, string sshPrivate)
+    {
+      return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/install-dotnet.log");
     }
 
     public class DigitalOceanService

@@ -45,6 +45,23 @@ namespace Accounting.Controllers
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
     }
 
+    [Route("download-install-dotnet-output/{tenantId}")]
+    [HttpGet]
+    public async Task<IActionResult> DownloadInstallDotnetOutput(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
+      {
+        return NotFound();
+      }
+
+      string fileContent = await _cloudServices.InstallDotnetResultAsync(tenant.Ipv4, tenant.SshPrivate);
+
+      var fileName = $"install-dotnet-output_{tenantId}.txt";
+
+      return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
+    }
+
     [Route("download-update-apt-output/{tenantId}")]
     [HttpGet]
     public async Task<IActionResult> DownloadUpdateAptOutput(int tenantId)
@@ -756,7 +773,7 @@ namespace Accounting.Controllers
         return BadRequest("Tenant does not have a valid IP address or SSH private key.");
       }
 
-      string result = await cloudServices.InstallDotnetAsync(ipAddress, privateKey);
+      string result = await cloudServices.InstallDotnetSdkAsync(ipAddress, privateKey);
 
       return Ok(result);
     }
