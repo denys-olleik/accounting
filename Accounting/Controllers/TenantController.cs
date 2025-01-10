@@ -749,6 +749,34 @@ namespace Accounting.Controllers
       _secretService = secretService;
     }
 
+    [HttpPost("{tenantId}/clone-repo")]
+    public async Task<IActionResult> CloneRepository(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+
+      var cloudServices = new CloudServices(_secretService, _tenantService);
+
+      string ipAddress = tenant.Ipv4;
+      if (string.IsNullOrEmpty(ipAddress))
+      {
+        return BadRequest("IP is null");
+      }
+
+      string privateKey = tenant.SshPrivate;
+      if (string.IsNullOrEmpty(privateKey))
+      {
+        return BadRequest("Tenant does not have a valid SSH private key.");
+      }
+
+      string result = await cloudServices.CloneRepositoryAsync(ipAddress, privateKey);
+
+      return Ok(result);
+    }
+
     [HttpPost("{tenantId}/install-dotnet")]
     public async Task<IActionResult> InstallDotnet(int tenantId)
     {

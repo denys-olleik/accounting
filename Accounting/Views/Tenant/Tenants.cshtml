@@ -113,6 +113,12 @@
               </div>
             </div>
           </div>
+          <div class="display-flex border-bottom-1px-solid-lightgray">
+            <div class="flex-1"><a href="#" @@click.prevent="cloneRepository">clone repository</a></div>
+            <div class="flex-1 text-align-right">
+              <a :href="'/tenant/download-clone-repo-output/' + tenant.tenantID" class="color-blue">get output</a>
+            </div>
+          </div>
         </span>
       </div>
     </div>
@@ -197,6 +203,18 @@
     props: ['tenant', 'isExpanded'],
     template: '#tenant-action-template',
     methods: {
+      cloneRepository() {
+        fetch(`/api/tenant/${this.tenant.tenantID}/clone-repo`, {
+          method: 'POST'
+        })
+          .then(response => response.text())
+          .then(data => {
+            console.log(data);
+          })
+          .catch(error => {
+            console.error('Error cloning repository:', error);
+          });
+      },
       installDotnet() {
         fetch(`/api/tenant/${this.tenant.tenantID}/install-dotnet`, {
           method: 'POST'
@@ -295,10 +313,10 @@
     },
     methods: {
       fetchTenants() {
-				const storedPageSize = parseInt(localStorage.getItem('pageSize'));
-				if (storedPageSize) {
-					this.pageSize = storedPageSize;
-				}
+        const storedPageSize = parseInt(localStorage.getItem('pageSize'));
+        if (storedPageSize) {
+          this.pageSize = storedPageSize;
+        }
 
         fetch(`/api/tenant/get-all-tenants?page=${this.page}&pageSize=${this.pageSize}`)
           .then(response => response.json())
