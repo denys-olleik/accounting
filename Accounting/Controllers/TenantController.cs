@@ -12,6 +12,7 @@ using Accounting.Models.TenantViewModels;
 using Accounting.CustomAttributes;
 using Accounting.Common;
 using static Accounting.Models.TenantViewModels.UpdateUserViewModel;
+using DigitalOcean.API.Exceptions;
 
 namespace Accounting.Controllers
 {
@@ -657,7 +658,21 @@ namespace Accounting.Controllers
           });
 
           var cloudServices = new CloudServices(_secretService, _tenantService);
-          await cloudServices.GetDigitalOceanService().CreateDropletAsync(tenant, GetOrganizationId());
+
+          try
+          {
+            await cloudServices.GetDigitalOceanService().CreateDropletAsync(tenant, GetOrganizationId());
+          }
+          catch (ApiException e)
+          {
+            if (e.Message != "Access Denied")
+            {
+              throw;
+            }
+
+            model.ValidationResult.Errors.Add(new ValidationFailure("Shared", "Access denied"));
+            return View(model);
+          }
 
           scope.Complete();
         }
