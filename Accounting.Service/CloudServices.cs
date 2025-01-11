@@ -92,19 +92,19 @@ namespace Accounting.Service
       return result;
     }
 
-    public async Task<string> UpdateAptAsync(string ipAddress, string privateKey)
+    public async Task<string> UpdateAptAsync(string ipv4, string privateKey)
     {
-      return await ExecuteCommandAsync(ipAddress, privateKey, "nohup apt update > /var/log/accounting/apt-update.log 2>&1 &");
+      return await ExecuteCommandAsync(ipv4, privateKey, "nohup apt update > /var/log/accounting/apt-update.log 2>&1 &");
     }
 
-    public async Task<string> UpdateAptResultAsync(string ipAddress, string privateKey)
+    public async Task<string> UpdateAptResultAsync(string ipv4, string privateKey)
     {
-      return await ExecuteCommandAsync(ipAddress, privateKey, "cat /var/log/accounting/apt-update.log");
+      return await ExecuteCommandAsync(ipv4, privateKey, "cat /var/log/accounting/apt-update.log");
     }
 
-    public async Task<string> InstallDotnetSdkAsync(string ipAddress, string privateKey)
+    public async Task<string> InstallDotnetSdkAsync(string ipv4, string privateKey)
     {
-      return await ExecuteCommandAsync(ipAddress, privateKey, "nohup sudo snap install dotnet-sdk --channel=8.0/stable --classic > /var/log/accounting/install-dotnet.log 2>&1 &");
+      return await ExecuteCommandAsync(ipv4, privateKey, "nohup sudo snap install dotnet-sdk --channel=8.0/stable --classic > /var/log/accounting/install-dotnet.log 2>&1 &");
     }
 
     public async Task<string> InstallDotnetResultAsync(string? ipv4, string sshPrivate)
@@ -112,14 +112,24 @@ namespace Accounting.Service
       return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/install-dotnet.log");
     }
 
-    public async Task<string> CloneRepositoryAsync(string ipAddress, string privateKey, string repoUrl)
+    public async Task<string> CloneRepositoryAsync(string ipv4, string privateKey, string repoUrl)
     {
-      return await ExecuteCommandAsync(ipAddress, privateKey, $"nohup git clone {repoUrl} /opt/accounting > /var/log/accounting/git-clone.log 2>&1 &");
+      return await ExecuteCommandAsync(ipv4, privateKey, $"nohup git clone {repoUrl} /opt/accounting > /var/log/accounting/git-clone.log 2>&1 &");
     }
 
-    public async Task<string> CloneRepositoryResultAsync(string ipAddress, string privateKey)
+    public async Task<string> CloneRepositoryResultAsync(string ipv4, string privateKey)
     {
-      return await ExecuteCommandAsync(ipAddress, privateKey, "cat /var/log/accounting/git-clone.log");
+      return await ExecuteCommandAsync(ipv4, privateKey, "cat /var/log/accounting/git-clone.log");
+    }
+
+    public async Task<string> CreateLogDirectoryAsync(string ipv4, string privateKey)
+    {
+      return await ExecuteCommandAsync(ipv4, privateKey, "mkdir -p /var/log/accounting && echo 'Log directory created successfully' > /var/log/accounting/create-log-directory.log");
+    }
+
+    public async Task<string> CreateLogDirectoryResultAsync(string? ipv4, string sshPrivate)
+    {
+      return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/create-log-directory.log");
     }
 
     public class DigitalOceanService

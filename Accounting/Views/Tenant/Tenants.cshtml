@@ -99,6 +99,14 @@
           <div class="display-flex flex-direction-column background-color-darkcyan color-white">
             checklist
           </div>
+          <div class="display-flex border-bottom-1px-solid-lightgray">
+            <div class="flex-1"><a href="#" @@click.prevent="createLogDirectory">create log directory</a></div>
+            <div class="flex-1 text-align-right">
+              <a :href="'/tenant/download-create-log-directory-output/' + tenant.tenantID" class="color-blue">
+                get output
+              </a>
+            </div>
+          </div>
           <div class="display-flex flex-direction-column">
             <div class="display-flex border-bottom-1px-solid-lightgray">
               <div class="flex-1"><a href="#" @@click.prevent="updateApt">update apt</a></div>
@@ -203,6 +211,18 @@
     props: ['tenant', 'isExpanded'],
     template: '#tenant-action-template',
     methods: {
+      createLogDirectory() {
+        fetch(`/api/tenant/${this.tenant.tenantID}/create-log-directory`, {
+          method: 'POST'
+        })
+          .then(response => response.text())
+          .then(data => {
+            console.log(data);
+          })
+          .catch(error => {
+            console.error('Error creating log directory:', error);
+          });
+      },
       cloneRepository() {
         fetch(`/api/tenant/${this.tenant.tenantID}/clone-repo`, {
           method: 'POST'

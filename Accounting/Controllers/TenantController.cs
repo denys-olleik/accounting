@@ -13,6 +13,9 @@ using Accounting.CustomAttributes;
 using Accounting.Common;
 using static Accounting.Models.TenantViewModels.UpdateUserViewModel;
 using DigitalOcean.API.Exceptions;
+using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Http.HttpResults;
+using System.IO;
 
 namespace Accounting.Controllers
 {
@@ -43,6 +46,23 @@ namespace Accounting.Controllers
       _databaseService = databaseService;
       _organizationService = new OrganizationService(requestContext.DatabaseName);
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
+    }
+
+    [Route("download-create-log-directory-output/{tenantId}")]
+    [HttpGet]
+    public async Task<IActionResult> DownloadCreateLogDirectoryOutput(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
+      {
+        return NotFound();
+      }
+
+      string fileContent = await _cloudServices.CreateLogDirectoryResultAsync(tenant.Ipv4, tenant.SshPrivate);
+
+      var fileName = $"create-log-directory-output_{tenantId}.txt";
+
+      return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
     }
 
     [Route("download-clone-repo-output/{tenantId}")]
@@ -764,6 +784,29 @@ namespace Accounting.Controllers
       _userOrganizationService = userOrganizationService;
       _userService = userService;
       _secretService = secretService;
+    }
+
+    [HttpPost("{tenantId}/create-log-directory")]
+    public async Task<IActionResult> CreateLogDirectory(int tenantId)
+    {
+      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      if (tenant == null)
+      {
+        return NotFound();
+      }
+      var cloudServices = new CloudServices(_secretService, _tenantService);
+      string ipAddress = tenant.Ipv4;
+      if (string.IsNullOrEmpty(ipAddress))
+      {
+        return BadRequest("IP is null");
+      }
+      string privateKey = tenant.SshPrivate;
+      if (string.IsNullOrEmpty(privateKey))
+      {
+        return BadRequest("Tenant does not have a valid SSH private key.");
+      }
+      string result = await cloudServices.CreateLogDirectoryAsync(ipAddress, privateKey);
+      return Ok(result);
     }
 
     [HttpPost("{tenantId}/clone-repo")]
