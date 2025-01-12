@@ -47,6 +47,13 @@
 						<div v-if="itemHierarchyType(item)" class="display-flex flex-direction-column background-color-darkcyan padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
 							<div class="flex-1"></div>
 							<a class="font-size-16px font-Roboto color-white text-decoration-none">
+								{{ item.itemType }}
+							</a>
+							<div class="flex-1"></div>
+						</div>
+						<div v-if="itemHierarchyType(item)" class="display-flex flex-direction-column background-color-darkcyan padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
+							<div class="flex-1"></div>
+							<a class="font-size-16px font-Roboto color-white text-decoration-none">
 								{{ itemHierarchyType(item) }}
 							</a>
 							<div class="flex-1"></div>

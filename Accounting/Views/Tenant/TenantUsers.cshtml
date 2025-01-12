@@ -12,7 +12,7 @@
 <template id="user-action-template">
   <div class="display-flex padding-top-bottom-2px">
     <div class="display-flex flex-1">
-      <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ user.email }}</a>
+      <a href="#" @@click.prevent="toggleAction" class="margin-right-5px white-space-nowrap">{{ user.email }}</a>
       <span v-if="isExpanded" class="display-flex margin-left-2px">
         <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
           <div class="flex-1"></div>

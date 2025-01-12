@@ -132,6 +132,16 @@ namespace Accounting.Service
       return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/create-log-directory.log");
     }
 
+    public async Task<string> InstallNginxResultAsync(string? ipv4, string sshPrivate)
+    {
+      return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/install-nginx.log");
+    }
+
+    public async Task<string> InstallNginxAsync(string ipAddress, string privateKey)
+    {
+      return await ExecuteCommandAsync(ipAddress, privateKey, "nohup apt install nginx -y > /var/log/accounting/install-nginx.log 2>&1 &");
+    }
+
     public class DigitalOceanService
     {
       private readonly SecretService _secretService;
@@ -162,13 +172,36 @@ namespace Accounting.Service
 
         var sshKeyResponse = await client.Keys.Create(sshKeyRequest);
 
+        string setupScript = """
+#!/bin/bash
+
+# Update package lists
+sudo apt update > /dev/null 2>&1
+
+# Install Nginx
+sudo apt install -y nginx > /dev/null 2>&1
+
+# Install .NET SDK
+sudo snap install dotnet-sdk --channel=8.0/stable --classic > /dev/null 2>&1
+
+# Clone repository
+git clone https://github.com/denys-olleik/accounting /opt/accounting > /dev/null 2>&1
+
+# Create log directory
+sudo mkdir -p /var/log/accounting > /dev/null 2>&1
+
+# Indicate successful setup
+echo "Setup completed successfully" > /var/log/custom-setup.log
+""";
+
         var dropletRequest = new DigitalOcean.API.Models.Requests.Droplet()
         {
           Name = tenant.FullyQualifiedDomainName,
           Region = "nyc",
           Size = "s-1vcpu-512mb-10gb",
           Image = "ubuntu-24-04-x64",
-          SshKeys = new List<object> { sshKeyResponse.Fingerprint }
+          SshKeys = new List<object> { sshKeyResponse.Fingerprint },
+          UserData = setupScript
         };
 
         var dropletResponse = await client.Droplets.Create(dropletRequest);
