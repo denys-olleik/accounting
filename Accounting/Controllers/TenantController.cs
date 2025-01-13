@@ -630,7 +630,8 @@ namespace Accounting.Controllers
       DeleteTenantViewModel model = new DeleteTenantViewModel()
       {
         TenantId = tenant.TenantID,
-        DeleteDatabase = deleteDatabase
+        DeleteDatabase = deleteDatabase,
+        DatabaseName = tenant.DatabaseName
       };
 
       return View(model);

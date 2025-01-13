@@ -11,20 +11,24 @@
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <form asp-action="Delete" asp-asp-controller="Tenant" method="post"
-      class="display-flex flex-direction-column margin-bottom-5px">
+  class="display-flex flex-direction-column margin-bottom-5px">
 
   <input asp-for="TenantId" type="hidden" />
 
-  <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite margin-bottom-5px">
-    <span>
-      <input asp-for="DeleteDatabase" class="font-size-20px" readonly />
-      <label asp-for="DeleteDatabase">Delete database</label>
-    </span>
-  </div>
-
+  @if (!string.IsNullOrEmpty(Model.DatabaseName))
+  {
+    <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite margin-bottom-5px">
+      <span>
+        <input asp-for="DeleteDatabase" class="font-size-20px" readonly />
+        <label asp-for="DeleteDatabase">Delete database</label>
+      </span>
+    </div>
+  }
+  
   <div class="display-flex">
     <div class="flex-1">
-      <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Tenants", "Tenant")';">Cancel</button>
+      <button class="full-width-regular-button width-100" type="button"
+        onclick="event.preventDefault(); window.location.href='@Url.Action("Tenants", "Tenant")';">Cancel</button>
     </div>
     <div class="width-5px"></div>
     <div class="flex-1">
