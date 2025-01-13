@@ -187,6 +187,9 @@ sudo snap install dotnet-sdk --channel=8.0/stable --classic > /dev/null 2>&1
 # Install PostgreSQL
 sudo apt install -y postgresql > /dev/null 2>&1
 
+# Install PostGIS
+sudo apt install -y postgis > /dev/null 2>&1
+
 # Clone repository
 git clone https://github.com/denys-olleik/accounting /opt/accounting > /dev/null 2>&1
 
