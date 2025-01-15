@@ -195,6 +195,9 @@ sudo apt-get update > /dev/null 2>&1
 
 # Install the .NET SDK
 sudo apt-get install -y dotnet-sdk-8.0 > /dev/null 2>&1
+
+# Update .NET workloads
+dotnet workload update > /dev/null 2>&1
 # ----------------
 
 # Install PostgreSQL
