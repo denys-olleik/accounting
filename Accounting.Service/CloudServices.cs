@@ -92,55 +92,55 @@ namespace Accounting.Service
       return result;
     }
 
-    public async Task<string> UpdateAptAsync(string ipv4, string privateKey)
-    {
-      return await ExecuteCommandAsync(ipv4, privateKey, "nohup apt update > /var/log/accounting/apt-update.log 2>&1 &");
-    }
+    //public async Task<string> UpdateAptAsync(string ipv4, string privateKey)
+    //{
+    //  return await ExecuteCommandAsync(ipv4, privateKey, "nohup apt update > /var/log/accounting/apt-update.log 2>&1 &");
+    //}
 
-    public async Task<string> UpdateAptResultAsync(string ipv4, string privateKey)
-    {
-      return await ExecuteCommandAsync(ipv4, privateKey, "cat /var/log/accounting/apt-update.log");
-    }
+    //public async Task<string> UpdateAptResultAsync(string ipv4, string privateKey)
+    //{
+    //  return await ExecuteCommandAsync(ipv4, privateKey, "cat /var/log/accounting/apt-update.log");
+    //}
 
-    public async Task<string> InstallDotnetSdkAsync(string ipv4, string privateKey)
-    {
-      return await ExecuteCommandAsync(ipv4, privateKey, "nohup sudo snap install dotnet-sdk --channel=8.0/stable --classic > /var/log/accounting/install-dotnet.log 2>&1 &");
-    }
+    //public async Task<string> InstallDotnetSdkAsync(string ipv4, string privateKey)
+    //{
+    //  return await ExecuteCommandAsync(ipv4, privateKey, "nohup sudo snap install dotnet-sdk --channel=8.0/stable --classic > /var/log/accounting/install-dotnet.log 2>&1 &");
+    //}
 
-    public async Task<string> InstallDotnetResultAsync(string? ipv4, string sshPrivate)
-    {
-      return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/install-dotnet.log");
-    }
+    //public async Task<string> InstallDotnetResultAsync(string? ipv4, string sshPrivate)
+    //{
+    //  return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/install-dotnet.log");
+    //}
 
-    public async Task<string> CloneRepositoryAsync(string ipv4, string privateKey, string repoUrl)
-    {
-      return await ExecuteCommandAsync(ipv4, privateKey, $"nohup git clone {repoUrl} /opt/accounting > /var/log/accounting/git-clone.log 2>&1 &");
-    }
+    //public async Task<string> CloneRepositoryAsync(string ipv4, string privateKey, string repoUrl)
+    //{
+    //  return await ExecuteCommandAsync(ipv4, privateKey, $"nohup git clone {repoUrl} /opt/accounting > /var/log/accounting/git-clone.log 2>&1 &");
+    //}
 
-    public async Task<string> CloneRepositoryResultAsync(string ipv4, string privateKey)
-    {
-      return await ExecuteCommandAsync(ipv4, privateKey, "cat /var/log/accounting/git-clone.log");
-    }
+    //public async Task<string> CloneRepositoryResultAsync(string ipv4, string privateKey)
+    //{
+    //  return await ExecuteCommandAsync(ipv4, privateKey, "cat /var/log/accounting/git-clone.log");
+    //}
 
-    public async Task<string> CreateLogDirectoryAsync(string ipv4, string privateKey)
-    {
-      return await ExecuteCommandAsync(ipv4, privateKey, "mkdir -p /var/log/accounting && echo 'Log directory created successfully' > /var/log/accounting/create-log-directory.log");
-    }
+    //public async Task<string> CreateLogDirectoryAsync(string ipv4, string privateKey)
+    //{
+    //  return await ExecuteCommandAsync(ipv4, privateKey, "mkdir -p /var/log/accounting && echo 'Log directory created successfully' > /var/log/accounting/create-log-directory.log");
+    //}
 
-    public async Task<string> CreateLogDirectoryResultAsync(string? ipv4, string sshPrivate)
-    {
-      return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/create-log-directory.log");
-    }
+    //public async Task<string> CreateLogDirectoryResultAsync(string? ipv4, string sshPrivate)
+    //{
+    //  return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/create-log-directory.log");
+    //}
 
-    public async Task<string> InstallNginxResultAsync(string? ipv4, string sshPrivate)
-    {
-      return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/install-nginx.log");
-    }
+    //public async Task<string> InstallNginxResultAsync(string? ipv4, string sshPrivate)
+    //{
+    //  return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/install-nginx.log");
+    //}
 
-    public async Task<string> InstallNginxAsync(string ipAddress, string privateKey)
-    {
-      return await ExecuteCommandAsync(ipAddress, privateKey, "nohup apt install nginx -y > /var/log/accounting/install-nginx.log 2>&1 &");
-    }
+    //public async Task<string> InstallNginxAsync(string ipAddress, string privateKey)
+    //{
+    //  return await ExecuteCommandAsync(ipAddress, privateKey, "nohup apt install nginx -y > /var/log/accounting/install-nginx.log 2>&1 &");
+    //}
 
     public class DigitalOceanService
     {
@@ -176,19 +176,32 @@ namespace Accounting.Service
 #!/bin/bash
 
 # Update package lists
-sudo apt update > /dev/null 2>&1
+sudo apt-get update > /dev/null 2>&1
 
 # Install Nginx
-sudo apt install -y nginx > /dev/null 2>&1
+sudo apt-get install -y nginx > /dev/null 2>&1
 
 # Install .NET SDK
-sudo snap install dotnet-sdk --channel=8.0/stable --classic > /dev/null 2>&1
+# ----------------
+# Install required packages
+sudo apt-get install -y wget gpg > /dev/null 2>&1
+
+# Add Microsoft GPG key and repository
+wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb > /dev/null 2>&1
+sudo dpkg -i packages-microsoft-prod.deb > /dev/null 2>&1
+
+# Update package index
+sudo apt-get update > /dev/null 2>&1
+
+# Install the .NET SDK
+sudo apt-get install -y dotnet-sdk-8.0 > /dev/null 2>&1
+# ----------------
 
 # Install PostgreSQL
-sudo apt install -y postgresql > /dev/null 2>&1
+sudo apt-get install -y postgresql > /dev/null 2>&1
 
 # Install PostGIS
-sudo apt install -y postgis > /dev/null 2>&1
+sudo apt-get install -y postgis > /dev/null 2>&1
 
 # Clone repository
 git clone https://github.com/denys-olleik/accounting /opt/accounting > /dev/null 2>&1

@@ -45,90 +45,90 @@ namespace Accounting.Controllers
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
     }
 
-    [Route("download-install-nginx-output/{tenantId}")]
-    [HttpGet]
-    public async Task<IActionResult> DownloadInstallNginxOutput(int tenantId)
-    {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
-      if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
-      {
-        return NotFound();
-      }
+    //[Route("download-install-nginx-output/{tenantId}")]
+    //[HttpGet]
+    //public async Task<IActionResult> DownloadInstallNginxOutput(int tenantId)
+    //{
+    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
+    //  if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
+    //  {
+    //    return NotFound();
+    //  }
 
-      string fileContent = await _cloudServices.InstallNginxResultAsync(tenant.Ipv4, tenant.SshPrivate);
+    //  string fileContent = await _cloudServices.InstallNginxResultAsync(tenant.Ipv4, tenant.SshPrivate);
 
-      var fileName = $"install-nginx-output_{tenantId}.txt";
+    //  var fileName = $"install-nginx-output_{tenantId}.txt";
 
-      return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
-    }
+    //  return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
+    //}
 
-    [Route("download-create-log-directory-output/{tenantId}")]
-    [HttpGet]
-    public async Task<IActionResult> DownloadCreateLogDirectoryOutput(int tenantId)
-    {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
-      if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
-      {
-        return NotFound();
-      }
+    //[Route("download-create-log-directory-output/{tenantId}")]
+    //[HttpGet]
+    //public async Task<IActionResult> DownloadCreateLogDirectoryOutput(int tenantId)
+    //{
+    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
+    //  if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
+    //  {
+    //    return NotFound();
+    //  }
 
-      string fileContent = await _cloudServices.CreateLogDirectoryResultAsync(tenant.Ipv4, tenant.SshPrivate);
+    //  string fileContent = await _cloudServices.CreateLogDirectoryResultAsync(tenant.Ipv4, tenant.SshPrivate);
 
-      var fileName = $"create-log-directory-output_{tenantId}.txt";
+    //  var fileName = $"create-log-directory-output_{tenantId}.txt";
 
-      return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
-    }
+    //  return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
+    //}
 
-    [Route("download-clone-repo-output/{tenantId}")]
-    [HttpGet]
-    public async Task<IActionResult> DownloadCloneRepoOutput(int tenantId)
-    {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
-      if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
-      {
-        return NotFound();
-      }
+    //[Route("download-clone-repo-output/{tenantId}")]
+    //[HttpGet]
+    //public async Task<IActionResult> DownloadCloneRepoOutput(int tenantId)
+    //{
+    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
+    //  if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
+    //  {
+    //    return NotFound();
+    //  }
 
-      string fileContent = await _cloudServices.CloneRepositoryResultAsync(tenant.Ipv4, tenant.SshPrivate);
+    //  string fileContent = await _cloudServices.CloneRepositoryResultAsync(tenant.Ipv4, tenant.SshPrivate);
 
-      var fileName = $"clone-repo-output_{tenantId}.txt";
+    //  var fileName = $"clone-repo-output_{tenantId}.txt";
 
-      return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
-    }
+    //  return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
+    //}
 
-    [Route("download-install-dotnet-output/{tenantId}")]
-    [HttpGet]
-    public async Task<IActionResult> DownloadInstallDotnetOutput(int tenantId)
-    {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
-      if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
-      {
-        return NotFound();
-      }
+    //[Route("download-install-dotnet-output/{tenantId}")]
+    //[HttpGet]
+    //public async Task<IActionResult> DownloadInstallDotnetOutput(int tenantId)
+    //{
+    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
+    //  if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
+    //  {
+    //    return NotFound();
+    //  }
 
-      string fileContent = await _cloudServices.InstallDotnetResultAsync(tenant.Ipv4, tenant.SshPrivate);
+    //  string fileContent = await _cloudServices.InstallDotnetResultAsync(tenant.Ipv4, tenant.SshPrivate);
 
-      var fileName = $"install-dotnet-output_{tenantId}.txt";
+    //  var fileName = $"install-dotnet-output_{tenantId}.txt";
 
-      return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
-    }
+    //  return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
+    //}
 
-    [Route("download-update-apt-output/{tenantId}")]
-    [HttpGet]
-    public async Task<IActionResult> DownloadUpdateAptOutput(int tenantId)
-    {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
-      if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
-      {
-        return NotFound();
-      }
+    //[Route("download-update-apt-output/{tenantId}")]
+    //[HttpGet]
+    //public async Task<IActionResult> DownloadUpdateAptOutput(int tenantId)
+    //{
+    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
+    //  if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
+    //  {
+    //    return NotFound();
+    //  }
 
-      string fileContent = await _cloudServices.UpdateAptResultAsync(tenant.Ipv4, tenant.SshPrivate);
+    //  string fileContent = await _cloudServices.UpdateAptResultAsync(tenant.Ipv4, tenant.SshPrivate);
 
-      var fileName = $"update-apt-output_{tenantId}.txt";
+    //  var fileName = $"update-apt-output_{tenantId}.txt";
 
-      return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
-    }
+    //  return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
+    //}
 
     [Route("download-private-key/{tenantId}")]
     [HttpGet]
@@ -801,144 +801,144 @@ namespace Accounting.Controllers
       _secretService = secretService;
     }
 
-    [HttpPost("{tenantId}/install-nginx")]
-    public async Task<IActionResult> InstallNginx(int tenantId)
-    {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
-      if (tenant == null)
-      {
-        return NotFound();
-      }
+    //[HttpPost("{tenantId}/install-nginx")]
+    //public async Task<IActionResult> InstallNginx(int tenantId)
+    //{
+    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
+    //  if (tenant == null)
+    //  {
+    //    return NotFound();
+    //  }
 
-      var cloudServices = new CloudServices(_secretService, _tenantService);
+    //  var cloudServices = new CloudServices(_secretService, _tenantService);
 
-      string ipAddress = tenant.Ipv4;
+    //  string ipAddress = tenant.Ipv4;
 
-      if (string.IsNullOrEmpty(ipAddress))
-      {
-        return BadRequest("IP is null");
-      }
+    //  if (string.IsNullOrEmpty(ipAddress))
+    //  {
+    //    return BadRequest("IP is null");
+    //  }
 
-      string privateKey = tenant.SshPrivate;
+    //  string privateKey = tenant.SshPrivate;
 
-      if (string.IsNullOrEmpty(ipAddress) || string.IsNullOrEmpty(privateKey))
-      {
-        return BadRequest("Tenant does not have a valid IP address or SSH private key.");
-      }
+    //  if (string.IsNullOrEmpty(ipAddress) || string.IsNullOrEmpty(privateKey))
+    //  {
+    //    return BadRequest("Tenant does not have a valid IP address or SSH private key.");
+    //  }
 
-      string result = await cloudServices.InstallNginxAsync(ipAddress, privateKey);
+    //  string result = await cloudServices.InstallNginxAsync(ipAddress, privateKey);
 
-      return Ok(result);
-    }
+    //  return Ok(result);
+    //}
 
-    [HttpPost("{tenantId}/create-log-directory")]
-    public async Task<IActionResult> CreateLogDirectory(int tenantId)
-    {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
-      if (tenant == null)
-      {
-        return NotFound();
-      }
-      var cloudServices = new CloudServices(_secretService, _tenantService);
-      string ipAddress = tenant.Ipv4;
-      if (string.IsNullOrEmpty(ipAddress))
-      {
-        return BadRequest("IP is null");
-      }
-      string privateKey = tenant.SshPrivate;
-      if (string.IsNullOrEmpty(privateKey))
-      {
-        return BadRequest("Tenant does not have a valid SSH private key.");
-      }
-      string result = await cloudServices.CreateLogDirectoryAsync(ipAddress, privateKey);
-      return Ok(result);
-    }
+    //[HttpPost("{tenantId}/create-log-directory")]
+    //public async Task<IActionResult> CreateLogDirectory(int tenantId)
+    //{
+    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
+    //  if (tenant == null)
+    //  {
+    //    return NotFound();
+    //  }
+    //  var cloudServices = new CloudServices(_secretService, _tenantService);
+    //  string ipAddress = tenant.Ipv4;
+    //  if (string.IsNullOrEmpty(ipAddress))
+    //  {
+    //    return BadRequest("IP is null");
+    //  }
+    //  string privateKey = tenant.SshPrivate;
+    //  if (string.IsNullOrEmpty(privateKey))
+    //  {
+    //    return BadRequest("Tenant does not have a valid SSH private key.");
+    //  }
+    //  string result = await cloudServices.CreateLogDirectoryAsync(ipAddress, privateKey);
+    //  return Ok(result);
+    //}
 
-    [HttpPost("{tenantId}/clone-repo")]
-    public async Task<IActionResult> CloneRepository(int tenantId)
-    {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
-      if (tenant == null)
-      {
-        return NotFound();
-      }
+    //[HttpPost("{tenantId}/clone-repo")]
+    //public async Task<IActionResult> CloneRepository(int tenantId)
+    //{
+    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
+    //  if (tenant == null)
+    //  {
+    //    return NotFound();
+    //  }
 
-      var cloudServices = new CloudServices(_secretService, _tenantService);
+    //  var cloudServices = new CloudServices(_secretService, _tenantService);
 
-      string ipAddress = tenant.Ipv4;
-      if (string.IsNullOrEmpty(ipAddress))
-      {
-        return BadRequest("IP is null");
-      }
+    //  string ipAddress = tenant.Ipv4;
+    //  if (string.IsNullOrEmpty(ipAddress))
+    //  {
+    //    return BadRequest("IP is null");
+    //  }
 
-      string privateKey = tenant.SshPrivate;
-      if (string.IsNullOrEmpty(privateKey))
-      {
-        return BadRequest("Tenant does not have a valid SSH private key.");
-      }
+    //  string privateKey = tenant.SshPrivate;
+    //  if (string.IsNullOrEmpty(privateKey))
+    //  {
+    //    return BadRequest("Tenant does not have a valid SSH private key.");
+    //  }
 
-      string result = await cloudServices.CloneRepositoryAsync(ipAddress, privateKey, "https://github.com/denys-olleik/accounting");
+    //  string result = await cloudServices.CloneRepositoryAsync(ipAddress, privateKey, "https://github.com/denys-olleik/accounting");
 
-      return Ok(result);
-    }
+    //  return Ok(result);
+    //}
 
-    [HttpPost("{tenantId}/install-dotnet")]
-    public async Task<IActionResult> InstallDotnet(int tenantId)
-    {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
-      if (tenant == null)
-      {
-        return NotFound();
-      }
+    //[HttpPost("{tenantId}/install-dotnet")]
+    //public async Task<IActionResult> InstallDotnet(int tenantId)
+    //{
+    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
+    //  if (tenant == null)
+    //  {
+    //    return NotFound();
+    //  }
 
-      var cloudServices = new CloudServices(_secretService, _tenantService);
+    //  var cloudServices = new CloudServices(_secretService, _tenantService);
 
-      string ipAddress = tenant.Ipv4;
-      if (string.IsNullOrEmpty(ipAddress))
-      {
-        return BadRequest("IP is null");
-      }
+    //  string ipAddress = tenant.Ipv4;
+    //  if (string.IsNullOrEmpty(ipAddress))
+    //  {
+    //    return BadRequest("IP is null");
+    //  }
 
-      string privateKey = tenant.SshPrivate;
+    //  string privateKey = tenant.SshPrivate;
 
-      if (string.IsNullOrEmpty(ipAddress) || string.IsNullOrEmpty(privateKey))
-      {
-        return BadRequest("Tenant does not have a valid IP address or SSH private key.");
-      }
+    //  if (string.IsNullOrEmpty(ipAddress) || string.IsNullOrEmpty(privateKey))
+    //  {
+    //    return BadRequest("Tenant does not have a valid IP address or SSH private key.");
+    //  }
 
-      string result = await cloudServices.InstallDotnetSdkAsync(ipAddress, privateKey);
+    //  string result = await cloudServices.InstallDotnetSdkAsync(ipAddress, privateKey);
 
-      return Ok(result);
-    }
+    //  return Ok(result);
+    //}
 
-    [HttpPost("{tenantId}/update-apt")]
-    public async Task<IActionResult> UpdateApt(int tenantId)
-    {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
-      if (tenant == null)
-      {
-        return NotFound();
-      }
+    //[HttpPost("{tenantId}/update-apt")]
+    //public async Task<IActionResult> UpdateApt(int tenantId)
+    //{
+    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
+    //  if (tenant == null)
+    //  {
+    //    return NotFound();
+    //  }
 
-      var cloudServices = new CloudServices(_secretService, _tenantService);
+    //  var cloudServices = new CloudServices(_secretService, _tenantService);
 
-      string ipAddress = tenant.Ipv4;
-      if (string.IsNullOrEmpty(ipAddress))
-      {
-        return BadRequest("IP is null");
-      }
+    //  string ipAddress = tenant.Ipv4;
+    //  if (string.IsNullOrEmpty(ipAddress))
+    //  {
+    //    return BadRequest("IP is null");
+    //  }
 
-      string privateKey = tenant.SshPrivate;
+    //  string privateKey = tenant.SshPrivate;
 
-      if (string.IsNullOrEmpty(ipAddress) || string.IsNullOrEmpty(privateKey))
-      {
-        return BadRequest("Tenant does not have a valid IP address or SSH private key.");
-      }
+    //  if (string.IsNullOrEmpty(ipAddress) || string.IsNullOrEmpty(privateKey))
+    //  {
+    //    return BadRequest("Tenant does not have a valid IP address or SSH private key.");
+    //  }
 
-      string result = await cloudServices.UpdateAptAsync(ipAddress, privateKey);
+    //  string result = await cloudServices.UpdateAptAsync(ipAddress, privateKey);
 
-      return Ok(result);
-    }
+    //  return Ok(result);
+    //}
 
     [HttpPost("{tenantId}/execute-command")]
     public async Task<IActionResult> ExecuteCommand(int tenantId, [FromBody] ExecuteCommandViewModel model)
