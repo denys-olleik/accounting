@@ -209,6 +209,9 @@ sudo apt-get install -y postgis > /dev/null 2>&1
 # Clone repository
 git clone https://github.com/denys-olleik/accounting /opt/accounting > /dev/null 2>&1
 
+# Build the .NET project
+dotnet build /opt/accounting/Accounting/Accounting.csproj > /dev/null 2>&1
+
 # Create log directory
 sudo mkdir -p /var/log/accounting > /dev/null 2>&1
 
