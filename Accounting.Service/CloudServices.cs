@@ -212,7 +212,8 @@ sudo apt-get install -y postgis > /var/log/accounting/postgis-install.log 2>&1
 git clone https://github.com/denys-olleik/accounting /opt/accounting > /var/log/accounting/git-clone.log 2>&1
 
 # Build the .NET project
-# dotnet build /opt/accounting/Accounting/Accounting.csproj > /var/log/accounting/dotnet-build.log 2>&1
+export DOTNET_CLI_HOME=/root
+dotnet build /opt/accounting/Accounting/Accounting.csproj > /var/log/accounting/dotnet-build.log 2>&1
 
 # Indicate successful setup
 echo "Setup completed successfully" > /var/log/custom-setup.log
@@ -222,7 +223,7 @@ echo "Setup completed successfully" > /var/log/custom-setup.log
         {
           Name = tenant.FullyQualifiedDomainName,
           Region = "nyc",
-          Size = "s-1vcpu-512mb-10gb",
+          Size = "s-1vcpu-1gb",
           Image = "ubuntu-24-04-x64",
           SshKeys = new List<object> { sshKeyResponse.Fingerprint },
           UserData = setupScript
