@@ -174,46 +174,45 @@ namespace Accounting.Service
 
         string setupScript = """
 #!/bin/bash
+# Create log directory
+sudo mkdir -p /var/log/accounting > /dev/null 2>&1
 
 # Update package lists
-sudo apt-get update > /dev/null 2>&1
+sudo apt-get update > /var/log/accounting/apt-update.log 2>&1
 
 # Install Nginx
-sudo apt-get install -y nginx > /dev/null 2>&1
+sudo apt-get install -y nginx > /var/log/accounting/nginx-install.log 2>&1
 
 # Install .NET SDK
 # ----------------
 # Install required packages
-sudo apt-get install -y wget gpg > /dev/null 2>&1
+sudo apt-get install -y wget gpg > /var/log/accounting/dotnet-install.log 2>&1
 
 # Add Microsoft GPG key and repository
-wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb > /dev/null 2>&1
-sudo dpkg -i packages-microsoft-prod.deb > /dev/null 2>&1
+wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb >> /var/log/accounting/dotnet-install.log 2>&1
+sudo dpkg -i packages-microsoft-prod.deb >> /var/log/accounting/dotnet-install.log 2>&1
 
 # Update package index
-sudo apt-get update > /dev/null 2>&1
+sudo apt-get update >> /var/log/accounting/dotnet-install.log 2>&1
 
 # Install the .NET SDK
-sudo apt-get install -y dotnet-sdk-8.0 > /dev/null 2>&1
+sudo apt-get install -y dotnet-sdk-8.0 >> /var/log/accounting/dotnet-install.log 2>&1
 
 # Update .NET workloads
-dotnet workload update > /dev/null 2>&1
+dotnet workload update >> /var/log/accounting/dotnet-install.log 2>&1
 # ----------------
 
 # Install PostgreSQL
-sudo apt-get install -y postgresql > /dev/null 2>&1
+sudo apt-get install -y postgresql > /var/log/accounting/postgresql-install.log 2>&1
 
 # Install PostGIS
-sudo apt-get install -y postgis > /dev/null 2>&1
+sudo apt-get install -y postgis > /var/log/accounting/postgis-install.log 2>&1
 
 # Clone repository
-git clone https://github.com/denys-olleik/accounting /opt/accounting > /dev/null 2>&1
+git clone https://github.com/denys-olleik/accounting /opt/accounting > /var/log/accounting/git-clone.log 2>&1
 
 # Build the .NET project
-dotnet build /opt/accounting/Accounting/Accounting.csproj > /dev/null 2>&1
-
-# Create log directory
-sudo mkdir -p /var/log/accounting > /dev/null 2>&1
+# dotnet build /opt/accounting/Accounting/Accounting.csproj > /var/log/accounting/dotnet-build.log 2>&1
 
 # Indicate successful setup
 echo "Setup completed successfully" > /var/log/custom-setup.log
