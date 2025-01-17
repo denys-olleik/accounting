@@ -205,6 +205,16 @@ dotnet workload update >> /var/log/accounting/dotnet-install.log 2>&1
 # Install PostgreSQL
 sudo apt-get install -y postgresql > /var/log/accounting/postgresql-install.log 2>&1
 
+# Set PostgreSQL password
+sudo -i -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'password';" > /var/log/accounting/postgres-password.log 2>&1
+
+# Update pg_hba.conf to use scram-sha-256 /etc/postgresql/16/main/pg_hba.conf
+
+sudo -i -u postgres psql -c "CREATE DATABASE Accounting;"
+
+# Restart PostgreSQL
+sudo systemctl restart postgresql
+
 # Install PostGIS
 sudo apt-get install -y postgis > /var/log/accounting/postgis-install.log 2>&1
 
