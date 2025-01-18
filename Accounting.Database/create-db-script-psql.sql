@@ -3,6 +3,7 @@
 	"TenantID" SERIAL PRIMARY KEY NOT NULL,
 	"PublicId" VARCHAR(10) NOT NULL UNIQUE,
 	"DatabaseName" VARCHAR(100) NULL,
+	"DatabasePassword" VARCHAR(100) NULL,
 	"FullyQualifiedDomainName" VARCHAR(100) NULL, -- accounting.example.com
 	"Email" VARCHAR(100) NOT NULL UNIQUE,
 	"DropletId" BIGINT NULL,
@@ -604,7 +605,7 @@ CREATE TABLE "Secret"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
-INSERT INTO "Secret" ("Master", "Value", "Type") VALUES
+INSERT INTO "Secret" ("Master", "Value", "Type") VALUES -- can be set in appsettings.Development.json, but this is the final fallback
 ('false', 'false', 'tenant-management');
 
 CREATE UNIQUE INDEX unique_master_per_organization

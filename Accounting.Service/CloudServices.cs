@@ -92,56 +92,6 @@ namespace Accounting.Service
       return result;
     }
 
-    //public async Task<string> UpdateAptAsync(string ipv4, string privateKey)
-    //{
-    //  return await ExecuteCommandAsync(ipv4, privateKey, "nohup apt update > /var/log/accounting/apt-update.log 2>&1 &");
-    //}
-
-    //public async Task<string> UpdateAptResultAsync(string ipv4, string privateKey)
-    //{
-    //  return await ExecuteCommandAsync(ipv4, privateKey, "cat /var/log/accounting/apt-update.log");
-    //}
-
-    //public async Task<string> InstallDotnetSdkAsync(string ipv4, string privateKey)
-    //{
-    //  return await ExecuteCommandAsync(ipv4, privateKey, "nohup sudo snap install dotnet-sdk --channel=8.0/stable --classic > /var/log/accounting/install-dotnet.log 2>&1 &");
-    //}
-
-    //public async Task<string> InstallDotnetResultAsync(string? ipv4, string sshPrivate)
-    //{
-    //  return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/install-dotnet.log");
-    //}
-
-    //public async Task<string> CloneRepositoryAsync(string ipv4, string privateKey, string repoUrl)
-    //{
-    //  return await ExecuteCommandAsync(ipv4, privateKey, $"nohup git clone {repoUrl} /opt/accounting > /var/log/accounting/git-clone.log 2>&1 &");
-    //}
-
-    //public async Task<string> CloneRepositoryResultAsync(string ipv4, string privateKey)
-    //{
-    //  return await ExecuteCommandAsync(ipv4, privateKey, "cat /var/log/accounting/git-clone.log");
-    //}
-
-    //public async Task<string> CreateLogDirectoryAsync(string ipv4, string privateKey)
-    //{
-    //  return await ExecuteCommandAsync(ipv4, privateKey, "mkdir -p /var/log/accounting && echo 'Log directory created successfully' > /var/log/accounting/create-log-directory.log");
-    //}
-
-    //public async Task<string> CreateLogDirectoryResultAsync(string? ipv4, string sshPrivate)
-    //{
-    //  return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/create-log-directory.log");
-    //}
-
-    //public async Task<string> InstallNginxResultAsync(string? ipv4, string sshPrivate)
-    //{
-    //  return await ExecuteCommandAsync(ipv4!, sshPrivate, "cat /var/log/accounting/install-nginx.log");
-    //}
-
-    //public async Task<string> InstallNginxAsync(string ipAddress, string privateKey)
-    //{
-    //  return await ExecuteCommandAsync(ipAddress, privateKey, "nohup apt install nginx -y > /var/log/accounting/install-nginx.log 2>&1 &");
-    //}
-
     public class DigitalOceanService
     {
       private readonly SecretService _secretService;
@@ -153,7 +103,7 @@ namespace Accounting.Service
         _tenantService = tenantService;
       }
 
-      public async Task CreateDropletAsync(Tenant tenant, int organizationId)
+      public async Task CreateDropletAsync(Tenant tenant, int organizationId, string databasePassword)
       {
         Secret? cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, organizationId);
         if (cloudSecret == null)
@@ -172,7 +122,7 @@ namespace Accounting.Service
 
         var sshKeyResponse = await client.Keys.Create(sshKeyRequest);
 
-        string setupScript = """
+        string setupScript = $"""
 #!/bin/bash
 # Create log directory
 sudo mkdir -p /var/log/accounting > /dev/null 2>&1
@@ -206,11 +156,9 @@ dotnet workload update >> /var/log/accounting/dotnet-install.log 2>&1
 sudo apt-get install -y postgresql > /var/log/accounting/postgresql-install.log 2>&1
 
 # Set PostgreSQL password
-sudo -i -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'password';" > /var/log/accounting/postgres-password.log 2>&1
+sudo -i -u postgres psql -c "ALTER USER postgres WITH PASSWORD '{databasePassword}';" > /var/log/accounting/postgres-password.log 2>&1
 
 # Update pg_hba.conf to use scram-sha-256 /etc/postgresql/16/main/pg_hba.conf
-
-sudo -i -u postgres psql -c "CREATE DATABASE Accounting;"
 
 # Restart PostgreSQL
 sudo systemctl restart postgresql
@@ -220,6 +168,10 @@ sudo apt-get install -y postgis > /var/log/accounting/postgis-install.log 2>&1
 
 # Clone repository
 git clone https://github.com/denys-olleik/accounting /opt/accounting > /var/log/accounting/git-clone.log 2>&1
+
+# Create database
+sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
+sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/create-db-script-psql.sql > /var/log/accounting/create-db.log 2>&1
 
 # Build the .NET project
 export DOTNET_CLI_HOME=/root

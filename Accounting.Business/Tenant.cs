@@ -7,6 +7,7 @@ namespace Accounting.Business
     public int TenantID { get; set; }
     public string? PublicId { get; set; }
     public string? DatabaseName { get; set; }
+    public string? DatabasePassword { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
     public string? Email { get; set; }
     public long? DropletId { get; set; }

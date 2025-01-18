@@ -6021,6 +6021,7 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@FullyQualifiedDomainName", entity.FullyQualifiedDomainName);
         p.Add("@Email", entity.Email);
+        p.Add("@DatabasePassword", entity.DatabasePassword);
         p.Add("@DropletId", entity.DropletId);
         p.Add("@Ipv4", entity.Ipv4);
         p.Add("@SshPublic", entity.SshPublic);
@@ -6028,11 +6029,12 @@ namespace Accounting.Database
         using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
         {
           result = await con.QueryAsync<Tenant>("""
-            INSERT INTO "Tenant" ("PublicId", "FullyQualifiedDomainName", "Email", "DropletId", "Ipv4", "SshPublic")
+            INSERT INTO "Tenant" ("PublicId", "FullyQualifiedDomainName", "Email", "DatabasePassword", "DropletId", "Ipv4", "SshPublic")
             VALUES (
               substr(md5(random()::text), 1, 10), -- Random alphanumeric string
               @FullyQualifiedDomainName, 
               @Email, 
+              @DatabasePassword,
               @DropletId, 
               @Ipv4, 
               @SshPublic

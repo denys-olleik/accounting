@@ -723,14 +723,15 @@ namespace Accounting.Controllers
           tenant = await _tenantService.CreateAsync(new Tenant()
           {
             Email = model.Email,
-            FullyQualifiedDomainName = model.FullyQualifiedDomainName
+            FullyQualifiedDomainName = model.FullyQualifiedDomainName,
+            DatabasePassword = RandomHelper.GenerateSecureAlphanumericString(20),
           });
 
           var cloudServices = new CloudServices(_secretService, _tenantService);
 
           try
           {
-            await cloudServices.GetDigitalOceanService().CreateDropletAsync(tenant, GetOrganizationId());
+            await cloudServices.GetDigitalOceanService().CreateDropletAsync(tenant, GetOrganizationId(), tenant.DatabasePassword);
           }
           catch (ApiException e)
           {
