@@ -159,6 +159,7 @@ sudo apt-get install -y postgresql > /var/log/accounting/postgresql-install.log 
 sudo -i -u postgres psql -c "ALTER USER postgres WITH PASSWORD '{databasePassword}';" > /var/log/accounting/postgres-password.log 2>&1
 
 # Update pg_hba.conf to use scram-sha-256 /etc/postgresql/16/main/pg_hba.conf
+# sudo sed -i '/^local\s\+all\s\+postgres\s\+peer/c\local   all             postgres                                scram-sha-256' /etc/postgresql/16/main/pg_hba.conf > /var/log/accounting/postgres-hba.log 2>&1
 
 # Restart PostgreSQL
 sudo systemctl restart postgresql
@@ -170,8 +171,8 @@ sudo apt-get install -y postgis > /var/log/accounting/postgis-install.log 2>&1
 git clone https://github.com/denys-olleik/accounting /opt/accounting > /var/log/accounting/git-clone.log 2>&1
 
 # Create database
-sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
-sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/create-db-script-psql.sql > /var/log/accounting/create-db.log 2>&1
+# sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
+# sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/create-db-script-psql.sql > /var/log/accounting/create-db.log 2>&1
 
 # Build the .NET project
 export DOTNET_CLI_HOME=/root
