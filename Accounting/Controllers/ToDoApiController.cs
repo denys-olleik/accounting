@@ -17,8 +17,8 @@ namespace Accounting.Controllers
 
     public ToDoApiController(RequestContext requestContext, ToDoService toDoService, UserTaskService userTaskService)
     {
-      _toDoService = new ToDoService(requestContext.DatabaseName);
-      _userTaskService = new UserTaskService(requestContext.DatabaseName);
+      _toDoService = new ToDoService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _userTaskService = new UserTaskService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [HttpGet("get-todos")]

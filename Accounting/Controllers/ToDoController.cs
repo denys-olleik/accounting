@@ -31,11 +31,11 @@ namespace Accounting.Controllers
       ToDoService toDoService, 
       ToDoTagService toDoTagService)
     {
-      _tagService = new TagService(requestContext.DatabaseName);
-      _userService = new UserService(requestContext.DatabaseName);
-      _userTaskService = new UserTaskService(requestContext.DatabaseName);
-      _toDoService = new ToDoService(requestContext.DatabaseName);
-      _toDoTagService = new ToDoTagService(requestContext.DatabaseName);
+      _tagService = new TagService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _userService = new UserService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _userTaskService = new UserTaskService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _toDoService = new ToDoService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _toDoTagService = new ToDoTagService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [Route("todos")]

@@ -17,19 +17,16 @@ namespace Accounting.Controllers
     private readonly UserOrganizationService _userOrganizationService;
     private readonly UserService _userService;
     private readonly SecretService _secretService;
-    private readonly TenantService _tenantService;
 
     public UserController(
       RequestContext requestContext,
       UserOrganizationService userOrganizationService,
       UserService userService,
-      SecretService secretService,
-      TenantService tenantService)
+      SecretService secretService)
     {
-      _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
-      _userService = new UserService(requestContext.DatabaseName);
-      _secretService = new SecretService(requestContext.DatabaseName);
-      _tenantService = new TenantService(requestContext.DatabaseName);
+      _userOrganizationService = new UserOrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _userService = new UserService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _secretService = new SecretService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [HttpGet]
