@@ -221,7 +221,8 @@ namespace Accounting.Controllers
             user,
             userOrganization.Organization.OrganizationID,
             userOrganization.Organization.Name,
-            tenant.DatabaseName);
+            tenant.DatabaseName,
+            tenant.DatabasePassword);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
           claimsPrincipal,

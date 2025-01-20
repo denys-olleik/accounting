@@ -7,22 +7,25 @@ namespace Accounting.Service
   public class JournalInvoiceInvoiceLineService
   {
     private readonly string _databaseName;
+    private readonly string _databasePassword;
     private readonly InvoiceLineService _invoiceLineService;
     private readonly JournalService _journalService;
 
     public JournalInvoiceInvoiceLineService(
       InvoiceLineService invoiceLineService,
       JournalService journalService,
+      string databasePassword = "password",
       string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
+      _databasePassword = databasePassword;
       _invoiceLineService = invoiceLineService;
       _journalService = journalService;
     }
 
     public async Task<JournalInvoiceInvoiceLine> CreateAsync(JournalInvoiceInvoiceLine journalInvoiceInvoiceLine)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetJournalInvoiceInvoiceLineManager().CreateAsync(journalInvoiceInvoiceLine);
     }
 
@@ -34,7 +37,7 @@ namespace Accounting.Service
       int userId,
       int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       var journalInvoiceInvoiceLineManager = factoryManager.GetJournalInvoiceInvoiceLineManager();
       var transactionGuid = GuidExtensions.CreateSecureGuid();
 
@@ -163,13 +166,13 @@ namespace Accounting.Service
 
     public async Task<List<InvoiceLine>> GetByInvoiceIdAsync(int invoiceID, int organizationId, bool onlyCurrent = false)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetJournalInvoiceInvoiceLineManager().GetByInvoiceIdAsync(invoiceID, organizationId, onlyCurrent);
     }
 
     public async Task<List<JournalInvoiceInvoiceLine>> GetAllAsync(int invoiceId, int organizationId, bool includeRemoved)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetJournalInvoiceInvoiceLineManager().GetAllAsync(invoiceId, organizationId, includeRemoved);
     }
   }

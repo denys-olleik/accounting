@@ -27,7 +27,7 @@ namespace Accounting.Controllers
       _invoiceLineService = new InvoiceLineService((requestContext.DatabaseName));
       _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName);
       _invoiceService = new InvoiceService(journalService, _journalInvoiceInvoiceLineService,  requestContext.DatabaseName);
-      _accountService = new AccountService(requestContext.DatabaseName);
+      _accountService = new AccountService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [HttpGet("get-unpaid-and-paid-balance")]

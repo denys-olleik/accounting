@@ -9,15 +9,17 @@ namespace Accounting.Service
   public class ZipCodeService
   {
     private readonly string _databaseName;
+    private readonly string _databasePassword;
 
-    public ZipCodeService(string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public ZipCodeService(string databasePassword, string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
+      _databasePassword = databasePassword;
     }
 
     public async Task<List<ZipCode>> GetAllAsync(bool locationIsNull)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetZIPCodeManager().GetAllAsync(locationIsNull);
     }
 
@@ -46,7 +48,7 @@ namespace Accounting.Service
 
       var zipCodesWithoutLocationGeography = await GetAllAsync(true);
 
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       await factoryManager.GetZIPCodeManager().UpdateLocationAsync(zipCodesWithoutLocationGeography);
     }
 

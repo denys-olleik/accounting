@@ -6,21 +6,23 @@ namespace Accounting.Service
   public class InvoiceLineService
   {
     private readonly string _databaseName;
+    private readonly string _databasePassword;
 
-    public InvoiceLineService(string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public InvoiceLineService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
+      _databasePassword = databasePassword;
     }
 
     public async Task<InvoiceLine> CreateAsync(InvoiceLine invoiceLine)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetInvoiceLineManager().CreateAsync(invoiceLine);
     }
 
     public async Task<int> DeleteByInvoiceIdAsync(int invoiceId, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetInvoiceLineManager().DeleteByInvoiceIdAsync(invoiceId, organizationId);
     }
 
@@ -32,13 +34,13 @@ namespace Accounting.Service
 
     public async Task<int> UpdateAsync(InvoiceLine line, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetInvoiceLineManager().UpdateAsync(line, organizationId);
     }
 
     public async Task<int> UpdateTitleAndDescription(List<InvoiceLine> invoiceLines, int invoiceID, int userId, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetInvoiceLineManager().UpdateTitleAndDescription(invoiceLines, invoiceID, userId, organizationId);
     }
   }

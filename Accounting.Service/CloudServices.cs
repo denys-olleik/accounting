@@ -12,14 +12,17 @@ namespace Accounting.Service
     private readonly DigitalOceanService _digitalOceanService;
     private readonly SecretService _secretService;
     private readonly string _databaseName;
+    private readonly string _databasePassword;
 
     public CloudServices(
       SecretService secretService,
       TenantService tenantService,
+      string databasePassword = "password",
       string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _digitalOceanService = new DigitalOceanService(secretService, tenantService);
       _databaseName = databaseName;
+      _databasePassword = databasePassword;
     }
 
     public bool TestSshConnectionAsync(string ipAddress, string privateKey, string username = "root")

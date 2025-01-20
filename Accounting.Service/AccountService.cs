@@ -6,63 +6,65 @@ namespace Accounting.Service
   public class AccountService
   {
     private readonly string _databaseName;
+    private readonly string _databasePassword;
 
-    public AccountService(string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public AccountService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
+      _databasePassword = databasePassword;
     }
 
     public async Task<List<Account>> GetAccountBalanceReport(int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetAccountBalanceReport(organizationId);
     }
 
     public async Task<Account> GetAsync(int accountId, int organizationId)
     {
-      FactoryManager factoryManager = new FactoryManager(_databaseName);
+      FactoryManager factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetAsync(accountId, organizationId);
     }
 
     public async Task<Account> CreateAsync(Account account)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().CreateAsync(account);
     }
 
     public async Task<List<Account>> GetAccountOptionsForPaymentReceptionCredit(int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetAccountOptionsForPaymentReceptionCredit(organizationId);
     }
 
     public async Task<List<Account>> GetAccountOptionsForPaymentReceptionDebit(int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetAccountOptionsForPaymentReceptionDebit(organizationId);
     }
 
     public async Task<List<Account>> GetAccountOptionsForInvoiceCreationCredit(int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetAccountOptionsForInvoiceCreationCredit(organizationId);
     }
 
     public async Task<List<Account>> GetAccountOptionsForInvoiceCreationDebit(int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetAccountOptionsForInvoiceCreationDebit(organizationId);
     }
 
     public async Task<int> UpdateAsync(Account account)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().UpdateAsync(account);
     }
 
     public async Task<Account> GetByAccountNameAsync(string accountName, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetByAccountNameAsync(accountName, organizationId);
     }
 
@@ -73,7 +75,7 @@ namespace Accounting.Service
         bool includeJournalEntriesCount,
         bool includeDescendants)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetAllAsync(page, pageSize, organizationId, includeJournalEntriesCount, includeDescendants);
     }
 
@@ -92,37 +94,37 @@ namespace Accounting.Service
 
     public async Task<List<Account>> GetAllAsync(string accountType, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetAllAsync(accountType, organizationId);
     }
 
     public async Task<bool> ExistsAsync(int accountId, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().ExistsAsync(accountId, organizationId);
     }
 
     public async Task<List<Account>> GetAllReconciliationExpenseAccountsAsync(int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetAllReconciliationExpenseAsync(organizationId);
     }
 
     public async Task<List<Account>> GetAllReconciliationLiabilitiesAndAssetsAsync(int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetAllReconciliationLiabilitiesAndAssetsAsync(organizationId);
     }
 
     public async Task<string> GetTypeAsync(int accountId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetTypeAsync(accountId);
     }
 
     public async Task<List<Account>> GetAllAsync(int organizationId, bool includeJournalEntriesCount)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetAccountManager().GetAllAsync(organizationId, includeJournalEntriesCount);
     }
   }

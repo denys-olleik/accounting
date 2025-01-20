@@ -279,7 +279,7 @@ namespace Accounting.Controllers
 
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        await _userOrganizationService.DeleteByOrganizationIdAsync(model.OrganizationId, tenant.DatabaseName!);
+        await _userOrganizationService.DeleteByOrganizationIdAsync(model.OrganizationId, tenant.DatabasePassword, tenant.DatabaseName!);
         await _organizationService.DeleteAsync(model.OrganizationId, tenant.DatabaseName!);
         scope.Complete();
       }
@@ -385,7 +385,7 @@ namespace Accounting.Controllers
       }
 
       var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
-      var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, tenant.DatabaseName!);
+      var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, tenant.DatabasePassword, tenant.DatabaseName!);
 
       UpdateUserViewModel model = new UpdateUserViewModel
       {
@@ -454,6 +454,7 @@ namespace Accounting.Controllers
       await userOrganizationService.UpdateUserOrganizationsAsync(
         user.UserID,
         (model.SelectedOrganizationIdsCsv ?? "").Split(',').Where(s => !string.IsNullOrEmpty(s)).Select(int.Parse).ToList(),
+        tenant.DatabasePassword,
         tenant.DatabaseName!
       );
 
@@ -554,7 +555,7 @@ namespace Accounting.Controllers
         FirstName = model.ExistingUser?.FirstName ?? model.FirstName,
         LastName = model.ExistingUser?.LastName ?? model.LastName,
         Password = hashedPassword
-      }, tenant.DatabaseName!);
+      }, tenant.DatabasePassword, tenant.DatabaseName);
 
       if (!string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
       {
@@ -1040,7 +1041,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      List<User> users = await _userOrganizationService.GetUsersWithOrganizationsAsync(tenant.DatabaseName!);
+      List<User> users = await _userOrganizationService.GetUsersWithOrganizationsAsync(tenant.DatabasePassword, tenant.DatabaseName!);
 
       var model = new GetUsersViewModel
       {

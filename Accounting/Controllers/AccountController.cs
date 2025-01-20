@@ -22,8 +22,8 @@ namespace Accounting.Controllers
       JournalService journalService,
       RequestContext requestContext)
     {
-      _accountService = new AccountService(requestContext.DatabaseName);
-      _journalService = new JournalService(requestContext.DatabaseName);
+      _accountService = new AccountService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _journalService = new JournalService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [Route("accounts")]
@@ -199,7 +199,7 @@ namespace Accounting.Controllers
 
     public AccountApiController(AccountService accountService, RequestContext requestContext)
     {
-      _accountService = new AccountService(requestContext.DatabaseName);
+      _accountService = new AccountService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [HttpGet("account-types")]

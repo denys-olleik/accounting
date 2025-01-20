@@ -1,4 +1,4 @@
-﻿INSERT INTO "Tenant" ("PublicId", "Email", "DatabaseName") VALUES ('1', 'test@example.com', 'Accounting');
+﻿INSERT INTO "Tenant" ("PublicId", "Email", "DatabaseName", "DatabasePassword") VALUES ('1', 'test@example.com', 'Accounting', 'password');
 
 INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
 VALUES ('test@example.com', 'Herp', 'Derp', 'sha1:64000:18:IofuE0pk3LtysdvPabvlsENb9NJ4x7XZ:Ui8pLvVoSzlwUXVARJj8MFEL', 1);

@@ -7,27 +7,28 @@ namespace Accounting.Service
   public class PaymentService
   {
     private readonly string _databaseName;
+    private readonly string _databasePassword;
 
-    public PaymentService(string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public PaymentService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
     }
 
     public async Task<Payment> CreateAsync(Payment payment)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetPaymentManager().CreateAsync(payment);
     }
 
     public async Task<List<Payment>> GetAllByInvoiceIdAsync(int invoiceId, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetPaymentManager().GetAllByInvoiceIdAsync(invoiceId, organizationId);
     }
 
     public async Task<Payment> GetAsync(int id, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetPaymentManager().GetAsync(id, organizationId);
     }
 
@@ -37,7 +38,7 @@ namespace Accounting.Service
       int userId,
       int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       await factoryManager.GetPaymentManager().UpdateVoidReasonAsync(payment.PaymentID, voidReason, organizationId);
 
       List<JournalInvoiceInvoiceLinePayment> lastTransactions = await factoryManager

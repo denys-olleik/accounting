@@ -33,14 +33,14 @@ namespace Accounting.Controllers
       RequestContext requestContext)
     {
       _invoiceLineService = invoiceLineService;
-      _journalService = new JournalService(requestContext.DatabaseName);
-      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName);
-      _journalInvoiceInvoiceLinePaymentService = new JournalInvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
-      _paymentService = new PaymentService(requestContext.DatabaseName);
-      _invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
-      _businessEntityService = new BusinessEntityService(requestContext.DatabaseName);
+      _journalService = new JournalService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabasePassword, requestContext.DatabaseName);
+      _journalInvoiceInvoiceLinePaymentService = new JournalInvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _paymentService = new PaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabasePassword, requestContext.DatabaseName);
       _requestContext = requestContext;
-      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName);
+      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [HttpGet("get-invoices")]

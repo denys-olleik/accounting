@@ -6,15 +6,17 @@ namespace Accounting.Service
   public class LocationService
   {
     private readonly string _databaseName;
+    private readonly string _databasePassword;
 
-    public LocationService(string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public LocationService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
+      _databasePassword = databasePassword;
     }
 
     public async Task<Location> CreateLocationAsync(Location location)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetLocationService().CreateAsync(location);
     }
 
@@ -23,7 +25,7 @@ namespace Accounting.Service
       int pageSize,
       int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetLocationService().GetAllAsync(page, pageSize, organizationId);
     }
 
@@ -47,13 +49,13 @@ namespace Accounting.Service
 
     public async Task<Location?> GetAsync(int locationId, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetLocationService().GetAsync(locationId, organizationId);
     }
 
     public async Task<List<Location>> GetAllAsync(int organizationId)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetLocationService().GetAllAsync(organizationId);
     }
 

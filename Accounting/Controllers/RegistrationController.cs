@@ -82,7 +82,7 @@ namespace Accounting.Controllers
 
         UserOrganizationService userOrganizationService = new(tenant.DatabaseName!);
 
-        await userOrganizationService.CreateAsync(user.UserID, 1, tenant.DatabaseName!);
+        await userOrganizationService.CreateAsync(user.UserID, 1, tenant.DatabasePassword, tenant.DatabaseName!);
 
         scope.Complete();
       }

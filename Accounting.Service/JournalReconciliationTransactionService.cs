@@ -6,15 +6,17 @@ namespace Accounting.Service
   public class JournalReconciliationTransactionService
   {
     private readonly string _databaseName;
+    private readonly string _databasePassword;
 
-    public JournalReconciliationTransactionService(string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public JournalReconciliationTransactionService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
+      _databasePassword = databasePassword;
     }
 
     public async Task<JournalReconciliationTransaction> CreateAsync(JournalReconciliationTransaction journalExpense)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       return await factoryManager.GetJournalReconciliationTransactionManager().CreateAsync(journalExpense);
     }
 
@@ -23,7 +25,7 @@ namespace Accounting.Service
       int organizationId,
       bool loadChildren = false)
     {
-      var factoryManager = new FactoryManager(_databaseName);
+      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
       var manager = factoryManager.GetJournalReconciliationTransactionManager();
 
       var transactions = await manager.GetLastTransactionAsync(reconciliationTransactionId, organizationId, loadChildren);

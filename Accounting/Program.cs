@@ -143,6 +143,7 @@ app.Use(async (context, next) =>
     if (databaseNameClaim != null)
     {
       requestContext.DatabaseName = databaseNameClaim.Value;
+      requestContext.DatabasePassword = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaimTypeConstants.DatabasePassword)?.Value!;
     }
   }
   else

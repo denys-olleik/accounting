@@ -9,7 +9,8 @@ namespace Accounting.Helpers
       Business.User user,
       int? organizationId = null,
       string? organizationName = null,
-      string? databaseName = null)
+      string? databaseName = null,
+      string? databasePassword = null)
     {
       List<Claim> claims = new List<Claim>();
 
@@ -23,6 +24,10 @@ namespace Accounting.Helpers
         if (!string.IsNullOrEmpty(databaseName))
         {
           claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.DatabaseName, databaseName));
+        }
+        if (!string.IsNullOrEmpty(databasePassword))
+        {
+          claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.DatabasePassword, databasePassword));
         }
       }
       else

@@ -15,12 +15,13 @@ namespace Accounting.Database
     private readonly string _databaseName;
     private readonly string _connectionString;
 
-    public DapperPsqlFactory(string databaseName)
+    public DapperPsqlFactory(string databasePassword, string databaseName)
     {
       _databaseName = databaseName;
 
       NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
       builder.Database = databaseName;
+      builder.Password = databasePassword;
       _connectionString = builder.ConnectionString;
     }
 

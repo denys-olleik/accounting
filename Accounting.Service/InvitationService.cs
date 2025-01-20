@@ -14,19 +14,19 @@ namespace Accounting.Service
 
   //  public async Task<Invitation> CreatAsync(Invitation invitation)
   //  {
-  //    var factoryManager = new FactoryManager(_databaseName);
+  //    var factoryManager = new FactoryManager(_databasePassword, _databaseName);
   //    return await factoryManager.GetInvitationManager().CreateAsync(invitation);
   //  }
 
   //  public async Task<int> DeleteAsync(Guid guid)
   //  {
-  //    var factoryManager = new FactoryManager(_databaseName);
+  //    var factoryManager = new FactoryManager(_databasePassword, _databaseName);
   //    return await factoryManager.GetInvitationManager().DeleteAsync(guid);
   //  }
 
   //  public async Task<Invitation> GetAsync(Guid guid)
   //  {
-  //    var factoryManager = new FactoryManager(_databaseName);
+  //    var factoryManager = new FactoryManager(_databasePassword, _databaseName);
   //    return await factoryManager.GetInvitationManager().GetAsync(guid);
   //  }
   //}
