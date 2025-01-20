@@ -17,7 +17,7 @@ namespace Accounting.Controllers
     public CustomerApiController(RequestContext requestContext)
     {
       _requestContext = requestContext;
-      _businessEntityService = new BusinessEntityService(_requestContext.DatabaseName);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabasePassword, _requestContext.DatabaseName);
     }
 
     [HttpGet("get-customers")]

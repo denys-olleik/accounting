@@ -18,7 +18,7 @@ namespace Accounting.Controllers
 
     public LocationController(RequestContext requestContext)
     {
-      _locationService = new LocationService(requestContext.DatabaseName);
+      _locationService = new LocationService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [Route("locations")]

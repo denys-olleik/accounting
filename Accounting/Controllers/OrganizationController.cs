@@ -17,7 +17,7 @@ namespace Accounting.Controllers
 
     public OrganizationController(OrganizationService organizationService, RequestContext requestContext)
     {
-      _organizationService = new OrganizationService(requestContext.DatabaseName);
+      _organizationService = new OrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [Route("update")]

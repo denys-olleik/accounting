@@ -13,12 +13,10 @@ namespace Accounting.Controllers
   public class SecretController : BaseController
   {
     private readonly SecretService _secretService;
-    private readonly string _databaseName;
 
     public SecretController(RequestContext requestContext, SecretService secretService)
     {
-      _databaseName = requestContext.DatabaseName;
-      _secretService = new SecretService(requestContext.DatabaseName);
+      _secretService = new SecretService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [Route("secrets")]

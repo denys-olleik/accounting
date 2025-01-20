@@ -28,11 +28,11 @@ namespace Accounting.Controllers
       JournalService journalService,
       RequestContext requestContext)
     {
-      _reconciliationTransactionService = new ReconciliationTransactionService(requestContext.DatabaseName);
-      _reconciliationService = new ReconciliationService(requestContext.DatabaseName);
-      _journalReconciliationTransactionService = new JournalReconciliationTransactionService(requestContext.DatabaseName);
-      _accountService = new AccountService(requestContext.DatabaseName);
-      _journalService = new JournalService(requestContext.DatabaseName);
+      _reconciliationTransactionService = new ReconciliationTransactionService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _reconciliationService = new ReconciliationService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _journalReconciliationTransactionService = new JournalReconciliationTransactionService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _accountService = new AccountService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _journalService = new JournalService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     //[HttpPost]

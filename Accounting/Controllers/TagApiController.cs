@@ -17,7 +17,7 @@ namespace Accounting.Controllers
 
     public TagApiController(RequestContext requestContext)
     {
-      _tagService = new TagService(requestContext.DatabaseName);
+      _tagService = new TagService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [HttpPost("create")]

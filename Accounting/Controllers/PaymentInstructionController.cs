@@ -17,7 +17,7 @@ namespace Accounting.Controllers
     public PaymentInstructionController(
       RequestContext requestContext)
     { 
-      _paymentInstructionService = new PaymentInstructionService(requestContext.DatabaseName);
+      _paymentInstructionService = new PaymentInstructionService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [Route("payment-instructions")]

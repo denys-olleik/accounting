@@ -23,8 +23,8 @@ namespace Accounting.Controllers
       ItemService itemService,
       RequestContext requestContext)
     {
-      _accountService = new AccountService(requestContext.DatabaseName);
-      _itemService = new ItemService(requestContext.DatabaseName);
+      _accountService = new AccountService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _itemService = new ItemService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [HttpGet]
@@ -176,9 +176,9 @@ namespace Accounting.Controllers
       LocationService locationService,
       RequestContext requestContext)
     {
-      _itemService = new ItemService(requestContext.DatabaseName);
-      _inventoryService = new InventoryService(requestContext.DatabaseName);
-      _locationService = new LocationService(requestContext.DatabaseName);
+      _itemService = new ItemService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _inventoryService = new InventoryService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _locationService = new LocationService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [HttpGet("get-all-items")]

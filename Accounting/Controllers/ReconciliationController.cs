@@ -27,9 +27,9 @@ namespace Accounting.Controllers
         ReconciliationAttachmentService reconciliationAttachmentService,
         RequestContext requestContext)
     {
-      _reconciliationTransactionService = new ReconciliationTransactionService(requestContext.DatabaseName);
-      _reconciliationService = new ReconciliationService(requestContext.DatabaseName);
-      _reconciliationAttachmentService = new ReconciliationAttachmentService(requestContext.DatabaseName);
+      _reconciliationTransactionService = new ReconciliationTransactionService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _reconciliationService = new ReconciliationService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _reconciliationAttachmentService = new ReconciliationAttachmentService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [Route("reconciliations")]

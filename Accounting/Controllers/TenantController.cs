@@ -37,12 +37,12 @@ namespace Accounting.Controllers
       UserOrganizationService userOrganizationService,
       RequestContext requestContext)
     {
-      _tenantService = new TenantService(requestContext.DatabaseName);
+      _tenantService = new TenantService(requestContext.DatabasePassword, requestContext.DatabaseName);
       _cloudServices = cloudServices;
-      _secretService = new SecretService(requestContext.DatabaseName);
+      _secretService = new SecretService(requestContext.DatabasePassword, requestContext.DatabaseName);
       _databaseService = databaseService;
-      _organizationService = new OrganizationService(requestContext.DatabaseName);
-      _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName);
+      _organizationService = new OrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _userOrganizationService = new UserOrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     //[Route("download-install-nginx-output/{tenantId}")]
