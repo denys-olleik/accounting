@@ -12,6 +12,7 @@ namespace Accounting.Service
     public PaymentService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
     {
       _databaseName = databaseName;
+      _databasePassword = databasePassword;
     }
 
     public async Task<Payment> CreateAsync(Payment payment)
