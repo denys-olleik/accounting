@@ -39,16 +39,15 @@ namespace Accounting.Controllers
       JournalInvoiceInvoiceLinePaymentService journalInvoiceInvoiceLinePaymentService,
       JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService)
     {
-      _journalService = new JournalService(requestContext.DatabaseName);
-      _invoiceLineService = new InvoiceLineService(requestContext.DatabaseName);
-      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(invoiceLineService, journalService, requestContext.DatabaseName);
-      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName);
-      _accountService = new AccountService(requestContext.DatabaseName);
-      _businessEntityService = new BusinessEntityService(requestContext.DatabaseName);
-      _paymentService = new PaymentService(requestContext.DatabaseName);
-      _invoicePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
-      _journalInvoicePaymentService = new JournalInvoiceInvoiceLinePaymentService(requestContext.DatabaseName);
-      
+      _journalService = new JournalService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _invoiceLineService = new InvoiceLineService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(invoiceLineService, journalService, requestContext.DatabasePassword, requestContext.DatabaseName);
+      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabasePassword,  requestContext.DatabaseName);
+      _accountService = new AccountService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _paymentService = new PaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _invoicePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _journalInvoicePaymentService = new JournalInvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
     [Route("receive-payment-for-invoice-ids")]
