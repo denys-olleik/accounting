@@ -173,9 +173,13 @@ sudo apt-get install -y postgis > /var/log/accounting/postgis-install.log 2>&1
 # Clone repository
 git clone https://github.com/denys-olleik/accounting /opt/accounting > /var/log/accounting/git-clone.log 2>&1
 
+# Set environment variable for database password
+echo 'ConnectionStrings__Psql="Host=localhost;Database=Accounting;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'ConnectionStrings__AdminPsql="Host=localhost;Database=postgres;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+
 # Create database
-# sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
-# sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/create-db-script-psql.sql > /var/log/accounting/create-db.log 2>&1
+sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
+sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/create-db-script-psql.sql > /var/log/accounting/create-db.log 2>&1
 
 # Build the .NET project
 export DOTNET_CLI_HOME=/root
