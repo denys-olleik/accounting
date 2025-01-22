@@ -23,7 +23,7 @@ namespace Accounting.Service
     public async Task<UserOrganization> GetAsync(int userId, int organizationId, string databaseName = DatabaseThing.DatabaseConstants.Database, string databasePassword = "password")
     {
       var factoryManager = new FactoryManager(databasePassword, databaseName);
-      return await factoryManager.GetUserOrganizationManager().GetAsync(userId, organizationId, databaseName);
+      return await factoryManager.GetUserOrganizationManager().GetAsync(userId, organizationId, databaseName, databasePassword);
     }
 
     public async Task<UserOrganization> CreateAsync(UserOrganization userOrganization)
@@ -68,16 +68,16 @@ namespace Accounting.Service
       return await factoryManager.GetUserOrganizationManager().CreateAsync(userID, organizationId, databaseName);
     }
 
-    public async Task UpdateUserOrganizationsAsync(int userID, List<int> selectedOrganizationIds,string databasePassword, string databaseName)
+    public async Task UpdateUserOrganizationsAsync(int userID, List<int> selectedOrganizationIds, string databasePassword, string databaseName)
     {
       var factoryManager = new FactoryManager(databasePassword, databaseName);
-      await factoryManager.GetUserOrganizationManager().UpdateUserOrganizationsAsync(userID, selectedOrganizationIds, databaseName);
+      await factoryManager.GetUserOrganizationManager().UpdateUserOrganizationsAsync(userID, selectedOrganizationIds, databasePassword, databaseName);
     }
 
     public async Task<int> DeleteByOrganizationIdAsync(int organizationId, string databasePassword, string databaseName)
     {
       var factoryManager = new FactoryManager(databasePassword, databaseName);
-      return await factoryManager.GetUserOrganizationManager().DeleteByOrganizationIdAsync(organizationId, databaseName);
+      return await factoryManager.GetUserOrganizationManager().DeleteByOrganizationIdAsync(organizationId, databasePassword, databaseName);
     }
   }
 }

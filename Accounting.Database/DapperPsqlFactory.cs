@@ -5,20 +5,16 @@ using Accounting.Database.Interfaces;
 using Npgsql;
 using System.Data;
 using System.Text.RegularExpressions;
-using Renci.SshNet.Security;
 using static Dapper.SqlMapper;
 
 namespace Accounting.Database
 {
   public class DapperPsqlFactory : IDatabaseFactoryDefinition
   {
-    private readonly string _databaseName;
     private readonly string _connectionString;
 
     public DapperPsqlFactory(string databasePassword, string databaseName)
     {
-      _databaseName = databaseName;
-
       NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
       builder.Database = databaseName;
       builder.Password = databasePassword;
@@ -27,18 +23,16 @@ namespace Accounting.Database
 
     public IAddressManager GetAddressManager()
     {
-      return new AddressManager(_databaseName);
+      return new AddressManager(_connectionString);
     }
 
     public class AddressManager : IAddressManager
     {
       private readonly string _connectionString;
 
-      public AddressManager(string databaseName)
+      public AddressManager(string connectionString)
       {
-        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = databaseName;
-        _connectionString = builder.ConnectionString;
+        _connectionString = connectionString;
       }
 
       public Address Create(Address entity)
@@ -153,18 +147,16 @@ namespace Accounting.Database
 
     public IBusinessEntityManager GetBusinessEntityManager()
     {
-      return new BusinessEntityManager(_databaseName);
+      return new BusinessEntityManager(_connectionString);
     }
 
     public class BusinessEntityManager : IBusinessEntityManager
     {
       private readonly string _connectionString;
 
-      public BusinessEntityManager(string databaseName)
+      public BusinessEntityManager(string connectionSring)
       {
-        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = databaseName;
-        _connectionString = builder.ConnectionString;
+        _connectionString = connectionSring;
       }
 
       public BusinessEntity Create(BusinessEntity entity)
@@ -4283,18 +4275,16 @@ namespace Accounting.Database
 
     public IUserManager GetUserManager()
     {
-      return new UserManager(_databaseName);
+      return new UserManager(_connectionString);
     }
 
     public class UserManager : IUserManager
     {
       private readonly string _connectionString;
 
-      public UserManager(string databaseName)
-      {
-        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = databaseName;
-        _connectionString = builder.ConnectionString;
+      public UserManager(string connectionString)
+      { 
+        _connectionString = connectionString;
       }
 
       public User Create(User entity)
@@ -4396,6 +4386,7 @@ namespace Accounting.Database
             continue;
 
           builder.Database = tenant.DatabaseName;
+          builder.Password = tenant.DatabasePassword;
 
           using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
           {
@@ -4467,7 +4458,8 @@ namespace Accounting.Database
 
           var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql)
           {
-            Database = tenant.DatabaseName
+            Database = tenant.DatabaseName,
+            Password = tenant.DatabasePassword
           };
 
           using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
@@ -4574,18 +4566,16 @@ namespace Accounting.Database
 
     public IUserOrganizationManager GetUserOrganizationManager()
     {
-      return new UserOrganizationManager(_databaseName);
+      return new UserOrganizationManager(_connectionString);
     }
 
     public class UserOrganizationManager : IUserOrganizationManager
     {
       private readonly string _connectionString;
 
-      public UserOrganizationManager(string databaseName)
+      public UserOrganizationManager(string connectionString)
       {
-        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = databaseName;
-        _connectionString = builder.ConnectionString;
+        _connectionString = connectionString;
       }
 
       public UserOrganization Create(UserOrganization entity)
@@ -4661,14 +4651,19 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> DeleteByOrganizationIdAsync(int organizationId, string databaseName)
+      public async Task<int> DeleteByOrganizationIdAsync(int organizationId, string databasePassword, string databaseName)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@OrganizationId", organizationId);
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        builder.Database = databaseName;
+        builder.Password = databasePassword;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             DELETE FROM "UserOrganization" 
@@ -4696,7 +4691,7 @@ namespace Accounting.Database
 
         IEnumerable<Tenant> tenants;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           tenants = await con.QueryAsync<Tenant>("""
             SELECT * 
@@ -4711,6 +4706,7 @@ namespace Accounting.Database
 
         var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
         builder.Database = databaseName;
+        builder.Password = tenant.DatabasePassword;
         string connectionString = builder.ConnectionString;
 
         IEnumerable<UserOrganization> result;
@@ -4735,7 +4731,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<UserOrganization> GetAsync(int userId, int organizationId, string databaseName)
+      public async Task<UserOrganization> GetAsync(int userId, int organizationId, string databaseName, string databasePassword)
       {
         var p = new DynamicParameters();
         p.Add("UserID", userId);
@@ -4743,10 +4739,7 @@ namespace Accounting.Database
 
         IEnumerable<UserOrganization> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = databaseName;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
               SELECT uo.*, u.*, o.* 
@@ -4776,7 +4769,7 @@ namespace Accounting.Database
 
         if (!searchTenants)
         {
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
             var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
                 SELECT uo.*, u.*, o.*
@@ -4825,6 +4818,7 @@ namespace Accounting.Database
               continue;
 
             builder.Database = tenant.DatabaseName;
+            builder.Password = tenant.DatabasePassword;
             using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
             {
               var userOrganizations = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
@@ -4863,7 +4857,7 @@ namespace Accounting.Database
 
         IEnumerable<UserOrganization?> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           if (tenantId > 0)
           {
@@ -4872,8 +4866,9 @@ namespace Accounting.Database
 
             if (tenant != null && !string.IsNullOrEmpty(tenant.DatabaseName))
             {
-              NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+              NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString);
               builder.Database = tenant.DatabaseName;
+              builder.Password = tenant.DatabasePassword;
 
               using (NpgsqlConnection tenantCon = new NpgsqlConnection(builder.ConnectionString))
               {
@@ -4928,11 +4923,8 @@ namespace Accounting.Database
         p.Add("@UserId", userId);
 
         IEnumerable<Organization> result;
-        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
 
-        builder.Database = databaseName;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Organization>("""
           select o.* from "Organization" o
@@ -4946,12 +4938,7 @@ namespace Accounting.Database
 
       public async Task<List<User>> GetUsersWithOrganizationsAsync(string databaseName)
       {
-        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql)
-        {
-          Database = databaseName
-        };
-
-        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           // Step 1: Fetch all users
           var users = (await con.QueryAsync<User>(
@@ -5007,12 +4994,11 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> UpdateUserOrganizationsAsync(int userId, List<int> selectedOrganizationIds, string databaseName)
-      {
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql)
-        {
-          Database = databaseName
-        };
+      public async Task<int> UpdateUserOrganizationsAsync(int userId, List<int> selectedOrganizationIds, string databasePassword, string databaseName)
+      { 
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
+        builder.Database = databaseName;
+        builder.Password = databasePassword;
 
         using var con = new NpgsqlConnection(builder.ConnectionString);
 
@@ -5435,7 +5421,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public IEnumerable<Business.DatabaseThing> GetAll()
+      public IEnumerable<DatabaseThing> GetAll()
       {
         throw new NotImplementedException();
       }
@@ -5475,8 +5461,7 @@ namespace Accounting.Database
         }
       }
 
-
-      public int Update(Business.DatabaseThing entity)
+      public int Update(DatabaseThing entity)
       {
         throw new NotImplementedException();
       }
@@ -6497,6 +6482,8 @@ namespace Accounting.Database
 
         IEnumerable<Secret> result;
 
+        Console.WriteLine($"Connection String: {_connectionString}");
+
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Secret>("""
@@ -6537,18 +6524,16 @@ namespace Accounting.Database
 
     public ILoginWithoutPasswordManager GetLoginWithoutPasswordManager()
     {
-      return new LoginWithoutPasswordManager(_databaseName);
+      return new LoginWithoutPasswordManager(_connectionString);
     }
 
     public class LoginWithoutPasswordManager : ILoginWithoutPasswordManager
     {
       private readonly string _connectionString;
 
-      public LoginWithoutPasswordManager(string databaseName)
+      public LoginWithoutPasswordManager(string connectionString)
       {
-        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = databaseName;
-        _connectionString = builder.ToString();
+        _connectionString = connectionString;
       }
 
       public LoginWithoutPassword Create(LoginWithoutPassword entity)
