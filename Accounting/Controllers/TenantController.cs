@@ -45,90 +45,7 @@ namespace Accounting.Controllers
       _userOrganizationService = new UserOrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
-    //[Route("download-install-nginx-output/{tenantId}")]
-    //[HttpGet]
-    //public async Task<IActionResult> DownloadInstallNginxOutput(int tenantId)
-    //{
-    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
-    //  if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
-    //  {
-    //    return NotFound();
-    //  }
 
-    //  string fileContent = await _cloudServices.InstallNginxResultAsync(tenant.Ipv4, tenant.SshPrivate);
-
-    //  var fileName = $"install-nginx-output_{tenantId}.txt";
-
-    //  return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
-    //}
-
-    //[Route("download-create-log-directory-output/{tenantId}")]
-    //[HttpGet]
-    //public async Task<IActionResult> DownloadCreateLogDirectoryOutput(int tenantId)
-    //{
-    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
-    //  if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
-    //  {
-    //    return NotFound();
-    //  }
-
-    //  string fileContent = await _cloudServices.CreateLogDirectoryResultAsync(tenant.Ipv4, tenant.SshPrivate);
-
-    //  var fileName = $"create-log-directory-output_{tenantId}.txt";
-
-    //  return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
-    //}
-
-    //[Route("download-clone-repo-output/{tenantId}")]
-    //[HttpGet]
-    //public async Task<IActionResult> DownloadCloneRepoOutput(int tenantId)
-    //{
-    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
-    //  if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
-    //  {
-    //    return NotFound();
-    //  }
-
-    //  string fileContent = await _cloudServices.CloneRepositoryResultAsync(tenant.Ipv4, tenant.SshPrivate);
-
-    //  var fileName = $"clone-repo-output_{tenantId}.txt";
-
-    //  return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
-    //}
-
-    //[Route("download-install-dotnet-output/{tenantId}")]
-    //[HttpGet]
-    //public async Task<IActionResult> DownloadInstallDotnetOutput(int tenantId)
-    //{
-    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
-    //  if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
-    //  {
-    //    return NotFound();
-    //  }
-
-    //  string fileContent = await _cloudServices.InstallDotnetResultAsync(tenant.Ipv4, tenant.SshPrivate);
-
-    //  var fileName = $"install-dotnet-output_{tenantId}.txt";
-
-    //  return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
-    //}
-
-    //[Route("download-update-apt-output/{tenantId}")]
-    //[HttpGet]
-    //public async Task<IActionResult> DownloadUpdateAptOutput(int tenantId)
-    //{
-    //  Tenant tenant = await _tenantService.GetAsync(tenantId);
-    //  if (tenant == null || string.IsNullOrEmpty(tenant.SshPrivate))
-    //  {
-    //    return NotFound();
-    //  }
-
-    //  string fileContent = await _cloudServices.UpdateAptResultAsync(tenant.Ipv4, tenant.SshPrivate);
-
-    //  var fileName = $"update-apt-output_{tenantId}.txt";
-
-    //  return File(System.Text.Encoding.UTF8.GetBytes(fileContent), "text/plain", fileName);
-    //}
 
     [Route("download-private-key/{tenantId}")]
     [HttpGet]
@@ -203,7 +120,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      UserService userService = new UserService(tenant.DatabaseName);
+      UserService userService = new UserService(tenant.DatabasePassword, tenant.DatabaseName);
       User user = await userService.GetAsync(userId);
       if (user == null)
       {
@@ -229,7 +146,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      UserService userService = new UserService(tenant.DatabaseName);
+      UserService userService = new UserService(tenant.DatabasePassword, tenant.DatabaseName);
       User user = await userService.GetAsync(userId);
       if (user == null)
       {
@@ -514,7 +431,7 @@ namespace Accounting.Controllers
             model.SelectedOrganizationIdsCsv.Split(',').Where(id => !string.IsNullOrEmpty(id)));
       }
 
-      UserService _userService = new UserService(tenant.DatabaseName);
+      UserService _userService = new UserService(tenant.DatabasePassword, tenant.DatabaseName);
       User user = await _userService.GetAsync(model.Email);
 
       if (user != null)
@@ -562,7 +479,7 @@ namespace Accounting.Controllers
         var selectedOrganizationIds = model.SelectedOrganizationIdsCsv.Split(',').Select(int.Parse);
         foreach (var organizationId in selectedOrganizationIds)
         {
-          await _userOrganizationService.CreateAsync(user.UserID, organizationId, tenant.DatabaseName!);
+          await _userOrganizationService.CreateAsync(user.UserID, organizationId, tenant.DatabasePassword, tenant.DatabaseName!);
         }
       }
 
@@ -674,7 +591,6 @@ namespace Accounting.Controllers
     public async Task<IActionResult> ProvisionTenant(
       ProvisionTenantViewModel model)
     {
-
       ProvisionTenantViewModel.ProvisionTenantViewModelValidator validator
         = new ProvisionTenantViewModel.ProvisionTenantViewModelValidator(_tenantService, _secretService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
@@ -695,6 +611,7 @@ namespace Accounting.Controllers
           {
             FullyQualifiedDomainName = model.FullyQualifiedDomainName,
             Email = model.Email,
+            DatabasePassword = "password"
           });
 
           scope.Complete();
