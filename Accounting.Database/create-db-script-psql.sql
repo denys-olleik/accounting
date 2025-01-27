@@ -354,23 +354,6 @@ CREATE TABLE "UserToDo"
 	UNIQUE ("UserId", "ToDoId")
 );
 
-CREATE TABLE "Invitation"
-(
-	"InvitationID" SERIAL PRIMARY KEY NOT NULL,
-	"Guid" UUID NOT NULL,
-	"Email" VARCHAR(100) NOT NULL,
-	"FirstName" VARCHAR(100) NOT NULL,
-	"LastName" VARCHAR(100) NOT NULL,
-	"UserId" INT NOT NULL,
-	"Expiration" TIMESTAMPTZ NULL,
-	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-	"CreatedById" INT NOT NULL,
-	"OrganizationId" INT NOT NULL,
-	FOREIGN KEY ("UserId") REFERENCES "User"("UserID"),
-	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
-);
-
 CREATE TABLE "Payment"
 (
 	"PaymentID" SERIAL PRIMARY KEY NOT NULL,

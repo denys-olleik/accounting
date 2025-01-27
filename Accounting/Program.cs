@@ -74,7 +74,6 @@ builder.Services.AddTransient<ToDoTagService>();
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
 ConfigurationSingleton.Instance.ConnectionStringAdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
-ConfigurationSingleton.Instance.InvitationExpirationMinutes = Convert.ToInt32(builder.Configuration["InvitationExpirationMinutes"]);
 
 #region Configure Paths
 bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);

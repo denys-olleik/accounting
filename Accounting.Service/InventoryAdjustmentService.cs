@@ -3,15 +3,16 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class InventoryAdjustmentService
+  public class InventoryAdjustmentService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public InventoryAdjustmentService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public InventoryAdjustmentService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+      
+    }
+
+    public InventoryAdjustmentService(string databaseName, string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<InventoryAdjustment> CreateAsync(InventoryAdjustment inventoryAdjustment)
