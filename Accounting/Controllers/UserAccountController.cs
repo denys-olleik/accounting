@@ -38,7 +38,7 @@ namespace Accounting.Controllers
     {
       _organizationService = new OrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
       _userOrganizationService = new UserOrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _userService = new UserService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _userService = new UserService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _loginWithoutPasswordService = new LoginWithoutPasswordService(requestContext.DatabasePassword, requestContext.DatabaseName);
       _secretService = new SecretService(requestContext.DatabasePassword, requestContext.DatabaseName);
       _emailService = new EmailService(_secretService);

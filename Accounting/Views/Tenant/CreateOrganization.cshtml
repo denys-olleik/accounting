@@ -1,11 +1,11 @@
 ﻿@model Accounting.Models.TenantViewModels.CreateOrganizationViewModel
 
 @{
-  ViewData["Title"] = "Create Organization - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Create organization - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 @{
-  string headerText = "Create Organization";
+  string headerText = "Create organization";
 }
 
 <partial name="_H1HeaderPartial" model="@headerText" />
@@ -45,7 +45,7 @@
     </div>
     <div class="width-5px"></div>
     <div class="flex-1">
-      <button type="submit" class="full-width-regular-button width-100">Create Organization</button>
+      <button type="submit" class="full-width-regular-button width-100">Create organization</button>
     </div>
   </div>
 </form>

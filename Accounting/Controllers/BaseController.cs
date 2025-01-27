@@ -5,7 +5,7 @@ using static Accounting.Business.Claim;
 
 namespace Accounting.Controllers
 {
-  public class BaseController : Controller
+  public abstract class BaseController : Controller
   {
     [NonAction]
     public int GetUserId()

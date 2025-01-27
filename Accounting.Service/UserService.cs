@@ -3,15 +3,16 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class UserService
+  public class UserService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public UserService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public UserService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+
+    }
+
+    public UserService(string databaseName, string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<User> AddUserAsync(string? email, string? firstName, string? lastName, string? password)

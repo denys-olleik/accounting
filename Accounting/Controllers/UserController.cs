@@ -25,7 +25,7 @@ namespace Accounting.Controllers
       SecretService secretService)
     {
       _userOrganizationService = new UserOrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _userService = new UserService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _userService = new UserService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _secretService = new SecretService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }
 
@@ -157,7 +157,7 @@ namespace Accounting.Controllers
 
     public UserApiController(RequestContext requestContext, UserService userService)
     {
-      _userService = new UserService(requestContext.DatabaseName);
+      _userService = new UserService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet("get-users")]

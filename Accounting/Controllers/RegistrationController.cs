@@ -69,7 +69,7 @@ namespace Accounting.Controllers
           Password = PasswordStorage.CreateHash(model.Password!)
         };
 
-        UserService userService = new(tenant.DatabaseName!);
+        UserService userService = new UserService(tenant.DatabaseName!, tenant.DatabasePassword);
 
         user = await userService.CreateAsync(user);
 

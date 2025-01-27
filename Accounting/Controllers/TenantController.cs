@@ -120,7 +120,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      UserService userService = new UserService(tenant.DatabasePassword, tenant.DatabaseName);
+      UserService userService = new UserService(tenant.DatabaseName, tenant.DatabasePassword);
       User user = await userService.GetAsync(userId);
       if (user == null)
       {
@@ -146,7 +146,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      UserService userService = new UserService(tenant.DatabasePassword, tenant.DatabaseName);
+      UserService userService = new UserService(tenant.DatabaseName, tenant.DatabasePassword);
       User user = await userService.GetAsync(userId);
       if (user == null)
       {
@@ -293,7 +293,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      UserService _userService = new UserService(tenant.DatabaseName);
+      UserService _userService = new UserService(tenant.DatabaseName, tenant.DatabasePassword);
       User user = await _userService.GetAsync(int.Parse(userId));
 
       if (user == null)
@@ -330,7 +330,7 @@ namespace Accounting.Controllers
       UpdateUserViewModel model)
     {
       Tenant tenant = await _tenantService.GetAsync(int.Parse(tenantId));
-      UserService userService = new UserService(tenant.DatabaseName!);
+      UserService userService = new UserService(tenant.DatabaseName!, tenant.DatabasePassword);
       User user = await userService.GetAsync(int.Parse(userId));
       if (tenant == null || user == null)
       {
@@ -431,7 +431,7 @@ namespace Accounting.Controllers
             model.SelectedOrganizationIdsCsv.Split(',').Where(id => !string.IsNullOrEmpty(id)));
       }
 
-      UserService _userService = new UserService(tenant.DatabasePassword, tenant.DatabaseName);
+      UserService _userService = new UserService(tenant.DatabaseName, tenant.DatabasePassword);
       User user = await _userService.GetAsync(model.Email);
 
       if (user != null)
