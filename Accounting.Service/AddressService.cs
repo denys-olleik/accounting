@@ -3,15 +3,16 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class AddressService
+  public class AddressService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public AddressService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public AddressService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+      
+    }
+
+    public AddressService(string databaseName, string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<Address> CreateAsync(Address address)

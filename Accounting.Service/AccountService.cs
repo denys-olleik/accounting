@@ -3,15 +3,16 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class AccountService
+  public class AccountService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public AccountService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public AccountService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+
+    }
+
+    public AccountService(string databaseName, string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<List<Account>> GetAccountBalanceReport(int organizationId)
