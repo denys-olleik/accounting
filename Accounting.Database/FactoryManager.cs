@@ -6,9 +6,9 @@ namespace Accounting.Database
   {
     private IDatabaseFactoryDefinition databaseFactoryDefinition;
 
-    public FactoryManager(string databasePassword, string databaseName)
+    public FactoryManager(string databaseName, string databasePassword)
     {
-      databaseFactoryDefinition = new DapperPsqlFactory(databasePassword, databaseName);
+      databaseFactoryDefinition = new DapperPsqlFactory(databaseName, databasePassword);
     }
 
     public IAddressManager GetAddressManager()

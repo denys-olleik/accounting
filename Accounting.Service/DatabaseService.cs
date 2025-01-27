@@ -3,36 +3,38 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class DatabaseService
+  public class DatabaseService : BaseService
   {
-    private readonly string _databasePassword;
-
-    public DatabaseService(string databasePassword = "password")
+    public DatabaseService() : base()
     {
-      _databasePassword = databasePassword;
+
+    }
+
+    public DatabaseService(string databaseName, string databasePassword) : base(databaseName, databasePassword)
+    {
     }
 
     public async Task ResetDatabase()
     {
-      var factoryManager = new FactoryManager(_databasePassword, null);
+      var factoryManager = new FactoryManager(null, _databasePassword);
       await factoryManager.GetDatabaseManager().ResetDatabaseAsync();
     }
 
     public async Task<DatabaseThing> CreateDatabaseAsync(string tenantId)
     {
-      var factoryManager = new FactoryManager(_databasePassword, null);
+      var factoryManager = new FactoryManager(null, _databasePassword);
       return await factoryManager.GetDatabaseManager().CreateDatabase(tenantId);
     }
 
     public async Task RunSQLScript(string script, string databaseName)
     {
-      var factoryManager = new FactoryManager(_databasePassword, null);
+      var factoryManager = new FactoryManager(null, _databasePassword);
       await factoryManager.GetDatabaseManager().RunSQLScript(script, databaseName);
     }
 
     public async Task DeleteAsync(string databaseName)
     {
-      var factoryManager = new FactoryManager(_databasePassword, null);
+      var factoryManager = new FactoryManager(null, _databasePassword);
       await factoryManager.GetDatabaseManager().DeleteAsync(databaseName);
     }
   }

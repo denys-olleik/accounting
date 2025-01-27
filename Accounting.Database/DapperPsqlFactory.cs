@@ -4739,7 +4739,12 @@ namespace Accounting.Database
 
         IEnumerable<UserOrganization> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        builder.Database = databaseName;
+        builder.Password = databasePassword;
+        string connectionString = builder.ConnectionString;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
         {
           result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
               SELECT uo.*, u.*, o.* 
