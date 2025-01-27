@@ -73,14 +73,14 @@ namespace Accounting.Controllers
 
         user = await userService.CreateAsync(user);
 
-        OrganizationService organizationService = new(tenant.DatabaseName!);
+        OrganizationService organizationService = new(tenant.DatabaseName!, tenant.DatabasePassword);
 
         string sampleDataPath = Path.Combine(AppContext.BaseDirectory, "sample-data-production.sql");
         string sampleDataScript = System.IO.File.ReadAllText(sampleDataPath);
 
         await organizationService.InsertSampleOrganizationDataAsync(sampleDataScript);
 
-        UserOrganizationService userOrganizationService = new(tenant.DatabaseName!);
+        UserOrganizationService userOrganizationService = new(tenant.DatabaseName!, tenant.DatabasePassword);
 
         await userOrganizationService.CreateAsync(user.UserID, 1, tenant.DatabasePassword, tenant.DatabaseName!);
 

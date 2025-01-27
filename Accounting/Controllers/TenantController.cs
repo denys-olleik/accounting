@@ -42,10 +42,8 @@ namespace Accounting.Controllers
       _secretService = new SecretService(requestContext.DatabasePassword, requestContext.DatabaseName);
       _databaseService = databaseService;
       _organizationService = new OrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _userOrganizationService = new UserOrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
-
-
 
     [Route("download-private-key/{tenantId}")]
     [HttpGet]
@@ -301,8 +299,12 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
+      OrganizationService _organizationService = new OrganizationService(tenant.DatabaseName, tenant.DatabaseName);
       var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
+      UserOrganizationService _userOrganizationService = new UserOrganizationService(tenant.DatabaseName, tenant.DatabasePassword);
       var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, tenant.DatabasePassword, tenant.DatabaseName!);
+
+      throw new NotImplementedException("GetAllAsync(tenant.DatabaseName!);");
 
       UpdateUserViewModel model = new UpdateUserViewModel
       {
@@ -336,7 +338,7 @@ namespace Accounting.Controllers
       {
         return NotFound();
       }
-      UserOrganizationService userOrganizationService = new UserOrganizationService(tenant.DatabaseName);
+      UserOrganizationService userOrganizationService = new UserOrganizationService(tenant.DatabaseName, tenant.DatabasePassword);
       List<UserOrganization> userOrganizations = await userOrganizationService.GetAllAsync(tenant.TenantID);
 
       string currentDatabaseName = GetDatabaseName();

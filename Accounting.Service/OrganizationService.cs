@@ -3,15 +3,16 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class OrganizationService
+  public class OrganizationService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public OrganizationService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public OrganizationService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+
+    }
+
+    public OrganizationService(string databaseName, string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<Organization> CreateAsync(string organizationName)
