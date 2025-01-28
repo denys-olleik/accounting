@@ -34,7 +34,11 @@ namespace Accounting.Controllers
     {
       _invoiceLineService = invoiceLineService;
       _journalService = new JournalService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabasePassword, requestContext.DatabaseName);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(
+        _invoiceLineService, 
+        _journalService, 
+        requestContext.DatabasePassword, 
+        requestContext.DatabaseName);
       _journalInvoiceInvoiceLinePaymentService = new JournalInvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
       _paymentService = new PaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
       _invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
@@ -57,7 +61,8 @@ namespace Accounting.Controllers
           GetOrganizationId(),
           includeVoidInvoices);
 
-      InvoiceInvoiceLinePaymentService invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(_requestContext.DatabaseName);
+      InvoiceInvoiceLinePaymentService invoiceInvoiceLinePaymentService 
+        = new InvoiceInvoiceLinePaymentService(_requestContext.DatabaseName!, _requestContext.DatabasePassword!);
       foreach (var invoice in invoices)
       {
         invoice.Payments = await _invoiceInvoiceLinePaymentService.GetAllPaymentsByInvoiceIdAsync(invoice.InvoiceID, GetOrganizationId(), true);
@@ -123,7 +128,7 @@ namespace Accounting.Controllers
         string invoiceNumbers = null,
         string company = null)
     {
-      InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, _requestContext.DatabaseName);
+      InvoiceService invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, _requestContext.DatabaseName!, _requestContext.DatabasePassword!);
       List<Invoice> invoices = await invoiceService.GetFilteredAsync(inStatus?.Split(","), invoiceNumbers, company, GetOrganizationId());
 
       foreach (var invoice in invoices)

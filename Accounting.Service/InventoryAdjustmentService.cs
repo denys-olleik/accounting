@@ -10,7 +10,9 @@ namespace Accounting.Service
       
     }
 
-    public InventoryAdjustmentService(string databaseName, string databasePassword) : base(databaseName, databasePassword)
+    public InventoryAdjustmentService(
+      string databaseName, 
+      string databasePassword) : base(databaseName, databasePassword)
     {
 
     }

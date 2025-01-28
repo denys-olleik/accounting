@@ -4,23 +4,27 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class InvoiceService
+  public class InvoiceService : BaseService
   {
     private readonly JournalService _journalService;
     private readonly JournalInvoiceInvoiceLineService _journalInvoiceInvoiceLineService;
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
+
+    public InvoiceService(
+      JournalService journalService, 
+      JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService) : base()
+    {
+      _journalService = journalService;
+      _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
+    }
 
     public InvoiceService(
         JournalService journalService,
         JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService,
-        string databasePassword = "password",
-        string databaseName = DatabaseThing.DatabaseConstants.Database)
+        string databaseName,
+        string databasePassword) : base(databaseName, databasePassword)
     {
       _journalService = journalService;
       _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
     }
 
     public async Task<Invoice> CreateAsync(Invoice invoice)

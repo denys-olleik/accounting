@@ -3,27 +3,30 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class PaymentInstructionService
+  public class PaymentInstructionService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public PaymentInstructionService(string databasePassword, string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public PaymentInstructionService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+
+    }
+
+    public PaymentInstructionService(
+      string databaseName,
+      string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public Task CreateAsync(PaymentInstruction paymentInstruction)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return factoryManager.GetPaymentInstructionManager()
           .CreateAsync(paymentInstruction);
     }
 
     public Task<List<PaymentInstruction>> GetPaymentInstructionsAsync(int organizationId)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return factoryManager.GetPaymentInstructionManager()
           .GetAllAsync(organizationId);
     }

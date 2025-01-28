@@ -8,10 +8,10 @@ namespace Accounting.Database.Interfaces
     Task<Organization> CreateAsync(string organizationName, string databaseName);
     Task InsertSampleOrganizationDataAsync(string sampleSqlDataToInsert);
     Task<int> DeleteAsync(int organizationId, string databaseName);
-    Task<List<Organization>> GetAllAsync(string databaseName);
+    Task<List<Organization>> GetAllAsync();
     Task<Organization> GetAsync(int organizationId, string databaseName);
     Task<Organization> GetAsync(string name, bool searchTenants);
-    Task<Organization> GetAsync(string name, string tenantId);
+    Task<Organization> GetAsync(string name);
     Task<string?> GetPaymentInstructions(int organizationId);
     Task<int> UpdateAccountsPayableEmailAsync(int organizationId, string accountsPayableEmail);
     Task<int> UpdateAccountsPayablePhoneAsync(int organizationId, string accountsPayablePhone);

@@ -3,32 +3,35 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class JournalInvoiceInvoiceLinePaymentService
+  public class JournalInvoiceInvoiceLinePaymentService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public JournalInvoiceInvoiceLinePaymentService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public JournalInvoiceInvoiceLinePaymentService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+      
+    }
+
+    public JournalInvoiceInvoiceLinePaymentService(
+      string databaseName, 
+      string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<JournalInvoiceInvoiceLinePayment> CreateAsync(JournalInvoiceInvoiceLinePayment ledgerContext)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetJournalInvoiceInvoiceLinePaymentManager().CreateAsync(ledgerContext);
     }
 
     public async Task<List<JournalInvoiceInvoiceLinePayment>> GetAllAsync(int paymentId, bool getReversedEntries)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetJournalInvoiceInvoiceLinePaymentManager().GetAllAsync(paymentId, getReversedEntries);
     }
 
     public async Task<List<JournalInvoiceInvoiceLinePayment>> GetAllAsync(int invoicePaymentId, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetJournalInvoiceInvoiceLinePaymentManager().GetAllAsync(invoicePaymentId, organizationId);
     }
   }

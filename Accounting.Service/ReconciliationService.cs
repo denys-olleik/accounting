@@ -3,33 +3,36 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class ReconciliationService
+  public class ReconciliationService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public ReconciliationService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public ReconciliationService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+
+    }
+
+    public ReconciliationService(
+      string databaseName,
+      string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<Reconciliation> CreateAsync(Reconciliation reconciliation)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.ReconciliationManager().CreateAsync(reconciliation);
     }
 
     public async Task<List<Reconciliation>> GetAllDescendingAsync(int top, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       var reconciliations = await factoryManager.ReconciliationManager().GetAllDescendingAsync(top, organizationId);
       return reconciliations.OrderByDescending(x => x.ReconciliationID).ToList();
     }
 
     public async Task<Reconciliation> GetByIdAsync(int id, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.ReconciliationManager().GetByIdAsync(id, organizationId);
     }
 

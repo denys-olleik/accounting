@@ -3,38 +3,41 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class LoginWithoutPasswordService
+  public class LoginWithoutPasswordService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public LoginWithoutPasswordService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public LoginWithoutPasswordService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+      
+    }
+
+    public LoginWithoutPasswordService(
+      string databaseName,
+      string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<LoginWithoutPassword> CreateAsync(string email)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetLoginWithoutPasswordManager().CreateAsync(email);
     }
 
     public async Task<LoginWithoutPassword> GetAsync(string email)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetLoginWithoutPasswordManager().GetAsync(email);
     }
 
     public async Task DeleteAsync(LoginWithoutPassword loginWithoutPassword)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       await factoryManager.GetLoginWithoutPasswordManager().DeleteAsync(loginWithoutPassword);
     }
 
     public async Task<int> DeleteAsync(string? email)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetLoginWithoutPasswordManager().DeleteAsync(email);
     }
   }

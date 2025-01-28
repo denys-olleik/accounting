@@ -46,7 +46,7 @@ namespace Accounting.Events
 
       if (organizationId > 0)
       {
-        var userOrganization = await _userOrganizationService.GetAsync(userId!.Value, organizationId, databaseName!);
+        var userOrganization = await _userOrganizationService.GetAsync(userId!.Value, organizationId);
 
         if (userOrganization == null)
         {

@@ -3,20 +3,23 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class RequestLogService
+  public class RequestLogService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public RequestLogService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public RequestLogService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+      
+    }
+
+    public RequestLogService(
+      string databaseName,
+      string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<RequestLog> CreateAsync(RequestLog requestLog)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetRequestLogManager().CreateAsync(requestLog);
     }
   }

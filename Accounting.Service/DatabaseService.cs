@@ -10,7 +10,9 @@ namespace Accounting.Service
 
     }
 
-    public DatabaseService(string databaseName, string databasePassword) : base(databaseName, databasePassword)
+    public DatabaseService(
+      string databaseName, 
+      string databasePassword) : base(databaseName, databasePassword)
     {
     }
 

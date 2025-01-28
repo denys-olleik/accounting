@@ -3041,12 +3041,9 @@ namespace Accounting.Database
         return null!;
       }
 
-      public async Task<Organization> GetAsync(string name, string databaseName)
+      public async Task<Organization> GetAsync(string name)
       {
-        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
-        builder.Database = databaseName;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           DynamicParameters p = new DynamicParameters();
           p.Add("@Name", name);
@@ -3061,12 +3058,9 @@ namespace Accounting.Database
         }
       }
 
-      public async Task<List<Organization>> GetAllAsync(string databaseName)
+      public async Task<List<Organization>> GetAllAsync()
       {
-        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
-        builder.Database = databaseName;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           var organizations = await con.QueryAsync<Organization>("""
             SELECT * 
@@ -4731,7 +4725,7 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<UserOrganization> GetAsync(int userId, int organizationId, string databaseName, string databasePassword)
+      public async Task<UserOrganization> GetAsync(int userId, int organizationId)
       {
         var p = new DynamicParameters();
         p.Add("UserID", userId);
@@ -4739,12 +4733,7 @@ namespace Accounting.Database
 
         IEnumerable<UserOrganization> result;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
-        builder.Database = databaseName;
-        builder.Password = databasePassword;
-        string connectionString = builder.ConnectionString;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(connectionString))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<UserOrganization, User, Organization, UserOrganization>("""
               SELECT uo.*, u.*, o.* 
@@ -4922,7 +4911,7 @@ namespace Accounting.Database
         return result.Single();
       }
 
-      public async Task<List<Organization>> GetByUserIdAsync(int userId, string? databaseName)
+      public async Task<List<Organization>> GetByUserIdAsync(int userId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@UserId", userId);

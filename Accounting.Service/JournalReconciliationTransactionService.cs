@@ -3,20 +3,23 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class JournalReconciliationTransactionService
+  public class JournalReconciliationTransactionService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public JournalReconciliationTransactionService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public JournalReconciliationTransactionService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+
+    }
+
+    public JournalReconciliationTransactionService(
+      string databaseName,
+      string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<JournalReconciliationTransaction> CreateAsync(JournalReconciliationTransaction journalExpense)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetJournalReconciliationTransactionManager().CreateAsync(journalExpense);
     }
 
@@ -25,7 +28,7 @@ namespace Accounting.Service
       int organizationId,
       bool loadChildren = false)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       var manager = factoryManager.GetJournalReconciliationTransactionManager();
 
       var transactions = await manager.GetLastTransactionAsync(reconciliationTransactionId, organizationId, loadChildren);

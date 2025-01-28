@@ -6,20 +6,23 @@ using System.Globalization;
 
 namespace Accounting.Service
 {
-  public class ZipCodeService
+  public class ZipCodeService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public ZipCodeService(string databasePassword, string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public ZipCodeService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+        
+    }
+
+    public ZipCodeService(
+      string databaseName,
+      string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<List<ZipCode>> GetAllAsync(bool locationIsNull)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetZIPCodeManager().GetAllAsync(locationIsNull);
     }
 
@@ -48,7 +51,7 @@ namespace Accounting.Service
 
       var zipCodesWithoutLocationGeography = await GetAllAsync(true);
 
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       await factoryManager.GetZIPCodeManager().UpdateLocationAsync(zipCodesWithoutLocationGeography);
     }
 

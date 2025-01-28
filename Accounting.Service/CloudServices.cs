@@ -7,16 +7,24 @@ using System.Text;
 
 namespace Accounting.Service
 {
-  public class CloudServices
+  public class CloudServices : BaseService
   {
-    private readonly DigitalOceanService _digitalOceanService;
     private readonly SecretService _secretService;
+    private readonly DigitalOceanService _digitalOceanService;
+
+    public CloudServices(
+      SecretService secretService,
+      TenantService tenantService) : base()
+    {
+      _secretService = new SecretService(_databaseName, _databasePassword);
+      _digitalOceanService = new DigitalOceanService(secretService, tenantService);
+    }
 
     public CloudServices(
       SecretService secretService,
       TenantService tenantService,
-      string databasePassword = "password",
-      string databaseName = DatabaseThing.DatabaseConstants.Database)
+      string databaseName,
+      string databasePassword) : base(databaseName, databasePassword)
     {
       _digitalOceanService = new DigitalOceanService(secretService, tenantService);
     }

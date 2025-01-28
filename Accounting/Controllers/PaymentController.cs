@@ -31,7 +31,7 @@ namespace Accounting.Controllers
       _invoiceLineService = new InvoiceLineService(requestContext.DatabasePassword, requestContext.DatabaseName);
       _journalService = new JournalService(requestContext.DatabasePassword, requestContext.DatabaseName);
       _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabasePassword, requestContext.DatabaseName);
-      _paymentService = new PaymentService(requestContext.DatabaseName);
+      _paymentService = new PaymentService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabasePassword, requestContext.DatabaseName);
       _invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
     }

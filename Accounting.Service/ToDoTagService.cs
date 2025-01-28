@@ -3,20 +3,23 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class ToDoTagService
+  public class ToDoTagService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public ToDoTagService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public ToDoTagService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+      
+    }
+
+    public ToDoTagService(
+      string databaseName,
+      string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<ToDoTag> CreateAsync(ToDoTag taskTag)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetTaskTagManager().CreateAsync(taskTag);
     }
   }

@@ -24,9 +24,9 @@ namespace Accounting.Controllers
       UserService userService,
       SecretService secretService)
     {
-      _userOrganizationService = new UserOrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _userService = new UserService(requestContext.DatabaseName, requestContext.DatabasePassword);
-      _secretService = new SecretService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
+      _userService = new UserService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
+      _secretService = new SecretService(requestContext.DatabasePassword!, requestContext.DatabaseName!);
     }
 
     [HttpGet]
@@ -104,7 +104,7 @@ namespace Accounting.Controllers
     [Route("details/{id}")]
     public async Task<IActionResult> Details(int id)
     {
-      User user = (await _userOrganizationService.GetAsync(id, GetOrganizationId(), null)).User!;
+      User user = (await _userOrganizationService.GetAsync(id, GetOrganizationId())).User!;
 
       if (user == null)
       {

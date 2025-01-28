@@ -24,12 +24,12 @@ public class UpdateClaimsMiddleware
 
       if (int.TryParse(userIdClaim, out int userId) && int.TryParse(orgIdClaim, out int orgId))
       {
-        var userOrganization = await _userOrganizationService.GetAsync(userId, orgId, databaseName!);
+        var userOrganization = await _userOrganizationService.GetAsync(userId, orgId);
         if (userOrganization?.Organization != null)
         {
           var claims = new List<Claim>(context.User.Claims);
           claims.RemoveAll(c => c.Type == CustomClaimTypeConstants.OrganizationName);
-          claims.Add(new Claim(CustomClaimTypeConstants.OrganizationName, userOrganization.Organization.Name));
+          claims.Add(new Claim(CustomClaimTypeConstants.OrganizationName, userOrganization.Organization.Name!));
 
           var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
           context.User = new ClaimsPrincipal(identity);

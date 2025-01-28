@@ -4,32 +4,35 @@ using Accounting.Database;
 
 namespace Accounting.Service
 {
-  public class PaymentService
+  public class PaymentService : BaseService
   {
-    private readonly string _databaseName;
-    private readonly string _databasePassword;
-
-    public PaymentService(string databasePassword = "password", string databaseName = DatabaseThing.DatabaseConstants.Database)
+    public PaymentService() : base()
     {
-      _databaseName = databaseName;
-      _databasePassword = databasePassword;
+      
+    }
+
+    public PaymentService(
+      string databaseName,
+      string databasePassword) : base(databaseName, databasePassword)
+    {
+
     }
 
     public async Task<Payment> CreateAsync(Payment payment)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetPaymentManager().CreateAsync(payment);
     }
 
     public async Task<List<Payment>> GetAllByInvoiceIdAsync(int invoiceId, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetPaymentManager().GetAllByInvoiceIdAsync(invoiceId, organizationId);
     }
 
     public async Task<Payment> GetAsync(int id, int organizationId)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetPaymentManager().GetAsync(id, organizationId);
     }
 
@@ -39,7 +42,7 @@ namespace Accounting.Service
       int userId,
       int organizationId)
     {
-      var factoryManager = new FactoryManager(_databasePassword, _databaseName);
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       await factoryManager.GetPaymentManager().UpdateVoidReasonAsync(payment.PaymentID, voidReason, organizationId);
 
       List<JournalInvoiceInvoiceLinePayment> lastTransactions = await factoryManager
