@@ -299,12 +299,10 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      OrganizationService _organizationService = new OrganizationService(tenant.DatabaseName, tenant.DatabaseName);
+      OrganizationService _organizationService = new OrganizationService(tenant.DatabaseName, tenant.DatabasePassword);
       var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!, tenant.DatabasePassword);
       UserOrganizationService _userOrganizationService = new UserOrganizationService(tenant.DatabaseName, tenant.DatabasePassword);
-      var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, tenant.DatabasePassword, tenant.DatabaseName!);
-
-      throw new NotImplementedException("GetAllAsync(tenant.DatabaseName!);");
+      var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, tenant.DatabaseName!, tenant.DatabasePassword);
 
       UpdateUserViewModel model = new UpdateUserViewModel
       {
@@ -373,8 +371,8 @@ namespace Accounting.Controllers
       await userOrganizationService.UpdateUserOrganizationsAsync(
         user.UserID,
         (model.SelectedOrganizationIdsCsv ?? "").Split(',').Where(s => !string.IsNullOrEmpty(s)).Select(int.Parse).ToList(),
-        tenant.DatabasePassword,
-        tenant.DatabaseName!
+        tenant.DatabaseName,
+        tenant.DatabasePassword
       );
 
       return RedirectToAction("TenantUsers", new { tenantId });
@@ -468,21 +466,26 @@ namespace Accounting.Controllers
       string? hashedPassword = model.ExistingUser?.Password ??
                                (model.Password != null ? PasswordStorage.CreateHash(model.Password) : null);
 
-      user = await _userService.CreateAsync(new User()
+      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        Email = model.Email,
-        FirstName = model.ExistingUser?.FirstName ?? model.FirstName,
-        LastName = model.ExistingUser?.LastName ?? model.LastName,
-        Password = hashedPassword
-      }, tenant.DatabasePassword, tenant.DatabaseName);
-
-      if (!string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
-      {
-        var selectedOrganizationIds = model.SelectedOrganizationIdsCsv.Split(',').Select(int.Parse);
-        foreach (var organizationId in selectedOrganizationIds)
+        user = await _userService.CreateAsync(new User()
         {
-          await _userOrganizationService.CreateAsync(user.UserID, organizationId, tenant.DatabasePassword, tenant.DatabaseName!);
+          Email = model.Email,
+          FirstName = model.ExistingUser?.FirstName ?? model.FirstName,
+          LastName = model.ExistingUser?.LastName ?? model.LastName,
+          Password = hashedPassword
+        }, tenant.DatabaseName, tenant.DatabasePassword);
+
+        if (!string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
+        {
+          var selectedOrganizationIds = model.SelectedOrganizationIdsCsv.Split(',').Select(int.Parse);
+          foreach (var organizationId in selectedOrganizationIds)
+          {
+            await _userOrganizationService.CreateAsync(user.UserID, organizationId, tenant.DatabaseName!, tenant.DatabasePassword);
+          }
         }
+
+        scope.Complete();
       }
 
       return RedirectToAction("Tenants");
@@ -821,7 +824,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      List<User> users = await _userOrganizationService.GetUsersWithOrganizationsAsync(tenant.DatabasePassword, tenant.DatabaseName!);
+      List<User> users = await _userOrganizationService.GetUsersWithOrganizationsAsync(tenant.DatabaseName!, tenant.DatabasePassword);
 
       var model = new GetUsersViewModel
       {

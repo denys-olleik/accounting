@@ -65,7 +65,7 @@ namespace Accounting.Service
       return await factoryManager.GetUserOrganizationManager().GetUsersWithOrganizationsAsync(databaseName);
     }
 
-    public async Task<UserOrganization> CreateAsync(int userID, int organizationId, string databaseName = DatabaseThing.DatabaseConstants.Database, string databasePassword = "password")
+    public async Task<UserOrganization> CreateAsync(int userID, int organizationId, string databaseName, string databasePassword)
     {
       var factoryManager = new FactoryManager(databaseName, databasePassword);
       return await factoryManager.GetUserOrganizationManager().CreateAsync(userID, organizationId, databaseName);
