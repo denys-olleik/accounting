@@ -34,10 +34,13 @@ namespace Accounting.Controllers
       int page = 1,
       int pageSize = 2)
     {
+      var referer = Request.Headers["Referer"].ToString() ?? string.Empty;
+
       var vm = new ItemsPaginatedViewModel
       {
         Page = page,
-        PageSize = pageSize
+        PageSize = pageSize,
+        RememberPageSize = string.IsNullOrEmpty(referer),
       };
 
       return View(vm);
@@ -326,7 +329,7 @@ namespace Accounting.Models.Item
     public int? RevenueAccountId { get; set; }
     public int? AssetsAccountId { get; set; }
     public int? ParentItemId { get; set; }
-    public DateTimeOffset Created { get; set; }
+    public DateTime Created { get; set; }
     public int CreatedById { get; set; }
     public int OrganizationId { get; set; }
     public List<ItemViewModel>? Children { get; set; }

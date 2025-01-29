@@ -106,24 +106,23 @@
 	</div>
 </div>
 
-<div id="app" class="display-flex flex-direction-column font-Roboto-Mono">
-
-	<div class="margin-bottom-5px display-flex font-size-20px background-color-antiquewhite">
-		<div class="flex-1 text-align-left">
-			<a :href="`/item/items?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
-		</div>
-		<div class="display-flex flex-1">
-			<input type="text" v-model="pageSize" class="text-align-center width-100" @@change="onPageSizeChange">
-		</div>
-		<div class="flex-1 text-align-right">
-			<a :href="`/item/items?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
-		</div>
-	</div>
-
+<div id="app" class="display-flex flex-direction-column">
 	<div class="margin-bottom-5px">
 		<template v-for="item in items" :key="item.itemID">
 			<item :item="item" @@item-clicked="onItemClicked"></item>
 		</template>
+	</div>
+
+	<div class="margin-bottom-5px display-flex font-size-16px background-color-antiquewhite">
+		<div class="flex-1 text-align-left">
+			<a :href="`/item/items?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
+		</div>
+		<div class="display-flex flex-1">
+
+		</div>
+		<div class="flex-1 text-align-right">
+			<a :href="`/item/items?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
+		</div>
 	</div>
 </div>
 
@@ -193,9 +192,6 @@
 			resetSelectedItemID(item, selectedID = null) {
 				const children = item.children ? item.children.map(child => this.resetSelectedItemID(child, selectedID)) : [];
 				return { ...item, children, selectedItemID: selectedID };
-			},
-			onPageSizeChange() {
-				this.fetchItems();
 			}
 		},
 		mounted() {
