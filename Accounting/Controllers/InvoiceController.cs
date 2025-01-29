@@ -48,18 +48,18 @@ namespace Accounting.Controllers
       JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService,
       RequestContext requestContext)
     {
-      _addressService = new AddressService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _businessEntityService = new BusinessEntityService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _journalService = new JournalService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _invoiceAttachmentService = new InvoiceAttachmentService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _invoiceLineService = new InvoiceLineService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _invoicePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabasePassword, requestContext.DatabaseName);
-      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabasePassword, requestContext.DatabaseName);
-      _itemService = new ItemService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _organizationService = new OrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _paymentTermsService = new PaymentTermsService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _accountService = new AccountService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _addressService = new AddressService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _journalService = new JournalService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _invoiceAttachmentService = new InvoiceAttachmentService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _invoiceLineService = new InvoiceLineService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _invoicePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName, requestContext.DatabasePassword);
+      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName, requestContext.DatabasePassword);
+      _itemService = new ItemService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _organizationService = new OrganizationService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _paymentTermsService = new PaymentTermsService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _accountService = new AccountService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [Route("invoices")]

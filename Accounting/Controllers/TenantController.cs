@@ -166,7 +166,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      Organization organization = await _organizationService.GetAsync(int.Parse(organizationId), tenant.DatabaseName!);
+      Organization organization = await _organizationService.GetAsync(int.Parse(organizationId), tenant.DatabaseName!, GetDatabasePassword());
       if (organization == null)
       {
         return NotFound();
@@ -212,7 +212,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      Organization organization = await _organizationService.GetAsync(int.Parse(organizationId), tenant.DatabaseName!);
+      Organization organization = await _organizationService.GetAsync(int.Parse(organizationId), tenant.DatabaseName!, GetDatabasePassword());
       if (organization == null)
       {
         return NotFound();
@@ -237,7 +237,7 @@ namespace Accounting.Controllers
       {
         return NotFound();
       }
-      Organization organization = await _organizationService.GetAsync(int.Parse(organizationId), tenant.DatabaseName!);
+      Organization organization = await _organizationService.GetAsync(int.Parse(organizationId), tenant.DatabaseName!, GetDatabasePassword());
       if (organization == null)
       {
         return NotFound();

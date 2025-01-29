@@ -81,7 +81,7 @@ namespace Accounting.Controllers
         && (!string.IsNullOrEmpty(existingUser.Password) && !string.IsNullOrEmpty(model.Password))
         && PasswordStorage.VerifyPassword(model.Password, existingUser.Password))
       {
-        ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser);
+        ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, null, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
           claimsPrincipal,
@@ -152,7 +152,7 @@ namespace Accounting.Controllers
       }
 
       var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
-      ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser);
+      ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, null, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
 
       await HttpContext.SignInAsync(
         CookieAuthenticationDefaults.AuthenticationScheme,

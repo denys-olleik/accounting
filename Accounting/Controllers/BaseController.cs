@@ -87,6 +87,22 @@ namespace Accounting.Controllers
     }
 
     [NonAction]
+    public string GetDatabasePassword()
+    {
+      var identity = User?.Identity as ClaimsIdentity;
+      if (identity == null)
+      {
+        throw new InvalidOperationException("User identity is not available.");
+      }
+      var databasePasswordClaim = identity.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.DatabasePassword);
+      if (databasePasswordClaim == null || string.IsNullOrEmpty(databasePasswordClaim.Value))
+      {
+        throw new InvalidOperationException("Database password claim is not available or invalid.");
+      }
+      return databasePasswordClaim.Value;
+    }
+
+    [NonAction]
     public string? GetRefererUrl()
     {
       return HttpContext.Request.Headers["Referer"].ToString();

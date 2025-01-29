@@ -33,18 +33,18 @@ namespace Accounting.Controllers
       RequestContext requestContext)
     {
       _invoiceLineService = invoiceLineService;
-      _journalService = new JournalService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _journalService = new JournalService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(
-        _invoiceLineService, 
-        _journalService, 
-        requestContext.DatabasePassword, 
-        requestContext.DatabaseName);
-      _journalInvoiceInvoiceLinePaymentService = new JournalInvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _paymentService = new PaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _businessEntityService = new BusinessEntityService(requestContext.DatabasePassword, requestContext.DatabaseName);
+          _invoiceLineService,
+          _journalService,
+          requestContext.DatabaseName,
+          requestContext.DatabasePassword);
+      _journalInvoiceInvoiceLinePaymentService = new JournalInvoiceInvoiceLinePaymentService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _paymentService = new PaymentService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _requestContext = requestContext;
-      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabasePassword, requestContext.DatabaseName);
+      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet("get-invoices")]
