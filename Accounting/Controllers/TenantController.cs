@@ -37,11 +37,11 @@ namespace Accounting.Controllers
       UserOrganizationService userOrganizationService,
       RequestContext requestContext)
     {
-      _tenantService = new TenantService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _tenantService = new TenantService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _cloudServices = cloudServices;
-      _secretService = new SecretService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _secretService = new SecretService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _databaseService = databaseService;
-      _organizationService = new OrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _organizationService = new OrganizationService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
@@ -268,7 +268,7 @@ namespace Accounting.Controllers
       OrganizationsViewModel model = new OrganizationsViewModel();
       model.TenantId = tenant.TenantID;
 
-      List<Organization> organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
+      List<Organization> organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!, tenant.DatabasePassword);
       model.Organizations = organizations.Select(organizations => new OrganizationsViewModel.OrganizationViewModel
       {
         OrganizationID = organizations.OrganizationID,
@@ -300,7 +300,7 @@ namespace Accounting.Controllers
       }
 
       OrganizationService _organizationService = new OrganizationService(tenant.DatabaseName, tenant.DatabaseName);
-      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
+      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!, tenant.DatabasePassword);
       UserOrganizationService _userOrganizationService = new UserOrganizationService(tenant.DatabaseName, tenant.DatabasePassword);
       var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, tenant.DatabasePassword, tenant.DatabaseName!);
 
@@ -392,7 +392,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
+      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!, tenant.DatabasePassword);
 
       CreateUserViewModel model = new CreateUserViewModel
       {
@@ -420,7 +420,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!);
+      var organizations = await _organizationService.GetAllAsync(tenant.DatabaseName!, tenant.DatabasePassword);
       model.AvailableOrganizations = organizations.Select(x => new CreateUserViewModel.OrganizationViewModel
       {
         OrganizationID = x.OrganizationID,

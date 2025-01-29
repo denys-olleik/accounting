@@ -41,15 +41,15 @@ namespace Accounting.Service
       return await factoryManager.GetOrganizationManager().DeleteAsync(organizationId, databaseName);
     }
 
-    public async Task<List<Organization>> GetAllAsync(string databaseName)
+    public async Task<List<Organization>> GetAllAsync(string databaseName, string databasePassword)
     {
-      var factoryManager = new FactoryManager(databaseName, _databasePassword);
+      var factoryManager = new FactoryManager(databaseName, databasePassword);
       return await factoryManager.GetOrganizationManager().GetAllAsync();
     }
 
-    public async Task<Organization> GetAsync(int organizationId, string databaseName)
+    public async Task<Organization> GetAsync(int organizationId, string databaseName, string databasePassword)
     {
-      var factoryManager = new FactoryManager(databaseName, _databasePassword);
+      var factoryManager = new FactoryManager(databaseName, databasePassword);
       return await factoryManager.GetOrganizationManager().GetAsync(organizationId, databaseName);
     }
 
