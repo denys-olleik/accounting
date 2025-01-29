@@ -4,6 +4,7 @@ using Accounting.Models.Item;
 using Accounting.Models.ItemViewModels;
 using Accounting.Service;
 using Accounting.Validators;
+using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
@@ -90,7 +91,7 @@ namespace Accounting.Controllers
     [Route("create/{parentItemId?}")]
     public async Task<IActionResult> Create(CreateItemViewModel model)
     {
-      CreateItemViewModelValidator validator = new CreateItemViewModelValidator(GetOrganizationId());
+      CreateItemViewModel.CreateItemViewModelValidator validator = new CreateItemViewModel.CreateItemViewModelValidator(GetOrganizationId());
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -380,6 +381,34 @@ namespace Accounting.Models.Item
       public int AccountID { get; set; }
       public string? Name { get; set; }
       public string? Type { get; set; }
+    }
+
+    public class CreateItemViewModelValidator : AbstractValidator<CreateItemViewModel>
+    {
+      private readonly int _organizationId;
+
+      public CreateItemViewModelValidator(int organizationId)
+      {
+        _organizationId = organizationId;
+
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Name is required.")
+            .MaximumLength(100).WithMessage("Name cannot be more than 100 characters.");
+
+        RuleFor(x => x.SellFor)
+            .GreaterThanOrEqualTo(0).WithMessage("Sell for cannot be a negative number.");
+
+        RuleFor(x => x.SelectedRevenueAccountId)
+            .NotEmpty().WithMessage("Revenue account is required.")
+            .When(x => x.SellFor > 0);
+
+        RuleFor(x => x.SelectedAssetsAccountId)
+            .NotEmpty().WithMessage("Asset account is required.")
+            .When(x => x.SellFor > 0);
+
+        RuleFor(x => x.SelectedItemType)
+            .NotEmpty().WithMessage("Item type is required.");
+      }
     }
   }
 
