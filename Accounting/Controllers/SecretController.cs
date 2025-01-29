@@ -16,7 +16,7 @@ namespace Accounting.Controllers
 
     public SecretController(RequestContext requestContext, SecretService secretService)
     {
-      _secretService = new SecretService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _secretService = new SecretService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [Route("secrets")]

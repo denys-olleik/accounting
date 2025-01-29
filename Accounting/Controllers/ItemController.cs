@@ -176,9 +176,9 @@ namespace Accounting.Controllers
       LocationService locationService,
       RequestContext requestContext)
     {
-      _itemService = new ItemService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _inventoryService = new InventoryService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _locationService = new LocationService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _itemService = new ItemService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _inventoryService = new InventoryService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _locationService = new LocationService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet("get-all-items")]

@@ -31,12 +31,12 @@ namespace Accounting.Controllers
       InvoiceLineService invoiceLineService)
     {
       _ironPdfService = ironPdfService;
-      _invoiceLineService = new InvoiceLineService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _journalService = new JournalService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabasePassword, requestContext.DatabaseName);
-      _organizationService = new OrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _businessEntityService = new BusinessEntityService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabasePassword, requestContext.DatabaseName);
+      _invoiceLineService = new InvoiceLineService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _journalService = new JournalService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName, requestContext.DatabasePassword);
+      _organizationService = new OrganizationService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet("view-invoice/{id}")]
