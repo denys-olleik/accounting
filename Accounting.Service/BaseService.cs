@@ -1,4 +1,5 @@
 ﻿using Accounting.Business;
+using static Accounting.Business.Claim;
 
 namespace Accounting.Service
 {
@@ -8,8 +9,8 @@ namespace Accounting.Service
     protected readonly string _databasePassword;
 
     public BaseService() : this(
-      DatabaseThing.DatabaseConstants.Database, 
-      "password")
+      DatabaseThing.DatabaseConstants.Database,
+      CustomClaimTypeConstants.Password)
     {
 
     }

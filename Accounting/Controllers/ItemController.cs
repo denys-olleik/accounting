@@ -23,8 +23,8 @@ namespace Accounting.Controllers
       ItemService itemService,
       RequestContext requestContext)
     {
-      _accountService = new AccountService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _itemService = new ItemService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _accountService = new AccountService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _itemService = new ItemService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet]

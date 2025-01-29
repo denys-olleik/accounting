@@ -36,13 +36,13 @@ namespace Accounting.Controllers
       SecretService secretService,
       TenantService tenantService)
     {
-      _organizationService = new OrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _userOrganizationService = new UserOrganizationService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _organizationService = new OrganizationService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _userService = new UserService(requestContext.DatabaseName, requestContext.DatabasePassword);
-      _loginWithoutPasswordService = new LoginWithoutPasswordService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _secretService = new SecretService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _loginWithoutPasswordService = new LoginWithoutPasswordService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _secretService = new SecretService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _emailService = new EmailService(_secretService);
-      _tenantService = new TenantService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _tenantService = new TenantService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet]

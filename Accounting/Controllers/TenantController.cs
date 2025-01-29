@@ -13,6 +13,7 @@ using Accounting.CustomAttributes;
 using Accounting.Common;
 using static Accounting.Models.TenantViewModels.UpdateUserViewModel;
 using DigitalOcean.API.Exceptions;
+using static Accounting.Business.Claim;
 
 namespace Accounting.Controllers
 {
@@ -616,7 +617,7 @@ namespace Accounting.Controllers
           {
             FullyQualifiedDomainName = model.FullyQualifiedDomainName,
             Email = model.Email,
-            DatabasePassword = "password"
+            DatabasePassword = CustomClaimTypeConstants.Password
           });
 
           scope.Complete();

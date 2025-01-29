@@ -1,4 +1,5 @@
 ﻿using Accounting.Database.Interfaces;
+using static Accounting.Business.Claim;
 
 namespace Accounting.Database
 {
@@ -8,6 +9,11 @@ namespace Accounting.Database
 
     public FactoryManager(string databaseName, string databasePassword)
     {
+      if (string.IsNullOrEmpty(databasePassword))
+      {
+        databasePassword = CustomClaimTypeConstants.Password;
+      }
+
       databaseFactoryDefinition = new DapperPsqlFactory(databaseName, databasePassword);
     }
 
