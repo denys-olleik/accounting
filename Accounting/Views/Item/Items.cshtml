@@ -18,7 +18,7 @@
 				<a href="#" @@click.prevent="handleItemClick(item.itemID)">
 					{{ item.name }}
 				</a>
-				<div v-if="item.selectedItemID === item.itemID" class="display-flex flex-direction-column flex-1">
+				<div v-if="item.optionsExpanded" class="display-flex flex-direction-column flex-1">
 					<div class="display-flex margin-bottom-2px">
 						<div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
 							<div class="flex-1"></div>
@@ -168,7 +168,7 @@
 				fetch(`/api/inv/get-all-items?page=${this.page}&pageSize=${this.pageSize}&includeDescendants=true&includeInventories=true`)
 					.then(response => response.json())
 					.then(data => {
-						this.items = this.addSelectedItemID(data.items);
+						this.items = data.items;
 						if (data.currentPage > 0) {
 							this.page = data.currentPage;
 						}
@@ -178,13 +178,7 @@
 					});
 			},
 			onItemClicked(itemID) {
-				console.log('Item clicked:', itemID);
-				if (this.selectedItemID === itemID) {
-					this.selectedItemID = null;
-				} else {
-					this.selectedItemID = itemID;
-				}
-				this.items = this.items.map(item => this.resetSelectedItemID(item, this.selectedItemID));
+				
 			},
 			addSelectedItemID(items) {
 				return items.map(item => this.resetSelectedItemID(item));
