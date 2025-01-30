@@ -15,43 +15,52 @@
 	<div class="background-color-antiquewhite">
 		<div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
 			<div class="display-flex flex-direction-column flex-1 margin-right-2px margin-left-2px">
+				<span v-if="item.children && item.children.length && item.childrenExpanded" class="margin-right-5px">➖</span>
 				<a href="#" @@click.prevent="handleItemClick(item.itemID)">
 					{{ item.name }}
 				</a>
+				<span v-if="item.children && item.children.length && !item.childrenExpanded" class="margin-left-5px">➕</span>
 				<div v-if="item.optionsExpanded" class="display-flex flex-direction-column flex-1">
 					<div class="display-flex margin-bottom-2px">
-						<div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+						<div
+							class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
 							<div class="flex-1"></div>
 							<a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
 							<div class="flex-1"></div>
 						</div>
-						<div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+						<div
+							class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
 							<div class="flex-1"></div>
 							<a class="font-size-16px font-Roboto color-white text-decoration-none"
-								 :href="`/item/update/${item.itemID}`">Update</a>
+								:href="`/item/update/${item.itemID}`">Update</a>
 							<div class="flex-1"></div>
 						</div>
-						<div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+						<div
+							class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
 							<div class="flex-1"></div>
 							<a class="font-size-16px font-Roboto color-white text-decoration-none"
-								 :href="`/item/create/${item.itemID}`">Add</a>
+								:href="`/item/create/${item.itemID}`">Add</a>
 							<div class="flex-1"></div>
 						</div>
 					</div>
 					<div class="display-flex margin-bottom-2px">
-						<div class="display-flex flex-direction-column background-color-darkcyan padding-left-5px padding-right-5px">
+						<div
+							class="display-flex flex-direction-column background-color-darkcyan padding-left-5px padding-right-5px">
 							<div class="flex-1"></div>
-							<a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">information:</a>
+							<a
+								class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">information:</a>
 							<div class="flex-1"></div>
 						</div>
-						<div v-if="itemHierarchyType(item)" class="display-flex flex-direction-column background-color-darkcyan padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
+						<div v-if="itemHierarchyType(item)"
+							class="display-flex flex-direction-column background-color-darkcyan padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
 							<div class="flex-1"></div>
 							<a class="font-size-16px font-Roboto color-white text-decoration-none">
 								{{ item.itemType }}
 							</a>
 							<div class="flex-1"></div>
 						</div>
-						<div v-if="itemHierarchyType(item)" class="display-flex flex-direction-column background-color-darkcyan padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
+						<div v-if="itemHierarchyType(item)"
+							class="display-flex flex-direction-column background-color-darkcyan padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
 							<div class="flex-1"></div>
 							<a class="font-size-16px font-Roboto color-white text-decoration-none">
 								{{ itemHierarchyType(item) }}
@@ -60,12 +69,15 @@
 						</div>
 					</div>
 					<div class="display-flex">
-						<div class="display-flex flex-direction-column background-color-crimson padding-left-5px padding-right-5px">
+						<div
+							class="display-flex flex-direction-column background-color-crimson padding-left-5px padding-right-5px">
 							<div class="flex-1"></div>
-							<a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">inventories:</a>
+							<a
+								class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">inventories:</a>
 							<div class="flex-1"></div>
 						</div>
-						<div class="flex-1 display-flex flex-direction-column background-color-crimson padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
+						<div
+							class="flex-1 display-flex flex-direction-column background-color-crimson padding-right-5px padding-left-5px border-radius-5px margin-left-2px">
 							<table class="border-collapse width-100 background-color-crimson font-Roboto-Mono color-white">
 								<thead class="border-bottom-1px-solid-white">
 									<tr>
@@ -89,7 +101,7 @@
 			</div>
 			<div>{{ item.price }}</div>
 		</div>
-		<div v-if="item.children && item.children.length" class="margin-left-25px">
+		<div v-if="item.childrenExpanded && item.children && item.children.length" class="margin-left-25px">
 			<template v-for="childItem in item.children" :key="childItem.itemID">
 				<item :item="childItem" @@item-clicked="handleItemClick"></item>
 			</template>
@@ -99,10 +111,12 @@
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
 	<div class="margin-left-20px">
-		<a asp-action="Create" asp-controller="Item" class="font-Roboto font-size-16px color-blue">Create Product or Service</a>
+		<a asp-action="Create" asp-controller="Item" class="font-Roboto font-size-16px color-blue">Create Product or
+			Service</a>
 	</div>
 	<div class="flex-1 text-align-right">
-		<a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
+		<a asp-action="Index" asp-controller="Home"
+			class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
 	</div>
 </div>
 
@@ -164,8 +178,23 @@
 			}
 		},
 		methods: {
+			updateItemExpansion(item, selectedID, path = []) {
+				const isSelected = item.itemID === selectedID;
+				const isPathNode = path.includes(item.itemID);
+				const children = item.children ? item.children.map(child =>
+					this.updateItemExpansion(child, selectedID, isSelected ? [item.itemID, ...path] : path)
+				) : [];
+
+				return {
+					...item,
+					children,
+					childrenExpanded: isSelected || isPathNode || children.some(child => child.childrenExpanded),
+					optionsExpanded: isSelected
+				};
+			},
 			fetchItems() {
-				fetch(`/api/inv/get-all-items?page=${this.page}&pageSize=${this.pageSize}&includeDescendants=true&includeInventories=true`)
+				fetch(`/api/inv/get-all-items?page=${this.page
+					} & pageSize=${this.pageSize} & includeDescendants=true & includeInventories=true`)
 					.then(response => response.json())
 					.then(data => {
 						this.items = data.items;
@@ -178,7 +207,8 @@
 					});
 			},
 			onItemClicked(itemID) {
-				
+				this.selectedItemID = this.selectedItemID === itemID ? null : itemID;
+				this.items = this.items.map(item => this.updateItemExpansion(item, this.selectedItemID));
 			},
 			addSelectedItemID(items) {
 				return items.map(item => this.resetSelectedItemID(item));
