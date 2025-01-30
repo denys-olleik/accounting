@@ -24,11 +24,11 @@
   <div class="background-color-antiquewhite">
     <div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
       <div class="display-flex flex-1 align-items-center">
-        <span v-if="account.children && account.children.length && account.expanded" class="margin-right-5px">➖</span>
+        <span v-if="account.children && account.children.length && account.childrenExpanded" class="margin-right-5px">➖</span>
         <a href="#" @@click.prevent="handleAccountClick(account.accountID)">
           {{ account.name }}
         </a>
-        <span v-if="account.children && account.children.length && !account.expanded" class="margin-left-5px">➕</span>
+        <span v-if="account.children && account.children.length && !account.childrenExpanded" class="margin-left-5px">➕</span>
         <span>&nbsp;</span>
         <div v-if="account.optionsExpanded" class="display-flex flex-direction-column">
           <div class="display-flex margin-bottom-2px">
@@ -74,7 +74,7 @@
       </div>
       <div>{{ account.type }}</div>
     </div>
-    <div v-if="account.expanded && account.children && account.children.length" class="margin-left-25px">
+    <div v-if="account.childrenExpanded && account.children && account.children.length" class="margin-left-25px">
       <template v-for="childAccount in account.children" :key="childAccount.accountID">
         <account :account="childAccount" @@account-clicked="handleAccountClick"></account>
       </template>
@@ -140,7 +140,7 @@
         return {
           ...account,
           children,
-          expanded: isSelected || isPathNode || children.some(child => child.expanded),
+          childrenExpanded: isSelected || isPathNode || children.some(child => child.childrenExpanded),
           optionsExpanded: isSelected
         };
       },
