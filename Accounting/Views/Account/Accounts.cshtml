@@ -29,8 +29,8 @@
           {{ account.name }}
         </a>
         <span v-if="account.children && account.children.length && !account.childrenExpanded" class="margin-left-5px">➕</span>
-        <span>&nbsp;</span>
-        <div v-if="account.optionsExpanded" class="display-flex flex-direction-column">
+
+        <div v-if="account.optionsExpanded" class="display-flex flex-direction-column margin-left-5px">
           <div class="display-flex margin-bottom-2px">
             <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
               <div class="flex-1"></div>
