@@ -15,11 +15,15 @@
 	<div class="background-color-antiquewhite">
 		<div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
 			<div class="display-flex flex-direction-column flex-1 margin-right-2px margin-left-2px">
-				<span v-if="item.children && item.children.length && item.childrenExpanded" class="margin-right-5px">➖</span>
-				<a href="#" @@click.prevent="handleItemClick(item.itemID)">
-					{{ item.name }}
-				</a>
-				<span v-if="item.children && item.children.length && !item.childrenExpanded" class="margin-left-5px">➕</span>
+				<div>
+					<span v-if="item.children && item.children.length && item.childrenExpanded"
+						class="margin-right-5px">➖</span>
+					<a href="#" @@click.prevent="handleItemClick(item.itemID)">
+						{{ item.name }}
+					</a>
+					<span v-if="item.children && item.children.length && !item.childrenExpanded"
+						class="margin-left-5px">➕</span>
+				</div>
 				<div v-if="item.optionsExpanded" class="display-flex flex-direction-column flex-1">
 					<div class="display-flex margin-bottom-2px">
 						<div
@@ -86,7 +90,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-if="item.inventories.length === 0">
+									<tr v-if="!item.inventories || item.inventories.length === 0">
 										<td colspan="2" class="text-align-center">empty</td>
 									</tr>
 									<tr v-for="inventory in item.inventories" :key="inventory.inventoryID">
@@ -178,9 +182,22 @@
 			}
 		},
 		methods: {
+			updateItemExpansion(item, selectedID, path = []) {
+				const isSelected = item.itemID === selectedID;
+				const isPathNode = path.includes(item.itemID);
+				const children = item.children ? item.children.map(child =>
+					this.updateItemExpansion(child, selectedID, isSelected ? [item.itemID, ...path] : path)
+				) : [];
+
+				return {
+					...item,
+					children,
+					childrenExpanded: isSelected || isPathNode || children.some(child => child.childrenExpanded),
+					optionsExpanded: isSelected
+				};
+			},
 			fetchItems() {
-				fetch(`/api/inv/get-all-items?page=${this.page
-					} & pageSize=${this.pageSize} & includeDescendants=true & includeInventories=true`)
+				fetch(`/api/inv/get-all-items?page=${this.page}&pageSize=${this.pageSize}&includeDescendants=true&includeInventories=true`)
 					.then(response => response.json())
 					.then(data => {
 						this.items = data.items;
