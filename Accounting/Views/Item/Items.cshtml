@@ -196,9 +196,6 @@
 				this.expandedItemID = this.expandedItemID === itemID ? null : itemID;
 				this.items = this.items.map(item => this.updateItemExpansion(item, this.expandedItemID));
 			},
-			addSelectedItemID(items){
-				return items.map(item => this.resetSelectedItemID(item));
-			}
 		},
 		mounted() {
 			this.fetchItems();
