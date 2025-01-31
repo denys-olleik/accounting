@@ -15,12 +15,12 @@
 	<div class="background-color-antiquewhite">
 		<div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
 			<div class="display-flex flex-direction-column flex-1 margin-right-2px margin-left-2px">
-				<span class="margin-right-5px">➖</span>
+				<span v-if="item.children && item.children.length && item.childrenExpanded" class="margin-right-5px">➖</span>
 				<a href="#" @@click.prevent="handleItemClick(item.itemID)">
 					{{ item.name }}
 				</a>
-				<span class="margin-left-5px">➕</span>
-				<div v-if="item.expanded" class="display-flex flex-direction-column flex-1">
+				<span v-if="item.children && item.children.length && !item.childrenExpanded" class="margin-left-5px">➕</span>
+				<div v-if="isExpanded" class="display-flex flex-direction-column flex-1">
 					<div class="display-flex margin-bottom-2px">
 						<div
 							class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
@@ -101,9 +101,9 @@
 			</div>
 			<div>{{ item.price }}</div>
 		</div>
-		<div v-if="item.expanded && item.children && item.children.length" class="margin-left-25px">
+		<div v-if="item.childrenExpanded && item.children && item.children.length" class="margin-left-25px">
 			<template v-for="childItem in item.children" :key="childItem.itemID">
-				<item :item="childItem" @@item-clicked="handleItemClick"></item>
+				<item :item="childItem" :expanded-item-id="expandedItemID" @@item-clicked="handleItemClick"></item>
 			</template>
 		</div>
 	</div>
@@ -146,14 +146,11 @@
 	const Item = {
 		name: 'item',
 		template: '#item-template',
-		props: ['item', 'expandedItemID'],
+		props: ['item'],
 		methods: {
 			handleItemClick(itemID) {
-				if (this.expandedItemID === itemID) {
-					this.$emit('item-clicked', null);
-				} else {
-					this.$emit('item-clicked', itemID);
-				}
+				console.log(itemID);
+				this.$emit('item-clicked', itemID);
 			},
 			itemHierarchyType(item) {
 				if (item.parentItemId && item.children && item.children.length) {
