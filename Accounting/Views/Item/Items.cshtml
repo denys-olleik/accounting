@@ -15,11 +15,11 @@
 	<div class="background-color-antiquewhite">
 		<div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
 			<div class="display-flex flex-direction-column flex-1 margin-right-2px margin-left-2px">
-				<span v-if="item.children && item.children.length && item.expanded" class="margin-right-5px">➖</span>
+				<span class="margin-right-5px">➖</span>
 				<a href="#" @@click.prevent="handleItemClick(item.itemID)">
 					{{ item.name }}
 				</a>
-				<span v-if="item.children && item.children.length && !item.expanded" class="margin-left-5px">➕</span>
+				<span class="margin-left-5px">➕</span>
 				<div v-if="item.expanded" class="display-flex flex-direction-column flex-1">
 					<div class="display-flex margin-bottom-2px">
 						<div
