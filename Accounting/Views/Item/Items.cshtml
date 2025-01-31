@@ -15,12 +15,12 @@
 	<div class="background-color-antiquewhite">
 		<div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
 			<div class="display-flex flex-direction-column flex-1 margin-right-2px margin-left-2px">
-				<span v-if="item.children && item.children.length && item.childrenExpanded" class="margin-right-5px">➖</span>
+				<span v-if="item.children && item.children.length && item.expanded" class="margin-right-5px">➖</span>
 				<a href="#" @@click.prevent="handleItemClick(item.itemID)">
 					{{ item.name }}
 				</a>
-				<span v-if="item.children && item.children.length && !item.childrenExpanded" class="margin-left-5px">➕</span>
-				<div v-if="item.optionsExpanded" class="display-flex flex-direction-column flex-1">
+				<span v-if="item.children && item.children.length && !item.expanded" class="margin-left-5px">➕</span>
+				<div v-if="item.expanded" class="display-flex flex-direction-column flex-1">
 					<div class="display-flex margin-bottom-2px">
 						<div
 							class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
@@ -101,7 +101,7 @@
 			</div>
 			<div>{{ item.price }}</div>
 		</div>
-		<div v-if="item.childrenExpanded && item.children && item.children.length" class="margin-left-25px">
+		<div v-if="item.expanded && item.children && item.children.length" class="margin-left-25px">
 			<template v-for="childItem in item.children" :key="childItem.itemID">
 				<item :item="childItem" @@item-clicked="handleItemClick"></item>
 			</template>
@@ -171,26 +171,16 @@
 		data() {
 			return {
 				items: [],
-				selectedItemID: null,
+				expandedItemID: null,
 				page: @Model.Page,
 				pageSize: @Model.PageSize,
 				nextPage: null,
 			}
 		},
 		methods: {
-			updateItemExpansion(item, selectedID, path = []) {
-				const isSelected = item.itemID === selectedID;
-				const isPathNode = path.includes(item.itemID);
-				const children = item.children ? item.children.map(child =>
-					this.updateItemExpansion(child, selectedID, isSelected ? [item.itemID, ...path] : path)
-				) : [];
-
-				return {
-					...item,
-					children,
-					childrenExpanded: isSelected || isPathNode || children.some(child => child.childrenExpanded),
-					optionsExpanded: isSelected
-				};
+			onItemClicked(itemID) {
+				console.log(itemID);
+				this.expandedItemID = itemID;
 			},
 			fetchItems() {
 				fetch(`/api/inv/get-all-items?page=${this.page
@@ -206,17 +196,6 @@
 						}
 					});
 			},
-			onItemClicked(itemID) {
-				this.selectedItemID = this.selectedItemID === itemID ? null : itemID;
-				this.items = this.items.map(item => this.updateItemExpansion(item, this.selectedItemID));
-			},
-			addSelectedItemID(items) {
-				return items.map(item => this.resetSelectedItemID(item));
-			},
-			resetSelectedItemID(item, selectedID = null) {
-				const children = item.children ? item.children.map(child => this.resetSelectedItemID(child, selectedID)) : [];
-				return { ...item, children, selectedItemID: selectedID };
-			}
 		},
 		mounted() {
 			this.fetchItems();
