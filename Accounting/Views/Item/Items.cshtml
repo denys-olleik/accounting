@@ -146,11 +146,14 @@
 	const Item = {
 		name: 'item',
 		template: '#item-template',
-		props: ['item'],
+		props: ['item', 'expandedItemID'],
 		methods: {
 			handleItemClick(itemID) {
-				console.log(itemID);
-				this.$emit('item-clicked', itemID);
+				if (this.expandedItemID === itemID) {
+					this.$emit('item-clicked', null);
+				} else {
+					this.$emit('item-clicked', itemID);
+				}
 			},
 			itemHierarchyType(item) {
 				if (item.parentItemId && item.children && item.children.length) {
