@@ -20,7 +20,7 @@
 					{{ item.name }}
 				</a>
 				<span v-if="item.children && item.children.length && !item.childrenExpanded" class="margin-left-5px">➕</span>
-				<div v-if="isExpanded" class="display-flex flex-direction-column flex-1">
+				<div v-if="item.optionsExpanded" class="display-flex flex-direction-column flex-1">
 					<div class="display-flex margin-bottom-2px">
 						<div
 							class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
@@ -178,10 +178,6 @@
 			}
 		},
 		methods: {
-			onItemClicked(itemID) {
-				console.log(itemID);
-				this.expandedItemID = itemID;
-			},
 			fetchItems() {
 				fetch(`/api/inv/get-all-items?page=${this.page
 					} & pageSize=${this.pageSize} & includeDescendants=true & includeInventories=true`)
@@ -196,6 +192,13 @@
 						}
 					});
 			},
+			onItemClicked(itemID) {
+				this.expandedItemID = this.expandedItemID === itemID ? null : itemID;
+				this.items = this.items.map(item => this.updateItemExpansion(item, this.expandedItemID));
+			},
+			addSelectedItemID(items){
+				return items.map(item => this.resetSelectedItemID(item));
+			}
 		},
 		mounted() {
 			this.fetchItems();

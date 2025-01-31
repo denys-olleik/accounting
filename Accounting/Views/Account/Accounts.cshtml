@@ -173,9 +173,6 @@
         this.selectedAccountID = this.selectedAccountID === accountID ? null : accountID;
         this.accounts = this.accounts.map(account => this.updateAccountExpansion(account, this.selectedAccountID));
       },
-      addSelectedAccountID(accounts) {
-        return accounts.map(account => this.resetSelectedAccountID(account));
-      },
       resetSelectedAccountID(account, selectedID = null) {
         const children = account.children ? account.children.map(child => this.resetSelectedAccountID(child, selectedID)) : [];
         return { ...account, children, selectedAccountID: selectedID };
