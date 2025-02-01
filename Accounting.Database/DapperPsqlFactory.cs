@@ -2542,7 +2542,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> DeleteAsync(int itemId)
+      public async Task<int> DeleteAsync(int itemId, bool deleteChildren)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@ItemId", itemId);
@@ -2551,16 +2551,34 @@ namespace Accounting.Database
         {
           using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
-            return await con.ExecuteAsync("""
-              DELETE FROM "Item" 
-              WHERE "ItemID" = @ItemId
-              """, p);
+            await con.OpenAsync();
+              if (deleteChildren)
+              {
+                // Use a recursive CTE to find all descendants
+                await con.ExecuteAsync("""
+                  WITH RECURSIVE Descendants AS (
+                    SELECT "ItemID" FROM "Item" WHERE "ParentItemId" = @ItemId
+                    UNION
+                    SELECT i."ItemID" FROM "Item" i
+                    INNER JOIN Descendants d ON i."ParentItemId" = d."ItemID"
+                  )
+                  DELETE FROM "Item"
+                  WHERE "ItemID" IN (SELECT "ItemID" FROM Descendants)
+                  """, p);
+              }
+
+              // Delete the item itself
+              int rowsAffected = await con.ExecuteAsync("""
+                DELETE FROM "Item" 
+                WHERE "ItemID" = @ItemId
+                """, p);
+
+              return rowsAffected;
           }
         }
-        catch (PostgresException ex) when (ex.SqlState == "23503") // 23503 is the SQLSTATE code for foreign key violation
+        catch (PostgresException ex) when (ex.SqlState == "23503")
         {
-          // Optionally, log the exception or handle it as needed
-          throw new InvalidOperationException("The item cannot be deleted because it is being used elsewhere.", ex);
+          throw new InvalidOperationException("The item cannot be deleted because it is being used elsewhere. 23503.", ex);
         }
       }
 

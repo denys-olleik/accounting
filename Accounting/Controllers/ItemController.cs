@@ -1,5 +1,6 @@
 ﻿using Accounting.Business;
 using Accounting.CustomAttributes;
+using Accounting.Database.Interfaces;
 using Accounting.Models.Item;
 using Accounting.Models.ItemViewModels;
 using Accounting.Service;
@@ -34,6 +35,8 @@ namespace Accounting.Controllers
     {
       Item item = await _itemService.GetAsync(itemId, GetOrganizationId());
       
+      item.Children = await _itemService.GetChildrenAsync(itemId, GetOrganizationId());
+
       if (item == null)
         return NotFound();
 
@@ -41,6 +44,7 @@ namespace Accounting.Controllers
       {
         ItemID = item.ItemID,
         Name = item.Name,
+        HasChildren = item.Children?.Count > 0
       });
     }
 
@@ -48,6 +52,15 @@ namespace Accounting.Controllers
     [Route("delete/{itemId}")]
     public async Task<IActionResult> Delete(DeleteItemViewModel model)
     {
+      DeleteItemViewModel.DeleteItemViewModelValidator validator = new DeleteItemViewModel.DeleteItemViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
       Item item = await _itemService.GetAsync(model.ItemID, GetOrganizationId());
 
       if (item == null)
@@ -57,14 +70,18 @@ namespace Accounting.Controllers
       {
         using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
-          await _itemService.DeleteAsync(model.ItemID);
+          await _itemService.DeleteAsync(model.ItemID, model.DeleteChildren);
           scope.Complete();
         }
       }
       catch (InvalidOperationException ex)
       {
-        model.ValidationResult.Errors.Add(new ValidationFailure(nameof(model.ItemID), ex.Message));
-        return View(model);
+        if (ex.Message.Contains("23503"))
+        {
+          model.ValidationResult.Errors.Add(new ValidationFailure(nameof(model.ItemID), ex.Message));
+          return View(model);
+        }
+        throw;
       }
 
       return RedirectToAction("Items");

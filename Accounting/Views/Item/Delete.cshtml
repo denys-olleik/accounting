@@ -21,6 +21,16 @@
     </div>
   </div>
 
+  @if (Model.HasChildren)
+  {
+    <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite margin-bottom-5px">
+      <span>
+        <input asp-for="DeleteChildren" class="font-size-20px" readonly />
+        <label asp-for="DeleteChildren">Delete children</label>
+      </span>
+    </div>
+  }
+
   <div class="display-flex">
     <div class="flex-1">
       <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Items", "Item")';">Cancel</button>
