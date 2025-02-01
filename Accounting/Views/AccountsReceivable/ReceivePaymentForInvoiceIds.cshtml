@@ -1,11 +1,11 @@
 ﻿@model Accounting.Models.AccountsReceivableViewModels.ReceivePaymentForInvoiceIdsViewModel
 
 @{
-  ViewData["Title"] = "Receive Payment - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Receive payment - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 @{
-  string headerText = "Receive Payment";
+  string headerText = "Receive payment";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
@@ -20,7 +20,7 @@
 
   <div class="display-flex margin-bottom-5px">
     <div class="flex-1 display-flex flex-direction-column background-color-antiquewhite">
-      <label for="ReferenceNumber" class="font-size-16px">Reference Number (required)</label>
+      <label for="ReferenceNumber" class="font-size-16px">Reference number (required)</label>
       <input type="text" name="ReferenceNumber" class="font-size-20px" value="@Model.ReferenceNumber" autocomplete="off" />
     </div>
     <div class="width-5px"></div>
@@ -46,7 +46,7 @@
         <th class="text-align-left padding-right-20px">Customer</th>
         <th class="text-align-right width-1px padding-right-20px">Total</th>
         <th class="text-align-right width-1px padding-right-20px">Received</th>
-        <th class="text-align-right white-space-nowrap width-1px">Amount To Receive</th>
+        <th class="text-align-right white-space-nowrap width-1px">Amount to receive</th>
       </tr>
     </thead>
     <tbody>
@@ -117,14 +117,14 @@
     <div class="flex-1"></div>
     <div class="width-5px"></div>
     <div class="display-flex flex-1 flex-direction-column">
-      <label for="Payment Total" class="font-size-16px font-Roboto background-color-antiquewhite">Payment Total</label>
+      <label for="Payment Total" class="font-size-16px font-Roboto background-color-antiquewhite">Payment total</label>
       <input type="number" step="0.01" name="PaymentTotal"
-             placeholder="Payment Total"
+             placeholder="Payment total"
              class="font-size-20px font-Roboto-Mono" value="@Model.PaymentTotal" />
     </div>
   </div>
 
-  <button type="submit" class="full-width-regular-button width-100">Receive Payment</button>
+  <button type="submit" class="full-width-regular-button width-100">Receive payment</button>
 </form>
 
 @if (Model != null && Model.ValidationResult != null)
