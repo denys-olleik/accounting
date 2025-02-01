@@ -17,6 +17,17 @@
 	</div>
 </div>
 
+<template id="select-account-template">
+   <div class="display-flex flex-direction-column">
+      <input type="text" class="font-size-16px" @@click="handleInputClick" @@blur="handleInputBlur" v-model="inputText" />
+      <div v-if="dropdownVisible" class="display-flex flex-direction-column">
+         <div v-for="(account, index) in accounts" :key="account.id" @@click="handleAccountSelected(account)">
+            {{ account.name }}
+         </div>
+      </div>
+   </div>
+</template>
+
 <form id="app" asp-action="ReceivePaymentForInvoiceIds" asp-controller="AccountsReceivable" method="post"
 			class="display-flex flex-direction-column margin-bottom-5px">
 
@@ -37,6 +48,19 @@
 					</option>
 				}
 			</select>
+		</div>
+	</div>
+
+	<div class="display-flex margin-bottom-5px">
+		<div class="flex-1 display-flex flex-direction-column background-color-antiquewhite">
+		</div>
+		<div class="width-5px"></div>
+		<div class="flex-1 display-flex flex-direction-column background-color-antiquewhite">
+			<label for="SelectedDebitAccountId" class="font-size-16px">Account</label>
+			<select-debit-account :accounts="debitAccounts"
+									    :selected-account="selectedDebitAccount"
+                               @@account-selected="accountSelected">
+			</select-debit-account>
 		</div>
 	</div>
 
@@ -149,7 +173,38 @@
 <script>
 	const { createApp } = Vue;
 
+   const SelectAccountDropdown = {
+      name: 'SelectAccountDropdown',
+      template: '#select-account-template',
+      props: ['accounts', 'selectedAccount'],
+      data() {
+		   return {
+			   dropdownVisible: false,
+            inputText: '',
+			   preselectedIndex: 0
+		   };
+      },
+      methods: {
+         handleAccountSelected(account) {
+            this.inputText = '';
+            this.$emit('account-selected', account);
+            this.dropdownVisible = false;
+         },
+         handleInputClick() {
+            this.dropdownVisible = true;
+         },
+         handleInputBlur() {
+		      setTimeout(() => {
+				   this.dropdownVisible = false;
+		      }, 200);
+         },
+      }
+   }
+
 	const app = createApp({
+      components: {
+         'select-debit-account': SelectAccountDropdown
+      },
 		data() {
 			return {
 				debitAccounts: @Html.Raw(Json.Serialize(Model.DebitAccounts).ToString() ?? "[]"),
@@ -157,7 +212,9 @@
 			}
 		},
 		methods: {
-
+         accountSelected(selectedDebitAccount) {
+            this.selectedDebitAccount = selectedDebitAccount;
+         }
 		},
 	});
 
