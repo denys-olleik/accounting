@@ -14,7 +14,7 @@
 
 <template id="item-type-selector-template">
   <select v-model="selectedItemType" name="SelectedItemType" class="font-size-20px width-100">
-    <option value="">Select Item Type</option>
+    <option value="">Select item type</option>
     <option v-for="itemType in itemTypes" :value="itemType">{{ itemType }}</option>
   </select>
 </template>
@@ -60,23 +60,23 @@
   </div>
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label asp-for="Quantity" class="background-color-antiquewhite">Invoice Quantity</label>
+    <label asp-for="Quantity" class="background-color-antiquewhite">Invoice quantity</label>
     <input asp-for="Quantity" type="number" step="0.01" class="font-size-20px" />
   </div>
 
   <div class="display-flex flex-1 flex-direction-column margin-bottom-5px">
-    <label for="SellFor" class="background-color-antiquewhite">Sell For</label>
+    <label for="SellFor" class="background-color-antiquewhite">Sell for</label>
     <input asp-for="SellFor" type="number" step="0.01" class="width-100 font-size-20px" v-model="sellFor" />
   </div>
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label class="background-color-antiquewhite">Item Type</label>
+    <label class="background-color-antiquewhite">Item type</label>
     <item-type-selector :item-types="itemTypes"></item-type-selector>
   </div>
 
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label class="background-color-antiquewhite">Inventory Method</label>
+    <label class="background-color-antiquewhite">Inventory method</label>
     <select asp-for="SelectedInventoryMethod" class="font-size-20px width-100">
       @foreach (var method in Model.AvailableInventoryMethods)
       {
