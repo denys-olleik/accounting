@@ -208,6 +208,7 @@ namespace Accounting.Controllers
         Name = model.Name,
         Description = model.Description,
         Quantity = model.Quantity,
+        AssemblyQuantity = model.AssemblyQuantity,
         SellFor = model.SellFor,
         RevenueAccountId = model.SelectedRevenueAccountId,
         AssetsAccountId = model.SelectedAssetsAccountId,
@@ -421,6 +422,7 @@ namespace Accounting.Models.Item
     public string? Name { get; set; }
     public string? Description { get; set; }
     public decimal Quantity { get; set; }
+    public decimal AssemblyQuantity { get; set; }
     public decimal SellFor { get; set; }
     public int? ParentItemId { get; set; }
     public ItemViewModel? ParentItem { get; set; }

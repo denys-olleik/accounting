@@ -9,6 +9,7 @@ namespace Accounting.Business
     public string? Name { get; set; }
     public string? Description { get; set; }
     public decimal Quantity { get; set; }
+    public decimal AssemblyQuantity { get; set; }
     public decimal SellFor { get; set; }
     public int? UnitTypeId { get; set; }
     public string? ItemType { get; set; }

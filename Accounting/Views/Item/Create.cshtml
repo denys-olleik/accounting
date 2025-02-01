@@ -64,6 +64,11 @@
     <input asp-for="Quantity" type="number" step="0.01" class="font-size-20px" />
   </div>
 
+	<div class="display-flex flex-direction-column margin-bottom-5px">
+		<label asp-for="AssemblyQuantity" class="background-color-antiquewhite">Assembly quantity</label>
+		<input asp-for="AssemblyQuantity" type="number" step="0.01" class="font-size-20px" />
+	</div>
+
   <div class="display-flex flex-1 flex-direction-column margin-bottom-5px">
     <label for="SellFor" class="background-color-antiquewhite">Sell for</label>
     <input asp-for="SellFor" type="number" step="0.01" class="width-100 font-size-20px" v-model="sellFor" />
