@@ -23,6 +23,12 @@ namespace Accounting.Service
       return await factoryManager.GetItemManager().CreateAsync(item);
     }
 
+    public async Task<int> DeleteAsync(int itemId)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      return await factoryManager.GetItemManager().DeleteAsync(itemId);
+    }
+
     public async Task<List<Item>> GetAllAsync(int page, int pageSize, int organizationId, int includeChildren)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);

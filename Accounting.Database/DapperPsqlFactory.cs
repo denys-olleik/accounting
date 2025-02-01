@@ -2542,6 +2542,28 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<int> DeleteAsync(int itemId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@ItemId", itemId);
+
+        try
+        {
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+          {
+            return await con.ExecuteAsync("""
+              DELETE FROM "Item" 
+              WHERE "ItemID" = @ItemId
+              """, p);
+          }
+        }
+        catch (PostgresException ex) when (ex.SqlState == "23503") // 23503 is the SQLSTATE code for foreign key violation
+        {
+          // Optionally, log the exception or handle it as needed
+          throw new InvalidOperationException("The item cannot be deleted because it is being used elsewhere.", ex);
+        }
+      }
+
       public Item Get(int id)
       {
         throw new NotImplementedException();

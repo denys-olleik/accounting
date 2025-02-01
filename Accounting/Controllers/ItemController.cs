@@ -29,6 +29,48 @@ namespace Accounting.Controllers
     }
 
     [HttpGet]
+    [Route("delete/{itemId}")]
+    public async Task<IActionResult> Delete(int itemId)
+    {
+      Item item = await _itemService.GetAsync(itemId, GetOrganizationId());
+      
+      if (item == null)
+        return NotFound();
+
+      return View(new DeleteItemViewModel
+      {
+        ItemID = item.ItemID,
+        Name = item.Name,
+      });
+    }
+
+    [HttpPost]
+    [Route("delete/{itemId}")]
+    public async Task<IActionResult> Delete(DeleteItemViewModel model)
+    {
+      Item item = await _itemService.GetAsync(model.ItemID, GetOrganizationId());
+
+      if (item == null)
+        return NotFound();
+
+      try
+      {
+        using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+        {
+          await _itemService.DeleteAsync(model.ItemID);
+          scope.Complete();
+        }
+      }
+      catch (InvalidOperationException ex)
+      {
+        model.ValidationResult.Errors.Add(new ValidationFailure(nameof(model.ItemID), ex.Message));
+        return View(model);
+      }
+
+      return RedirectToAction("Items");
+    }
+
+    [HttpGet]
     [Route("items")]
     public IActionResult Items(
       int page = 1,

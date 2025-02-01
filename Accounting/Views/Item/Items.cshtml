@@ -36,14 +36,21 @@
 							class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
 							<div class="flex-1"></div>
 							<a class="font-size-16px font-Roboto color-white text-decoration-none"
-								:href="`/item/update/${item.itemID}`">Update</a>
+								:href="`/item/update/${item.itemID}`">update</a>
 							<div class="flex-1"></div>
 						</div>
 						<div
 							class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
 							<div class="flex-1"></div>
 							<a class="font-size-16px font-Roboto color-white text-decoration-none"
-								:href="`/item/create/${item.itemID}`">Add</a>
+								:href="`/item/create/${item.itemID}`">add</a>
+							<div class="flex-1"></div>
+						</div>
+						<div
+							class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+							<div class="flex-1"></div>
+							<a class="font-size-16px font-Roboto color-white text-decoration-none"
+								:href="`/item/delete/${item.itemID}`">delete</a>
 							<div class="flex-1"></div>
 						</div>
 					</div>
@@ -179,6 +186,7 @@
 				page: @Model.Page,
 				pageSize: @Model.PageSize,
 				nextPage: null,
+				rememberPageSize: @(Model.RememberPageSize ? "true" : "false")
 			}
 		},
 		methods: {
@@ -197,6 +205,11 @@
 				};
 			},
 			fetchItems() {
+				const storedPageSize = parseInt(localStorage.getItem('pageSize'));
+				if (storedPageSize) {
+					this.pageSize = storedPageSize;
+				}
+
 				fetch(`/api/inv/get-all-items?page=${this.page}&pageSize=${this.pageSize}&includeDescendants=true&includeInventories=true`)
 					.then(response => response.json())
 					.then(data => {
@@ -215,6 +228,9 @@
 			},
 		},
 		mounted() {
+			if (this.rememberPageSize) {
+				localStorage.setItem('pageSize', this.pageSize);
+			}
 			this.fetchItems();
 		}
 	});
