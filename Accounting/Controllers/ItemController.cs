@@ -52,19 +52,24 @@ namespace Accounting.Controllers
     [Route("delete/{itemId}")]
     public async Task<IActionResult> Delete(DeleteItemViewModel model)
     {
-      DeleteItemViewModel.DeleteItemViewModelValidator validator = new DeleteItemViewModel.DeleteItemViewModelValidator();
-      ValidationResult validationResult = await validator.ValidateAsync(model);
-
-      if (!validationResult.IsValid)
-      {
-        model.ValidationResult = validationResult;
-        return View(model);
-      }
-
       Item item = await _itemService.GetAsync(model.ItemID, GetOrganizationId());
 
       if (item == null)
         return NotFound();
+
+      DeleteItemViewModel.DeleteItemViewModelValidator validator = new DeleteItemViewModel.DeleteItemViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      item.Children = await _itemService.GetChildrenAsync(item.ItemID, GetOrganizationId());
+      model.HasChildren = item.Children?.Count > 0;
+
+      if (!validationResult.IsValid)
+      {
+        model.ItemID = item.ItemID;
+        model.Name = item.Name;
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
 
       try
       {
