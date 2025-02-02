@@ -34,27 +34,12 @@ namespace Accounting.Validators
           }).WithMessage("Payments cannot be received against void invoices.");
 
       RuleFor(x => x)
-          .Must(x => ValidatePaymentAllocation(x.Invoices))
-          .WithMessage("Each invoice must have either an itemized or a total amount to receive, but not both.");
-
-      RuleFor(x => x)
           .Must(x => ValidateTotalPaymentMatches(x))
           .WithMessage("The sum of payments does not match the total payment amount.");
-    }
 
-    private bool ValidatePaymentAllocation(List<ReceivePaymentForInvoiceViewModel> invoices)
-    {
-      foreach (var invoice in invoices)
-      {
-        bool hasInvoiceAmountToReceive = invoice.AmountToReceive.HasValue;
-        bool hasLineItemAmountsToReceive = invoice.InvoiceLines?.Any(line => line.AmountToReceive.HasValue) ?? false;
-
-        if (hasInvoiceAmountToReceive == hasLineItemAmountsToReceive)
-        {
-          return false;
-        }
-      }
-      return true;
+      RuleForEach(x => x.Invoices)
+          .Must(invoice => invoice.InvoiceLines.All(line => line.AmountToReceive > 0))
+          .WithMessage("All invoice line items must have an AmountToReceive greater than 0.");
     }
 
     private bool ValidateTotalPaymentMatches(ReceivePaymentForInvoiceIdsViewModel viewModel)

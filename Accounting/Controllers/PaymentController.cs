@@ -28,12 +28,12 @@ namespace Accounting.Controllers
       JournalService journalService,
       InvoiceLineService invoiceLineService)
     {
-      _invoiceLineService = new InvoiceLineService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _journalService = new JournalService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabasePassword, requestContext.DatabaseName);
+      _invoiceLineService = new InvoiceLineService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _journalService = new JournalService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _journalInvoiceInvoiceLineService = new JournalInvoiceInvoiceLineService(_invoiceLineService, _journalService, requestContext.DatabaseName, requestContext.DatabasePassword);
       _paymentService = new PaymentService(requestContext.DatabaseName, requestContext.DatabasePassword);
-      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabasePassword, requestContext.DatabaseName);
-      _invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _invoiceService = new InvoiceService(_journalService, _journalInvoiceInvoiceLineService, requestContext.DatabaseName, requestContext.DatabasePassword);
+      _invoiceInvoiceLinePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet]
