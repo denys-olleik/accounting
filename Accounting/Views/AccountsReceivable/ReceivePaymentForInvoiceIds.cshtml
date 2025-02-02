@@ -19,7 +19,7 @@
 
 <template id="select-account-template">
 	<div class="display-flex flex-direction-column background-color-black">
-		<div v-if="selectedAccount && !dropdownVisible" class="display-flex font-size-16px margin-5px font-Roboto-Mono">
+		<div v-if="selectedAccount && !dropdownVisible" class="display-flex font-size-16px margin-5px font-Roboto-Mono" @@click="resetInput">
 			<div>
 				<span class="margin-right-10px color-lawngreen">█</span>
 			</div>
@@ -28,11 +28,11 @@
 			</div>
 		</div>
 	</div>
-	<input type="text" class="font-size-20px font-Roboto-Mono" @@click="handleInputClick" @@blur="handleInputBlur" v-model="inputText" />
+	<input v-if="!selectedAccount" type="text" class="font-size-20px font-Roboto-Mono" @@click="handleInputClick" @@blur="handleInputBlur" v-model="inputText" />
 	<div v-if="dropdownVisible" class="display-flex flex-direction-column background-color-black font-Roboto-Mono padding-5px">
 		<div v-for="(account, index) in accounts" :key="account.id" @@click="handleAccountSelected(account)" class="display-flex color-white font-size-16px">
 			<div>
-				<span class="margin-right-10px color-lawngreen">█</span>
+				<span class="margin-right-10px color-white">█</span>
 			</div>
 			<div>
 				{{ account.name }}
@@ -199,6 +199,11 @@
 			};
 		},
 		methods: {
+			resetInput() {
+				this.inputText = '';
+				this.$emit('account-selected', null);
+				this.dropdownVisible = true;
+			},
 			handleAccountSelected(account) {
 				this.inputText = '';
 				this.$emit('account-selected', account);
