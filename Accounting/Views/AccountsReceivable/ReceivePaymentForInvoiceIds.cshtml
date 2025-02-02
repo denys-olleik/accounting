@@ -41,8 +41,9 @@
 	</div>
 </template>
 
-<form id="app" asp-action="ReceivePaymentForInvoiceIds" asp-controller="AccountsReceivable" method="post"
-			class="display-flex flex-direction-column margin-bottom-5px">
+<form id="app" asp-action="ReceivePaymentForInvoiceIds" asp-controller="AccountsReceivable" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+
+	<input type="hidden" name="SelectedDebitAccountId" v-model="selectedDebitAccountID">
 
 	<div class="display-flex margin-bottom-5px">
 		<div class="flex-1 display-flex flex-direction-column background-color-antiquewhite">
@@ -52,27 +53,7 @@
 		<div class="width-5px"></div>
 		<div class="flex-1 display-flex flex-direction-column background-color-antiquewhite">
 			<label for="SelectedDebitAccountId" class="font-size-16px">Account</label>
-			<select name="SelectedDebitAccountId" class="font-size-20px">
-				<option value="">Select an account</option>
-				@foreach (var account in Model.DebitAccounts)
-				{
-					<option value="@account.AccountID" selected="@(Model.SelectedDebitAccountId == account.AccountID.ToString() ? "selected" : null)">
-						@account.Name @account.Type
-					</option>
-				}
-			</select>
-		</div>
-	</div>
-
-	<div class="display-flex margin-bottom-5px">
-		<div class="flex-1 display-flex flex-direction-column background-color-antiquewhite">
-		</div>
-		<div class="width-5px"></div>
-		<div class="flex-1 display-flex flex-direction-column background-color-antiquewhite">
-			<label for="SelectedDebitAccountId" class="font-size-16px">Account</label>
-			<select-debit-account :accounts="debitAccounts"
-														:selected-account="selectedDebitAccount"
-														@@account-selected="accountSelected">
+			<select-debit-account :accounts="debitAccounts" :selected-account="selectedDebitAccount" @@account-selected="accountSelected">
 			</select-debit-account>
 		</div>
 	</div>
@@ -95,20 +76,17 @@
 					<td class="font-Roboto-Mono">@(i + 1)</td>
 					<td class="font-Roboto-Mono">@Model.Invoices[i].InvoiceNumber</td>
 					<td class="font-Roboto-Mono">
-						@(Model.Invoices[i].BusinessEntity?.CustomerType == "individual"
-											? (Model.Invoices[i].BusinessEntity?.FirstName + " " + Model.Invoices[i].BusinessEntity?.LastName + (Model.Invoices[i].BusinessEntity?.CompanyName != null ? " (" + Model.Invoices[i].BusinessEntity?.CompanyName + ")" : ""))
-											: (Model.Invoices[i].BusinessEntity?.CompanyName + (Model.Invoices[i].BusinessEntity?.FirstName != null || Model.Invoices[i].BusinessEntity?.LastName != null ? " (" + Model.Invoices[i].BusinessEntity?.FirstName + " " + Model.Invoices[i].BusinessEntity?.LastName + ")" : ""))
-											)
+						@(Model.Invoices[i].BusinessEntity?.CustomerType == "individual" ? (Model.Invoices[i].BusinessEntity?.FirstName + " " + Model.Invoices[i].BusinessEntity?.LastName + (Model.Invoices[i].BusinessEntity?.CompanyName != null ? " (" + Model.Invoices[i].BusinessEntity?.CompanyName + ")" : ""))
+											: (Model.Invoices[i].BusinessEntity?.CompanyName + (Model.Invoices[i].BusinessEntity?.FirstName != null || Model.Invoices[i].BusinessEntity?.LastName != null ? " (" + Model.Invoices[i].BusinessEntity?.FirstName + " " + Model.Invoices[i].BusinessEntity?.LastName + ")"
+											: "")))
 					</td>
-					<td class="text-align-right padding-right-20px font-Roboto-Mono">@Model.Invoices[i].Total!.Value.ToString("F2")</td>
-					<td class="text-align-right padding-right-20px font-Roboto-Mono">@Model.Invoices[i].Received?.ToString("F2")</td>
+					<td class="text-align-right padding-right-20px font-Roboto-Mono">
+						@Model.Invoices[i].Total!.Value.ToString("F2")</td>
+					<td class="text-align-right padding-right-20px font-Roboto-Mono">
+						@Model.Invoices[i].Received?.ToString("F2")</td>
 					<td class="text-align-right">
 						<input type="hidden" name="Invoices[@i].InvoiceId" value="@Model.Invoices[i].InvoiceId" />
-						<input type="number" name="Invoices[@i].AmountToReceive"
-									 value="@Model.Invoices[i].AmountToReceive"
-									 placeholder="0.00"
-									 class="font-size-16px text-align-right width-100 font-Roboto-Mono"
-									 step="0.01" min="0" disabled />
+						<input type="number" name="Invoices[@i].AmountToReceive" value="@Model.Invoices[i].AmountToReceive" placeholder="0.00" class="font-size-16px text-align-right width-100 font-Roboto-Mono" step="0.01" min="0" disabled />
 					</td>
 				</tr>
 				@if (Model.Invoices[i].InvoiceLines != null)
@@ -122,24 +100,24 @@
 										<th class="text-align-left padding-right-20px">Title</th>
 										<th class="text-align-right width-1px padding-right-20px">Quantity</th>
 										<th class="text-align-right width-1px padding-right-20px">Price</th>
-										<th class="text-align-right width-1px white-space-nowrap">Itemized amount to receive</th>
+										<th class="text-align-right width-1px white-space-nowrap">Itemized amount to receive
+										</th>
 									</tr>
 								</thead>
 								<tbody>
 									@for (int j = 0; j < Model.Invoices[i].InvoiceLines.Count; j++)
 									{
 										<tr class="border-bottom-1px-solid-lightgray background-color-lightgreen">
-											<td class="padding-right-20px font-Roboto-Mono">@Model.Invoices[i].InvoiceLines[j].Title</td>
-											<td class="text-align-right padding-right-20px font-Roboto-Mono">@Model.Invoices[i].InvoiceLines[j].Quantity?.ToString("F2")</td>
-											<td class="text-align-right padding-right-20px font-Roboto-Mono">@Model.Invoices[i].InvoiceLines[j].Price?.ToString("F2")</td>
+											<td class="padding-right-20px font-Roboto-Mono">@Model.Invoices[i].InvoiceLines[j].Title
+											</td>
+											<td class="text-align-right padding-right-20px font-Roboto-Mono">
+												@Model.Invoices[i].InvoiceLines[j].Quantity?.ToString("F2")</td>
+											<td class="text-align-right padding-right-20px font-Roboto-Mono">
+												@Model.Invoices[i].InvoiceLines[j].Price?.ToString("F2")</td>
 											<td class="text-align-right white-space-nowrap">
 												<input type="hidden" name="Invoices[@i].InvoiceLines[@j].InvoiceLineId" value="@Model.Invoices[i].InvoiceLines[j].InvoiceLineID" />
 												<input type="hidden" name="Invoices[@i].InvoiceLines[@j].AssetsAccountId" value="@Model.Invoices[i].InvoiceLines[j].AssetsAccountId" />
-												<input type="number" name="Invoices[@i].InvoiceLines[@j].AmountToReceive"
-															 value="@Model.Invoices[i].InvoiceLines[j].AmountToReceive"
-															 placeholder="0.00"
-															 class="font-size-16px text-align-right width-100 font-Roboto-Mono"
-															 step="0.01" min="0">
+												<input type="number" name="Invoices[@i].InvoiceLines[@j].AmountToReceive" value="@Model.Invoices[i].InvoiceLines[j].AmountToReceive" placeholder="0.00" class="font-size-16px text-align-right width-100 font-Roboto-Mono" step="0.01" min="0">
 											</td>
 										</tr>
 									}
@@ -156,10 +134,9 @@
 		<div class="flex-1"></div>
 		<div class="width-5px"></div>
 		<div class="display-flex flex-1 flex-direction-column">
-			<label for="Payment Total" class="font-size-16px font-Roboto background-color-antiquewhite">Payment total</label>
-			<input type="number" step="0.01" name="PaymentTotal"
-						 placeholder="Payment total"
-						 class="font-size-20px font-Roboto-Mono" value="@Model.PaymentTotal" />
+			<label for="Payment Total" class="font-size-16px font-Roboto background-color-antiquewhite">Payment
+				total</label>
+			<input type="number" step="0.01" name="PaymentTotal" placeholder="Payment total" class="font-size-20px font-Roboto-Mono" value="@Model.PaymentTotal" />
 		</div>
 	</div>
 
@@ -228,6 +205,11 @@
 			return {
 				debitAccounts: @Html.Raw(Json.Serialize(Model.DebitAccounts).ToString() ?? "[]"),
 				selectedDebitAccount: @Html.Raw(Json.Serialize(Model.SelectedDebitAccount).ToString() ?? "null"),
+			}
+		},
+		computed: {
+			selectedDebitAccountID() {
+				return this.selectedDebitAccount?.accountID || '';
 			}
 		},
 		methods: {
