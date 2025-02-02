@@ -28,7 +28,7 @@
 			</div>
 		</div>
 	</div>
-	<input v-if="!selectedAccount" type="text" class="font-size-20px font-Roboto-Mono" @@click="handleInputClick" @@blur="handleInputBlur" v-model="inputText" />
+	<input v-if="!selectedAccount" type="text" class="font-size-20px font-Roboto-Mono" @@click="handleInputClick" @@keydown="handleKeyDown" @@blur="handleInputBlur" v-model="inputText" />
 	<div v-if="dropdownVisible" class="display-flex flex-direction-column background-color-black font-Roboto-Mono padding-5px">
 		<div v-for="(account, index) in accounts" :key="account.id" @@click="handleAccountSelected(account)" class="display-flex color-white font-size-16px">
 			<div>
@@ -176,6 +176,13 @@
 			};
 		},
 		methods: {
+			handleKeyDown(event) {
+				if (event.key === 'Enter') {
+					event.preventDefault();
+					this.inputText = '';
+					console.log('Enter pressed');
+				}
+			},
 			resetInput() {
 				this.inputText = '';
 				this.$emit('account-selected', null);
