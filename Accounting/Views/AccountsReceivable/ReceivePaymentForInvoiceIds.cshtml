@@ -179,6 +179,28 @@
 			handleKeyDown(event) {
 				if (event.key === 'Enter') {
 					event.preventDefault();
+
+					let apiUrl = `/api/a/create`;
+
+					let account = {
+						accountName: this.inputText
+					};
+
+					fetch(apiUrl, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(account)
+					})
+						.then(response => response.json())
+						.then(data => {
+							this.$emit('account-selected', data);
+						})
+						.catch((error) => {
+							console.error('Error:', error);
+						});
+
 					this.inputText = '';
 					console.log('Enter pressed');
 				}
@@ -222,6 +244,10 @@
 		methods: {
 			accountSelected(selectedDebitAccount) {
 				this.selectedDebitAccount = selectedDebitAccount;
+				// if the account is not in the list, add it
+				if (!this.debitAccounts.some(account => account.accountID === selectedDebitAccount.accountID)) {
+					this.debitAccounts.push(selectedDebitAccount);
+				}
 			}
 		},
 	});

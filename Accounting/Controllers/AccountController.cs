@@ -202,6 +202,36 @@ namespace Accounting.Controllers
       _accountService = new AccountService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
+    [HttpPost("create")]
+    public async Task<IActionResult> CreateAccount(CreateAccountViewModel model)
+    {
+      model.SelectedAccountType = Account.AccountTypeConstants.Assets;
+      CreateAccountViewModelValidator validator = new CreateAccountViewModelValidator(_accountService);
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return BadRequest(model);
+      }
+      Account account = new Account
+      {
+        Name = model.AccountName,
+        Type = Account.AccountTypeConstants.Assets,
+        OrganizationId = GetOrganizationId(),
+        CreatedById = GetUserId()
+      };
+
+      account = await _accountService.CreateAsync(account);
+
+      AccountViewModel newAccount = new()
+      {
+        AccountID = account.AccountID,
+        Name = account.Name
+      };
+
+      return Ok(newAccount);
+    }
+
     [HttpGet("account-types")]
     public IActionResult AccountConstants()
     {
