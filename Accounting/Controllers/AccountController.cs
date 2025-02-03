@@ -205,6 +205,18 @@ namespace Accounting.Controllers
     [HttpPost("create")]
     public async Task<IActionResult> CreateAccount(CreateAccountViewModel model)
     {
+      Account existingAccount = await _accountService.GetByAccountNameAsync(model.AccountName, GetOrganizationId());
+
+      if (existingAccount != null)
+      {
+        AccountViewModel existingAccountViewModel = new()
+        {
+          AccountID = existingAccount.AccountID,
+          Name = existingAccount.Name
+        };
+        return Ok(existingAccountViewModel);
+      }
+
       model.SelectedAccountType = Account.AccountTypeConstants.Assets;
       CreateAccountViewModelValidator validator = new CreateAccountViewModelValidator(_accountService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
@@ -383,7 +395,12 @@ namespace Accounting.Models.Account
 
   public class CreateAccountViewModel : BaseAccountViewModel
   {
-    public string? AccountName { get; set; }
+    private string? _accountName;
+    public string? AccountName
+    {
+      get => _accountName;
+      set => _accountName = value?.Trim();
+    }
     public string? SelectedAccountType { get; set; }
     public bool ShowInInvoiceCreationDropDownForCredit { get; set; }
     public bool ShowInInvoiceCreationDropDownForDebit { get; set; }
