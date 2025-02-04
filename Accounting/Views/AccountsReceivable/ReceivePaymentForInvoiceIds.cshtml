@@ -34,7 +34,7 @@
 		<label asp-for="Remember">Remember</label>
 	</span>
 	<div v-if="dropdownVisible" class="display-flex flex-direction-column background-color-black font-Roboto-Mono padding-5px">
-		<div v-for="(account, index) in accounts" :key="account.id" @@click="handleAccountSelected(account)" class="display-flex color-white font-size-16px">
+		<div v-for="(account, index) in filteredAccounts" :key="account.id" @@click="handleAccountSelected(account)" class="display-flex color-white font-size-16px">
 			<div>
 				<span class="margin-right-10px color-white">█</span>
 			</div>
@@ -178,6 +178,16 @@
 				inputText: '',
 				preselectedIndex: 0
 			};
+		},
+		computed: {
+			filteredAccounts() {
+				if (!this.inputText) {
+					return this.accounts;
+				}
+				return this.accounts.filter(account =>
+					account.name.toLowerCase().includes(this.inputText.toLowerCase())
+				);
+			}
 		},
 		methods: {
 			handleKeyDown(event) {
