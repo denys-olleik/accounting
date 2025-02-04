@@ -895,6 +895,27 @@ namespace Accounting.Database
 
         return result.Single();
       }
+
+      public async Task<List<Account>> GetAssetAccounts(int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@OrganizationId", organizationId);
+        p.Add("@Type", Account.AccountTypeConstants.Assets);
+
+        IEnumerable<Account> result;
+        
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = await con.QueryAsync<Account>("""
+            SELECT * 
+            FROM "Account" 
+            WHERE "Type" = @Type
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return result.ToList();
+      }
     }
 
     public IJournalInvoiceInvoiceLinePaymentManager GetJournalInvoiceInvoiceLinePaymentManager()

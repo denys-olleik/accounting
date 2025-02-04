@@ -128,5 +128,11 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetAccountManager().GetAllAsync(organizationId, includeJournalEntriesCount);
     }
+
+    public async Task<List<Account>> GetAssetAccounts(int organizationId)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      return await factoryManager.GetAccountManager().GetAssetAccounts(organizationId);
+    }
   }
 }

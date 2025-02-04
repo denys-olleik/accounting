@@ -21,6 +21,7 @@ namespace Accounting.Database.Interfaces
     Task<List<Account>> GetAllAsync(int organizationId, bool includeJournalEntriesCount);
     Task<List<Account>> GetAllReconciliationExpenseAsync(int organizationId);
     Task<List<Account>> GetAllReconciliationLiabilitiesAndAssetsAsync(int organizationId);
+    Task<List<Account>> GetAssetAccounts(int organizationId);
     Task<List<Account>> GetAsync(string[] accountName, int organizationId);
     Task<Account> GetAsync(int id);
     Task<Account> GetAsync(string accountName, int organizationId);

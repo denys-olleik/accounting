@@ -55,7 +55,7 @@ namespace Accounting.Controllers
     public async Task<IActionResult> ReceivePaymentForInvoiceIds(string invoiceIdsCsv)
     {
       List<Invoice> invoices = await FetchInvoices(invoiceIdsCsv);  
-      List<Account> debitAccounts = await _accountService.GetAccountOptionsForPaymentReceptionDebit(GetOrganizationId());
+      List<Account> debitAccounts = await _accountService.GetAssetAccounts(GetOrganizationId());
 
       var model = CreateReceivePaymentForInvoiceIdsViewModel(invoices, debitAccounts);
       return View(model);
