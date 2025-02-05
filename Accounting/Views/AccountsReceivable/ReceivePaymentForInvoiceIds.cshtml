@@ -19,7 +19,7 @@
 
 <template id="select-account-template">
 	<div class="display-flex flex-direction-column background-color-black">
-		<div v-if="selectedAccount && !dropdownVisible" class="display-flex font-size-16px margin-5px font-Roboto-Mono" @@click="resetInput">
+		<div v-if="selectedAccount && !dropdownVisible" class="display-flex font-size-16px margin-5px font-Roboto-Mono">
 			<div>
 				<span class="margin-right-10px color-lawngreen">█</span>
 			</div>
@@ -34,9 +34,9 @@
 		<label asp-for="Remember">Remember</label>
 	</span>
 	<div v-if="dropdownVisible" class="display-flex flex-direction-column background-color-black font-Roboto-Mono padding-5px">
-		<div v-for="(account, index) in filteredAccounts" :key="account.id" @@click="handleAccountSelected(account)" class="display-flex color-white font-size-16px">
+		<div v-for="(account, index) in filteredAccounts" :key="account.accountID" @@click="handleAccountSelected(account)" class="display-flex color-white font-size-16px">
 			<div>
-				<span class="margin-right-10px color-white">█</span>
+				<span :class="{'margin-right-10px color-white': true, 'blinking-cursor': index === preselectedIndex}">█</span>
 			</div>
 			<div>
 				{{ account.name }}
@@ -193,13 +193,10 @@
 			handleKeyDown(event) {
 				if (event.key === 'Enter') {
 					event.preventDefault();
-
 					let apiUrl = `/api/a/create`;
-
 					let account = {
 						accountName: this.inputText
 					};
-
 					fetch(apiUrl, {
 						method: 'POST',
 						headers: {
@@ -214,15 +211,25 @@
 						.catch((error) => {
 							console.error('Error:', error);
 						});
-
 					this.inputText = '';
 					console.log('Enter pressed');
+				} else if (event.key === 'ArrowUp') {
+					event.preventDefault();
+					if (this.preselectedIndex > 0) {
+						this.preselectedIndex--; // Move up to the previous item
+					} else {
+						this.preselectedIndex = this.filteredAccounts.length - 1; // Wrap to the last item
+					}
+					console.log('Arrow Up pressed');
+				} else if (event.key === 'ArrowDown') {
+					event.preventDefault();
+					if (this.preselectedIndex < this.filteredAccounts.length - 1) {
+						this.preselectedIndex++; // Move down to the next item
+					} else {
+						this.preselectedIndex = 0; // Wrap to the first item
+					}
+					console.log('Arrow Down pressed');
 				}
-			},
-			resetInput() {
-				this.inputText = '';
-				this.$emit('account-selected', null);
-				this.dropdownVisible = true;
 			},
 			handleAccountSelected(account) {
 				this.inputText = '';
