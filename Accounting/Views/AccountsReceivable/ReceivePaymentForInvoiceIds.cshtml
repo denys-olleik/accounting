@@ -18,7 +18,7 @@
 </div>
 
 <template id="select-account-template">
-	<input type="text" class="font-size-20px font-Roboto-Mono" @@click="handleInputClick" @@keydown="handleKeyDown" @@blur="handleInputBlur" v-model="inputText" />
+	<input ref="inputElement" type="text" class="font-size-20px font-Roboto-Mono" @@keydown="handleKeyDown" @@focus="handleFocus" @@blur="handleBlur" v-model="inputText" />
 	<div class="display-flex flex-direction-column background-color-black">
 		<div v-if="selectedAccount && !dropdownVisible" class="display-flex font-size-16px margin-5px font-Roboto-Mono">
 			<div>
@@ -174,9 +174,9 @@
 		emits: ['account-selected'],
 		data() {
 			return {
-				dropdownVisible: false,
 				inputText: '',
-				preselectedIndex: 0
+				preselectedIndex: 0,
+				dropdownVisible: false
 			};
 		},
 		computed: {
@@ -190,6 +190,14 @@
 			}
 		},
 		methods: {
+			handleBlur() {
+				setTimeout(() => {
+					this.dropdownVisible = false;
+				}, 200);
+			},
+			handleFocus() {
+				this.dropdownVisible = true;
+			},
 			handleKeyDown(event) {
 				if (event.key === 'Enter') {
 					event.preventDefault();
@@ -236,15 +244,6 @@
 			handleAccountSelected(account) {
 				this.inputText = '';
 				this.$emit('account-selected', account);
-				this.dropdownVisible = false;
-			},
-			handleInputClick() {
-				this.dropdownVisible = true;
-			},
-			handleInputBlur() {
-				setTimeout(() => {
-					this.dropdownVisible = false;
-				}, 200);
 			},
 		}
 	}
