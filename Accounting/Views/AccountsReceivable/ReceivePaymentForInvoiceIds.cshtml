@@ -34,9 +34,9 @@
 		<label asp-for="Remember">Remember</label>
 	</span>
 	<div v-if="dropdownVisible" class="display-flex flex-direction-column background-color-black font-Roboto-Mono padding-5px">
-		<div v-for="(account, index) in filteredAccounts" :key="account.accountID" @@click="handleAccountSelected(account)" class="display-flex color-white font-size-16px">
+		<div v-for="(account, index) in filteredAccounts" :key="account.accountID" @@click="handleAccountSelected(account)" class="display-flex font-size-16px color-white">
 			<div>
-				<span :class="{'margin-right-10px': true, 'blinking-cursor': index === preselectedIndex}">█</span>
+				<span class="margin-right-10px">█</span>
 			</div>
 			<div>
 				{{ account.name }}
