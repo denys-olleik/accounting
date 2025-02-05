@@ -204,6 +204,7 @@
 					event.preventDefault();
 					if (this.preselectedIndex < this.filteredAccounts.length) {
 						this.handleAccountSelected(this.filteredAccounts[this.preselectedIndex]);
+						this.dropdownVisible = false;
 					} else {
 						let apiUrl = `/api/a/create`;
 
@@ -217,6 +218,7 @@
 							.then(response => response.json())
 							.then(data => {
 								this.$emit('account-selected', data);
+								this.dropdownVisible = false;
 							})
 							.catch((error) => {
 								console.error('Error:', error);
