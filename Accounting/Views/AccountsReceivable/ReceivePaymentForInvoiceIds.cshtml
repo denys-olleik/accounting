@@ -36,7 +36,7 @@
 	<div v-if="dropdownVisible" class="display-flex flex-direction-column background-color-black font-Roboto-Mono padding-5px">
 		<div v-for="(account, index) in filteredAccounts" :key="account.accountID" @@click="handleAccountSelected(account)" class="display-flex font-size-16px color-white">
 			<div>
-				<span class="margin-right-10px">█</span>
+				<span :class="['margin-right-10px', account.accountID === selectedAccount?.accountID ? 'color-lawngreen' : '', index === preselectedIndex ? 'blinking-cursor' : '']">█</span>
 			</div>
 			<div>
 				{{ account.name }}
