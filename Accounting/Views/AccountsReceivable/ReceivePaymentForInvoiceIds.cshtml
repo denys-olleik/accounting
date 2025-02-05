@@ -193,40 +193,42 @@
 			handleKeyDown(event) {
 				if (event.key === 'Enter') {
 					event.preventDefault();
-					let apiUrl = `/api/a/create`;
-					let account = {
-						accountName: this.inputText
-					};
-					fetch(apiUrl, {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify(account)
-					})
-						.then(response => response.json())
-						.then(data => {
-							this.$emit('account-selected', data);
+					if (this.preselectedIndex < this.filteredAccounts.length) {
+						this.handleAccountSelected(this.filteredAccounts[this.preselectedIndex]);
+					} else {
+						let apiUrl = `/api/a/create`;
+
+						let account = { accountName: this.inputText };
+
+						fetch(apiUrl, {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify(account)
 						})
-						.catch((error) => {
-							console.error('Error:', error);
-						});
-					this.inputText = '';
-					console.log('Enter pressed');
+							.then(response => response.json())
+							.then(data => {
+								this.$emit('account-selected', data);
+							})
+							.catch((error) => {
+								console.error('Error:', error);
+							});
+
+						this.inputText = '';
+					}
 				} else if (event.key === 'ArrowUp') {
 					event.preventDefault();
 					if (this.preselectedIndex > 0) {
-						this.preselectedIndex--; // Move up to the previous item
+						this.preselectedIndex--;
 					} else {
-						this.preselectedIndex = this.filteredAccounts.length - 1; // Wrap to the last item
+						this.preselectedIndex = this.filteredAccounts.length - 1;
 					}
 					console.log('Arrow Up pressed');
 				} else if (event.key === 'ArrowDown') {
 					event.preventDefault();
 					if (this.preselectedIndex < this.filteredAccounts.length - 1) {
-						this.preselectedIndex++; // Move down to the next item
+						this.preselectedIndex++;
 					} else {
-						this.preselectedIndex = 0; // Wrap to the first item
+						this.preselectedIndex = 0;
 					}
 					console.log('Arrow Down pressed');
 				}
@@ -265,7 +267,7 @@
 		methods: {
 			accountSelected(selectedDebitAccount) {
 				this.selectedDebitAccount = selectedDebitAccount;
-				// if the account is not in the list, add it
+
 				if (!this.debitAccounts.some(account => account.accountID === selectedDebitAccount.accountID)) {
 					this.debitAccounts.push(selectedDebitAccount);
 				}
