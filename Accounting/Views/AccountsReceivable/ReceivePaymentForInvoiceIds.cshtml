@@ -179,6 +179,13 @@
 				dropdownVisible: false
 			};
 		},
+		watch: {
+			inputText(newVal) {
+				if (newVal !== '') {
+					this.dropdownVisible = true;
+				}
+			}
+		},
 		computed: {
 			filteredAccounts() {
 				if (!this.inputText) {
@@ -233,6 +240,7 @@
 					} else {
 						this.preselectedIndex = this.filteredAccounts.length - 1;
 					}
+					this.dropdownVisible = true;
 					console.log('Arrow Up pressed');
 				} else if (event.key === 'ArrowDown') {
 					event.preventDefault();
@@ -241,6 +249,7 @@
 					} else {
 						this.preselectedIndex = 0;
 					}
+					this.dropdownVisible = true;
 					console.log('Arrow Down pressed');
 				}
 			},
