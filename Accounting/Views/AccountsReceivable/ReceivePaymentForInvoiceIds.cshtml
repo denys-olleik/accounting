@@ -203,12 +203,25 @@
 				}, 200);
 			},
 			handleFocus() {
-				this.preselectedIndex = 0;
+				if (this.selectedAccount) {
+					// Find the index of the selected account in the filteredAccounts array
+					this.preselectedIndex = this.filteredAccounts.findIndex(account =>
+						account.accountID === this.selectedAccount.accountID
+					);
+				} else {
+					this.preselectedIndex = 0;
+				}
 				this.dropdownVisible = true;
 			},
 			handleKeyDown(event) {
 				if (event.key === 'Enter') {
 					event.preventDefault();
+
+					if (!this.dropdownVisible) {
+						this.dropdownVisible = true;
+						return;
+					}
+
 					if (this.preselectedIndex < this.filteredAccounts.length) {
 						this.handleAccountSelected(this.filteredAccounts[this.preselectedIndex]);
 						this.dropdownVisible = false;
