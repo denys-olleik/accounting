@@ -34,7 +34,7 @@ namespace Accounting.Controllers
 
     [Route("customers")]
     [HttpGet]
-    public IActionResult Customers(int page = 1, int pageSize = 10)
+    public IActionResult Customers(int page = 1, int pageSize = 2)
     {
       BusinessEntitiesViewModel model = new BusinessEntitiesViewModel();
       model.Page = page;
