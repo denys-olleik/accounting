@@ -387,6 +387,12 @@ namespace Accounting.Models.Account
     public List<string> AvailableAccountTypes { get; set; } = new List<string>();
   }
 
+  public class DeleteAccountViewModel
+  {
+    public int AccountID { get; set; }
+    public string Name { get; set; }
+  }
+
   public class AccountsViewModel
   {
     public List<AccountViewModel> Accounts { get; set; } = new List<AccountViewModel>();
