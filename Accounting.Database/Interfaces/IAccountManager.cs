@@ -5,6 +5,7 @@ namespace Accounting.Database.Interfaces
   public interface IAccountManager : IGenericRepository<Account, int>
   {
     Task<Account> CreateAsync(Account account);
+    Task<int> DeleteAsync(int accountID, int organizationId);
     Task<bool> ExistsAsync(int id, int organizationId);
     Task<List<Account>> GetAccountBalanceReport(int organizationId);
     Task<List<Account>> GetAccountOptionsForInvoiceCreationCredit(int organizationId);

@@ -916,6 +916,26 @@ namespace Accounting.Database
 
         return result.ToList();
       }
+
+      public async Task<int> DeleteAsync(int accountID, int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@AccountID", accountID);
+        p.Add("@OrganizationId", organizationId);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            DELETE FROM "Account" 
+            WHERE "AccountID" = @AccountID
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return rowsAffected;
+      }
     }
 
     public IJournalInvoiceInvoiceLinePaymentManager GetJournalInvoiceInvoiceLinePaymentManager()
