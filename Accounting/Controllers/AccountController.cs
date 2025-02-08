@@ -26,6 +26,29 @@ namespace Accounting.Controllers
       _journalService = new JournalService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
     }
 
+    [HttpGet]
+    [Route("delete/{accountId}")]
+    public async Task<IActionResult> Delete(int accountId)
+    {
+      Account account = await _accountService.GetAsync(accountId, GetOrganizationId());
+      if (account == null)
+        return NotFound();
+      DeleteAccountViewModel model = new DeleteAccountViewModel
+      {
+        AccountID = account.AccountID,
+        Name = account.Name
+      };
+      return View(model);
+    }
+
+    [HttpPost]
+    [Route("delete/{accountId}")]
+    public async Task<IActionResult> Delete(DeleteAccountViewModel model)
+    {
+      await _accountService.DeleteAsync(model.AccountID, GetOrganizationId());
+      return RedirectToAction("Accounts");
+    }
+
     [Route("accounts")]
     [HttpGet]
     public IActionResult Accounts(
