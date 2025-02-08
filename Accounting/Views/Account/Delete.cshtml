@@ -1,0 +1,34 @@
+﻿@model Accounting.Models.Account.DeleteAccountViewModel
+
+@{
+	ViewData["Title"] = "Delete account - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+	string headerText = "Delete account";
+}
+
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="Delete" asp-controller="Account" method="post"
+			class="display-flex flex-direction-column margin-bottom-5px">
+
+	<input asp-for="AccountID" type="hidden" />
+
+	<div class="display-flex">
+		<div class="display-flex flex-1 flex-direction-column background-color-antiquewhite margin-bottom-5px">
+			<label asp-for="Name">Account name</label>
+			<input asp-for="Name" class="font-size-20px" readonly />
+		</div>
+	</div>
+
+	<div class="display-flex">
+		<div class="flex-1">
+			<button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Accounts", "Account")';">Cancel</button>
+		</div>
+		<div class="width-5px"></div>
+		<div class="flex-1">
+			<button type="submit" class="full-width-orange-red-button width-100">Delete</button>
+		</div>
+	</div>
+</form>
