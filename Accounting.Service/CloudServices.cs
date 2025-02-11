@@ -1,6 +1,5 @@
 ﻿using Accounting.Business;
 using DigitalOcean.API;
-using DigitalOcean.API.Exceptions;
 using DigitalOcean.API.Models.Responses;
 using Renci.SshNet;
 using System.Text;
@@ -8,15 +7,13 @@ using System.Text;
 namespace Accounting.Service
 {
   public class CloudServices : BaseService
-  {
-    private readonly SecretService _secretService;
+  { 
     private readonly DigitalOceanService _digitalOceanService;
 
     public CloudServices(
       SecretService secretService,
       TenantService tenantService) : base()
     {
-      _secretService = new SecretService(_databaseName, _databasePassword);
       _digitalOceanService = new DigitalOceanService(secretService, tenantService);
     }
 
