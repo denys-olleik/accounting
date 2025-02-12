@@ -74,6 +74,7 @@ builder.Services.AddTransient<ToDoTagService>();
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
 ConfigurationSingleton.Instance.ConnectionStringAdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
+ConfigurationSingleton.Instance.DatabasePassword = builder.Configuration["DatabasePassword"];
 
 #region Configure Paths
 bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
@@ -163,8 +164,9 @@ app.Run();
 
 async Task LoadTenantManagementFromDatabase(WebApplication app)
 {
-  using var scope = app.Services.CreateScope();
-  var secretService = scope.ServiceProvider.GetRequiredService<SecretService>();
+  Console.WriteLine(ConfigurationSingleton.Instance.DatabasePassword);
+
+  var secretService = new SecretService("Accounting", ConfigurationSingleton.Instance.DatabasePassword);
   var tenantManagement = await secretService.GetAsync(Secret.SecretTypeConstants.TenantManagement);
 
   if (tenantManagement != null)

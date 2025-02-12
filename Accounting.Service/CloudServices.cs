@@ -177,6 +177,7 @@ git clone https://github.com/denys-olleik/accounting /opt/accounting > /var/log/
 # Set environment variable for database password
 echo 'ConnectionStrings__Psql="Host=localhost;Database=Accounting;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'ConnectionStrings__AdminPsql="Host=localhost;Database=postgres;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'DatabasePassword={databasePassword}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 
 # Create database
 sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
