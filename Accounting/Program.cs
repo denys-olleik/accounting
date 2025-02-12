@@ -34,47 +34,47 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddScoped<CustomCookieAuthenticationEventsHandler>();
 builder.Services.AddScoped<RequestContext>();
-builder.Services.AddTransient<AddressService>();
-builder.Services.AddTransient<BusinessEntityService>();
-builder.Services.AddTransient<AccountService>();
-builder.Services.AddTransient<JournalInvoiceInvoiceLinePaymentService>();
-builder.Services.AddTransient<JournalInvoiceInvoiceLineService>();
-builder.Services.AddTransient<JournalService>();
-builder.Services.AddTransient<InvoiceAttachmentService>();
-builder.Services.AddTransient<InvoiceLineService>();
-builder.Services.AddTransient<InvoiceInvoiceLinePaymentService>();
-builder.Services.AddTransient<InvoiceService>();
-builder.Services.AddTransient<IronPdfService>();
-builder.Services.AddTransient<ItemService>();
-builder.Services.AddTransient<OrganizationService>();
-builder.Services.AddTransient<PaymentService>();
-builder.Services.AddTransient<PaymentTermsService>();
-builder.Services.AddTransient<UserOrganizationService>();
-builder.Services.AddTransient<UserService>();
-builder.Services.AddTransient<ReconciliationTransactionService>();
-builder.Services.AddTransient<ReconciliationService>();
-builder.Services.AddTransient<ReconciliationAttachmentService>();
-builder.Services.AddTransient<JournalReconciliationTransactionService>();
-builder.Services.AddTransient<LocationService>();
-builder.Services.AddTransient<InventoryService>();
-builder.Services.AddTransient<RequestLogService>();
-builder.Services.AddTransient<InventoryAdjustmentService>();
-builder.Services.AddTransient<JournalInventoryAdjustmentService>();
-builder.Services.AddTransient<TenantService>();
-builder.Services.AddTransient<SecretService>();
-builder.Services.AddTransient<CloudServices>();
-builder.Services.AddTransient<DatabaseService>();
-builder.Services.AddTransient<EmailService>();
-builder.Services.AddTransient<LoginWithoutPasswordService>();
-builder.Services.AddTransient<TagService>();
-builder.Services.AddTransient<UserTaskService>();
-builder.Services.AddTransient<ToDoService>();
-builder.Services.AddTransient<ToDoTagService>();
+builder.Services.AddScoped<AddressService>();
+builder.Services.AddScoped<BusinessEntityService>();
+builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<JournalInvoiceInvoiceLinePaymentService>();
+builder.Services.AddScoped<JournalInvoiceInvoiceLineService>();
+builder.Services.AddScoped<JournalService>();
+builder.Services.AddScoped<InvoiceAttachmentService>();
+builder.Services.AddScoped<InvoiceLineService>();
+builder.Services.AddScoped<InvoiceInvoiceLinePaymentService>();
+builder.Services.AddScoped<InvoiceService>();
+builder.Services.AddScoped<IronPdfService>();
+builder.Services.AddScoped<ItemService>();
+builder.Services.AddScoped<OrganizationService>();
+builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<PaymentTermsService>();
+builder.Services.AddScoped<UserOrganizationService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ReconciliationTransactionService>();
+builder.Services.AddScoped<ReconciliationService>();
+builder.Services.AddScoped<ReconciliationAttachmentService>();
+builder.Services.AddScoped<JournalReconciliationTransactionService>();
+builder.Services.AddScoped<LocationService>();
+builder.Services.AddScoped<InventoryService>();
+builder.Services.AddScoped<RequestLogService>();
+builder.Services.AddScoped<InventoryAdjustmentService>();
+builder.Services.AddScoped<JournalInventoryAdjustmentService>();
+builder.Services.AddScoped<TenantService>();
+builder.Services.AddScoped<SecretService>();
+builder.Services.AddScoped<CloudServices>();
+builder.Services.AddScoped<DatabaseService>();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<LoginWithoutPasswordService>();
+builder.Services.AddScoped<TagService>();
+builder.Services.AddScoped<UserTaskService>();
+builder.Services.AddScoped<ToDoService>();
+builder.Services.AddScoped<ToDoTagService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
 ConfigurationSingleton.Instance.ConnectionStringAdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
-ConfigurationSingleton.Instance.DatabasePassword = builder.Configuration["DatabasePassword"];
+//ConfigurationSingleton.Instance.DatabasePassword = builder.Configuration["DatabasePassword"];
 
 #region Configure Paths
 bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
@@ -140,21 +140,23 @@ app.Use(async (context, next) =>
   if (context.User.Identity?.IsAuthenticated == true)
   {
     var databaseNameClaim = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaimTypeConstants.DatabaseName);
-    if (databaseNameClaim != null)
+    var databasePasswordClaim = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaimTypeConstants.DatabasePassword);
+    if (databaseNameClaim != null && databasePasswordClaim != null)
     {
       requestContext.DatabaseName = databaseNameClaim.Value;
-      requestContext.DatabasePassword = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaimTypeConstants.DatabasePassword)?.Value!;
+      requestContext.DatabasePassword = databasePasswordClaim.Value;
     }
   }
   else
   {
     requestContext.DatabaseName = DatabaseThing.DatabaseConstants.Database;
+    requestContext.DatabasePassword = "password";
   }
 
   await next();
 });
 
-app.UseMiddleware<UpdateClaimsMiddleware>();
+app.UseMiddleware<UpdateOrganizationNameClaimMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

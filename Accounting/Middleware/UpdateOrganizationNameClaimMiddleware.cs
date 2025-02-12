@@ -3,15 +3,13 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using static Accounting.Business.Claim;
 using System.Security.Claims;
 
-public class UpdateClaimsMiddleware
+public class UpdateOrganizationNameClaimMiddleware
 {
   private readonly RequestDelegate _next;
-  private readonly UserOrganizationService _userOrganizationService;
 
-  public UpdateClaimsMiddleware(RequestDelegate next, UserService userService, UserOrganizationService userOrganizationService)
+  public UpdateOrganizationNameClaimMiddleware(RequestDelegate next)
   {
     _next = next;
-    _userOrganizationService = userOrganizationService;
   }
 
   public async Task InvokeAsync(HttpContext context)
@@ -21,9 +19,11 @@ public class UpdateClaimsMiddleware
       var userIdClaim = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
       var orgIdClaim = context.User.FindFirst(CustomClaimTypeConstants.OrganizationId)?.Value;
       var databaseName = context.User.FindFirst(CustomClaimTypeConstants.DatabaseName)?.Value;
+      var databasePassword = context.User.FindFirst(CustomClaimTypeConstants.DatabasePassword)?.Value;
 
       if (int.TryParse(userIdClaim, out int userId) && int.TryParse(orgIdClaim, out int orgId))
       {
+        UserOrganizationService _userOrganizationService = new (databaseName, databasePassword);
         var userOrganization = await _userOrganizationService.GetAsync(userId, orgId);
         if (userOrganization?.Organization != null)
         {

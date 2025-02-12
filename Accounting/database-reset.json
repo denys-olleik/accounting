@@ -1,3 +1,5 @@
 {
-  "Reset": false
+  "Reset": false,
+  "DatabaseName": "Accounting",
+  "DatabasePassword": "password"
 }
