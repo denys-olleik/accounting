@@ -21,19 +21,14 @@ namespace Accounting.Helpers
         claims.Add(new Claim(ClaimTypes.Email, user.Email));
         claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.OrganizationId, organizationId.Value.ToString()));
         claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.OrganizationName, organizationName));
-        if (!string.IsNullOrEmpty(databaseName))
-        {
-          claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.DatabaseName, databaseName));
-        }
-        if (!string.IsNullOrEmpty(databasePassword))
-        {
-          claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.DatabasePassword, databasePassword));
-        }
       }
       else
       {
         claims.Add(new Claim(ClaimTypes.Email, user.Email));
       }
+
+      claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.DatabaseName, databaseName!));
+      claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.DatabasePassword, databasePassword!));
 
       claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.Password, user.Password));
 

@@ -9,7 +9,7 @@ namespace Accounting.Service
     protected readonly string _databasePassword;
 
     public BaseService() : this(
-      DatabaseThing.DatabaseConstants.Database,
+      DatabaseThing.DatabaseConstants.DatabaseName,
       CustomClaimTypeConstants.Password)
     {
 

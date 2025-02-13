@@ -103,7 +103,7 @@ if (app.Environment.IsDevelopment())
     string sampleDataPath = Path.Combine(AppContext.BaseDirectory, "sample-data.sql");
     string sampleDataScript = System.IO.File.ReadAllText(sampleDataPath);
 
-    await databaseService.RunSQLScript(sampleDataScript, DatabaseThing.DatabaseConstants.Database);
+    await databaseService.RunSQLScript(sampleDataScript, DatabaseThing.DatabaseConstants.DatabaseName);
 
     databaseResetConfig.Reset = false;
     System.IO.File.WriteAllText(databaseResetConfigPath, JsonConvert.SerializeObject(databaseResetConfig, Formatting.Indented));
@@ -137,20 +137,20 @@ app.Use(async (context, next) =>
 {
   var requestContext = context.RequestServices.GetRequiredService<RequestContext>();
 
+  // for authenticated requests
   if (context.User.Identity?.IsAuthenticated == true)
   {
     var databaseNameClaim = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaimTypeConstants.DatabaseName);
     var databasePasswordClaim = context.User.Claims.FirstOrDefault(c => c.Type == CustomClaimTypeConstants.DatabasePassword);
-    if (databaseNameClaim != null && databasePasswordClaim != null)
-    {
-      requestContext.DatabaseName = databaseNameClaim.Value;
-      requestContext.DatabasePassword = databasePasswordClaim.Value;
-    }
+
+    requestContext.DatabaseName = databaseNameClaim.Value;
+    requestContext.DatabasePassword = databasePasswordClaim.Value;
   }
+  // for anonymous requests
   else
   {
-    requestContext.DatabaseName = DatabaseThing.DatabaseConstants.Database;
-    requestContext.DatabasePassword = "password";
+    requestContext.DatabaseName = DatabaseThing.DatabaseConstants.DatabaseName;
+    requestContext.DatabasePassword = DatabaseThing.DatabaseConstants.DatabasePassword;
   }
 
   await next();
@@ -166,9 +166,7 @@ app.Run();
 
 async Task LoadTenantManagementFromDatabase(WebApplication app)
 {
-  Console.WriteLine(ConfigurationSingleton.Instance.DatabasePassword);
-
-  var secretService = new SecretService("Accounting", ConfigurationSingleton.Instance.DatabasePassword);
+  var secretService = new SecretService(DatabaseThing.DatabaseConstants.DatabaseName, DatabaseThing.DatabaseConstants.DatabasePassword);
   var tenantManagement = await secretService.GetAsync(Secret.SecretTypeConstants.TenantManagement);
 
   if (tenantManagement != null)

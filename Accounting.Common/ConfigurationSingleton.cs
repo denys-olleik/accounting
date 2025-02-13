@@ -11,6 +11,8 @@
     public string DigitalOceanKey { get; set; }
     public string? TempPath { get; set; }
     public string? PermPath { get; set; }
+    public string AnonymousRequestDatabaseName { get; set; }
+    public string AnonymousRequestDatabasePassword { get; set; }
     public string? ConnectionStringDefaultPsql { get; set; }
     public string? ConnectionStringAdminPsql { get; set; }
     public bool TenantManagement { get; set; }
