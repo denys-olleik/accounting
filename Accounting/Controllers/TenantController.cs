@@ -337,8 +337,8 @@ namespace Accounting.Controllers
       {
         return NotFound();
       }
-      UserOrganizationService userOrganizationService = new UserOrganizationService(tenant.DatabaseName, tenant.DatabasePassword);
-      List<UserOrganization> userOrganizations = await userOrganizationService.GetAllAsync(tenant.TenantID);
+      UserOrganizationService userOrganizationService = new UserOrganizationService();
+      //List<UserOrganization> userOrganizations = await userOrganizationService.GetAllAsync(tenant.TenantID);
 
       string currentDatabaseName = GetDatabaseName();
 
