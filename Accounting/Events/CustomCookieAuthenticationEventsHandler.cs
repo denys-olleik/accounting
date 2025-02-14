@@ -9,13 +9,9 @@ namespace Accounting.Events
 {
   public class CustomCookieAuthenticationEventsHandler : CookieAuthenticationEvents
   {
-    private readonly UserService _userService;
-    private readonly UserOrganizationService _userOrganizationService;
-
-    public CustomCookieAuthenticationEventsHandler(UserService userService, UserOrganizationService userOrganizationService)
+    public CustomCookieAuthenticationEventsHandler()
     {
-      _userService = userService;
-      _userOrganizationService = userOrganizationService;
+
     }
 
     public override async Task ValidatePrincipal(CookieValidatePrincipalContext context)
@@ -40,13 +36,15 @@ namespace Accounting.Events
 
       int organizationId = Convert.ToInt32(principal?.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.OrganizationId)?.Value);
       string password = principal?.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.Password)?.Value;
+      string databasePassword = principal?.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.DatabasePassword)?.Value;
 
       User user;
       Organization organization = null;
 
       if (organizationId > 0)
       {
-        var userOrganization = await _userOrganizationService.GetAsync(userId!.Value, organizationId);
+        UserOrganizationService userOrganizationService = new UserOrganizationService(databaseName, databasePassword);
+        var userOrganization = await userOrganizationService.GetAsync(userId!.Value, organizationId);
 
         if (userOrganization == null)
         {
@@ -60,7 +58,8 @@ namespace Accounting.Events
       }
       else
       {
-        var (existingUser, _) = await _userService.GetFirstOfAnyTenantAsync(email);
+        UserService userService = new ();
+        var (existingUser, _) = await userService.GetFirstOfAnyTenantAsync(email);
         user = existingUser;
       }
 
