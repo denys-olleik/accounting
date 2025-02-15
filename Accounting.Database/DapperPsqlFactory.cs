@@ -6,6 +6,7 @@ using Npgsql;
 using System.Data;
 using System.Text.RegularExpressions;
 using static Dapper.SqlMapper;
+using static Accounting.Business.Claim;
 
 namespace Accounting.Database
 {
@@ -15,7 +16,9 @@ namespace Accounting.Database
 
     public DapperPsqlFactory(string databaseName, string databasePassword)
     {
-      NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+      NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder();
+      builder.Host = "localhost";
+      builder.Username = "postgres";
       builder.Database = databaseName;
       builder.Password = databasePassword;
       _connectionString = builder.ConnectionString;
@@ -3095,7 +3098,7 @@ namespace Accounting.Database
 
         if (searchTenants)
         {
-          TenantManager tenantManager = new TenantManager();
+          TenantManager tenantManager = new TenantManager(_connectionString);
           var tenants = await tenantManager.GetAllAsync();
 
           var builder = new NpgsqlConnectionStringBuilder(_connectionString);
@@ -3210,11 +3213,18 @@ namespace Accounting.Database
 
     public IPaymentInstructionManager GetPaymentInstructionManager()
     {
-      return new PaymentInstructionManager();
+      return new PaymentInstructionManager(_connectionString);
     }
 
     public class PaymentInstructionManager : IPaymentInstructionManager
     {
+      private readonly string _connectionString;
+
+      public PaymentInstructionManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public PaymentInstruction Create(PaymentInstruction entity)
       {
         throw new NotImplementedException();
@@ -3230,7 +3240,7 @@ namespace Accounting.Database
 
         PaymentInstruction? result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection())
         {
           result = await con.QueryFirstOrDefaultAsync<PaymentInstruction>(@"
             INSERT INTO PaymentInstruction (Title, Content, CreatedById, OrganizationId) 
@@ -3263,7 +3273,7 @@ namespace Accounting.Database
 
         IEnumerable<PaymentInstruction> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<PaymentInstruction>("""
             SELECT * FROM "PaymentInstruction"
@@ -3501,11 +3511,18 @@ namespace Accounting.Database
 
     public IReconciliationManager GetReconciliationManager()
     {
-      return new ReconciliationManager();
+      return new ReconciliationManager(_connectionString);
     }
 
     public class ReconciliationManager : IReconciliationManager
     {
+      private readonly string _connectionString;
+
+      public ReconciliationManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public Reconciliation Create(Reconciliation entity)
       {
         throw new NotImplementedException();
@@ -3520,7 +3537,7 @@ namespace Accounting.Database
 
         IEnumerable<Reconciliation> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Reconciliation>("""
             INSERT INTO "Reconciliation" 
@@ -3557,7 +3574,7 @@ namespace Accounting.Database
 
         IEnumerable<Reconciliation> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Reconciliation, ReconciliationAttachment, Reconciliation>($"""
             SELECT r.*, ra.*
@@ -3584,7 +3601,7 @@ namespace Accounting.Database
 
         IEnumerable<Reconciliation> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Reconciliation>("""
             SELECT * 
@@ -3605,11 +3622,18 @@ namespace Accounting.Database
 
     public IReconciliationTransactionManager GetReconciliationTransactionManager()
     {
-      return new ReconciliationTransactionManager();
+      return new ReconciliationTransactionManager(_connectionString);
     }
 
     public class ReconciliationTransactionManager : IReconciliationTransactionManager
     {
+      private readonly string _connectionString;
+
+      public ReconciliationTransactionManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public ReconciliationTransaction Create(ReconciliationTransaction entity)
       {
         throw new NotImplementedException();
@@ -3643,7 +3667,7 @@ namespace Accounting.Database
 
         IEnumerable<ReconciliationTransaction> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ReconciliationTransaction>(
             """
@@ -3664,7 +3688,7 @@ namespace Accounting.Database
 
         IEnumerable<ReconciliationTransaction> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ReconciliationTransaction>(
             """
@@ -3686,7 +3710,7 @@ namespace Accounting.Database
 
         IEnumerable<ReconciliationTransaction> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ReconciliationTransaction>($"""
             SELECT * FROM (
@@ -3715,7 +3739,7 @@ namespace Accounting.Database
       {
         int rowsAffected = 0;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           foreach (var reconciliationTransaction in reconciliationTransactions)
           {
@@ -3771,7 +3795,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync(
             """
@@ -3797,7 +3821,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "ReconciliationTransaction" 
@@ -3817,7 +3841,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "ReconciliationTransaction" 
@@ -3832,11 +3856,18 @@ namespace Accounting.Database
 
     public IReconiliationAttachmentManager GetReconiliationAttachmentManager()
     {
-      return new ReconiliationAttachmentManager();
+      return new ReconiliationAttachmentManager(_connectionString);
     }
 
     public class ReconiliationAttachmentManager : IReconiliationAttachmentManager
     {
+      private readonly string _connectionString;
+
+      public ReconiliationAttachmentManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public ReconciliationAttachment Create(ReconciliationAttachment entity)
       {
         throw new NotImplementedException();
@@ -3854,7 +3885,7 @@ namespace Accounting.Database
 
         IEnumerable<ReconciliationAttachment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ReconciliationAttachment>(
             """
@@ -3891,7 +3922,7 @@ namespace Accounting.Database
 
         IEnumerable<ReconciliationAttachment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ReconciliationAttachment>(
               """
@@ -3910,7 +3941,7 @@ namespace Accounting.Database
       {
         ReconciliationAttachment? result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           var p = new DynamicParameters();
           p.Add("@ReconciliationId", reconciliationId);
@@ -3941,7 +3972,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync(
             """
@@ -3964,7 +3995,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync(
             """
@@ -3981,11 +4012,18 @@ namespace Accounting.Database
 
     public ITagManager GetTagManager()
     {
-      return new TagManager();
+      return new TagManager(_connectionString);
     }
 
     public class TagManager : ITagManager
     {
+      private readonly string _connectionString;
+
+      public TagManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public Tag Create(Tag entity)
       {
         throw new NotImplementedException();
@@ -4000,7 +4038,7 @@ namespace Accounting.Database
 
         IEnumerable<Tag> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Tag>("""
             INSERT INTO "Tag" ("Name", "CreatedById", "OrganizationId")
@@ -4031,7 +4069,7 @@ namespace Accounting.Database
       {
         IEnumerable<Tag> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Tag>("""
             SELECT * FROM "Tag"
@@ -4048,7 +4086,7 @@ namespace Accounting.Database
 
         IEnumerable<Tag> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Tag>("""
             SELECT * 
@@ -4068,11 +4106,18 @@ namespace Accounting.Database
 
     public IToDoManager GetTaskManager()
     {
-      return new ToDoManager();
+      return new ToDoManager(_connectionString);
     }
 
     public class ToDoManager : IToDoManager
     {
+      private readonly string _connectionString;
+
+      public ToDoManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      } 
+
       public ToDo Create(ToDo entity)
       {
         throw new NotImplementedException();
@@ -4090,7 +4135,7 @@ namespace Accounting.Database
 
         IEnumerable<ToDo> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ToDo>("""
             INSERT INTO "ToDo" 
@@ -4126,7 +4171,7 @@ namespace Accounting.Database
 
         List<ToDo> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = (await con.QueryAsync<ToDo>("""
             SELECT "ToDoID", "Title", "Content", "ParentToDoId", "Status", "Created", "CreatedById", "OrganizationId"
@@ -4141,7 +4186,7 @@ namespace Accounting.Database
       {
         ToDo? result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           var p = new DynamicParameters();
           p.Add("@ToDoID", id);
@@ -4162,7 +4207,7 @@ namespace Accounting.Database
       {
         IEnumerable<ToDo> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           var p = new DynamicParameters();
           p.Add("@ParentId", parentId);
@@ -4182,7 +4227,7 @@ namespace Accounting.Database
       {
         IEnumerable<ToDo> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           DynamicParameters p = new DynamicParameters();
           p.Add("@ToDoID", id);
@@ -4228,7 +4273,7 @@ namespace Accounting.Database
 
         IEnumerable<ToDo> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ToDo>("""
             SELECT * 
@@ -4250,7 +4295,7 @@ namespace Accounting.Database
       {
         ToDo result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           DynamicParameters p = new DynamicParameters();
           p.Add("@ToDoID", toDoId);
@@ -4279,7 +4324,7 @@ namespace Accounting.Database
           throw new InvalidOperationException("A ToDo cannot be made a parent of itself.");
         }
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           DynamicParameters p = new DynamicParameters();
           p.Add("@ToDoID", toDoId, DbType.Int32);
@@ -4330,7 +4375,7 @@ namespace Accounting.Database
         p.Add("@Status", status);
         p.Add("@OrganizationId", organizationId);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           string sql = """
             UPDATE "ToDo"
@@ -4451,10 +4496,10 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@Email", email);
 
-        TenantManager tenantManager = new TenantManager();
+        TenantManager tenantManager = new TenantManager(_connectionString);
         var tenants = await tenantManager.GetAllAsync();
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
 
         foreach (var tenant in tenants)
         {
@@ -4524,7 +4569,7 @@ namespace Accounting.Database
 
         int rowsModified = 0;
 
-        TenantManager tenantManager = new TenantManager();
+        TenantManager tenantManager = new TenantManager(_connectionString);
         var tenants = await tenantManager.GetAllAsync();
 
         foreach (var tenant in tenants)
@@ -4532,7 +4577,7 @@ namespace Accounting.Database
           if (string.IsNullOrEmpty(tenant.DatabaseName))
             continue;
 
-          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql)
+          var builder = new NpgsqlConnectionStringBuilder(_connectionString)
           {
             Database = tenant.DatabaseName,
             Password = tenant.DatabasePassword
@@ -4734,7 +4779,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = databaseName;
         builder.Password = databasePassword;
         string connectionString = builder.ConnectionString;
@@ -4780,7 +4825,7 @@ namespace Accounting.Database
 
         string databaseName = tenant.DatabaseName;
 
-        var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = databaseName;
         builder.Password = tenant.DatabasePassword;
         string connectionString = builder.ConnectionString;
@@ -4883,10 +4928,10 @@ namespace Accounting.Database
 
         if (searchTenants)
         {
-          TenantManager tenantManager = new TenantManager();
+          TenantManager tenantManager = new TenantManager(_connectionString);
           var tenants = await tenantManager.GetAllAsync();
 
-          var builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql);
+          var builder = new NpgsqlConnectionStringBuilder(_connectionString);
 
           foreach (var tenant in tenants)
           {
@@ -4937,7 +4982,7 @@ namespace Accounting.Database
         {
           if (tenantId > 0)
           {
-            TenantManager tenantManager = new TenantManager();
+            TenantManager tenantManager = new TenantManager(_connectionString);
             Tenant tenant = await tenantManager.GetAsync(tenantId);
 
             if (tenant != null && !string.IsNullOrEmpty(tenant.DatabaseName))
@@ -5117,11 +5162,18 @@ namespace Accounting.Database
 
     public IReconciliationExpenseManager GetExpenseManager()
     {
-      return new ReconciliationExpenseManager();
+      return new ReconciliationExpenseManager(_connectionString);
     }
 
     public class ReconciliationExpenseManager : IReconciliationExpenseManager
     {
+      private readonly string _connectionString;
+
+      public ReconciliationExpenseManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public ReconciliationExpense Create(ReconciliationExpense entity)
       {
         throw new NotImplementedException();
@@ -5137,7 +5189,7 @@ namespace Accounting.Database
 
         IEnumerable<ReconciliationExpense> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ReconciliationExpense>("""
             INSERT INTO "ReconciliationExpense" ("Amount", "ReconciliationTransactionId", "CreatedById", "OrganizationId") 
@@ -5171,7 +5223,7 @@ namespace Accounting.Database
 
         IEnumerable<ReconciliationExpense> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ReconciliationExpense>("""
             SELECT * 
@@ -5196,7 +5248,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "ReconciliationExpense" 
@@ -5216,7 +5268,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "ReconciliationExpense" 
@@ -5232,11 +5284,18 @@ namespace Accounting.Database
 
     public IJournalReconciliationTransactionManager GetJournalReconciliationExpenseManager()
     {
-      return new JournalReconciliationTransactionManager();
+      return new JournalReconciliationTransactionManager(_connectionString);
     }
 
     public class JournalReconciliationTransactionManager : IJournalReconciliationTransactionManager
     {
+      private readonly string _connectionString;
+
+      public JournalReconciliationTransactionManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public JournalReconciliationTransaction Create(JournalReconciliationTransaction entity)
       {
         throw new NotImplementedException();
@@ -5254,7 +5313,7 @@ namespace Accounting.Database
 
         IEnumerable<JournalReconciliationTransaction> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<JournalReconciliationTransaction>("""
             INSERT INTO "JournalReconciliationTransaction" 
@@ -5296,7 +5355,7 @@ namespace Accounting.Database
 
         if (loadChildren)
         {
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
             result = await con.QueryAsync<JournalReconciliationTransaction, Journal, JournalReconciliationTransaction>("""
               SELECT glrt.*, gl.*
@@ -5319,7 +5378,7 @@ namespace Accounting.Database
         }
         else
         {
-          using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
             result = await con.QueryAsync<JournalReconciliationTransaction>("""
               SELECT *
@@ -5347,11 +5406,18 @@ namespace Accounting.Database
 
     public IReconciliationExpenseCategoryManager GetReconciliationExpenseCategoryManager()
     {
-      return new ReconciliationExpenseCategoryManager();
+      return new ReconciliationExpenseCategoryManager(_connectionString);
     }
 
     public class ReconciliationExpenseCategoryManager : IReconciliationExpenseCategoryManager
     {
+      private readonly string _connectionString;
+
+      public ReconciliationExpenseCategoryManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public ReconciliationExpenseCategory Create(ReconciliationExpenseCategory entity)
       {
         throw new NotImplementedException();
@@ -5384,7 +5450,7 @@ namespace Accounting.Database
 
         IEnumerable<ReconciliationExpenseCategory> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ReconciliationExpenseCategory>("""
             SELECT * 
@@ -5403,7 +5469,7 @@ namespace Accounting.Database
 
         IEnumerable<ReconciliationExpenseCategory> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ReconciliationExpenseCategory>("""
             SELECT * 
@@ -5423,11 +5489,18 @@ namespace Accounting.Database
 
     public IDatabaseManager GetDatabaseManager()
     {
-      return new DatabaseManager();
+      return new DatabaseManager(_connectionString);
     }
 
     public class DatabaseManager : IDatabaseManager
     {
+      private readonly string _connectionString;
+
+      public DatabaseManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public DatabaseThing Create(DatabaseThing entity)
       {
         throw new NotImplementedException();
@@ -5442,7 +5515,11 @@ namespace Accounting.Database
       {
         string databaseName = $"{PrefixConstants.TenantDatabasePrefix}{tenantId}";
 
-        using (var con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringAdminPsql))
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString);
+        builder.Database = DatabaseThing.DatabaseConstants.DatabaseNameAdmin;
+        builder.Password = ConfigurationSingleton.Instance.DatabasePassword;
+
+        using (var con = new NpgsqlConnection(builder.ConnectionString))
         {
           await con.ExecuteAsync($$"""
             CREATE DATABASE {{databaseName}}
@@ -5484,7 +5561,11 @@ namespace Accounting.Database
       {
         string sanitizedDbName = Regex.Replace(databaseName, @"[^a-zA-Z0-9_]", "");
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringAdminPsql))
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString);
+        builder.Database = DatabaseThing.DatabaseConstants.DatabaseNameAdmin;
+        builder.Password = ConfigurationSingleton.Instance.DatabasePassword;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
           await con.ExecuteAsync($"""
             DROP DATABASE IF EXISTS "{sanitizedDbName}" WITH (FORCE);
@@ -5510,12 +5591,19 @@ namespace Accounting.Database
         string resetCreateDbScript = System.IO.File.ReadAllText(resetCreateDbScriptPath);
         string createSchemaScript = System.IO.File.ReadAllText(createSchemaScriptPath);
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringAdminPsql))
+        //modify connection string to use admin database
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
+        builder.Database = DatabaseThing.DatabaseConstants.DatabaseNameAdmin;
+        builder.Password = ConfigurationSingleton.Instance.DatabasePassword;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
           await con.ExecuteAsync(resetCreateDbScript);
         }
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        builder.Database = DatabaseThing.DatabaseConstants.DatabaseName;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
           await con.ExecuteAsync(createSchemaScript);
         }
@@ -5523,9 +5611,7 @@ namespace Accounting.Database
 
       public async Task RunSQLScript(string script, string databaseName)
       {
-        var connectionString = ConfigurationSingleton.Instance.ConnectionStringAdminPsql;
-
-        var builder = new NpgsqlConnectionStringBuilder(connectionString);
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
 
         builder.Database = databaseName;
 
@@ -5742,18 +5828,22 @@ namespace Accounting.Database
       }
     }
 
-    public IUserToDoManager GetUserToDoManager()
-    {
-      return new UserTaskManager();
-    }
+
 
     public IInventoryManager GetInventoryManager()
     {
-      return new InventoryManager();
+      return new InventoryManager(_connectionString);
     }
 
     public class InventoryManager : IInventoryManager
     {
+      private readonly string _connectionString;
+
+      public InventoryManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public Inventory Create(Inventory entity)
       {
         throw new NotImplementedException();
@@ -5771,7 +5861,7 @@ namespace Accounting.Database
 
         IEnumerable<Inventory> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Inventory>("""
             INSERT INTO "Inventory" ("ItemId", "LocationId", "Quantity", "SellFor", "CreatedById", "OrganizationId") 
@@ -5814,7 +5904,7 @@ namespace Accounting.Database
 
         IEnumerable<Inventory> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Inventory>("""
             SELECT * 
@@ -5835,11 +5925,18 @@ namespace Accounting.Database
 
     public IRequestLogManager GetRequestLogManager()
     {
-      return new RequestLogManager();
+      return new RequestLogManager(_connectionString);
     }
 
     public class RequestLogManager : IRequestLogManager
     {
+      private readonly string _connectionString;
+
+      public RequestLogManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public RequestLog Create(RequestLog entity)
       {
         throw new NotImplementedException();
@@ -5858,7 +5955,7 @@ namespace Accounting.Database
 
         IEnumerable<RequestLog> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<RequestLog>("""
             INSERT INTO "RequestLog" 
@@ -5895,11 +5992,18 @@ namespace Accounting.Database
 
     public IInventoryAdjustmentManager GetInventoryAdjustmentManager()
     {
-      return new InventoryAdjustmentManager();
+      return new InventoryAdjustmentManager(_connectionString);
     }
 
     public class InventoryAdjustmentManager : IInventoryAdjustmentManager
     {
+      private readonly string _connectionString;
+
+      public InventoryAdjustmentManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public InventoryAdjustment Create(InventoryAdjustment entity)
       {
         throw new NotImplementedException();
@@ -5917,7 +6021,7 @@ namespace Accounting.Database
 
         IEnumerable<InventoryAdjustment> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<InventoryAdjustment>("""
             INSERT INTO "InventoryAdjustment" 
@@ -5954,11 +6058,18 @@ namespace Accounting.Database
 
     public IZIPCodeManager GetZIPCodeManager()
     {
-      return new ZIPCodeManager();
+      return new ZIPCodeManager(_connectionString);
     }
 
     public class ZIPCodeManager : IZIPCodeManager
     {
+      private readonly string _connectionString;
+
+      public ZIPCodeManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public ZipCode Create(ZipCode entity)
       {
         throw new NotImplementedException();
@@ -5991,7 +6102,7 @@ namespace Accounting.Database
 
         IEnumerable<ZipCode> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<ZipCode>("""
             SELECT "ID", "Zip5", "Latitude", "Longitude", "City", "State2"
@@ -6012,7 +6123,7 @@ namespace Accounting.Database
       {
         int rowsAffected = 0;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           foreach (var zipCode in zipCodes)
           {
@@ -6037,11 +6148,18 @@ namespace Accounting.Database
 
     public ITenantManager GetTenantManager()
     {
-      return new TenantManager();
+      return new TenantManager(_connectionString);
     }
 
     public class TenantManager : ITenantManager
     {
+      private readonly string _connectionString;
+
+      public TenantManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public Tenant Create(Tenant entity)
       {
         throw new NotImplementedException();
@@ -6056,12 +6174,11 @@ namespace Accounting.Database
 
         int rowsAffected = 0;
 
-        TenantManager tenantManager = new TenantManager();
-        List<Tenant> tenants = await tenantManager.GetAllAsync();
+        List<Tenant> tenants = await GetAllAsync();
 
         foreach (var tenant in tenants)
         {
-          NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql)
+          NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
           {
             Database = tenant.DatabaseName
           };
@@ -6088,7 +6205,7 @@ namespace Accounting.Database
         p.Add("@Ipv4", entity.Ipv4);
         p.Add("@SshPublic", entity.SshPublic);
         IEnumerable<Tenant> result;
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Tenant>("""
             INSERT INTO "Tenant" ("PublicId", "FullyQualifiedDomainName", "Email", "DatabasePassword", "DropletId", "Ipv4", "SshPublic")
@@ -6119,7 +6236,7 @@ namespace Accounting.Database
 
         IEnumerable<Tenant> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Tenant>("""
             SELECT * 
@@ -6151,7 +6268,7 @@ namespace Accounting.Database
 
         IEnumerable<Tenant> paginatedResult;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           paginatedResult = await con.QueryAsync<Tenant>($"""
             SELECT * FROM (
@@ -6188,7 +6305,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "Tenant" 
@@ -6208,7 +6325,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "Tenant" 
@@ -6228,7 +6345,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "Tenant" 
@@ -6249,7 +6366,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "Tenant" 
@@ -6266,7 +6383,7 @@ namespace Accounting.Database
       {
         IEnumerable<Tenant> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Tenant>("""
             SELECT * 
@@ -6285,7 +6402,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "Tenant" 
@@ -6304,7 +6421,7 @@ namespace Accounting.Database
 
         IEnumerable<Tenant> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Tenant>("""
             SELECT * 
@@ -6323,7 +6440,7 @@ namespace Accounting.Database
 
         int rowsModified;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsModified = await con.ExecuteAsync("""
             DELETE FROM "Tenant" 
@@ -6341,7 +6458,7 @@ namespace Accounting.Database
 
         IEnumerable<Tenant> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Tenant>("""
             SELECT * 
@@ -6361,7 +6478,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection connection = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await connection.ExecuteAsync("""
             UPDATE "Tenant" 
@@ -6381,7 +6498,7 @@ namespace Accounting.Database
 
         int rowsAffected;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
             UPDATE "Tenant" 
@@ -6709,11 +6826,18 @@ namespace Accounting.Database
 
     public ILocationManager GetLocationManager()
     {
-      return new LocationManager();
+      return new LocationManager(_connectionString);
     }
 
     public class LocationManager : ILocationManager
     {
+      private readonly string _connectionString;
+
+      public LocationManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public Location Create(Location entity)
       {
         throw new NotImplementedException();
@@ -6730,7 +6854,7 @@ namespace Accounting.Database
 
         IEnumerable<Location> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Location>("""
             INSERT INTO "Location" ("Name", "Description", "ParentLocationId", "CreatedById", "OrganizationId") 
@@ -6769,7 +6893,7 @@ namespace Accounting.Database
 
         IEnumerable<Location> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Location>($"""
             SELECT * FROM (
@@ -6798,7 +6922,7 @@ namespace Accounting.Database
       {
         IEnumerable<Location> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Location>("""
             SELECT * 
@@ -6818,7 +6942,7 @@ namespace Accounting.Database
 
         IEnumerable<Location> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Location>("""
             SELECT * 
@@ -6837,8 +6961,20 @@ namespace Accounting.Database
       }
     }
 
+    public IUserToDoManager GetUserToDoManager()
+    {
+      return new UserTaskManager(_connectionString);
+    }
+
     public class UserTaskManager : IUserToDoManager
     {
+      private readonly string _connectionString;
+
+      public UserTaskManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public UserToDo Create(UserToDo entity)
       {
         throw new NotImplementedException();
@@ -6855,7 +6991,7 @@ namespace Accounting.Database
 
         IEnumerable<UserToDo> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<UserToDo>("""
             INSERT INTO "UserToDo" ("UserId", "ToDoId", "Completed", "OrganizationId", "CreatedById") 
@@ -6891,7 +7027,7 @@ namespace Accounting.Database
 
         IEnumerable<User> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(ConfigurationSingleton.Instance.ConnectionStringDefaultPsql))
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<User>("""
             SELECT u.* 

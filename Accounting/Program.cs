@@ -72,9 +72,8 @@ builder.Services.AddScoped<ToDoService>();
 builder.Services.AddScoped<ToDoTagService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
-ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
-ConfigurationSingleton.Instance.ConnectionStringAdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
-//ConfigurationSingleton.Instance.DatabasePassword = builder.Configuration["DatabasePassword"];
+//ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
+//ConfigurationSingleton.Instance.ConnectionStringAdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
 
 #region Configure Paths
 bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
@@ -150,7 +149,7 @@ app.Use(async (context, next) =>
   else
   {
     requestContext.DatabaseName = DatabaseThing.DatabaseConstants.DatabaseName;
-    requestContext.DatabasePassword = DatabaseThing.DatabaseConstants.DatabasePassword;
+    requestContext.DatabasePassword = builder.Configuration["DatabasePassword"];
   }
 
   await next();
@@ -166,7 +165,7 @@ app.Run();
 
 async Task LoadTenantManagementFromDatabase(WebApplication app)
 {
-  var secretService = new SecretService(DatabaseThing.DatabaseConstants.DatabaseName, DatabaseThing.DatabaseConstants.DatabasePassword);
+  var secretService = new SecretService(DatabaseThing.DatabaseConstants.DatabaseName, builder.Configuration["DatabasePassword"]);
   var tenantManagement = await secretService.GetAsync(Secret.SecretTypeConstants.TenantManagement);
 
   if (tenantManagement != null)

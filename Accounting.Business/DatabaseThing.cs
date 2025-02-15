@@ -17,7 +17,7 @@ namespace Accounting.Business
     public static class DatabaseConstants
     {
       public const string DatabaseName = "Accounting";
-      public const string DatabasePassword = "password";
+      public const string DatabaseNameAdmin = "postgres";
 
       private static readonly List<string> _all = new List<string>();
 
