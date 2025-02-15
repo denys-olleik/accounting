@@ -4929,10 +4929,11 @@ namespace Accounting.Database
 
         if (searchTenants)
         {
-          TenantManager tenantManager = new TenantManager(_connectionString);
-          var tenants = await tenantManager.GetAllAsync();
-
           var builder = new NpgsqlConnectionStringBuilder(_connectionString);
+          builder.Database = DatabaseThing.DatabaseConstants.DatabaseName;
+
+          TenantManager tenantManager = new TenantManager(builder.ConnectionString);
+          var tenants = await tenantManager.GetAllAsync();
 
           foreach (var tenant in tenants)
           {
