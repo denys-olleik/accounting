@@ -5517,7 +5517,7 @@ namespace Accounting.Database
 
         NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = DatabaseThing.DatabaseConstants.DatabaseNameAdmin;
-        builder.Password = ConfigurationSingleton.Instance.DatabasePassword;
+        //builder.Password = ConfigurationSingleton.Instance.DatabasePassword;
 
         using (var con = new NpgsqlConnection(builder.ConnectionString))
         {
@@ -5594,7 +5594,7 @@ namespace Accounting.Database
         //modify connection string to use admin database
         var builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = DatabaseThing.DatabaseConstants.DatabaseNameAdmin;
-        builder.Password = ConfigurationSingleton.Instance.DatabasePassword;
+        //builder.Password = ConfigurationSingleton.Instance.DatabasePassword;
 
         using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
