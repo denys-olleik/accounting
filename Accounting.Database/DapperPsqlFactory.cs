@@ -6207,7 +6207,14 @@ namespace Accounting.Database
         p.Add("@Ipv4", entity.Ipv4);
         p.Add("@SshPublic", entity.SshPublic);
         IEnumerable<Tenant> result;
-        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+
+        // change db name to default db
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
+        {
+          Database = DatabaseThing.DatabaseConstants.DatabaseName
+        };
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
           result = await con.QueryAsync<Tenant>("""
             INSERT INTO "Tenant" ("PublicId", "FullyQualifiedDomainName", "Email", "DatabasePassword", "DropletId", "Ipv4", "SshPublic")
