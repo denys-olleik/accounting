@@ -9,8 +9,21 @@ namespace Accounting.Models.TenantViewModels
     public TenantViewModel? Tenant { get; set; }
     public int UserID { get; set; }
     public string? Email { get; set; }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
+
+    private string? _firstName;
+    public string? FirstName
+    {
+      get => _firstName;
+      set => _firstName = value?.Trim();
+    }
+
+    private string? _lastName;
+    public string? LastName
+    {
+      get => _lastName;
+      set => _lastName = value?.Trim();
+    }
+
     public List<OrganizationViewModel> AvailableOrganizations { get; set; } = new List<OrganizationViewModel>();
     public string? SelectedOrganizationIdsCsv { get; set; }
 
@@ -33,12 +46,12 @@ namespace Accounting.Models.TenantViewModels
       public UpdateUserViewModelValidator()
       {
         RuleFor(x => x.FirstName)
-            .NotEmpty()
-            .WithMessage("First name is required.");
+          .NotEmpty()
+          .WithMessage("First name is required.");
 
         RuleFor(x => x.LastName)
-            .NotEmpty()
-            .WithMessage("Last name is required.");
+          .NotEmpty()
+          .WithMessage("Last name is required.");
       }
     }
   }

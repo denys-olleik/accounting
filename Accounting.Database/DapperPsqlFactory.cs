@@ -6423,7 +6423,12 @@ namespace Accounting.Database
 
         IEnumerable<Tenant> result;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
+        {
+          Database = DatabaseThing.DatabaseConstants.DatabaseName
+        };
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
           result = await con.QueryAsync<Tenant>("""
             SELECT * 
