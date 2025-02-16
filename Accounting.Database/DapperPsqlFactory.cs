@@ -6,7 +6,6 @@ using Npgsql;
 using System.Data;
 using System.Text.RegularExpressions;
 using static Dapper.SqlMapper;
-using static Accounting.Business.Claim;
 
 namespace Accounting.Database
 {
@@ -6459,7 +6458,13 @@ namespace Accounting.Database
 
         int rowsModified;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
+        {
+          Database = DatabaseThing.DatabaseConstants.DatabaseName,
+          Password = ConfigurationSingleton.Instance.DatabasePassword
+        };
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
           rowsModified = await con.ExecuteAsync("""
             DELETE FROM "Tenant" 
@@ -6527,6 +6532,29 @@ namespace Accounting.Database
         }
 
         return rowsAffected;
+      }
+
+      public async Task<bool> TenantExistsAsync(string? databaseName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@DatabaseName", databaseName);
+        
+        IEnumerable<Tenant> result;
+
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
+        {
+          Database = DatabaseThing.DatabaseConstants.DatabaseName
+        };
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          result = await con.QueryAsync<Tenant>("""
+            SELECT * 
+            FROM "Tenant" 
+            WHERE "DatabaseName" = @DatabaseName
+            """, p);
+        }
+        return result.Any();
       }
     }
 

@@ -88,5 +88,11 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetTenantManager().UpdateIpv4Async(tenantId, ipAddress);
     }
+
+    public async Task<bool> TenantExistsAsync(string? databaseName)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      return await factoryManager.GetTenantManager().TenantExistsAsync(databaseName);
+    }
   }
 }

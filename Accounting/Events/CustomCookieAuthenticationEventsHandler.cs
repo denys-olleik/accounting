@@ -34,6 +34,14 @@ namespace Accounting.Events
         databaseName = databaseNameClaim.Value;
       }
 
+      var databaseExists = await TenantExistsAsync(databaseName);
+      if (!databaseExists)
+      {
+        context.RejectPrincipal();
+        await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return;
+      } 
+
       int organizationId = Convert.ToInt32(principal?.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.OrganizationId)?.Value);
       string password = principal?.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.Password)?.Value;
       string databasePassword = principal?.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.DatabasePassword)?.Value;
@@ -69,6 +77,12 @@ namespace Accounting.Events
         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return;
       }
+    }
+
+    private async Task<bool> TenantExistsAsync(string? databaseName)
+    {
+      TenantService tenantService = new();
+      return await tenantService.TenantExistsAsync(databaseName);
     }
   }
 }
