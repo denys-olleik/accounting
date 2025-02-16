@@ -74,6 +74,7 @@ builder.Services.AddScoped<ToDoTagService>();
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 //ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
 //ConfigurationSingleton.Instance.ConnectionStringAdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
+ConfigurationSingleton.Instance.DatabasePassword = builder.Configuration["DatabasePassword"];
 
 #region Configure Paths
 bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
