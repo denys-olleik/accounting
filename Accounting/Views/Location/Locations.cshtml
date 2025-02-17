@@ -133,7 +133,7 @@
 			},
 		},
 		mounted() {
-			fetch('/api/l/all')
+			fetch('/api/l/locations')
 				.then(response => response.json())
 				.then(data => {
 					this.locations = this.addSelectedLocationID(data);
