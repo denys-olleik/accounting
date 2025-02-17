@@ -13,8 +13,12 @@
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
-  <div>
-    <a asp-action="Create" asp-controller="Location" class="font-Roboto font-size-20px text-decoration-none color-darkslategray">Create Location</a>
+  <div class="margin-left-20px">
+    <a asp-action="Create" asp-controller="Location" class="font-Roboto font-size-16px color-blue">Create Location</a>
+  </div>
+  <div class="flex-1 text-align-right">
+    <a asp-action="Index" asp-controller="Home"
+       class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
   </div>
 </div>
 
