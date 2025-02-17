@@ -241,7 +241,7 @@ namespace Accounting.Database
                 FROM "BusinessEntity"
                 WHERE "OrganizationId" = @OrganizationId    
             ) AS NumberedBusinessEntities
-            WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page
+            WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
             """, p);
         }
 

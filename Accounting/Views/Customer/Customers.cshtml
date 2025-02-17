@@ -50,7 +50,7 @@
 </div>
 
 <div id="app">
-  <table class="border-collapse width-100 background-color-antiquewhite">
+  <table class="border-collapse width-100 background-color-antiquewhite margin-bottom-5px">
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
       <tr>
         <th class="text-align-left">#</th>
@@ -71,13 +71,13 @@
     </tbody>
   </table>
 
-  <div class="display-flex">
+  <div class="margin-bottom-5px display-flex font-size-16px background-color-antiquewhite">
     <div>
-      <a :href="`/c/customers?page=${page - 1}`" v-if="page > 1" class="margin-right-5px">prev</a>
+      <a :href="`/c/customers?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
     </div>
     <div class="flex-1"></div>
     <div>
-      <a :href="`/c/customers?page=${nextPage}`" v-if="nextPage" class="margin-right-5px">next</a>
+      <a :href="`/c/customers?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
     </div>
   </div>
 </div>
