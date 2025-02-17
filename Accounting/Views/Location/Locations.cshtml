@@ -1,134 +1,145 @@
 ﻿@model Accounting.Models.LocationViewModels.LocationViewModel
 
 @{
-  ViewData["Title"] = "Locations - " + ConfigurationSingleton.Instance.ApplicationName;
+	ViewData["Title"] = "Locations - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-  string headerText = "Locations";
+	string headerText = "Locations";
 }
 
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
-  <div class="margin-left-20px">
-    <a asp-action="Create" asp-controller="Location" class="font-Roboto font-size-16px color-blue">Create Location</a>
-  </div>
-  <div class="flex-1 text-align-right">
-    <a asp-action="Index" asp-controller="Home"
-       class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
-  </div>
+	<div class="margin-left-20px">
+		<a asp-action="Create" asp-controller="Location" class="font-Roboto font-size-16px color-blue">Create Location</a>
+	</div>
+	<div class="flex-1 text-align-right">
+		<a asp-action="Index" asp-controller="Home"
+			 class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
+	</div>
 </div>
 
 <template id="location-template">
-  <div>
-    <div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
-      <div class="display-flex flex-1">
-        <a href="#" @@click.prevent="handleLocationClick(location.locationID)">
-          {{ location.name }}
-        </a>
-        <span>&nbsp;</span>
-        <div v-if="location.selectedLocationID === location.locationID" class="display-flex">
-          <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
-            <div class="flex-1"></div>
-            <a class="font-size-12px font-Roboto  color-white text-decoration-none cursor-default">options:</a>
-            <div class="flex-1"></div>
-          </div>
-          <div class="display-flex
+	<div>
+		<div class="display-flex border-bottom-1px-solid-lightgray padding-top-bottom-2px">
+			<div class="display-flex flex-1">
+				<a href="#" @@click.prevent="handleLocationClick(location.locationID)">
+					{{ location.name }}
+				</a>
+				<span>&nbsp;</span>
+				<div v-if="location.selectedLocationID === location.locationID" class="display-flex">
+					<div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+						<div class="flex-1"></div>
+						<a class="font-size-12px font-Roboto  color-white text-decoration-none cursor-default">options:</a>
+						<div class="flex-1"></div>
+					</div>
+					<div class="display-flex
               flex-direction-column
               background-color-333333
               padding-right-5px
               padding-left-5px
               margin-left-2px">
-            <div class="flex-1"></div>
-            <a class="font-size-16px font-Roboto color-white text-decoration-none"
-               :href="`/l/update/${location.locationID}`">Update</a>
-            <div class="flex-1"></div>
-          </div>
-          <div class="display-flex
+						<div class="flex-1"></div>
+						<a class="font-size-16px font-Roboto color-white text-decoration-none"
+							 :href="`/l/update/${location.locationID}`">Update</a>
+						<div class="flex-1"></div>
+					</div>
+					<div class="display-flex
               flex-direction-column
               background-color-333333
               padding-right-5px
               padding-left-5px
               margin-left-2px">
-            <div class="flex-1"></div>
-            <a class="font-size-16px font-Roboto color-white text-decoration-none"
-               :href="`/l/create/${location.locationID}`">Add</a>
-            <div class="flex-1"></div>
-          </div>
-        </div>
-      </div>
-      <div>{{ location.type }}</div>
-    </div>
-    <div v-if="location.children && location.children.length" class="margin-left-25px">
-      <template v-for="childLocation in location.children" :key="childLocation.locationID">
-        <location :location="childLocation" @@location-clicked="handleLocationClick"></location>
-      </template>
-    </div>
-  </div>
+						<div class="flex-1"></div>
+						<a class="font-size-16px font-Roboto color-white text-decoration-none"
+							 :href="`/l/create/${location.locationID}`">Add</a>
+						<div class="flex-1"></div>
+					</div>
+				</div>
+			</div>
+			<div>{{ location.type }}</div>
+		</div>
+		<div v-if="location.children && location.children.length" class="margin-left-25px">
+			<template v-for="childLocation in location.children" :key="childLocation.locationID">
+				<location :location="childLocation" @@location-clicked="handleLocationClick"></location>
+			</template>
+		</div>
+	</div>
 </template>
 
 <div id="app" class="display-flex flex-direction-column font-Roboto-Mono background-color-antiquewhite">
-  <template v-for="location in locations" :key="location.locationID">
-    <location :location="location" @@location-clicked="onLocationClicked"></location>
-  </template>
+	<template v-for="location in locations" :key="location.locationID">
+		<location :location="location" @@location-clicked="onLocationClicked"></location>
+	</template>
+
+	<div class="margin-bottom-5px display-flex font-size-16px background-color-antiquewhite">
+		<div class="flex-1 text-align-left">
+			<a :href="`/l/all?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
+		</div>
+		<div class="display-flex flex-1">
+		</div>
+		<div class="flex-1 text-align-right">
+			<a :href="`/l/all?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
+		</div>
+	</div>
 </div>
 
 <script>
-  const { createApp } = Vue;
+	const { createApp } = Vue;
 
-  const Location = {
-    name: 'location',
-    template: '#location-template',
-    props: ['location'],
-    methods: {
-      handleLocationClick(locationID) {
-        console.log(locationID);
-        this.$emit('location-clicked', locationID);
-      },
-    }
-  };
+	const Location = {
+		name: 'location',
+		template: '#location-template',
+		props: ['location'],
+		methods: {
+			handleLocationClick(locationID) {
+				console.log(locationID);
+				this.$emit('location-clicked', locationID);
+			},
+		}
+	};
 
-  const app = createApp({
-    components: {
-      'location': Location
-    },
-    data() {
-      return {
-        locations: [],
-        selectedLocationID: null
-      }
-    },
-    methods: {
-      onLocationClicked(locationID) {
-        console.log('Location clicked:', locationID);
+	const app = createApp({
+		components: {
+			'location': Location
+		},
+		data() {
+			return {
+				locations: [],
+				selectedLocationID: null
+			}
+		},
+		methods: {
+			onLocationClicked(locationID) {
+				console.log('Location clicked:', locationID);
 
-        if (this.selectedLocationID === locationID) {
-          this.selectedLocationID = null;
-        } else {
-          this.selectedLocationID = locationID;
-        }
+				if (this.selectedLocationID === locationID) {
+					this.selectedLocationID = null;
+				} else {
+					this.selectedLocationID = locationID;
+				}
 
-        this.locations = this.locations.map(location => this.resetSelectedLocationID(location, this.selectedLocationID));
-      },
-      addSelectedLocationID(locations) {
-        return locations.map(location => this.resetSelectedLocationID(location));
-      },
-      resetSelectedLocationID(location, selectedID = null) {
-        const children = location.children ? location.children.map(child => this.resetSelectedLocationID(child, selectedID)) : [];
-        return { ...location, children, selectedLocationID: selectedID };
-      },
-    },
-    mounted() {
-      fetch('/api/l/all')
-        .then(response => response.json())
-        .then(data => {
-          this.locations = this.addSelectedLocationID(data);
-        });
-    },
-  });
+				this.locations = this.locations.map(location => this.resetSelectedLocationID(location, this.selectedLocationID));
+			},
+			addSelectedLocationID(locations) {
+				return locations.map(location => this.resetSelectedLocationID(location));
+			},
+			resetSelectedLocationID(location, selectedID = null) {
+				const children = location.children ? location.children.map(child => this.resetSelectedLocationID(child, selectedID)) : [];
+				return { ...location, children, selectedLocationID: selectedID };
+			},
+		},
+		mounted() {
+			fetch('/api/l/all')
+				.then(response => response.json())
+				.then(data => {
+					this.locations = this.addSelectedLocationID(data);
+				});
+		},
+	});
 
-  app.mount('#app');
+	app.mount('#app');
 </script>

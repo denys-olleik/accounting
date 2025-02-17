@@ -18,8 +18,12 @@ namespace Accounting.Controllers
       _locationService = new LocationService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
-    [HttpGet("all")]
-    public async Task<IActionResult> GetAllLocations()
+    [HttpGet("locations")]
+    public async Task<IActionResult> GetAllLocations(
+      bool includeDescendants,
+      bool includeInventories,
+      int page = 1,
+      int pageSize = 2)
     {
       var organizationId = GetOrganizationId();
       List<Location> locations = await _locationService.GetAllHierarchicalAsync(organizationId);
