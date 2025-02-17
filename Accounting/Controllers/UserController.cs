@@ -26,7 +26,7 @@ namespace Accounting.Controllers
     {
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
       _userService = new UserService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
-      _secretService = new SecretService(requestContext.DatabasePassword!, requestContext.DatabaseName!);
+      _secretService = new SecretService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
     }
 
     [HttpGet]

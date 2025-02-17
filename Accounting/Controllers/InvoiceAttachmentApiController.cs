@@ -11,13 +11,11 @@ namespace Accounting.Controllers
   [Route("api/invoice-attachment")]
   public class InvoiceAttachmentApiController : BaseController
   {
-    private readonly string _databaseName;
     private readonly InvoiceAttachmentService _invoiceAttachmentService;
 
     public InvoiceAttachmentApiController(RequestContext requestContext, InvoiceAttachmentService invoiceAttachmentService)
     {
-      _databaseName = requestContext.DatabaseName;
-      _invoiceAttachmentService = new InvoiceAttachmentService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _invoiceAttachmentService = new InvoiceAttachmentService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [Route("upload")]

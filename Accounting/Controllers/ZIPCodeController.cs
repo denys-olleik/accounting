@@ -13,7 +13,7 @@ namespace Accounting.Controllers
 
     public ZipCodeController(ZipCodeService zipCodeService, RequestContext requestContext)
     {
-      _zipCodeService = new ZipCodeService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _zipCodeService = new ZipCodeService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     public IActionResult Index()

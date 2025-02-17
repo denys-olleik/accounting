@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Transactions;
 using static Accounting.Models.ReconciliationViewModels.ReconciliationsViewModel;
-using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace Accounting.Controllers
 {
@@ -27,9 +26,9 @@ namespace Accounting.Controllers
         ReconciliationAttachmentService reconciliationAttachmentService,
         RequestContext requestContext)
     {
-      _reconciliationTransactionService = new ReconciliationTransactionService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _reconciliationService = new ReconciliationService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _reconciliationAttachmentService = new ReconciliationAttachmentService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _reconciliationTransactionService = new ReconciliationTransactionService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _reconciliationService = new ReconciliationService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _reconciliationAttachmentService = new ReconciliationAttachmentService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [Route("reconciliations")]

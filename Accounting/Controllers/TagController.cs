@@ -15,7 +15,7 @@ namespace Accounting.Controllers
 
     public TagController(RequestContext requestContext)
     {
-      _tagService = new TagService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _tagService = new TagService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet]

@@ -24,8 +24,8 @@ namespace Accounting.Controllers
       BusinessEntityService businessEntityService,
       RequestContext requestContext)
     {
-      _invoicePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabasePassword, requestContext.DatabaseName);
-      _businessEntityService = new BusinessEntityService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _invoicePaymentService = new InvoiceInvoiceLinePaymentService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _businessEntityService = new BusinessEntityService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet("get-invoice-payments")]

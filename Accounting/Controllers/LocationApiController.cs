@@ -15,7 +15,7 @@ namespace Accounting.Controllers
 
     public LocationApiController(LocationService locationService, RequestContext requestContext)
     {
-      _locationService = new LocationService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _locationService = new LocationService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet("all")]

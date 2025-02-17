@@ -17,7 +17,7 @@ namespace Accounting.Controllers
 
     public PaymentTermController(PaymentTermsService paymentTermsService, RequestContext requestContext)
     {
-      _paymentTermsService = new PaymentTermsService(requestContext.DatabasePassword, requestContext.DatabaseName);
+      _paymentTermsService = new PaymentTermsService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [Route("payment-terms")]
