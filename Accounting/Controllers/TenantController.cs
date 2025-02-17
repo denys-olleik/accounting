@@ -152,6 +152,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
+      await _userOrganizationService.DeleteUserAsync(userId, tenant.DatabaseName, tenant.DatabasePassword);
       await userService.DeleteAsync(userId);
 
       return RedirectToAction("TenantUsers", new { tenantId = model.TenantId });

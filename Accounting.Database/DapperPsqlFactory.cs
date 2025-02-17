@@ -4795,6 +4795,28 @@ namespace Accounting.Database
         return rowsAffected;
       }
 
+      public async Task<int> DeleteUserAsync(int userId, string databasePassword, string databaseName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@UserId", userId);
+
+        int rowsAffected;
+
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
+        builder.Database = databaseName;
+        builder.Password = databasePassword;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            DELETE FROM "UserOrganization" 
+            WHERE "UserId" = @UserId
+            """, p);
+        }
+
+        return rowsAffected;
+      }
+
       public UserOrganization Get(int id)
       {
         throw new NotImplementedException();

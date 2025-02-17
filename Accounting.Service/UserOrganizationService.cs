@@ -82,5 +82,11 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(databaseName, databasePassword);
       return await factoryManager.GetUserOrganizationManager().DeleteByOrganizationIdAsync(organizationId, databasePassword, databaseName);
     }
+
+    public async Task<int> DeleteUserAsync(int userId, string databaseName, string databasePassword)
+    {
+      var factoryManager = new FactoryManager(databaseName, databasePassword);
+      return await factoryManager.GetUserOrganizationManager().DeleteUserAsync(userId, databasePassword, databaseName);
+    }
   }
 }
