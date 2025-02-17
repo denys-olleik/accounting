@@ -4772,7 +4772,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> DeleteByOrganizationIdAsync(int organizationId, string databasePassword, string databaseName)
+      public async Task<int> DeleteByOrganizationIdAsync(int organizationId, string databaseName, string databasePassword)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@OrganizationId", organizationId);
