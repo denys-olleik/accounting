@@ -25,15 +25,54 @@ namespace Accounting.Controllers
       int page = 1,
       int pageSize = 2)
     {
-      var organizationId = GetOrganizationId();
-      List<Location> locations = await _locationService.GetAllHierarchicalAsync(organizationId);
+      (List<Location> locations, int? nextPage) =
+        await _locationService.GetAllAsync(
+          page,
+          pageSize,
+          GetOrganizationId(),
+          includeDescendants,
+          includeInventories);
 
-      List<LocationViewModel> locationsViewmodel = locations
-          .Where(location => location.ParentLocationId == null)
-          .Select(ConvertToViewModel)
-          .ToList();
+      GetAllLocationsViewModel.LocationViewModel ConvertToViewModel(Location location)
+      {
+        var viewModel = new GetAllLocationsViewModel.LocationViewModel
+        {
+          LocationID = location.LocationID,
+          Name = location.Name,
+          Children = new List<GetAllLocationsViewModel.LocationViewModel>(),
+          Inventories = location.Inventories?.Select(x => new GetAllLocationsViewModel.InventoryViewModel
+          {
+            InventoryID = x.InventoryID,
+            ItemId = x.ItemId,
+            LocationId = x.LocationId,
+            Item = new GetAllLocationsViewModel.ItemViewModel
+            {
+              ItemID = x.Item.ItemID,
+              Name = x.Item.Name
+            },
+            Quantity = x.Quantity,
+            SellFor = x.SellFor
+          }).ToList()
+        };
 
-      return Ok(locationsViewmodel);
+        if (location.Children != null)
+        {
+          foreach (var child in location.Children)
+          {
+            viewModel.Children.Add(ConvertToViewModel(child));
+          }
+        }
+
+        return viewModel;
+      }
+
+      return Ok(new GetAllLocationsViewModel
+      {
+        Locations = locations.Select(ConvertToViewModel).ToList(),
+        Page = page,
+        NextPage = nextPage,
+        PageSize = pageSize
+      });
     }
 
     private LocationViewModel ConvertToViewModel(Location location)

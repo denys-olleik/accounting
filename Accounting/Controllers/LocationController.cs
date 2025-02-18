@@ -22,61 +22,21 @@ namespace Accounting.Controllers
       _locationService = new LocationService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
-    [HttpGet("get-all-locations")]
-    public async Task<IActionResult> GetAllLocations(
-      bool includeDescendants,
-      bool includeInventories,
+    [HttpGet("locations")]
+    public async Task<IActionResult> Locations(
       int page = 1,
       int pageSize = 2)
     {
-      (List<Location> locations, int? nextPage) =
-        await _locationService.GetAllAsync(
-          page,
-          pageSize,
-          GetOrganizationId(),
-          includeDescendants,
-          includeInventories);
+      var referer = Request.Headers["Referer"].ToString() ?? string.Empty;
 
-    GetAllLocationsViewModel.LocationViewModel ConvertToViewModel(Location location)
+      var vm = new LocationsPaginatedViewModel
       {
-        var viewModel = new GetAllLocationsViewModel.LocationViewModel
-        {
-          LocationID = location.LocationID,
-          Name = location.Name,
-          Children = new List<GetAllLocationsViewModel.LocationViewModel>(),
-          Inventories = location.Inventories?.Select(x => new GetAllLocationsViewModel.InventoryViewModel
-          {
-            InventoryID = x.InventoryID,
-            ItemId = x.ItemId,
-            LocationId = x.LocationId,
-            Item = new GetAllLocationsViewModel.ItemViewModel
-            {
-              ItemID = x.Item.ItemID,
-              Name = x.Item.Name
-            },
-            Quantity = x.Quantity,
-            SellFor = x.SellFor
-          }).ToList()
-        };
-
-        if (location.Children != null)
-        {
-          foreach (var child in location.Children)
-          {
-            viewModel.Children.Add(ConvertToViewModel(child));
-          }
-        }
-
-        return viewModel;
-      }
-
-      return Ok(new GetAllLocationsViewModel
-      {
-        Locations = locations.Select(ConvertToViewModel).ToList(),
         Page = page,
-        NextPage = nextPage,
-        PageSize = pageSize
-      });
+        PageSize = pageSize,
+        RememberPageSize = string.IsNullOrEmpty(referer)
+      };
+
+      return View(vm);
     }
 
     [Route("create/{parentLocationId?}")]
