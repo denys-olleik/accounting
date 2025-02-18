@@ -10,8 +10,9 @@ namespace Accounting.Business
     public DateTime Created { get; set; }
     public int? ParentLocationId { get; set; }
     public int CreatedById { get; set; }
-    public object? OrganizationId { get; set; }
+    public int OrganizationId { get; set; }
 
+    public List<Inventory>? Inventories { get; set; }
     public List<Location>? Children { get; set; }
 
     public int Identifiable => this.LocationID;

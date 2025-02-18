@@ -7003,6 +7003,70 @@ namespace Accounting.Database
         return result.ToList();
       }
 
+      public async Task<(List<Location> locations, int? nextPage)> GetAllAsync(
+        int page,
+        int pageSize,
+        int organizationId,
+        bool includeDescendants,
+        bool includeInventories)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Page", page);
+        p.Add("@PageSize", pageSize + 1);
+        p.Add("@OrganizationId", organizationId);
+
+        IEnumerable<Location> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = await con.QueryAsync<Location>($"""
+            SELECT *, ROW_NUMBER() OVER (ORDER BY "LocationID") AS "RowNumber"
+            FROM "Location"
+            WHERE "OrganizationId" = @OrganizationId
+            ORDER BY "Name"
+            LIMIT @PageSize OFFSET @Offset
+            """, new { PageSize = pageSize + 1, Offset = pageSize * (page - 1), OrganizationId = organizationId });
+        }
+
+        var hasMoreRecords = result.Count() > pageSize;
+
+        if (hasMoreRecords)
+        {
+          result = result.Take(pageSize);
+        }
+
+        int? nextPage = hasMoreRecords ? page + 1 : null;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          if (includeInventories)
+          {
+            foreach (var location in result)
+            {
+              var inventories = await con.QueryAsync<Inventory, Item, Location, Inventory>($"""
+                SELECT i.*, it.*, l.*
+                FROM "Inventory" i
+                INNER JOIN "Item" it ON i."ItemId" = it."ItemID"
+                INNER JOIN "Location" l ON i."LocationId" = l."LocationID"
+                WHERE i."LocationId" = @LocationId
+                AND i."OrganizationId" = @OrganizationId
+                """,
+                  (inventory, inventoryItem, location) =>
+                  {
+                    inventory.Item = inventoryItem;
+                    return inventory;
+                  },
+                  new { LocationId = location.LocationID, OrganizationId = organizationId },
+                  splitOn: "ItemID,LocationID");
+
+              location.Inventories = inventories.ToList();
+            }
+          }
+        }
+
+        return (result.ToList(), nextPage);
+      }
+
       public async Task<Location?> GetAsync(int locationId, int organizationId)
       {
         DynamicParameters p = new DynamicParameters();

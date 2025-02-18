@@ -74,5 +74,16 @@ namespace Accounting.Service
         }
       }
     }
+
+    public async Task<(List<Location> locations, int? nextPage)> GetAllAsync(
+      int page, 
+      int pageSize, 
+      int organizationId, 
+      bool includeDescendants, 
+      bool includeInventories)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      return await factoryManager.GetLocationService().GetAllAsync(page, pageSize, organizationId, includeDescendants, includeInventories);
+    }
   }
 }
