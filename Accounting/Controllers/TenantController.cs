@@ -38,7 +38,7 @@ namespace Accounting.Controllers
       UserOrganizationService userOrganizationService,
       RequestContext requestContext)
     {
-      _tenantService = new TenantService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _tenantService = new TenantService();
       _cloudServices = cloudServices;
       _secretService = new SecretService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _databaseService = databaseService;

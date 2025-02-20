@@ -6985,7 +6985,7 @@ namespace Accounting.Database
           result = await con.QueryAsync<Location>($"""
             SELECT *, ROW_NUMBER() OVER (ORDER BY "LocationID") AS "RowNumber"
             FROM "Location"
-            WHERE "OrganizationId" = @OrganizationId
+            WHERE "OrganizationId" = @OrganizationId AND "ParentLocationId" IS NULL
             ORDER BY "Name"
             LIMIT @PageSize OFFSET @Offset
             """, new { PageSize = pageSize + 1, Offset = pageSize * (page - 1), OrganizationId = organizationId });
