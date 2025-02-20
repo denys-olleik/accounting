@@ -23,15 +23,6 @@ namespace Accounting.Service
       return await factoryManager.GetLocationService().CreateAsync(location);
     }
 
-    public async Task<(List<Location> locations, int? nextPage)> GetAllAsync(
-      int page,
-      int pageSize,
-      int organizationId)
-    {
-      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
-      return await factoryManager.GetLocationService().GetAllAsync(page, pageSize, organizationId);
-    }
-
     public async Task<List<Location>> GetAllHierarchicalAsync(int organizationId)
     {
       var allOrganizationLocationsFlatList = await GetAllAsync(organizationId);

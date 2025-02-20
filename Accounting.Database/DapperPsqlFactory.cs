@@ -6950,43 +6950,6 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<(List<Location> Locations, int? NextPageNumber)> GetAllAsync(
-        int page,
-        int pageSize,
-        int organizationId)
-      {
-        DynamicParameters p = new DynamicParameters();
-        p.Add("@Page", page);
-        p.Add("@PageSize", pageSize);
-        p.Add("@OrganizationId", organizationId);
-
-        IEnumerable<Location> result;
-
-        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
-        {
-          result = await con.QueryAsync<Location>($"""
-            SELECT * FROM (
-                SELECT *,
-                       ROW_NUMBER() OVER (ORDER BY "LocationID" DESC) AS RowNumber
-                FROM "Location"
-                WHERE "OrganizationId" = @OrganizationId
-            ) AS NumberedLocations
-            WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
-            """, p);
-        }
-
-        var resultList = result.ToList();
-        int? nextPageNumber = null;
-
-        if (resultList.Count > pageSize)
-        {
-          resultList.RemoveAt(resultList.Count - 1);
-          nextPageNumber = page + 1;
-        }
-
-        return (resultList, nextPageNumber);
-      }
-
       public async Task<List<Location>> GetAllAsync(int organizationId)
       {
         IEnumerable<Location> result;
