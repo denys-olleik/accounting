@@ -6978,11 +6978,11 @@ namespace Accounting.Database
         p.Add("@PageSize", pageSize + 1);
         p.Add("@OrganizationId", organizationId);
 
-        IEnumerable<Location> result;
+        IEnumerable<Location> locations;
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
-          result = await con.QueryAsync<Location>($"""
+          locations = await con.QueryAsync<Location>($"""
             SELECT *, ROW_NUMBER() OVER (ORDER BY "LocationID") AS "RowNumber"
             FROM "Location"
             WHERE "OrganizationId" = @OrganizationId AND "ParentLocationId" IS NULL
@@ -6991,20 +6991,52 @@ namespace Accounting.Database
             """, new { PageSize = pageSize + 1, Offset = pageSize * (page - 1), OrganizationId = organizationId });
         }
 
-        var hasMoreRecords = result.Count() > pageSize;
+        var hasMoreRecords = locations.Count() > pageSize;
 
         if (hasMoreRecords)
         {
-          result = result.Take(pageSize);
+          locations = locations.Take(pageSize);
         }
 
         int? nextPage = hasMoreRecords ? page + 1 : null;
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
+          if (includeDescendants)
+          {
+            // Query to get all locations for the organization
+            var allLocations = await con.QueryAsync<Location>($"""
+              SELECT *
+              FROM "Location"
+              WHERE "OrganizationId" = @OrganizationId
+              """, p);
+
+            void PopulateChildrenRecursively(List<Location> children)
+            {
+              foreach (var child in children)
+              {
+                child.Children = allLocations.Where(x => x.ParentLocationId == child.LocationID).OrderBy(x => x.Name).ToList();
+                if (child.Children.Any())
+                {
+                  PopulateChildrenRecursively(child.Children);
+                }
+              }
+            }
+
+            // Populate children for each root location
+            foreach (var location in locations)
+            {
+              location.Children = allLocations.Where(x => x.ParentLocationId == location.LocationID).OrderBy(x => x.Name).ToList();
+              if (location.Children.Any())
+              {
+                PopulateChildrenRecursively(location.Children);
+              }
+            }
+          }
+
           if (includeInventories)
           {
-            foreach (var location in result)
+            foreach (var location in locations)
             {
               var inventories = await con.QueryAsync<Inventory, Item, Location, Inventory>($"""
                 SELECT i.*, it.*, l.*
@@ -7014,20 +7046,20 @@ namespace Accounting.Database
                 WHERE i."LocationId" = @LocationId
                 AND i."OrganizationId" = @OrganizationId
                 """,
-                  (inventory, inventoryItem, location) =>
-                  {
-                    inventory.Item = inventoryItem;
-                    return inventory;
-                  },
-                  new { LocationId = location.LocationID, OrganizationId = organizationId },
-                  splitOn: "ItemID,LocationID");
+                (inventory, inventoryItem, loc) =>
+                {
+                  inventory.Item = inventoryItem;
+                  return inventory;
+                },
+                new { LocationId = location.LocationID, OrganizationId = organizationId },
+                splitOn: "ItemID,LocationID");
 
               location.Inventories = inventories.ToList();
             }
           }
         }
 
-        return (result.ToList(), nextPage);
+        return (locations.ToList(), nextPage);
       }
 
       public async Task<Location?> GetAsync(int locationId, int organizationId)
