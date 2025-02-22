@@ -1,0 +1,55 @@
+﻿@model Accounting.Models.LocationViewModels.DeleteLocationViewModel
+
+@{
+  ViewData["Title"] = "Delete Location - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Delete location";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="Delete" asp-controller="Location" method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
+
+  <input asp-for="LocationID" type="hidden" />
+
+  <div class="display-flex">
+    <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite margin-bottom-5px">
+      <label asp-for="Name">Name</label>
+      <input asp-for="Name" class="font-size-20px" readonly />
+    </div>
+  </div>
+
+  @if (Model.HasChildren)
+  {
+    <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite margin-bottom-5px">
+      <span>
+        <input asp-for="DeleteChildren" class="font-size-20px" readonly />
+        <label asp-for="DeleteChildren">Delete children</label>
+      </span>
+    </div>
+  }
+
+  <div class="display-flex">
+    <div class="flex-1">
+      <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Locations", "Location")';">Cancel</button>
+    </div>
+    <div class="width-5px"></div>
+    <div class="flex-1">
+      <button type="submit" class="full-width-orange-red-button width-100">Delete</button>
+    </div>
+  </div>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+  <div class="margin-bottom-5px">
+  </div>
+}
