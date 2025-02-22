@@ -1,13 +1,13 @@
 ﻿@model Accounting.Models.LocationViewModels.CreateLocationViewModel
 
 @{
-  ViewData["Title"] = "Create Location - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Create location - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-  string headerText = "Create Location";
+  string headerText = "Create location";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
@@ -18,7 +18,7 @@
   @if (Model.ParentLocation != null)
   {
     <div class="display-flex margin-bottom-5px background-color-antiquewhite">
-      <div>Parent Location:</div>
+      <div>Parent location:</div>
       <div class="display-flex flex-direction-column">
         <a asp-action="Update"
            asp-controller="Location"
@@ -40,5 +40,5 @@
     <textarea asp-for="Description" class="font-size-20px" rows="6"></textarea>
   </div>
 
-  <button type="submit" class="full-width-regular-button">Create Location</button>
+  <button type="submit" class="full-width-regular-button">Create location</button>
 </form>
