@@ -3,7 +3,8 @@
 namespace Accounting.Database.Interfaces
 {
   public interface ILocationManager : IGenericRepository<Location, int>
-  { 
+  {
+    Task<int> DeleteAsync(int locationID, bool deleteChildren);
     Task<List<Location>> GetAllAsync(int organizationId);
     Task<(List<Location> locations, int? nextPage)> GetAllAsync(
       int page, 

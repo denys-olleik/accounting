@@ -18,7 +18,7 @@ namespace Accounting.Models.ItemViewModels
       {
         RuleFor(item => item)
           .Must(item => IsValidForDeletion(item))
-          .WithMessage("Delete children first or select delete children to have all descendants .");
+          .WithMessage("Select 'delete children' to remove all descendants.");
       }
 
       private bool IsValidForDeletion(DeleteItemViewModel item)

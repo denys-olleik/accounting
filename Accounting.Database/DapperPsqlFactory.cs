@@ -6940,6 +6940,45 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<int> DeleteAsync(int locationID, bool deleteChildren)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@LocationID", locationID);
+
+        try
+        {
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+          {
+            await con.OpenAsync();
+            if (deleteChildren)
+            {
+              // Use a recursive CTE to find all descendants
+              await con.ExecuteAsync("""
+                  WITH RECURSIVE Descendants AS (
+                    SELECT "LocationID" FROM "Location" WHERE "ParentLocationId" = @LocationID
+                    UNION
+                    SELECT l."LocationID" FROM "Location" l
+                    INNER JOIN Descendants d ON l."ParentLocationId" = d."LocationID"
+                  )
+                  DELETE FROM "Location"
+                  WHERE "LocationID" IN (SELECT "LocationID" FROM Descendants)
+                  """, p);
+            }
+            // Delete the item itself
+            int rowsAffected = await con.ExecuteAsync("""
+                DELETE FROM "Location" 
+                WHERE "LocationID" = @LocationID
+                """, p);
+
+            return rowsAffected;
+          }
+        }
+        catch (PostgresException ex) when (ex.SqlState == "23503")
+        {
+          throw new InvalidOperationException("The location cannot be deleted because it is being used elsewhere. 23503.", ex);
+        }
+      }
+
       public Location Get(int id)
       {
         throw new NotImplementedException();

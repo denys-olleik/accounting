@@ -98,5 +98,40 @@ namespace Accounting.Controllers
 
       return RedirectToAction("Locations");
     }
+
+    [HttpGet]
+    [Route("delete/{locationId}")]
+    public async Task<IActionResult> Delete(int locationId)
+    {
+      Location location = await _locationService.GetAsync(locationId, GetOrganizationId());
+
+      if (location == null)
+        return NotFound();
+
+      return View(new DeleteLocationViewModel
+      {
+        LocationID = location.LocationID,
+        Name = location.Name,
+        HasChildren = location.Children?.Count > 0
+      });
+    }
+
+    [HttpPost]
+    [Route("delete/{locationId}")]
+    public async Task<IActionResult> Delete(DeleteLocationViewModel model)
+    {
+      Location location = await _locationService.GetAsync(model.LocationID, GetOrganizationId());
+
+      if (location == null)
+        return NotFound();
+
+      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      {
+        await _locationService.DeleteAsync(model.LocationID, model.DeleteChildren);
+        scope.Complete();
+      }
+
+      return RedirectToAction("Locations");
+    }
   }
 }
