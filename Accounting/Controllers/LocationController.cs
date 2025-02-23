@@ -108,6 +108,8 @@ namespace Accounting.Controllers
       if (location == null)
         return NotFound();
 
+      location.Children = await _locationService.GetChildrenAsync(locationId, GetOrganizationId());
+
       return View(new DeleteLocationViewModel
       {
         LocationID = location.LocationID,
@@ -125,10 +127,36 @@ namespace Accounting.Controllers
       if (location == null)
         return NotFound();
 
-      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      DeleteLocationViewModel.DeleteLocationViewModelValidator validator = new DeleteLocationViewModel.DeleteLocationViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      location.Children = await _locationService.GetChildrenAsync(location.LocationID, GetOrganizationId());
+      model.HasChildren = location.Children?.Count > 0;
+
+      if (!validationResult.IsValid)
       {
-        await _locationService.DeleteAsync(model.LocationID, model.DeleteChildren);
-        scope.Complete();
+        model.LocationID = location.LocationID;
+        model.Name = location.Name;
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      try
+      {
+        using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+        {
+          await _locationService.DeleteAsync(model.LocationID, model.DeleteChildren);
+          scope.Complete();
+        }
+      }
+      catch (InvalidOperationException ex)
+      {
+        if (ex.Message.Contains("23503"))
+        {
+          model.ValidationResult.Errors.Add(new ValidationFailure(nameof(model.LocationID), ex.Message));
+          return View(model);
+        }
+        throw;
       }
 
       return RedirectToAction("Locations");

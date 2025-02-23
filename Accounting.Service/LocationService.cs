@@ -82,5 +82,11 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetLocationService().DeleteAsync(locationID, deleteChildren);
     }
+
+    public async Task<List<Location>?> GetChildrenAsync(int locationId, int organizationId)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      return await factoryManager.GetLocationService().GetChildrenAsync(locationId, organizationId);
+    }
   }
 }

@@ -6949,7 +6949,6 @@ namespace Accounting.Database
         {
           using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
-            await con.OpenAsync();
             if (deleteChildren)
             {
               // Use a recursive CTE to find all descendants
@@ -7120,6 +7119,24 @@ namespace Accounting.Database
         }
 
         return result.SingleOrDefault();
+      }
+
+      public async Task<List<Location>?> GetChildrenAsync(int locationId, int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@LocationID", locationId);
+        p.Add("@OrganizationId", organizationId);
+        IEnumerable<Location> result;
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = await con.QueryAsync<Location>("""
+            SELECT * 
+            FROM "Location" 
+            WHERE "ParentLocationId" = @LocationID
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+        return result.ToList();
       }
 
       public int Update(Location entity)

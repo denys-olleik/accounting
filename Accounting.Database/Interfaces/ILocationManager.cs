@@ -13,5 +13,6 @@ namespace Accounting.Database.Interfaces
       bool includeDescendants, 
       bool includeInventories);
     Task<Location?> GetAsync(int locationId, int organizationId);
+    Task<List<Location>?> GetChildrenAsync(int locationId, int organizationId);
   }
 }
