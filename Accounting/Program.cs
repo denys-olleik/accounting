@@ -20,7 +20,7 @@ builder.Services.AddControllersWithViews(options =>
   {
     NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy()
   };
-});
+}); //
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
   .AddCookie(options =>
