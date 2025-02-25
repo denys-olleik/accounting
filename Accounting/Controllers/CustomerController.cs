@@ -36,9 +36,12 @@ namespace Accounting.Controllers
     [HttpGet]
     public IActionResult Customers(int page = 1, int pageSize = 2)
     {
-      BusinessEntitiesViewModel model = new BusinessEntitiesViewModel();
+      var referer = Request.Headers["Referer"].ToString() ?? string.Empty;
+
+      BusinessEntitiesPaginatedViewModel model = new BusinessEntitiesPaginatedViewModel();
       model.Page = page;
       model.PageSize = pageSize;
+      model.RememberPageSize = string.IsNullOrEmpty(referer);
 
       return View(model);
     }

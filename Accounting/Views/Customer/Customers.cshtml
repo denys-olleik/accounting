@@ -1,4 +1,4 @@
-﻿@model Accounting.Models.BusinessEntityViewModels.BusinessEntitiesViewModel
+﻿@model Accounting.Models.BusinessEntityViewModels.BusinessEntitiesPaginatedViewModel
 
 @{
   ViewData["Title"] = "Customers and vendors - " + ConfigurationSingleton.Instance.ApplicationName;
@@ -117,10 +117,16 @@
         pageSize: @Model.PageSize,
         expandedCustomerId: null,
         nextPage: null,
+        rememberPageSize: @(Model.RememberPageSize ? "true" : "false")
       };
     },
     methods: {
       fetchBusinessEntities() {
+        const storedPageSize = parseInt(localStorage.getItem('pageSize'));
+        if (storedPageSize) {
+          this.pageSize = storedPageSize;
+        }
+
         const apiUrl = `/api/c/get-customers?page=${this.page}&pageSize=${this.pageSize}`;
         fetch(apiUrl)
           .then(response => response.json())
@@ -135,6 +141,9 @@
       },
     },
     mounted() {
+      if (this.rememberPageSize) {
+        localStorage.setItem('pageSize', this.pageSize);
+      }
       this.fetchBusinessEntities();
     }
   });
