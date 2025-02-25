@@ -21,12 +21,12 @@
     </div>
   </div>
 
-  @if (Model.HasChildren)
+  @if (Model.IsLocationInUseAsync)
   {
     <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite margin-bottom-5px">
       <span>
         <input asp-for="DeleteChildren" class="font-size-20px" readonly />
-        <label asp-for="DeleteChildren">Delete children</label>
+        <label asp-for="DeleteChildren">Delete children and references.</label>
       </span>
     </div>
   }

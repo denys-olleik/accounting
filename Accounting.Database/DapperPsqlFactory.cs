@@ -7139,6 +7139,46 @@ namespace Accounting.Database
         return result.ToList();
       }
 
+      public async Task<bool> IsLocationInUseAsync(int locationId, int organizationId)
+      {
+        using var con = new NpgsqlConnection(_connectionString);
+        DynamicParameters p = new();
+        p.Add("@LocationID", locationId);
+        p.Add("@OrganizationId", organizationId);
+
+        // Query to find foreign key references to the Location table.
+        var foreignKeyQuery = """
+          SELECT n.nspname AS schema_name,
+                 c.relname AS table_name,
+                 a.attname AS column_name
+          FROM pg_constraint AS con
+          JOIN pg_class AS c ON con.conrelid = c.oid
+          JOIN pg_namespace AS n ON c.relnamespace = n.oid
+          JOIN pg_attribute AS a ON a.attrelid = c.oid AND a.attnum = ANY(con.conkey)
+          WHERE con.confrelid = '"Location"'::regclass;
+          """;
+
+        var references = await con.QueryAsync<(string Schema, string Table, string Column)>(foreignKeyQuery);
+
+        foreach (var (schema, table, column) in references)
+        {
+          var existsQuery = $"""
+          SELECT EXISTS (
+            SELECT 1
+            FROM "{schema}"."{table}"
+            WHERE "{column}" = @LocationID
+            AND "OrganizationId" = @OrganizationId
+          )
+          """;
+
+          bool isInUse = await con.ExecuteScalarAsync<bool>(existsQuery, p);
+          if (isInUse)
+            return true;
+        }
+
+        return false;
+      }
+
       public int Update(Location entity)
       {
         throw new NotImplementedException();

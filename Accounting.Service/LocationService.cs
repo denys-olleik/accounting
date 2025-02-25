@@ -88,5 +88,11 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetLocationService().GetChildrenAsync(locationId, organizationId);
     }
+
+    public async Task<bool> IsLocationInUseAsync(int locationId, int organizationId)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      return await factoryManager.GetLocationService().IsLocationInUseAsync(locationId, organizationId);
+    }
   }
 }

@@ -14,5 +14,6 @@ namespace Accounting.Database.Interfaces
       bool includeInventories);
     Task<Location?> GetAsync(int locationId, int organizationId);
     Task<List<Location>?> GetChildrenAsync(int locationId, int organizationId);
+    Task<bool> IsLocationInUseAsync(int locationId, int organizationId);
   }
 }

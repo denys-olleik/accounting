@@ -108,13 +108,14 @@ namespace Accounting.Controllers
       if (location == null)
         return NotFound();
 
+      bool isLocationInUseAsync = await _locationService.IsLocationInUseAsync(locationId, GetOrganizationId());
       location.Children = await _locationService.GetChildrenAsync(locationId, GetOrganizationId());
 
       return View(new DeleteLocationViewModel
       {
         LocationID = location.LocationID,
         Name = location.Name,
-        HasChildren = location.Children?.Count > 0
+        IsLocationInUseAsync = isLocationInUseAsync
       });
     }
 
@@ -127,11 +128,15 @@ namespace Accounting.Controllers
       if (location == null)
         return NotFound();
 
+      bool isLocationInUseAsync = await _locationService.IsLocationInUseAsync(model.LocationID, GetOrganizationId());
+      location.Children = await _locationService.GetChildrenAsync(model.LocationID, GetOrganizationId());
+      model.IsLocationInUseAsync = isLocationInUseAsync;
+
       DeleteLocationViewModel.DeleteLocationViewModelValidator validator = new DeleteLocationViewModel.DeleteLocationViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       location.Children = await _locationService.GetChildrenAsync(location.LocationID, GetOrganizationId());
-      model.HasChildren = location.Children?.Count > 0;
+      model.IsLocationInUseAsync = location.Children?.Count > 0;
 
       if (!validationResult.IsValid)
       {
