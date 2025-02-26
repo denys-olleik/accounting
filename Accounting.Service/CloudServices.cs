@@ -191,9 +191,6 @@ sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/
 export DOTNET_CLI_HOME=/root
 dotnet build /opt/accounting/Accounting/Accounting.csproj > /var/log/accounting/dotnet-build.log 2>&1
 
-# Install the Visual Studio Debugger (vsdbg) for remote debugging
-wget https://aka.ms/getvsdbgsh -O - | sudo bash /dev/stdin -v latest -l /remote-debugger >> /var/log/accounting/remote-debugger-install.log 2>&1
-
 # Indicate successful setup
 echo "Setup completed successfully" > /var/log/custom-setup.log
 """;
