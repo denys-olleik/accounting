@@ -7,8 +7,19 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
 using static Accounting.Business.Claim;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (args.Contains("--wait-for-debugger"))
+{
+  Console.WriteLine("Waiting for debugger to attach...");
+  while (!Debugger.IsAttached)
+  {
+    Thread.Sleep(1000);
+  }
+  Console.WriteLine("Debugger attached. Resuming execution.");
+}
 
 builder.Services.AddControllersWithViews(options =>
 {

@@ -134,6 +134,9 @@ sudo mkdir -p /var/log/accounting > /dev/null 2>&1
 # Update package lists
 sudo apt-get update > /var/log/accounting/apt-update.log 2>&1
 
+# Install net-tools for network utilities like netstat
+sudo apt-get install -y net-tools > /var/log/accounting/net-tools-install.log 2>&1
+
 # Install Nginx
 sudo apt-get install -y nginx > /var/log/accounting/nginx-install.log 2>&1
 
@@ -187,6 +190,9 @@ sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/
 # Build the .NET project
 export DOTNET_CLI_HOME=/root
 dotnet build /opt/accounting/Accounting/Accounting.csproj > /var/log/accounting/dotnet-build.log 2>&1
+
+# Install the Visual Studio Debugger (vsdbg) for remote debugging
+wget https://aka.ms/getvsdbgsh -O - | sudo bash /dev/stdin -v latest -l /remote-debugger >> /var/log/accounting/remote-debugger-install.log 2>&1
 
 # Indicate successful setup
 echo "Setup completed successfully" > /var/log/custom-setup.log
