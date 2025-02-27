@@ -31,3 +31,13 @@
     </div>
   }
 }
+
+<script>
+  window.onload = function() {
+    var emailInput = document.querySelector('input[name="Email"]');
+    var passwordInput = document.querySelector('input[name="Password"]');
+    if (emailInput && emailInput.value) {
+      passwordInput.focus();
+    }
+  };
+</script>
