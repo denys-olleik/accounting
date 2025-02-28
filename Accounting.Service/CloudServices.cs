@@ -131,6 +131,12 @@ namespace Accounting.Service
 # Create log directory
 sudo mkdir -p /var/log/accounting > /dev/null 2>&1
 
+# Set environment variable for database password
+echo 'ConnectionStrings__Psql="Host=localhost;Database=Accounting;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'ConnectionStrings__AdminPsql="Host=localhost;Database=postgres;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'DatabaseName={DatabaseThing.DatabaseConstants.DatabaseName}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'DatabasePassword={databasePassword}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+
 # Update package lists
 sudo apt-get update > /var/log/accounting/apt-update.log 2>&1
 
@@ -176,12 +182,6 @@ sudo apt-get install -y postgis > /var/log/accounting/postgis-install.log 2>&1
 
 # Clone repository
 git clone https://github.com/denys-olleik/accounting /opt/accounting > /var/log/accounting/git-clone.log 2>&1
-
-# Set environment variable for database password
-echo 'ConnectionStrings__Psql="Host=localhost;Database=Accounting;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
-echo 'ConnectionStrings__AdminPsql="Host=localhost;Database=postgres;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
-echo 'DatabaseName={DatabaseThing.DatabaseConstants.DatabaseName}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
-echo 'DatabasePassword={databasePassword}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 
 # Create database
 sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
