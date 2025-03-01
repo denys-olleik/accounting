@@ -214,6 +214,11 @@ git clone https://github.com/denys-olleik/accounting /opt/accounting > /var/log/
 sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
 sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/create-db-script-psql.sql > /var/log/accounting/create-db.log 2>&1
 
+# Load sample data except for user data - /opt/accounting/Accounting.Database/sample-data-production.sql
+sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/sample-data-production.sql > /var/log/accounting/sample-data.log 2>&1
+
+# Create user record
+
 # Build the .NET project
 export DOTNET_CLI_HOME=/root
 dotnet build /opt/accounting/Accounting/Accounting.csproj > /var/log/accounting/dotnet-build.log 2>&1
