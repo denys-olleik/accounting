@@ -13,8 +13,6 @@
     public string? PermPath { get; set; }
     public string DatabaseName { get; set; }
     public string DatabasePassword { get; set; }
-    //public string? ConnectionStringDefaultPsql { get; set; }
-    //public string? ConnectionStringAdminPsql { get; set; }
     public bool TenantManagement { get; set; }
 
 

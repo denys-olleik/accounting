@@ -655,7 +655,10 @@ namespace Accounting.Controllers
 
           try
           {
-            await cloudServices.GetDigitalOceanService().CreateDropletAsync(tenant, GetOrganizationId(), tenant.DatabasePassword);
+            await cloudServices.GetDigitalOceanService().CreateDropletAsync(
+              tenant, 
+              GetOrganizationId(), 
+              tenant.DatabasePassword, tenant.Email, null!, null!, null!, model.EnableTenantManagement);
           }
           catch (ApiException e)
           {

@@ -11,6 +11,7 @@ namespace Accounting.Models.TenantViewModels
     public string? FullyQualifiedDomainName { get; set; }
 
     public ValidationResult? ValidationResult { get; set; } = new();
+    public bool EnableTenantManagement { get; set; }
 
     public class ProvisionTenantViewModelValidator
      : AbstractValidator<ProvisionTenantViewModel>
@@ -46,6 +47,11 @@ namespace Accounting.Models.TenantViewModels
           .NotEmpty()
           .When(x => !x.Shared)
           .WithMessage("'Fully Qualified Domain Name' is required when 'Shared' is not selected.");
+
+        RuleFor(x => x.EnableTenantManagement)
+          .Equal(false)
+          .When(x => x.Shared)
+          .WithMessage("'Enable tenant management' (non-shared instances only).");
       }
     }
   }

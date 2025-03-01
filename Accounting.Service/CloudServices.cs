@@ -107,7 +107,15 @@ namespace Accounting.Service
         _tenantService = tenantService;
       }
 
-      public async Task CreateDropletAsync(Tenant tenant, int organizationId, string databasePassword)
+      public async Task CreateDropletAsync(
+        Tenant tenant, 
+        int organizationId, 
+        string databasePassword, 
+        string ownerEmail, 
+        string ownerPassword,
+        string ownerFirst,
+        string ownerLast,
+        bool tenantManagement)
       {
         Secret? cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, organizationId);
         if (cloudSecret == null)
@@ -131,11 +139,20 @@ namespace Accounting.Service
 # Create log directory
 sudo mkdir -p /var/log/accounting > /dev/null 2>&1
 
-# Set environment variable for database password
+# Set environment variables
 echo 'ConnectionStrings__Psql="Host=localhost;Database=Accounting;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'ConnectionStrings__AdminPsql="Host=localhost;Database=postgres;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'DatabaseName={DatabaseThing.DatabaseConstants.DatabaseName}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'DatabasePassword={databasePassword}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'OwnerEmail={ownerEmail}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'OwnerPassword={ownerPassword}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'OwnerFirst={ownerFirst}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'OwnerLast={ownerLast}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'TenantCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'OrganizationCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'UserCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'UserOrganizationCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'TenantManagement={tenantManagement}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 
 # Update package lists
 sudo apt-get update > /var/log/accounting/apt-update.log 2>&1
