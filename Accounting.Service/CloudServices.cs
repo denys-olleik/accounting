@@ -134,8 +134,18 @@ namespace Accounting.Service
 
         var sshKeyResponse = await client.Keys.Create(sshKeyRequest);
 
+        string timeCalculationScript =
+@"
+# Calculate time taken and store as environment variable
+end_time=$(date +%s)
+seconds_to_run_script=$((end_time - start_time))
+echo ""SetupTimeInSeconds=${seconds_to_run_script}"" | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+";
+
         string setupScript = $"""
 #!/bin/bash
+start_time=$(date +%s)
+
 # Create log directory
 sudo mkdir -p /var/log/accounting > /dev/null 2>&1
 
@@ -210,7 +220,7 @@ dotnet build /opt/accounting/Accounting/Accounting.csproj > /var/log/accounting/
 
 # Indicate successful setup
 echo "Setup completed successfully" > /var/log/custom-setup.log
-""";
+""" + timeCalculationScript;
 
         var dropletRequest = new DigitalOcean.API.Models.Requests.Droplet()
         {
