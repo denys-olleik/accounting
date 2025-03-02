@@ -1,8 +1,11 @@
 ﻿using Accounting.Business;
 using DigitalOcean.API;
 using DigitalOcean.API.Models.Responses;
+using Google.Protobuf.WellKnownTypes;
 using Renci.SshNet;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Accounting.Service
 {
@@ -108,14 +111,14 @@ namespace Accounting.Service
       }
 
       public async Task CreateDropletAsync(
-        Tenant tenant, 
-        int organizationId, 
-        string databasePassword, 
-        string ownerEmail, 
-        string ownerPassword,
-        string ownerFirst,
-        string ownerLast,
-        bool tenantManagement)
+    Tenant tenant,
+    int organizationId,
+    string databasePassword,
+    string ownerEmail,
+    string ownerPassword,
+    string ownerFirst,
+    string ownerLast,
+    bool tenantManagement)
       {
         Secret? cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, organizationId);
         if (cloudSecret == null)
@@ -135,11 +138,23 @@ namespace Accounting.Service
         var sshKeyResponse = await client.Keys.Create(sshKeyRequest);
 
         string timeCalculationScript =
-@"
+        @"
 # Calculate time taken and store as environment variable
 end_time=$(date +%s)
 seconds_to_run_script=$((end_time - start_time))
 echo ""SetupTimeInSeconds=${seconds_to_run_script}"" | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+";
+
+        // INSERT INTO "Tenant" ("PublicId", "Email", "DatabaseName", "DatabasePassword") VALUES ('1', '[ownerEmail]', 'Accounting', '[databasePassword]');
+        string createTenantRecordScript =
+          @"
+sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Tenant\"" (\""PublicId\"", \""Email\"", \""DatabaseName\"", \""DatabasePassword\"") VALUES ('1', '${OwnerEmail}', 'Accounting', '${DatabasePassword}');"" > /var/log/accounting/tenant-insert.log 2>&1
+";
+
+        string createUserRecordScript =
+        @"
+# Create user record
+sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""User\"" (\""Email\"", \""FirstName\"", \""LastName\"", \""Password\"") VALUES ('${OwnerEmail}', '${OwnerFirst}', '${OwnerLast}', '${OwnerPassword}');"" > /var/log/accounting/user-insert.log 2>&1
 ";
 
         string setupScript = $"""
@@ -160,7 +175,7 @@ echo 'OwnerFirst={ownerFirst}' | sudo tee -a /etc/environment >> /var/log/accoun
 echo 'OwnerLast={ownerLast}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'TenantCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'UserCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
-echo 'OrganizationCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.
+echo 'OrganizationCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'UserOrganizationCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'TenantManagement={tenantManagement}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 
@@ -214,8 +229,18 @@ git clone https://github.com/denys-olleik/accounting /opt/accounting > /var/log/
 sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
 sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/create-db-script-psql.sql > /var/log/accounting/create-db.log 2>&1
 
+# Source environment variables from /etc/environment
+set -o allexport
+source /etc/environment
+set +o allexport
+
+# Create tenant record
+""" + createTenantRecordScript + """
+# sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Tenant";'
+
 # Create user record
-sudo -i -u postgres psql -d "Accounting" -c "INSERT INTO \"User\" (\"Email\", \"FirstName\", \"LastName\", \"Password\") VALUES ('$OwnerEmail', '$OwnerFirst', '$OwnerLast', '$OwnerPassword');" > /var/log/accounting/user-insert.log 2>&1
+""" + createUserRecordScript + """
+# sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "User";'
 
 # Load sample data except for user data - /opt/accounting/Accounting.Database/sample-data-production.sql
 sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/sample-data-production.sql > /var/log/accounting/sample-data.log 2>&1
