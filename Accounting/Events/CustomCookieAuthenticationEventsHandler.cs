@@ -74,6 +74,7 @@ namespace Accounting.Events
 
       if (user == null || user.Password != password)
       {
+        Console.WriteLine("Database does not exist.");
         context.RejectPrincipal();
         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return;
