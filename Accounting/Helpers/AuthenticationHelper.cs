@@ -12,6 +12,12 @@ namespace Accounting.Helpers
       string? databaseName = null,
       string? databasePassword = null)
     {
+      Console.WriteLine("CreateClaimsPrincipal");
+      Console.WriteLine($"OrganizationId: {organizationId}");
+      Console.WriteLine($"OrganizationName: {organizationName}");
+      Console.WriteLine($"DatabaseName: {databaseName}");
+      Console.WriteLine($"DatabasePassword: {databasePassword}");
+
       List<Claim> claims = new List<Claim>();
 
       if (organizationId.HasValue && !string.IsNullOrEmpty(organizationName))
