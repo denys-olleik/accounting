@@ -29,6 +29,7 @@ namespace Accounting.Service
 
       var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
       var response = await client.SendEmailAsync(msg);
+      Console.WriteLine($"SendLoginWithoutPasswordAsync: {response.StatusCode}");
     }
   }
 }

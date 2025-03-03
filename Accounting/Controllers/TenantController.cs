@@ -633,6 +633,7 @@ namespace Accounting.Controllers
       else
       {
         Secret cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, GetOrganizationId());
+        Secret emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, GetOrganizationId());
 
         if (cloudSecret == null)
         {
@@ -658,7 +659,7 @@ namespace Accounting.Controllers
             await cloudServices.GetDigitalOceanService().CreateDropletAsync(
               tenant, 
               GetOrganizationId(), 
-              tenant.DatabasePassword, tenant.Email, null!, null!, null!, model.EnableTenantManagement);
+              tenant.DatabasePassword, tenant.Email, null!, null!, null!, model.EnableTenantManagement, emailSecret.Value);
           }
           catch (ApiException e)
           {

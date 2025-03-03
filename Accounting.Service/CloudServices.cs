@@ -3,6 +3,7 @@ using DigitalOcean.API;
 using DigitalOcean.API.Models.Responses;
 using Google.Protobuf.WellKnownTypes;
 using Renci.SshNet;
+using System;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -10,7 +11,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace Accounting.Service
 {
   public class CloudServices : BaseService
-  { 
+  {
     private readonly DigitalOceanService _digitalOceanService;
 
     public CloudServices(
@@ -111,14 +112,15 @@ namespace Accounting.Service
       }
 
       public async Task CreateDropletAsync(
-    Tenant tenant,
-    int organizationId,
-    string databasePassword,
-    string ownerEmail,
-    string ownerPassword,
-    string ownerFirst,
-    string ownerLast,
-    bool tenantManagement)
+        Tenant tenant,
+        int organizationId,
+        string databasePassword,
+        string ownerEmail,
+        string ownerPassword,
+        string ownerFirst,
+        string ownerLast,
+        bool tenantManagement,
+        string emailApiKey)
       {
         Secret? cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, organizationId);
         if (cloudSecret == null)
@@ -136,6 +138,31 @@ namespace Accounting.Service
         };
 
         var sshKeyResponse = await client.Keys.Create(sshKeyRequest);
+
+        //CREATE TABLE "Secret"
+        //(
+        //  "SecretID" SERIAL PRIMARY KEY NOT NULL,
+        //  "Master" BOOLEAN DEFAULT FALSE,
+        //  "Value" TEXT NOT NULL,
+        //  "ValueEncrypted" BOOLEAN NOT NULL DEFAULT FALSE,
+        //  "Type" VARCHAR(20) CHECK("Type" IN('email', 'sms', 'cloud', 'no-reply', 'tenant-management')) NULL UNIQUE,
+        //  "Purpose" VARCHAR(100) NULL,
+        //  "Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+        //  "CreatedById" INT NULL,
+        //  "OrganizationId" INT NULL,
+        //  FOREIGN KEY("CreatedById") REFERENCES "User"("UserID"),
+        //  FOREIGN KEY("OrganizationId") REFERENCES "Organization"("OrganizationID")
+        //);
+
+        string emailApiKeyScript =
+          @"
+sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"") VALUES (false, '${EmailApiKey}', 'email', 1, 1);"" > /var/log/accounting/email-api-key-insert.log 2>&1
+";
+
+        string noReplyScript =
+          @"
+sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"") VALUES (false, 'no-reply@${FullyQualifiedDomainName}', 'no-reply', 1, 1);"" > /var/log/accounting/no-reply-insert.log 2>&1
+";
 
         string timeCalculationScript =
         @"
@@ -173,6 +200,7 @@ echo 'OwnerEmail={ownerEmail}' | sudo tee -a /etc/environment >> /var/log/accoun
 echo 'OwnerPassword={ownerPassword}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'OwnerFirst={ownerFirst}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'OwnerLast={ownerLast}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'EmailApiKey={emailApiKey}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'TenantCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'UserCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'OrganizationCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
@@ -244,6 +272,12 @@ set +o allexport
 
 # Load sample data except for user data - /opt/accounting/Accounting.Database/sample-data-production.sql
 sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/sample-data-production.sql > /var/log/accounting/sample-data.log 2>&1
+
+# Create email API key
+""" + emailApiKeyScript + """
+
+# Create no-reply secret
+""" + noReplyScript + """
 
 # Build the .NET project
 export DOTNET_CLI_HOME=/root
