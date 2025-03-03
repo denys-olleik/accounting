@@ -16,10 +16,15 @@ namespace Accounting.Service
 
     public async Task SendLoginWithoutPasswordAsync(LoginWithoutPassword loginWithoutPassword)
     {
-      var emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email);
-      var client = new SendGridClient(emailSecret!.Value);
-
+      Secret emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email);
       Secret fromSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply);
+      
+      if (emailSecret == null || fromSecret == null)
+      {
+        throw new Exception("Email secret not found.");
+      }
+
+      var client = new SendGridClient(emailSecret!.Value);
 
       var from = new EmailAddress(fromSecret.Value, ConfigurationSingleton.Instance.ApplicationName);
       var subject = $"Login without password for {ConfigurationSingleton.Instance.ApplicationName}";
@@ -30,6 +35,8 @@ namespace Accounting.Service
       var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
       var response = await client.SendEmailAsync(msg);
       Console.WriteLine($"SendLoginWithoutPasswordAsync: {response.StatusCode}");
+      Console.WriteLine($"EmailSecret: {emailSecret.Value}");
+      Console.WriteLine($"FromSecret {fromSecret.Value}");
     }
   }
 }
