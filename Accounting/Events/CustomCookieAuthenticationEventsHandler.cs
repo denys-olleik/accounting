@@ -37,6 +37,7 @@ namespace Accounting.Events
       var databaseExists = await TenantExistsAsync(databaseName);
       if (!databaseExists)
       {
+        Console.WriteLine("Database does not exist.");
         context.RejectPrincipal();
         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return;

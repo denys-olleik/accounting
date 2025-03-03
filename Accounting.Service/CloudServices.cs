@@ -120,7 +120,8 @@ namespace Accounting.Service
         string ownerFirst,
         string ownerLast,
         bool tenantManagement,
-        string emailApiKey)
+        string emailApiKey,
+        string fullyQualifiedDomainName)
       {
         Secret? cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, organizationId);
         if (cloudSecret == null)
@@ -201,6 +202,7 @@ echo 'OwnerPassword={ownerPassword}' | sudo tee -a /etc/environment >> /var/log/
 echo 'OwnerFirst={ownerFirst}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'OwnerLast={ownerLast}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'EmailApiKey={emailApiKey}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'FullyQualifiedDomainName={fullyQualifiedDomainName}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'TenantCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'UserCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'OrganizationCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
