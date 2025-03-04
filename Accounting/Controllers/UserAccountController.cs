@@ -141,42 +141,29 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> LoginWithoutPassword(LoginWithoutPasswordViewModel model, string email)
     {
-      Console.WriteLine("Starting LoginWithoutPassword method...");
-      Console.WriteLine($"Email parameter: {email}");
-      Console.WriteLine($"Model Email: {model.Email}");
-
       LoginWithoutPasswordViewModelValidator validator
         = new LoginWithoutPasswordViewModelValidator(_loginWithoutPasswordService);
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
       {
-        Console.WriteLine("Validation failed.");
         model.ValidationResult = validationResult;
         return View(model);
       }
-      Console.WriteLine("Validation succeeded.");
 
       var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
-      Console.WriteLine($"Retrieved existing user: {existingUser?.UserID}");
-      Console.WriteLine($"Tenant: {tenantExistingUserBelongsTo?.DatabaseName}");
-
+     
       ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, null, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
-      Console.WriteLine("ClaimsPrincipal created.");
-
+   
       await HttpContext.SignInAsync(
         CookieAuthenticationDefaults.AuthenticationScheme,
         claimsPrincipal,
         new AuthenticationProperties() { IsPersistent = true }
       );
-      Console.WriteLine("User signed in.");
 
       LoginWithoutPassword loginWithoutPassword = await _loginWithoutPasswordService.GetAsync(model.Email)!;
-      Console.WriteLine("LoginWithoutPassword record retrieved.");
       await _loginWithoutPasswordService.DeleteAsync(loginWithoutPassword);
-      Console.WriteLine("LoginWithoutPassword record deleted.");
 
-      Console.WriteLine("Redirecting to ChooseOrganization...");
       return RedirectToAction("ChooseOrganization", "UserAccount");
     }
 
