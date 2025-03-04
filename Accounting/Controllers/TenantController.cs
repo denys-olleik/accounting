@@ -617,7 +617,7 @@ namespace Accounting.Controllers
           {
             FullyQualifiedDomainName = model.FullyQualifiedDomainName,
             Email = model.Email,
-            DatabasePassword = CustomClaimTypeConstants.Password
+            DatabasePassword = GetDatabasePassword()
           });
 
           scope.Complete();

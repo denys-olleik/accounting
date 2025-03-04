@@ -140,20 +140,6 @@ namespace Accounting.Service
 
         var sshKeyResponse = await client.Keys.Create(sshKeyRequest);
 
-        //CREATE TABLE "Secret"
-        //(
-        //  "SecretID" SERIAL PRIMARY KEY NOT NULL,
-        //  "Master" BOOLEAN DEFAULT FALSE,
-        //  "Value" TEXT NOT NULL,
-        //  "ValueEncrypted" BOOLEAN NOT NULL DEFAULT FALSE,
-        //  "Type" VARCHAR(20) CHECK("Type" IN('email', 'sms', 'cloud', 'no-reply', 'tenant-management')) NULL UNIQUE,
-        //  "Purpose" VARCHAR(100) NULL,
-        //  "Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
-        //  "CreatedById" INT NULL,
-        //  "OrganizationId" INT NULL,
-        //  FOREIGN KEY("CreatedById") REFERENCES "User"("UserID"),
-        //  FOREIGN KEY("OrganizationId") REFERENCES "Organization"("OrganizationID")
-        //);
 
         string emailApiKeyScript =
           @"
@@ -183,6 +169,12 @@ sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Tenant\"" (\""Pub
         @"
 # Create user record
 sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""User\"" (\""Email\"", \""FirstName\"", \""LastName\"", \""Password\"") VALUES ('${OwnerEmail}', '${OwnerFirst}', '${OwnerLast}', '${OwnerPassword}');"" > /var/log/accounting/user-insert.log 2>&1
+";
+
+        string createUserOrganizationRecordScript =
+          @"
+# Create user organization record
+sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""UserOrganization\"" (\""UserId\"", \""OrganizationId\"") VALUES (1, 1);"" > /var/log/accounting/user-organization-insert.log 2>&1
 ";
 
         string setupScript = $"""
@@ -274,6 +266,9 @@ set +o allexport
 
 # Load sample data except for user data - /opt/accounting/Accounting.Database/sample-data-production.sql
 sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/sample-data-production.sql > /var/log/accounting/sample-data.log 2>&1
+
+# Create user organization record
+""" + createUserOrganizationRecordScript + """
 
 # Create email API key
 """ + emailApiKeyScript + """
