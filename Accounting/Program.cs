@@ -29,7 +29,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.SlidingExpiration = true;
     options.EventsType = typeof(CustomCookieAuthenticationEventsHandler);
     options.LoginPath = new PathString("/user-account/login");
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
   });
 
 builder.Services.AddScoped<CustomCookieAuthenticationEventsHandler>();
