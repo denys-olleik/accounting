@@ -30,43 +30,6 @@ namespace Accounting.Service
       _digitalOceanService = new DigitalOceanService(secretService, tenantService);
     }
 
-    public bool TestSshConnectionAsync(string ipAddress, string privateKey, string username = "root")
-    {
-      bool success = false;
-
-      try
-      {
-        using (var privateKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(privateKey)))
-        using (var client = new SshClient(ipAddress, username, new PrivateKeyFile(privateKeyStream)))
-        {
-          client.Connect();
-          if (client.IsConnected)
-          {
-            var result = client.RunCommand("echo 'The quick brown fox jumped over the lazy dog!'");
-            if (result.Result.Contains("The quick brown fox jumped over the lazy dog!"))
-            {
-              success = true;
-            }
-            else
-            {
-              Console.WriteLine("Failed to establish SSH connection.");
-            }
-          }
-          else
-          {
-            Console.WriteLine("Failed to establish SSH connection.");
-          }
-          client.Disconnect();
-        }
-      }
-      catch (Exception ex)
-      {
-        Console.WriteLine($"An error occurred while testing SSH connection: {ex.Message}");
-      }
-
-      return success;
-    }
-
     public DigitalOceanService GetDigitalOceanService()
     {
       return _digitalOceanService;
@@ -86,16 +49,12 @@ namespace Accounting.Service
             var sshCommand = client.RunCommand(command);
             result = sshCommand.Result;
           }
-          else
-          {
-            Console.WriteLine("Failed to establish SSH connection.");
-          }
           client.Disconnect();
         }
       }
       catch (Exception ex)
       {
-        Console.WriteLine($"An error occurred while executing command: {ex.Message}");
+        //Console.WriteLine($"An error occurred while executing command: {ex.Message}");
       }
       return result;
     }

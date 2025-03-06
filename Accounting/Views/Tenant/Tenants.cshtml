@@ -278,19 +278,6 @@
       toggleAction() {
         this.$emit('expand');
       },
-      testSshConnectivity() {
-        fetch(`/api/tenant/${this.tenant.tenantID}/test-ssh`, {
-          method: 'POST'
-        })
-          .then(response => response.text())
-          .then(data => {
-            this.ipv4 = data;
-            console.log(data);
-          })
-          .catch(error => {
-            console.error('Error testing SSH connectivity:', error);
-          });
-      }
     }
   };
 

@@ -176,8 +176,4 @@ async Task LoadTenantManagementFromDatabase(WebApplication app)
     ConfigurationSingleton.Instance.TenantManagement
         = Convert.ToBoolean(tenantManagement.Value);
   }
-  else
-  {
-    Console.WriteLine("'TenantManagement' in database is not set.");
-  }
 }

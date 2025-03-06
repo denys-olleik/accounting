@@ -848,42 +848,6 @@ namespace Accounting.Controllers
       return Ok(model);
     }
 
-    [HttpPost("{tenantId}/test-ssh")]
-    public async Task<IActionResult> TestSsh(int tenantId)
-    {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
-      if (tenant == null)
-      {
-        return NotFound();
-      }
-
-      var cloudServices = new CloudServices(_secretService, _tenantService);
-
-      string ipAddress = tenant.Ipv4;
-      if (string.IsNullOrEmpty(ipAddress))
-      {
-        return BadRequest("IP is null");
-      }
-
-      string privateKey = tenant.SshPrivate;
-
-      if (string.IsNullOrEmpty(ipAddress) || string.IsNullOrEmpty(privateKey))
-      {
-        return BadRequest("Tenant does not have a valid IP address or SSH private key.");
-      }
-
-      bool success = cloudServices.TestSshConnectionAsync(ipAddress, privateKey);
-
-      if (success)
-      {
-        return Ok("SSH connection successful.");
-      }
-      else
-      {
-        return StatusCode(500, "SSH connection failed.");
-      }
-    }
-
     [HttpPost("{tenantId}/discover")]
     public async Task<IActionResult> Discover(int tenantId)
     {
