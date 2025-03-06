@@ -1,4 +1,5 @@
 ﻿using Accounting.Business;
+using Accounting.Common;
 using static Accounting.Business.Claim;
 
 namespace Accounting.Service
@@ -10,7 +11,7 @@ namespace Accounting.Service
 
     public BaseService() : this(
       DatabaseThing.DatabaseConstants.DatabaseName,
-      CustomClaimTypeConstants.Password)
+      ConfigurationSingleton.Instance.DatabasePassword)
     {
 
     }
