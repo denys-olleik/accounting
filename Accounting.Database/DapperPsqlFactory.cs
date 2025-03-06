@@ -6568,6 +6568,7 @@ namespace Accounting.Database
           Database = DatabaseThing.DatabaseConstants.DatabaseName
         };
 
+        Console.WriteLine($"TenantExistsAsync {builder.ConnectionString}");
         using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
         {
           result = await con.QueryAsync<Tenant>("""
