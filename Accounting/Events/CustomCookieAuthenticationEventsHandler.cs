@@ -16,7 +16,6 @@ namespace Accounting.Events
 
     public override async Task ValidatePrincipal(CookieValidatePrincipalContext context)
     {
-      Console.WriteLine("ValidatePrincipal");
       var principal = context.Principal;
 
       int? userId = null;
@@ -38,7 +37,6 @@ namespace Accounting.Events
       var databaseExists = await TenantExistsAsync(databaseName);
       if (!databaseExists)
       {
-        Console.WriteLine("Database does not exist.");
         context.RejectPrincipal();
         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return;
@@ -58,7 +56,6 @@ namespace Accounting.Events
 
         if (userOrganization == null)
         {
-          Console.WriteLine("UserOrganization does not exist.");
           context.RejectPrincipal();
           await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
           return;
@@ -76,7 +73,6 @@ namespace Accounting.Events
 
       if (user == null || user.Password != password)
       {
-        Console.WriteLine("Database does not exist.");
         context.RejectPrincipal();
         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return;
@@ -85,7 +81,6 @@ namespace Accounting.Events
 
     private async Task<bool> TenantExistsAsync(string? databaseName)
     {
-      Console.WriteLine($"TenantExistsAsync: {databaseName}");
       TenantService tenantService = new();
       return await tenantService.TenantExistsAsync(databaseName);
     }

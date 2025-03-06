@@ -115,7 +115,6 @@ if (app.Environment.IsDevelopment())
 ConfigurationSingleton.Instance.TenantManagement
     = Convert.ToBoolean(builder.Configuration["TenantManagement"]);
 
-Console.WriteLine("'TenantManagement' environment variable is set to: " + ConfigurationSingleton.Instance.TenantManagement);
 
 if (!ConfigurationSingleton.Instance.TenantManagement)
   await LoadTenantManagementFromDatabase(app);
@@ -174,7 +173,6 @@ async Task LoadTenantManagementFromDatabase(WebApplication app)
 
   if (tenantManagement != null)
   {
-    Console.WriteLine("'TenantManagement' in database is set to: " + tenantManagement.Value);
     ConfigurationSingleton.Instance.TenantManagement
         = Convert.ToBoolean(tenantManagement.Value);
   }
