@@ -94,5 +94,11 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetTenantManager().TenantExistsAsync(databaseName);
     }
+
+    public async Task<Tenant> GetByEmailAsync(string? email)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      return await factoryManager.GetTenantManager().GetByEmailAsync(email);
+    }
   }
 }

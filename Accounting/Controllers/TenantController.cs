@@ -13,7 +13,6 @@ using Accounting.CustomAttributes;
 using Accounting.Common;
 using static Accounting.Models.TenantViewModels.UpdateUserViewModel;
 using DigitalOcean.API.Exceptions;
-using static Accounting.Business.Claim;
 
 namespace Accounting.Controllers
 {
@@ -22,7 +21,6 @@ namespace Accounting.Controllers
   public class TenantController : BaseController
   {
     private readonly TenantService _tenantService;
-    private readonly CloudServices _cloudServices;
     private readonly SecretService _secretService;
     private readonly DatabaseService _databaseService;
     private readonly OrganizationService _organizationService;
@@ -31,7 +29,6 @@ namespace Accounting.Controllers
 
     public TenantController(
       TenantService tenantService,
-      CloudServices cloudServices,
       SecretService secretService,
       DatabaseService databaseService,
       OrganizationService organizationService,
@@ -39,7 +36,6 @@ namespace Accounting.Controllers
       RequestContext requestContext)
     {
       _tenantService = new TenantService();
-      _cloudServices = cloudServices;
       _secretService = new SecretService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _databaseService = databaseService;
       _organizationService = new OrganizationService(requestContext.DatabaseName, requestContext.DatabasePassword);
@@ -86,14 +82,22 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> UpdateTenant(int tenantId, UpdateTenantViewModel model)
     {
-      Tenant tenant = await _tenantService.GetAsync(tenantId);
+      Tenant thisTenant = await _tenantService.GetAsync(tenantId);
+      Tenant tenant = await _tenantService.GetByEmailAsync(model.Email);
 
-      if (tenant == null)
+      if (thisTenant == null)
       {
         return NotFound();
       }
 
-      model.ExistingTenant = tenant;
+      if (tenant != null)
+      {
+        model.PotentialTenant = new UpdateTenantViewModel.TenantViewModel
+        {
+          TenantId = tenant.TenantID,
+          Email = tenant.Email
+        };
+      }
 
       var validator = new UpdateTenantViewModel.UpdateTenantViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);

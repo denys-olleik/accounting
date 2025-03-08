@@ -6578,6 +6578,31 @@ namespace Accounting.Database
         }
         return result.Any();
       }
+
+      public async Task<Tenant> GetByEmailAsync(string? email)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Email", email);
+
+        IEnumerable<Tenant> result;
+
+        // change db name to default db
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
+        {
+          Database = DatabaseThing.DatabaseConstants.DatabaseName
+        };
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          result = await con.QueryAsync<Tenant>("""
+            SELECT * 
+            FROM "Tenant" 
+            WHERE "Email" = @Email
+            """, p);
+        }
+
+        return result.SingleOrDefault();
+      }
     }
 
     public ISecretManager GetSecretManager()

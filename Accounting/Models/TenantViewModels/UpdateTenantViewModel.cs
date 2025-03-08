@@ -1,5 +1,4 @@
-﻿using Accounting.Business;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 
 namespace Accounting.Models.TenantViewModels
@@ -7,9 +6,20 @@ namespace Accounting.Models.TenantViewModels
   public class UpdateTenantViewModel
   {
     public int TenantId { get; set; }
-    public string? Email { get; set; }
-    public Tenant? ExistingTenant { get; set; }
+    private string? _email;
+    public string? Email
+    {
+      get { return _email; }
+      set { _email = value?.Trim(); }
+    }
+    public TenantViewModel? PotentialTenant { get; set; }
     public ValidationResult? ValidationResult { get; set; }
+
+    public class TenantViewModel
+    {
+      public int TenantId { get; set; }
+      public string? Email { get; set; }
+    }
 
     public class UpdateTenantViewModelValidator : AbstractValidator<UpdateTenantViewModel>
     {
@@ -22,23 +32,9 @@ namespace Accounting.Models.TenantViewModels
           .WithMessage("Invalid email format.");
 
         RuleFor(x => x.Email)
-          .Must((model, email) =>
-          {
-            bool isNewEmail = model.ExistingTenant!.Email != email;
-            return isNewEmail;
-          })
-          .WithMessage("The email is already the current email.")
-          .When(x => x.ExistingTenant != null);
-
-        RuleFor(x => x.Email)
-          .Must((model, email) =>
-          {
-            bool noConflict = model.ExistingTenant == null;
-            bool isUniqueEmail = model.ExistingTenant?.Email != email;
-            return noConflict || isUniqueEmail;
-          })
-          .WithMessage("A tenant with this email already exists.")
-          .When(x => x.ExistingTenant != null);
+          .Must((model, email) => model.PotentialTenant!.Email != email)
+          .WithMessage("The email address must be different from the current one.")
+          .When(x => x.PotentialTenant != null);
       }
     }
   }

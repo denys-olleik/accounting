@@ -1,13 +1,13 @@
 ﻿@model Accounting.Models.TenantViewModels.UpdateTenantViewModel
 
 @{
-  ViewData["Title"] = "Update Tenant Email - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Update tenant email - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
 @{
-  string headerText = "Update Tenant Email";
+  string headerText = "Update tenant email";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
@@ -26,8 +26,14 @@
     <input asp-for="Email" class="font-size-20px" required autocomplete="off" />
   </div>
 
-  <div class="display-flex flex-direction-column margin-bottom-5px">
-    <button type="submit" class="full-width-regular-button">Update Email</button>
+  <div class="display-flex">
+    <div class="flex-1">
+      <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Tenants", "Tenant")';">Cancel</button>
+    </div>
+    <div class="width-5px"></div>
+    <div class="flex-1">
+      <button type="submit" class="full-width-regular-button width-100">Update email</button>
+    </div>
   </div>
 </form>
 
