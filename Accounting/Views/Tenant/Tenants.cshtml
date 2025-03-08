@@ -127,7 +127,6 @@
           Droplet ID
         </th>
         <th class="text-align-left width-1px padding-right-20px background-color-lightpink">IP</th>
-        <th class="text-align-left width-1px padding-right-20px background-color-lightpink">Public</th>
         <th class="text-align-left width-1px white-space-nowrap background-color-lightpink">Private</th>
       </tr>
     </thead>
@@ -148,7 +147,6 @@
             <td class="padding-right-20px background-color-lightpink">
               {{ tenant.ipv4 }}
             </td>
-            <td class="padding-right-20px background-color-lightpink">{{ tenant.sshPublic ? 'set' : 'no' }}</td>
             <td class="white-space-nowrap background-color-lightpink">
               <a :href="'/tenant/download-private-key/' + tenant.tenantID" class="color-blue">get</a>
             </td>
