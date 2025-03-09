@@ -142,6 +142,7 @@ start_time=$(date +%s)
 
 # Create log directory
 sudo mkdir -p /var/log/accounting > /dev/null 2>&1
+sudo mkdir -p /var/accounting > /dev/null 2>&1
 
 # Set environment variables
 echo 'ConnectionStrings__Psql="Host=localhost;Database=Accounting;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
