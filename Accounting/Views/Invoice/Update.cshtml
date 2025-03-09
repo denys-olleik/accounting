@@ -117,7 +117,7 @@
 </template>
 
 <template id="addresses-and-selected-address-template">
-  <div v-if="selectedAddress" class="margin-bottom-5px">
+  <div v-if="selectedAddress" class="background-color-black color-white">
     <div class="display-flex">
       <div class="font-Roboto-Mono">
         <div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -167,11 +167,17 @@
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
     <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
+      <div>
+        Billing
+      </div>
       <addresses-and-selected-address :selected-address="billingAddress" @@update:selected-address="handleSelectedAddress($event, 'billing')" :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="billing">
       </addresses-and-selected-address>
     </div>
     <div class="width-5px"></div>
     <div class="display-flex flex-direction-column flex-1 background-color-antiquewhite">
+      <div>
+        Shipping
+      </div>
       <addresses-and-selected-address :selected-address="shippingAddress" @@update:selected-address="handleSelectedAddress($event, 'shipping')" :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="shipping">
       </addresses-and-selected-address>
     </div>
