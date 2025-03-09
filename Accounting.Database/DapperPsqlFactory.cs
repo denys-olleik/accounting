@@ -7206,6 +7206,26 @@ namespace Accounting.Database
       {
         throw new NotImplementedException();
       }
+
+      public async Task<int> UpdateAsync(int locationId, string? name)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@LocationID", locationId);
+        p.Add("@Name", name);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            UPDATE "Location" 
+            SET "Name" = @Name
+            WHERE "LocationID" = @LocationID
+            """, p);
+        }
+
+        return rowsAffected;
+      }
     }
 
     public IUserToDoManager GetUserToDoManager()

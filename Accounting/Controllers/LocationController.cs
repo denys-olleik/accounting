@@ -1,7 +1,5 @@
 ﻿using Accounting.Business;
 using Accounting.CustomAttributes;
-using Accounting.Models.InvoiceViewModels;
-using Accounting.Models.Item;
 using Accounting.Models.LocationViewModels;
 using Accounting.Service;
 using Accounting.Validators;
@@ -20,6 +18,55 @@ namespace Accounting.Controllers
     public LocationController(RequestContext requestContext)
     {
       _locationService = new LocationService(requestContext.DatabaseName, requestContext.DatabasePassword);
+    }
+
+    [Route("update/{locationId}")]
+    [HttpGet]
+    public async Task<IActionResult> Update(int locationId)
+    {
+      Location location = await _locationService.GetAsync(locationId, GetOrganizationId());
+
+      if (location == null)
+      {
+        return NotFound();
+      }
+
+      var model = new UpdateLocationViewModel
+      {
+        LocationId = location.LocationID,
+        Name = location.Name
+      };
+
+      return View(model);
+    }
+
+    [Route("update/{locationId}")]
+    [HttpPost]
+    public async Task<IActionResult> Update(int locationId, UpdateLocationViewModel model)
+    {
+      Location location = await _locationService.GetAsync(locationId, GetOrganizationId());
+
+      if (location == null)
+      {
+        return NotFound();
+      }
+
+      var validator = new UpdateLocationViewModel.UpdateLocationViewModelValidator();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      {
+        await _locationService.UpdateAsync(locationId, model.Name);
+        scope.Complete();
+      }
+
+      return RedirectToAction("Locations");
     }
 
     [HttpGet("locations")]

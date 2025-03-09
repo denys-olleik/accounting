@@ -15,5 +15,6 @@ namespace Accounting.Database.Interfaces
     Task<Location?> GetAsync(int locationId, int organizationId);
     Task<List<Location>?> GetChildrenAsync(int locationId, int organizationId);
     Task<bool> IsLocationInUseAsync(int locationId, int organizationId);
+    Task<int> UpdateAsync(int locationId, string? name);
   }
 }
