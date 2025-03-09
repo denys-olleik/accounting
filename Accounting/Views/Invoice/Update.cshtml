@@ -14,18 +14,14 @@
 <template id="invoice-line-removal-template">
   <div class="display-flex flex-direction-column background-color-red">
     <div v-if="!isRemoveConfirmationVisible" :class="{ 'border-bottom-2px-solid-white': isRemoveConfirmationVisible }">
-      <a href="#" class="color-white text-decoration-none"
-        :class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }"
-        @@click.prevent="toggleConfirmationVisibility">remove</a>
+      <a href="#" class="color-white text-decoration-none" :class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }" @@click.prevent="toggleConfirmationVisibility">remove</a>
     </div>
     <div v-if="isRemoveConfirmationVisible" class="display-flex flex-1 flex-direction-column">
       <div class="flex-1"></div>
       <div class="display-flex flex-direction-column">
-        <div class="text-align-center"><a class="text-decoration-none color-white" href="#"
-            @@click.prevent="confirmRemoval">remove</a></div>
+        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="confirmRemoval">remove</a></div>
         <div class="height-5px"></div>
-        <div class="text-align-center"><a class="text-decoration-none color-white" href="#"
-            @@click.prevent="toggleConfirmationVisibility">cancel</a></div>
+        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="toggleConfirmationVisibility">cancel</a></div>
       </div>
       <div class="flex-1"></div>
     </div>
@@ -38,20 +34,17 @@
       <div class="display-flex max-width-768-flex-direction-column">
         <div class="display-flex flex-2 flex-direction-column">
           <label>Title</label>
-          <input type="text" ref="titleInput" class="font-size-20px font-Roboto-Mono width-100"
-            v-model="invoiceLine.title" />
+          <input type="text" ref="titleInput" class="font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.title" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-2 flex-direction-column">
           <label>Quantity</label>
-          <input type="number" ref="quantityInput" class="font-size-20px font-Roboto-Mono width-100"
-            v-model="invoiceLine.quantity" />
+          <input type="number" ref="quantityInput" class="font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.quantity" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-2 flex-direction-column">
           <label>Price</label>
-          <input type="number" step="0.01" class="font-size-20px font-Roboto-Mono width-100"
-            v-model="invoiceLine.price" />
+          <input type="number" step="0.01" class="font-size-20px font-Roboto-Mono width-100" v-model="invoiceLine.price" />
         </div>
         <div class="width-5px"></div>
         <div class="display-flex flex-1 flex-direction-column text-align-right">
@@ -67,8 +60,7 @@
       </div>
     </div>
     <div class="width-5px"></div>
-    <invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)"
-      @@cancel-removal="$emit('cancel-removal', invoiceLine)">
+    <invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)" @@cancel-removal="$emit('cancel-removal', invoiceLine)">
     </invoice-line-removal>
   </div>
 </template>
@@ -126,9 +118,6 @@
 
 <template id="addresses-and-selected-address-template">
   <div v-if="selectedAddress" class="margin-bottom-5px">
-    <div>
-      {{ addressType === 'billing' ? 'Selected billing address' : 'Selected shipping address' }}
-    </div>
     <div class="display-flex">
       <div class="font-Roboto-Mono">
         <div>{{ selectedAddress.extraAboveAddress }}</div>
@@ -163,8 +152,7 @@
   </a>
 </template>
 
-<form id="app" asp-action="Update" asp-controller="Invoice" method="post"
-  class="display-flex flex-direction-column margin-bottom-5px">
+<form id="app" asp-action="Update" asp-controller="Invoice" method="post" class="display-flex flex-direction-column margin-bottom-5px">
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
     <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
@@ -178,28 +166,21 @@
   </div>
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
-    <div
-      class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
-      <addresses-and-selected-address :selected-address="billingAddress"
-        @@update:selected-address="handleSelectedAddress($event, 'billing')"
-        :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="billing">
+    <div class="display-flex flex-direction-column flex-1 max-width-768-margin-bottom-5px background-color-antiquewhite">
+      <addresses-and-selected-address :selected-address="billingAddress" @@update:selected-address="handleSelectedAddress($event, 'billing')" :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="billing">
       </addresses-and-selected-address>
     </div>
     <div class="width-5px"></div>
     <div class="display-flex flex-direction-column flex-1 background-color-antiquewhite">
-      <addresses-and-selected-address :selected-address="shippingAddress"
-        @@update:selected-address="handleSelectedAddress($event, 'shipping')"
-        :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="shipping">
+      <addresses-and-selected-address :selected-address="shippingAddress" @@update:selected-address="handleSelectedAddress($event, 'shipping')" :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="shipping">
       </addresses-and-selected-address>
     </div>
   </div>
 
-  <products-and-services-search :products-or-services="productsOrServices"
-    @@product-or-service-selected="handleProductOrServiceSelected">
+  <products-and-services-search :products-or-services="productsOrServices" @@product-or-service-selected="handleProductOrServiceSelected">
   </products-and-services-search>
 
-  <invoice-line v-for="invoiceLine in invoiceLines" :key="invoiceLine.id" :invoice-line="invoiceLine"
-    @@confirm-removal="handleConfirmRemoval">
+  <invoice-line v-for="invoiceLine in invoiceLines" :key="invoiceLine.id" :invoice-line="invoiceLine" @@confirm-removal="handleConfirmRemoval">
   </invoice-line>
 
   <div class="background-color-antiquewhite margin-bottom-5px">
@@ -426,13 +407,13 @@
       'addresses-and-selected-address': AddressesAndSelectedAddress,
       'products-and-services-search': ProductsAndServicesSearch,
       'business-entity-name-display': BusinessEntityNameDisplay,
-			'customer-detail': CustomerDetail,
+      'customer-detail': CustomerDetail,
     },
     data() {
       return {
         customer: @Html.Raw(Json.Serialize(Model.Customer).ToString() ?? "null"),
         billingAddress: @Html.Raw(Json.Serialize(Model.BillingAddress).ToString() ?? "null"),
-				shippingAddress: @Html.Raw(Json.Serialize(Model.ShippingAddress).ToString() ?? "null"),
+        shippingAddress: @Html.Raw(Json.Serialize(Model.ShippingAddress).ToString() ?? "null"),
         invoiceLines: @Html.Raw(Json.Serialize(Model.ExistingInvoiceLines).ToString() ?? "[]"),
         deletedInoiceLines: [],
         paymentTerms: @Html.Raw(Json.Serialize(Model.PaymentTerms).ToString() ?? "[]"),
@@ -447,7 +428,7 @@
       };
     },
     watch: {
-    
+
     },
     methods: {
       removeInvoiceLine(invoiceLine) {
