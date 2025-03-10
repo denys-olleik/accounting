@@ -206,7 +206,12 @@
 
   <div class="display-flex">
     <div class="flex-1">
+      <button type="button" class="full-width-regular-button width-100"
+              onclick="event.preventDefault(); window.location.href='@Url.Action("Invoices", "Invoice")';">
+        Cancel
+      </button>
     </div>
+    <div class="width-5px"></div>
     <div class="flex-1">
       <button type="submit" class="full-width-regular-button width-100">Update invoice</button>
     </div>
