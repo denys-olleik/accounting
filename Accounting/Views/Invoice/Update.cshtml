@@ -206,7 +206,6 @@
   <input type="hidden" name="SelectedPaymentTermJSON" :value="JSON.stringify(selectedPaymentTerm)" />
   <input type="hidden" name="InvoiceDate" value="@Model.InvoiceDate!.Value.ToString("o")" />
   <input type="hidden" name="DueDate" :value="dueDate" />
-  <input type="hidden" name="SelectedAddressId" :value="selectedAddress?.id" />
   <input type="hidden" name="LastUpdated" value="@Model.LastUpdated" />
 
   <div class="display-flex">
