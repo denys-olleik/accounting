@@ -150,17 +150,13 @@
       </a>
     </div>
   </div>
-  <a href="#" v-if="customer" class="" @@click.prevent="dropdownVisible = !dropdownVisible">
-    <span v-if="dropdownVisible">Close Addresses</span>
-    <span v-else>{{ addressType === 'billing' ? 'Open Billing Addresses' : 'Open Shipping Addresses' }}</span>
-  </a>
 </template>
 
 <form id="app" asp-action="Update" asp-controller="Invoice" method="post" class="display-flex flex-direction-column margin-bottom-5px">
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
     <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
-      <customer-detail :customer="customer" v-if="customer"></customer-detail>
+      @* <customer-detail :customer="customer" v-if="customer"></customer-detail> *@
     </div>
     <div class="width-5px"></div>
     <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite">
@@ -174,7 +170,10 @@
       <div>
         Billing
       </div>
-      <addresses-and-selected-address :selected-address="billingAddress" @@update:selected-address="handleSelectedAddress($event, 'billing')" :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="billing">
+      <addresses-and-selected-address :selected-address="billingAddress"
+                                      @@update:selected-address="handleSelectedAddress($event, 'billing')"
+                                      :addresses="customer ? customer.addresses : []"
+                                      :customer="customer">
       </addresses-and-selected-address>
     </div>
     <div class="width-5px"></div>
@@ -182,7 +181,10 @@
       <div>
         Shipping
       </div>
-      <addresses-and-selected-address :selected-address="shippingAddress" @@update:selected-address="handleSelectedAddress($event, 'shipping')" :addresses="customer ? customer.addresses : []" :selected-customer="customer" address-type="shipping">
+      <addresses-and-selected-address :selected-address="shippingAddress"
+                                      @@update:selected-address="handleSelectedAddress($event, 'shipping')"
+                                      :addresses="customer ? customer.addresses : []"
+                                      :customer="customer">
       </addresses-and-selected-address>
     </div>
   </div>
@@ -192,12 +194,6 @@
 
   <invoice-line v-for="invoiceLine in invoiceLines" :key="invoiceLine.id" :invoice-line="invoiceLine" @@confirm-removal="handleConfirmRemoval">
   </invoice-line>
-
-  <div class="background-color-antiquewhite margin-bottom-5px">
-    <label>Payment terms selector</label>
-    <payment-term-selector :payment-terms="paymentTerms" v-model:selected-payment-term="selectedPaymentTerm">
-    </payment-term-selector>
-  </div>
 
   <total :invoice-lines="invoiceLines"></total>
 
