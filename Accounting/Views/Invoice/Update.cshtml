@@ -12,25 +12,26 @@
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <template id="invoice-line-removal-template">
-  <div class="display-flex flex-direction-column background-color-red">
-    <div v-if="!isRemoveConfirmationVisible" :class="{ 'border-bottom-2px-solid-white': isRemoveConfirmationVisible }">
-      <a href="#" class="color-white text-decoration-none" :class="{ 'writing-mode-vertical-lr': !isRemoveConfirmationVisible }" @@click.prevent="toggleConfirmationVisibility">remove</a>
+  <div class="background-color-red text-align-center">
+    <div v-if="!isRemoveConfirmationVisible">
+      <a href="#" class="color-white text-decoration-none width-100 display-block"
+         @@click.prevent="toggleConfirmationVisibility">remove</a>
     </div>
-    <div v-if="isRemoveConfirmationVisible" class="display-flex flex-1 flex-direction-column">
-      <div class="flex-1"></div>
-      <div class="display-flex flex-direction-column">
-        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="confirmRemoval">remove</a></div>
-        <div class="height-5px"></div>
-        <div class="text-align-center"><a class="text-decoration-none color-white" href="#" @@click.prevent="toggleConfirmationVisibility">cancel</a></div>
+    <div v-else>
+      <div class="margin-bottom-5px">
+        <a href="#" class="color-white text-decoration-none" @@click.prevent="confirmRemoval">remove</a>
       </div>
-      <div class="flex-1"></div>
+      <div>
+        <a href="#" class="color-white text-decoration-none"
+           @@click.prevent="toggleConfirmationVisibility">cancel</a>
+      </div>
     </div>
   </div>
 </template>
 
 <template id="invoice-line-template">
-  <div class="display-flex margin-bottom-5px">
-    <div class="display-flex flex-1 flex-direction-column border-1px-solid-darkgray">
+  <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
+    <div class="display-flex flex-1 flex-direction-column">
       <div class="display-flex max-width-768-flex-direction-column">
         <div class="display-flex flex-2 flex-direction-column">
           <label>Title</label>
@@ -59,16 +60,19 @@
         </div>
       </div>
     </div>
-    <div class="width-5px"></div>
-    <invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)" @@cancel-removal="$emit('cancel-removal', invoiceLine)">
-    </invoice-line-removal>
+    <div class="display-flex">
+      <div class="flex-1"></div>
+      <invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)"
+                            @@cancel-removal="$emit('cancel-removal', invoiceLine)">
+      </invoice-line-removal>
+    </div>
   </div>
 </template>
 
 <template id="total-template">
   <div class="display-flex margin-bottom-5px">
     <div class="flex-1 max-width-768-display-none"></div>
-    <div class="flex-1">
+    <div class="flex-1 background-color-antiquewhite">
       <table class="width-100 border-collapse">
         <thead>
           <tr>
