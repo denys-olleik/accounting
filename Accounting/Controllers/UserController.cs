@@ -1,6 +1,7 @@
 ﻿using Accounting.Business;
 using Accounting.Common;
 using Accounting.CustomAttributes;
+using Accounting.Models.TenantViewModels;
 using Accounting.Models.UserViewModels;
 using Accounting.Service;
 using Accounting.Validators;
@@ -30,6 +31,51 @@ namespace Accounting.Controllers
     }
 
     [HttpGet]
+    [Route("delete/{userId}")]
+    public async Task<IActionResult> Delete(int userId)
+    {
+      var userOrg = await _userOrganizationService.GetAsync(userId, GetOrganizationId());
+
+      if (userOrg?.User == null)
+        return NotFound();
+
+      return View(new Models.UserViewModels.DeleteUserViewModel
+      {
+        UserID = userOrg.User.UserID,
+        Email = userOrg.User.Email,
+        FirstName = userOrg.User.FirstName,
+        LastName = userOrg.User.LastName
+      });
+    }
+
+    [HttpPost]
+    [Route("delete/{userId}")]
+    public async Task<IActionResult> Delete(Models.UserViewModels.DeleteUserViewModel model)
+    {
+      var userOrg = await _userOrganizationService.GetAsync(model.UserID, GetOrganizationId());
+
+      if (userOrg?.User == null)
+        return NotFound();
+
+      var validator = new Models.UserViewModels.DeleteUserViewModel.DeleteUserViewModelValidator();
+      var validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      {
+        await _userOrganizationService.DeleteAsync(model.UserID, GetOrganizationId());
+        scope.Complete();
+      }
+
+      return RedirectToAction("Users");
+    }
+
+    [HttpGet]
     [Route("users")]
     public IActionResult Users(int page = 1, int pageSize = 2)
     {
@@ -54,9 +100,9 @@ namespace Accounting.Controllers
 
     [HttpPost]
     [Route("create")]
-    public async Task<ActionResult> Create(CreateUserViewModel model)
+    public async Task<ActionResult> Create(Models.TenantViewModels.CreateUserViewModel model)
     {
-      CreateUserViewModel.CreateUserViewModelValidator validator = new CreateUserViewModel.CreateUserViewModelValidator();
+      Models.TenantViewModels.CreateUserViewModel.CreateUserViewModelValidator validator = new Models.TenantViewModels.CreateUserViewModel.CreateUserViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)
@@ -169,9 +215,9 @@ namespace Accounting.Controllers
           page,
           pageSize);
 
-      GetUsersViewModel getUsersViewModel = new GetUsersViewModel()
+      Models.UserViewModels.GetUsersViewModel getUsersViewModel = new Models.UserViewModels.GetUsersViewModel()
       {
-        Users = users.Select(u => new GetUsersViewModel.UserViewModel()
+        Users = users.Select(u => new Models.UserViewModels.GetUsersViewModel.UserViewModel()
         {
           UserID = u.UserID,
           RowNumber = u.RowNumber,
@@ -194,9 +240,9 @@ namespace Accounting.Controllers
     {
       var users = await _userService.GetFilteredAsync(search);
 
-      GetUsersViewModel getUsersViewModel = new GetUsersViewModel()
+      Models.UserViewModels.GetUsersViewModel getUsersViewModel = new Models.UserViewModels.GetUsersViewModel()
       {
-        Users = users.Select(u => new GetUsersViewModel.UserViewModel()
+        Users = users.Select(u => new Models.UserViewModels.GetUsersViewModel.UserViewModel()
         {
           UserID = u.UserID,
           RowNumber = u.RowNumber,

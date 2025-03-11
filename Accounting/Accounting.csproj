@@ -8,6 +8,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="nginx.txt" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="nginx.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CsvHelper" Version="33.0.1" />
 		<PackageReference Include="FluentValidation" Version="11.9.1" />
 		<PackageReference Include="Markdig" Version="0.37.0" />

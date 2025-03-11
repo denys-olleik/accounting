@@ -70,6 +70,34 @@ namespace Accounting.Service
         _tenantService = tenantService;
       }
 
+      private string GetNginxConfig(string fullyQualifiedDomainName)
+      {
+        if (Uri.CheckHostName(fullyQualifiedDomainName) != UriHostNameType.Dns)
+        {
+          throw new ArgumentException("Invalid domain name format", nameof(fullyQualifiedDomainName));
+        }
+
+        if (!System.Text.RegularExpressions.Regex.IsMatch(fullyQualifiedDomainName, @"^[a-zA-Z0-9.-]+$"))
+        {
+          throw new ArgumentException("Domain contains invalid characters", nameof(fullyQualifiedDomainName));
+        }
+
+        string nginxTemplate = File.ReadAllText("nginx.txt");
+        bool isSubdomain = fullyQualifiedDomainName.Count(c => c == '.') > 1;
+
+        string serverNameLine;
+        if (isSubdomain)
+        {
+          serverNameLine = $"server_name {fullyQualifiedDomainName};";
+        }
+        else
+        {
+          serverNameLine = $"server_name {fullyQualifiedDomainName} www.{fullyQualifiedDomainName};";
+        }
+
+        return nginxTemplate.Replace("server_name example.com www.example.com;", serverNameLine);
+      }
+
       public async Task CreateDropletAsync(
         Tenant tenant,
         int organizationId,
@@ -99,14 +127,13 @@ namespace Accounting.Service
 
         var sshKeyResponse = await client.Keys.Create(sshKeyRequest);
 
-
         string emailApiKeyScript =
-          @"
+            @"
 sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"") VALUES (false, '${EmailApiKey}', 'email', 1, 1);"" > /var/log/accounting/email-api-key-insert.log 2>&1
 ";
 
         string noReplyScript =
-          @"
+            @"
 sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"") VALUES (false, 'no-reply@${FullyQualifiedDomainName}', 'no-reply', 1, 1);"" > /var/log/accounting/no-reply-insert.log 2>&1
 ";
 
@@ -118,9 +145,8 @@ seconds_to_run_script=$((end_time - start_time))
 echo ""SetupTimeInSeconds=${seconds_to_run_script}"" | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 ";
 
-        // INSERT INTO "Tenant" ("PublicId", "Email", "DatabaseName", "DatabasePassword") VALUES ('1', '[ownerEmail]', 'Accounting', '[databasePassword]');
         string createTenantRecordScript =
-          @"
+            @"
 sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Tenant\"" (\""PublicId\"", \""Email\"", \""DatabaseName\"", \""DatabasePassword\"") VALUES ('1', '${OwnerEmail}', 'Accounting', '${DatabasePassword}');"" > /var/log/accounting/tenant-insert.log 2>&1
 ";
 
@@ -131,10 +157,12 @@ sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""User\"" (\""Email
 ";
 
         string createUserOrganizationRecordScript =
-          @"
+            @"
 # Create user organization record
 sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""UserOrganization\"" (\""UserId\"", \""OrganizationId\"") VALUES (1, 1);"" > /var/log/accounting/user-organization-insert.log 2>&1
 ";
+
+        string nginxConfig = GetNginxConfig(fullyQualifiedDomainName);
 
         string setupScript = $"""
 #!/bin/bash
@@ -169,6 +197,10 @@ sudo apt-get install -y net-tools > /var/log/accounting/net-tools-install.log 2>
 
 # Install Nginx
 sudo apt-get install -y nginx > /var/log/accounting/nginx-install.log 2>&1
+
+# Configure Nginx
+echo '{nginxConfig}' | sudo tee /etc/nginx/sites-available/default > /var/log/accounting/nginx-config.log 2>&1
+sudo systemctl restart nginx >> /var/log/accounting/nginx-config.log 2>&1
 
 # Install .NET SDK
 # ----------------
