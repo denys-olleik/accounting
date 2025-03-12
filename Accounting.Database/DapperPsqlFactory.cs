@@ -905,7 +905,7 @@ namespace Accounting.Database
         p.Add("@Type", Account.AccountTypeConstants.Assets);
 
         IEnumerable<Account> result;
-        
+
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Account>("""
@@ -2596,10 +2596,10 @@ namespace Accounting.Database
           using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
           {
             await con.OpenAsync();
-              if (deleteChildren)
-              {
-                // Use a recursive CTE to find all descendants
-                await con.ExecuteAsync("""
+            if (deleteChildren)
+            {
+              // Use a recursive CTE to find all descendants
+              await con.ExecuteAsync("""
                   WITH RECURSIVE Descendants AS (
                     SELECT "ItemID" FROM "Item" WHERE "ParentItemId" = @ItemId
                     UNION
@@ -2609,15 +2609,15 @@ namespace Accounting.Database
                   DELETE FROM "Item"
                   WHERE "ItemID" IN (SELECT "ItemID" FROM Descendants)
                   """, p);
-              }
+            }
 
-              // Delete the item itself
-              int rowsAffected = await con.ExecuteAsync("""
+            // Delete the item itself
+            int rowsAffected = await con.ExecuteAsync("""
                 DELETE FROM "Item" 
                 WHERE "ItemID" = @ItemId
                 """, p);
 
-              return rowsAffected;
+            return rowsAffected;
           }
         }
         catch (PostgresException ex) when (ex.SqlState == "23503")
@@ -4115,7 +4115,7 @@ namespace Accounting.Database
       public ToDoManager(string connectionString)
       {
         _connectionString = connectionString;
-      } 
+      }
 
       public ToDo Create(ToDo entity)
       {
@@ -4403,7 +4403,7 @@ namespace Accounting.Database
       private readonly string _connectionString;
 
       public UserManager(string connectionString)
-      { 
+      {
         _connectionString = connectionString;
       }
 
@@ -4684,7 +4684,7 @@ namespace Accounting.Database
         }
       }
 
-      public async Task<bool> IsUserInUseAsync(int userId)
+      public async Task<IEnumerable<UserReferenceInfo>> GetUserReferencesAsync(int userId)
       {
         using var con = new NpgsqlConnection(_connectionString);
         DynamicParameters p = new();
@@ -4702,23 +4702,30 @@ namespace Accounting.Database
           """;
 
         var references = await con.QueryAsync<(string Schema, string Table, string Column)>(foreignKeyQuery);
+        var results = new List<UserReferenceInfo>();
 
         foreach (var (schema, table, column) in references)
         {
-          var existsQuery = $"""
-            SELECT EXISTS (
-              SELECT 1
-              FROM "{schema}"."{table}"
-              WHERE "{column}" = @UserID
-            )
+          var countQuery = $"""
+            SELECT COUNT(*)
+            FROM "{schema}"."{table}"
+            WHERE "{column}" = @UserID
             """;
 
-          bool isInUse = await con.ExecuteScalarAsync<bool>(existsQuery, p);
-          if (isInUse)
-            return true;
+          int count = await con.ExecuteScalarAsync<int>(countQuery, p);
+          if (count > 0)
+          {
+            results.Add(new UserReferenceInfo
+            {
+              Schema = schema,
+              Table = table,
+              Column = column,
+              ReferenceCount = count
+            });
+          }
         }
 
-        return false;
+        return results;
       }
     }
 
@@ -5176,7 +5183,7 @@ namespace Accounting.Database
       }
 
       public async Task<int> UpdateUserOrganizationsAsync(int userId, List<int> selectedOrganizationIds, string databasePassword, string databaseName)
-      { 
+      {
         var builder = new NpgsqlConnectionStringBuilder(_connectionString);
         builder.Database = databaseName;
         builder.Password = databasePassword;
@@ -6597,7 +6604,7 @@ namespace Accounting.Database
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@DatabaseName", databaseName);
-        
+
         IEnumerable<Tenant> result;
 
         NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)

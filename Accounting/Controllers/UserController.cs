@@ -30,52 +30,52 @@ namespace Accounting.Controllers
       _secretService = new SecretService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
     }
 
-    [HttpGet]
-    [Route("delete/{userId}")]
-    public async Task<IActionResult> Delete(int userId)
-    {
-      var userOrg = await _userOrganizationService.GetAsync(userId, GetOrganizationId());
+    //[HttpGet]
+    //[Route("delete/{userId}")]
+    //public async Task<IActionResult> Delete(int userId)
+    //{
+    //  var userOrg = await _userOrganizationService.GetAsync(userId, GetOrganizationId());
 
-      if (userOrg?.User == null)
-        return NotFound();
+    //  if (userOrg?.User == null)
+    //    return NotFound();
 
-      bool isUserInUse = await _userService.IsUserInUseAsync(userId, GetOrganizationId());
+    //  IEnumerable<UserReferenceInfo> isUserInUse = await _userService.GetUserReferencesAsync(userId);
 
-      return View(new Models.UserViewModels.DeleteUserViewModel
-      {
-        UserID = userOrg.User.UserID,
-        Email = userOrg.User.Email,
-        FirstName = userOrg.User.FirstName,
-        LastName = userOrg.User.LastName
-      });
-    }
+    //  return View(new Models.UserViewModels.DeleteUserViewModel
+    //  {
+    //    UserID = userOrg.User.UserID,
+    //    Email = userOrg.User.Email,
+    //    FirstName = userOrg.User.FirstName,
+    //    LastName = userOrg.User.LastName
+    //  });
+    //}
 
-    [HttpPost]
-    [Route("delete/{userId}")]
-    public async Task<IActionResult> Delete(Models.UserViewModels.DeleteUserViewModel model)
-    {
-      var userOrg = await _userOrganizationService.GetAsync(model.UserID, GetOrganizationId());
+    //[HttpPost]
+    //[Route("delete/{userId}")]
+    //public async Task<IActionResult> Delete(Models.UserViewModels.DeleteUserViewModel model)
+    //{
+    //  var userOrg = await _userOrganizationService.GetAsync(model.UserID, GetOrganizationId());
 
-      if (userOrg?.User == null)
-        return NotFound();
+    //  if (userOrg?.User == null)
+    //    return NotFound();
 
-      var validator = new Models.UserViewModels.DeleteUserViewModel.DeleteUserViewModelValidator();
-      var validationResult = await validator.ValidateAsync(model);
+    //  var validator = new Models.UserViewModels.DeleteUserViewModel.DeleteUserViewModelValidator();
+    //  var validationResult = await validator.ValidateAsync(model);
 
-      if (!validationResult.IsValid)
-      {
-        model.ValidationResult = validationResult;
-        return View(model);
-      }
+    //  if (!validationResult.IsValid)
+    //  {
+    //    model.ValidationResult = validationResult;
+    //    return View(model);
+    //  }
 
-      using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-      {
-        await _userOrganizationService.DeleteAsync(model.UserID, GetOrganizationId());
-        scope.Complete();
-      }
+    //  using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+    //  {
+    //    await _userOrganizationService.DeleteAsync(model.UserID, GetOrganizationId());
+    //    scope.Complete();
+    //  }
 
-      return RedirectToAction("Users");
-    }
+    //  return RedirectToAction("Users");
+    //}
 
     [HttpGet]
     [Route("users")]

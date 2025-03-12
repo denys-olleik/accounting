@@ -84,10 +84,10 @@ namespace Accounting.Service
       return await factoryManager.GetUserManager().GetFilteredAsync(search);
     }
 
-    public async Task<bool> IsUserInUseAsync(int userId, int organizationId)
+    public async Task<IEnumerable<UserReferenceInfo>> GetUserReferencesAsync(int userId)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
-      return await factoryManager.GetUserManager().IsUserInUseAsync(userId, organizationId);
+      return await factoryManager.GetUserManager().GetUserReferencesAsync(userId);
     }
   }
 }
