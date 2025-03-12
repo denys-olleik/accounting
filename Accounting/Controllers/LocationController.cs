@@ -156,7 +156,7 @@ namespace Accounting.Controllers
         return NotFound();
 
       bool isLocationInUseAsync = await _locationService.IsLocationInUseAsync(locationId, GetOrganizationId());
-      location.Children = await _locationService.GetChildrenAsync(locationId, GetOrganizationId());
+      //location.Children = await _locationService.GetChildrenAsync(locationId, GetOrganizationId());
 
       return View(new DeleteLocationViewModel
       {

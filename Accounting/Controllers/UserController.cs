@@ -39,6 +39,8 @@ namespace Accounting.Controllers
       if (userOrg?.User == null)
         return NotFound();
 
+      bool isUserInUse = await _userService.IsUserInUseAsync(userId, GetOrganizationId());
+
       return View(new Models.UserViewModels.DeleteUserViewModel
       {
         UserID = userOrg.User.UserID,
