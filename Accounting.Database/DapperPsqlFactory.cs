@@ -6243,7 +6243,7 @@ namespace Accounting.Database
 
         List<Tenant> tenants = await GetAllAsync();
 
-        foreach (var tenant in tenants)
+        foreach (var tenant in tenants.Where(t => !t.DropletId.HasValue))
         {
           NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
           {

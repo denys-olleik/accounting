@@ -18,16 +18,19 @@ namespace Accounting.Controllers
     private readonly UserOrganizationService _userOrganizationService;
     private readonly UserService _userService;
     private readonly SecretService _secretService;
+    private readonly TenantService _tenantService;
 
     public UserController(
       RequestContext requestContext,
       UserOrganizationService userOrganizationService,
       UserService userService,
-      SecretService secretService)
+      SecretService secretService,
+      TenantService tenantService)
     {
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
       _userService = new UserService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
       _secretService = new SecretService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
+      _tenantService = new TenantService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
     }
 
     //[HttpGet]
@@ -76,6 +79,73 @@ namespace Accounting.Controllers
 
     //  return RedirectToAction("Users");
     //}
+
+    [HttpGet]
+    [Route("update/{userId}")]
+    public async Task<IActionResult> UpdateUser(int userId)
+    {
+      UserService _userService = new UserService(GetDatabaseName(), GetDatabasePassword());
+      User user = await _userService.GetAsync(userId);
+      if (user == null) return NotFound();
+
+      OrganizationService _organizationService = new OrganizationService(GetDatabaseName(), GetDatabasePassword());
+      var organizations = await _organizationService.GetAllAsync(GetDatabaseName(), GetDatabasePassword());
+      UserOrganizationService _userOrganizationService = new UserOrganizationService(GetDatabaseName(), GetDatabasePassword());
+      var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, GetDatabaseName(), GetDatabasePassword());
+
+      return View(new Models.UserViewModels.UpdateUserViewModel
+      {
+        UserID = user.UserID,
+        Email = user.Email,
+        FirstName = user.FirstName,
+        LastName = user.LastName,
+        AvailableOrganizations = organizations.Select(x => new Models.UserViewModels.UpdateUserViewModel.OrganizationViewModel
+        {
+          OrganizationID = x.OrganizationID,
+          Name = x.Name
+        }).ToList(),
+        SelectedOrganizationIdsCsv = string.Join(',', userOrganizations.Select(x => x.OrganizationID))
+      });
+    }
+
+    [HttpPost]
+    [Route("update/{userId}")]
+    public async Task<IActionResult> UpdateUser(Models.UserViewModels.UpdateUserViewModel model)
+    {
+      var user = await _userService.GetAsync(model.UserID);
+      if (user == null) return NotFound();
+
+      string currentDatabaseName = GetDatabaseName();
+
+      if (!(user.UserID != GetUserId()))
+      {
+        int currentOrganizationId = GetOrganizationId();
+
+        var selectedOrganizationIds = (model.SelectedOrganizationIdsCsv?.Split(',') ?? Array.Empty<string>())
+          .Select(id => int.Parse(id.Trim()))
+          .ToList();
+
+        if (!selectedOrganizationIds.Contains(currentOrganizationId))
+        {
+          return Unauthorized("Cannot un-associate from the current organization.");
+        }
+      }
+
+      using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      {
+        await _userOrganizationService.UpdateUserOrganizationsAsync(
+            user.UserID,
+            (model.SelectedOrganizationIdsCsv ?? "").Split(',')
+                .Where(s => !string.IsNullOrEmpty(s))
+                .Select(int.Parse)
+                .ToList(), GetDatabaseName(), GetDatabasePassword()
+        );
+
+        scope.Complete();
+      }
+
+      return RedirectToAction("Users");
+    }
 
     [HttpGet]
     [Route("users")]

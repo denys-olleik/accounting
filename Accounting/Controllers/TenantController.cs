@@ -11,7 +11,6 @@ using FluentValidation;
 using Accounting.Models.TenantViewModels;
 using Accounting.CustomAttributes;
 using Accounting.Common;
-using static Accounting.Models.TenantViewModels.UpdateUserViewModel;
 using DigitalOcean.API.Exceptions;
 
 namespace Accounting.Controllers
@@ -310,7 +309,7 @@ namespace Accounting.Controllers
       UserOrganizationService _userOrganizationService = new UserOrganizationService(tenant.DatabaseName, tenant.DatabasePassword);
       var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, tenant.DatabaseName!, tenant.DatabasePassword);
 
-      UpdateUserViewModel model = new UpdateUserViewModel
+      Models.TenantViewModels.UpdateUserViewModel model = new UpdateUserViewModel
       {
         TenantId = tenant.TenantID,
         UserID = user.UserID,
@@ -360,7 +359,7 @@ namespace Accounting.Controllers
         }
       }
 
-      UpdateUserViewModelValidator validator = new UpdateUserViewModelValidator();
+      UpdateUserViewModel.UpdateUserViewModelValidator validator = new UpdateUserViewModel.UpdateUserViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);
       if (!validationResult.IsValid)
       {
@@ -368,21 +367,28 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      user.FirstName = model.FirstName;
-      user.LastName = model.LastName;
+      using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      {
+        user.FirstName = model.FirstName;
+        user.LastName = model.LastName;
 
-      await _tenantService.UpdateUserAsync(user.Email!, user.FirstName!, user.LastName!);
+        await _tenantService.UpdateUserAsync(user.Email!, user.FirstName!, user.LastName!);
 
-      await userOrganizationService.UpdateUserOrganizationsAsync(
-        user.UserID,
-        (model.SelectedOrganizationIdsCsv ?? "").Split(',').Where(s => !string.IsNullOrEmpty(s)).Select(int.Parse).ToList(),
-        tenant.DatabaseName,
-        tenant.DatabasePassword
-      );
+        await userOrganizationService.UpdateUserOrganizationsAsync(
+          user.UserID,
+          (model.SelectedOrganizationIdsCsv ?? "").Split(',')
+            .Where(s => !string.IsNullOrEmpty(s))
+            .Select(int.Parse)
+            .ToList(),
+          tenant.DatabaseName,
+          tenant.DatabasePassword
+        );
+
+        scope.Complete();
+      }
 
       return RedirectToAction("TenantUsers", new { tenantId });
     }
-
 
     [Route("create-user/{tenantId}")]
     [HttpGet]
@@ -661,8 +667,8 @@ namespace Accounting.Controllers
           try
           {
             await cloudServices.GetDigitalOceanService().CreateDropletAsync(
-              tenant, 
-              GetOrganizationId(), 
+              tenant,
+              GetOrganizationId(),
               tenant.DatabasePassword, tenant.Email, null!, null!, null!, model.EnableTenantManagement, emailSecret.Value, model.FullyQualifiedDomainName);
           }
           catch (ApiException e)
