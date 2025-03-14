@@ -13,6 +13,7 @@ namespace Accounting.Models.UserViewModels
     public string? SelectedOrganizationIdsCsv { get; set; }
 
     public int CurrentRequestingUserId { get; set; }
+    public ValidationResult ValidationResult { get; set; } = new ();
 
     public class OrganizationViewModel
     {

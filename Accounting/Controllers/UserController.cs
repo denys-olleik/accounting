@@ -30,7 +30,7 @@ namespace Accounting.Controllers
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
       _userService = new UserService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
       _secretService = new SecretService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
-      _tenantService = new TenantService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
+      _tenantService = new TenantService();
     }
 
     //[HttpGet]
@@ -116,34 +116,41 @@ namespace Accounting.Controllers
       var user = await _userService.GetAsync(model.UserID);
       if (user == null) return NotFound();
 
-      string currentDatabaseName = GetDatabaseName();
+      var validator = new Models.UserViewModels.UpdateUserViewModel.UpdateUserViewModelValidator();
+      var validationResult = await validator.ValidateAsync(model);
 
-      if (!(user.UserID != GetUserId()))
+      if (!validationResult.IsValid)
       {
-        int currentOrganizationId = GetOrganizationId();
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
 
-        var selectedOrganizationIds = (model.SelectedOrganizationIdsCsv?.Split(',') ?? Array.Empty<string>())
+      string currentDatabaseName = GetDatabaseName();
+      int currentOrganizationId = GetOrganizationId();
+
+      var selectedOrganizationIds = (model.SelectedOrganizationIdsCsv?.Split(',') ?? Array.Empty<string>())
           .Select(id => int.Parse(id.Trim()))
           .ToList();
 
-        if (!selectedOrganizationIds.Contains(currentOrganizationId))
-        {
-          return Unauthorized("Cannot un-associate from the current organization.");
-        }
-      }
-
-      using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      if (!selectedOrganizationIds.Contains(currentOrganizationId))
       {
-        await _userOrganizationService.UpdateUserOrganizationsAsync(
-            user.UserID,
-            (model.SelectedOrganizationIdsCsv ?? "").Split(',')
-                .Where(s => !string.IsNullOrEmpty(s))
-                .Select(int.Parse)
-                .ToList(), GetDatabaseName(), GetDatabasePassword()
-        );
-
-        scope.Complete();
+        return Unauthorized("Cannot un-associate from the current organization.");
       }
+
+      if (user.UserID == GetUserId())
+      {
+        user.Email = model.Email;
+        user.FirstName = model.FirstName;
+        user.LastName = model.LastName;
+        await _tenantService.UpdateUserAsync(user.Email, model.FirstName, model.LastName);
+      }
+
+      await _userOrganizationService.UpdateUserOrganizationsAsync(
+          user.UserID,
+          selectedOrganizationIds,
+          GetDatabaseName(),
+          GetDatabasePassword()
+      );
 
       return RedirectToAction("Users");
     }

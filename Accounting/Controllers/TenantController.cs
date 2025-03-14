@@ -367,25 +367,20 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-      {
-        user.FirstName = model.FirstName;
-        user.LastName = model.LastName;
+      user.FirstName = model.FirstName;
+      user.LastName = model.LastName;
 
-        await _tenantService.UpdateUserAsync(user.Email!, user.FirstName!, user.LastName!);
+      await _tenantService.UpdateUserAsync(user.Email!, user.FirstName!, user.LastName!);
 
-        await userOrganizationService.UpdateUserOrganizationsAsync(
-          user.UserID,
-          (model.SelectedOrganizationIdsCsv ?? "").Split(',')
-            .Where(s => !string.IsNullOrEmpty(s))
-            .Select(int.Parse)
-            .ToList(),
-          tenant.DatabaseName,
-          tenant.DatabasePassword
-        );
-
-        scope.Complete();
-      }
+      await userOrganizationService.UpdateUserOrganizationsAsync(
+        user.UserID,
+        (model.SelectedOrganizationIdsCsv ?? "").Split(',')
+          .Where(s => !string.IsNullOrEmpty(s))
+          .Select(int.Parse)
+          .ToList(),
+        tenant.DatabaseName,
+        tenant.DatabasePassword
+      );
 
       return RedirectToAction("TenantUsers", new { tenantId });
     }
