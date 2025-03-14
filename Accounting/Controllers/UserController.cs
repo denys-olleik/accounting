@@ -132,9 +132,11 @@ namespace Accounting.Controllers
           .Select(id => int.Parse(id.Trim()))
           .ToList();
 
-      if (!selectedOrganizationIds.Contains(currentOrganizationId))
+      var currentUserId = GetUserId();
+
+      if (user.UserID == currentUserId && !selectedOrganizationIds.Contains(currentOrganizationId))
       {
-        return Unauthorized("Cannot un-associate from the current organization.");
+        return Unauthorized("Cannot un-associate yourself from the current organization.");
       }
 
       if (user.UserID == GetUserId())
