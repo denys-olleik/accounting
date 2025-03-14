@@ -104,7 +104,8 @@ namespace Accounting.Controllers
           OrganizationID = x.OrganizationID,
           Name = x.Name
         }).ToList(),
-        SelectedOrganizationIdsCsv = string.Join(',', userOrganizations.Select(x => x.OrganizationID))
+        SelectedOrganizationIdsCsv = string.Join(',', userOrganizations.Select(x => x.OrganizationID)),
+        CurrentRequestingUserId = GetUserId()
       });
     }
 

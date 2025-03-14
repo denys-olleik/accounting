@@ -29,18 +29,18 @@
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label asp-for="Email" class="background-color-antiquewhite">Email</label>
-    <input asp-for="Email" class="font-size-20px" readonly />
+    <input asp-for="Email" class="font-size-20px" readonly="@(Model.UserID != Model.CurrentRequestingUserId)" />
   </div>
 
   <div class="display-flex">
     <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
       <label asp-for="FirstName" class="background-color-antiquewhite">First Name</label>
-      <input asp-for="FirstName" class="font-size-20px" readonly />
+      <input asp-for="FirstName" class="font-size-20px" readonly="@(Model.UserID != Model.CurrentRequestingUserId)" />
     </div>
     <div class="width-5px"></div>
     <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
       <label asp-for="LastName" class="background-color-antiquewhite">Last Name</label>
-      <input asp-for="LastName" class="font-size-20px" readonly />
+      <input asp-for="LastName" class="font-size-20px" readonly="@(Model.UserID != Model.CurrentRequestingUserId)" />
     </div>
   </div>
 
