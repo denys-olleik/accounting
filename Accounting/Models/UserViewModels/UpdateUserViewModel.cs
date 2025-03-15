@@ -5,15 +5,34 @@ namespace Accounting.Models.UserViewModels
 {
   public class UpdateUserViewModel
   {
+    private string? email;
+    private string? firstName;
+    private string? lastName;
+
     public int UserID { get; set; }
-    public string? Email { get; set; }
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
+    public string? Email
+    {
+      get => email;
+      set => email = value?.Trim();
+    }
+
+    public string? FirstName
+    {
+      get => firstName;
+      set => firstName = value?.Trim();
+    }
+
+    public string? LastName
+    {
+      get => lastName;
+      set => lastName = value?.Trim();
+    }
+
     public List<OrganizationViewModel> AvailableOrganizations { get; set; } = new List<OrganizationViewModel>();
     public string? SelectedOrganizationIdsCsv { get; set; }
 
     public int CurrentRequestingUserId { get; set; }
-    public ValidationResult ValidationResult { get; set; } = new ();
+    public ValidationResult ValidationResult { get; set; } = new();
 
     public class OrganizationViewModel
     {
