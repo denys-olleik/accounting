@@ -29,7 +29,7 @@
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label asp-for="Email" class="background-color-antiquewhite">Email</label>
-    <input asp-for="Email" class="font-size-20px" readonly="@(Model.UserID != Model.CurrentRequestingUserId)" />
+    <input asp-for="Email" class="font-size-20px" autocomplete="off" readonly="@(Model.UserID != Model.CurrentRequestingUserId)" />
     <div class="display-flex background-color-antiquewhite">
       <div class="flex-1"></div>
       <a asp-controller="User" asp-action="UpdateEmail" asp-route-id="@Model.UserID">Update email</a>
@@ -39,12 +39,12 @@
   <div class="display-flex">
     <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
       <label asp-for="FirstName" class="background-color-antiquewhite">First name</label>
-      <input asp-for="FirstName" class="font-size-20px" readonly="@(Model.UserID != Model.CurrentRequestingUserId)" />
+      <input asp-for="FirstName" class="font-size-20px" autocomplete="off" readonly="@(Model.UserID != Model.CurrentRequestingUserId)" />
     </div>
     <div class="width-5px"></div>
     <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
       <label asp-for="LastName" class="background-color-antiquewhite">Last name</label>
-      <input asp-for="LastName" class="font-size-20px" readonly="@(Model.UserID != Model.CurrentRequestingUserId)" />
+      <input asp-for="LastName" class="font-size-20px" autocomplete="off" readonly="@(Model.UserID != Model.CurrentRequestingUserId)" />
     </div>
   </div>
 

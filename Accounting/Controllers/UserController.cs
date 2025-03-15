@@ -129,8 +129,9 @@ namespace Accounting.Controllers
       int currentOrganizationId = GetOrganizationId();
 
       var selectedOrganizationIds = (model.SelectedOrganizationIdsCsv?.Split(',') ?? Array.Empty<string>())
-          .Select(id => int.Parse(id.Trim()))
-          .ToList();
+        .Where(id => !string.IsNullOrWhiteSpace(id))
+        .Select(id => int.Parse(id.Trim()))
+        .ToList();
 
       var currentUserId = GetUserId();
 
