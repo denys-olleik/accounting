@@ -33,52 +33,63 @@ namespace Accounting.Controllers
       _tenantService = new TenantService();
     }
 
-    //[HttpGet]
-    //[Route("delete/{userId}")]
-    //public async Task<IActionResult> Delete(int userId)
-    //{
-    //  var userOrg = await _userOrganizationService.GetAsync(userId, GetOrganizationId());
+    [HttpGet]
+    [Route("update-email/{userid}")]
+    public async Task<IActionResult> UpdateEmail(int userid)
+    {
+      var user = await _userService.GetAsync(userid);
+      if (user == null) return NotFound();
 
-    //  if (userOrg?.User == null)
-    //    return NotFound();
+      if (user.UserID != GetUserId())
+      {
+        return Unauthorized();
+      }
 
-    //  IEnumerable<UserReferenceInfo> isUserInUse = await _userService.GetUserReferencesAsync(userId);
+      var model = new UpdateEmailViewModel
+      {
+        UserID = user.UserID,
+        CurrentEmail = user.Email,
+        NewEmail = string.Empty
+      };
 
-    //  return View(new Models.UserViewModels.DeleteUserViewModel
-    //  {
-    //    UserID = userOrg.User.UserID,
-    //    Email = userOrg.User.Email,
-    //    FirstName = userOrg.User.FirstName,
-    //    LastName = userOrg.User.LastName
-    //  });
-    //}
+      return View(model);
+    }
 
-    //[HttpPost]
-    //[Route("delete/{userId}")]
-    //public async Task<IActionResult> Delete(Models.UserViewModels.DeleteUserViewModel model)
-    //{
-    //  var userOrg = await _userOrganizationService.GetAsync(model.UserID, GetOrganizationId());
+    [HttpPost]
+    [Route("update-email/{userid}")]
+    public async Task<IActionResult> UpdateEmail(UpdateEmailViewModel model)
+    {
+      var user = await _userService.GetAsync(model.UserID);
+      if (user == null) return NotFound();
 
-    //  if (userOrg?.User == null)
-    //    return NotFound();
+      if (user.UserID != GetUserId())
+      {
+        return Unauthorized();
+      }
 
-    //  var validator = new Models.UserViewModels.DeleteUserViewModel.DeleteUserViewModelValidator();
-    //  var validationResult = await validator.ValidateAsync(model);
+      var validator = new UpdateEmailViewModel.UpdateEmailViewModelValidator();
+      var validationResult = await validator.ValidateAsync(model);
 
-    //  if (!validationResult.IsValid)
-    //  {
-    //    model.ValidationResult = validationResult;
-    //    return View(model);
-    //  }
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
 
-    //  using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-    //  {
-    //    await _userOrganizationService.DeleteAsync(model.UserID, GetOrganizationId());
-    //    scope.Complete();
-    //  }
+      var existingUser = await _userService.GetAsync(model.NewEmail);
+      if (existingUser != null)
+      {
+        model.ValidationResult = new ValidationResult(new List<ValidationFailure>()
+        {
+            new ValidationFailure("NewEmail", "Email already exists.")
+        });
+        return View(model);
+      }
 
-    //  return RedirectToAction("Users");
-    //}
+      await _tenantService.UpdateUserAsync(model.NewEmail, user.FirstName, user.LastName);
+
+      return RedirectToAction("Users");
+    }
 
     [HttpGet]
     [Route("update/{userId}")]

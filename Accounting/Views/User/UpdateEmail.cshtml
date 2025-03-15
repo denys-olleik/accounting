@@ -1,0 +1,54 @@
+﻿@model Accounting.Models.UserViewModels.UpdateEmailViewModel
+
+@{
+  ViewData["Title"] = "Update email - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Update email";
+}
+
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div class="flex-1">
+  </div>
+  <div>
+    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
+  </div>
+</div>
+
+<form asp-action="UpdateEmail"
+      asp-controller="User"
+      asp-route-id="@Model.UserID"
+      method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
+
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="NewEmail" class="background-color-antiquewhite">New email</label>
+    <input asp-for="NewEmail" class="font-size-20px" autocomplete="off" />
+  </div>
+
+  <div class="display-flex">
+    <div class="flex-1">
+      <button class="full-width-regular-button width-100" type="button"
+              onclick="event.preventDefault(); window.location.href='@Url.Action("UpdateEmail", "User", new { userId = Model.UserID })';">
+        Cancel
+      </button>
+    </div>
+    <div class="width-5px"></div>
+    <div class="flex-1">
+      <button type="submit" class="full-width-regular-button width-100">Update email</button>
+    </div>
+  </div>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+}
