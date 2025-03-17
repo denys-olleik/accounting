@@ -3,6 +3,7 @@ Description=Accounting Application
 After=network.target postgresql.service
 
 [Service]
+EnvironmentFile=/etc/environment
 User=postgres
 WorkingDirectory=/opt/accounting/Accounting
 Environment="HOME=/var/lib/postgresql"
