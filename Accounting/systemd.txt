@@ -5,8 +5,8 @@ After=network.target postgresql.service
 [Service]
 User=postgres
 WorkingDirectory=/opt/accounting/Accounting
-Environment="HOME=/root"
-Environment="DOTNET_CLI_HOME=/root"
+Environment="HOME=/var/lib/postgresql"
+Environment="DOTNET_CLI_HOME=/var/lib/postgresql"
 ExecStart=/usr/bin/dotnet run
 Restart=always
 RestartSec=10
