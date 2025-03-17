@@ -3,6 +3,7 @@ Description=Accounting Application
 After=network.target postgresql.service
 
 [Service]
+User=postgres
 WorkingDirectory=/opt/accounting/Accounting
 Environment="HOME=/root"
 Environment="DOTNET_CLI_HOME=/root"
