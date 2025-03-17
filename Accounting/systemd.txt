@@ -1,0 +1,14 @@
+[Unit]
+Description=Accounting Application
+After=network.target postgresql.service
+
+[Service]
+WorkingDirectory=/opt/accounting/Accounting
+Environment="HOME=/root"
+Environment="DOTNET_CLI_HOME=/root"
+ExecStart=/usr/bin/dotnet run
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

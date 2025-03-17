@@ -164,6 +164,8 @@ sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""UserOrganization\
 
         string nginxConfig = GetNginxConfig(fullyQualifiedDomainName);
 
+        string systemdConfiguration = File.ReadAllText("systemd.txt");
+
         string setupScript = $"""
 #!/bin/bash
 start_time=$(date +%s)
@@ -266,11 +268,14 @@ sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/
 """ + emailApiKeyScript + """
 
 # Create no-reply secret
-""" + noReplyScript + """
+""" + noReplyScript + $"""
 
 # Build the .NET project
 export DOTNET_CLI_HOME=/root
 dotnet build /opt/accounting/Accounting/Accounting.csproj > /var/log/accounting/dotnet-build.log 2>&1
+
+# Configure systemd
+echo '{systemdConfiguration}' | sudo tee /etc/systemd/system/accounting.service > /var/log/accounting/systemd-config.log 2>&1
 
 # Indicate successful setup
 echo "Setup completed successfully" > /var/log/custom-setup.log

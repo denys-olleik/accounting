@@ -9,10 +9,14 @@
 
 	<ItemGroup>
 	  <None Remove="nginx.txt" />
+	  <None Remove="systemd.txt" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Content Include="nginx.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="systemd.txt">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
