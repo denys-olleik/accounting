@@ -272,10 +272,20 @@ sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/
 
 # Build the .NET project
 export DOTNET_CLI_HOME=/root
-dotnet build /opt/accounting/Accounting/Accounting.csproj > /var/log/accounting/dotnet-build.log 2>&1
+dotnet build /opt/accounting/Accounting/Accounting.csproj -c Release > /var/log/accounting/dotnet-build.log 2>&1
 
 # Configure systemd
 echo '{systemdConfiguration}' | sudo tee /etc/systemd/system/accounting.service > /var/log/accounting/systemd-config.log 2>&1
+
+# Ensure correct ownership and permissions
+sudo chown -R postgres:postgres /opt/accounting
+sudo chmod -R u+rwX /opt/accounting
+
+# Reload systemd to apply changes
+sudo systemctl daemon-reload
+
+# Restart the service
+sudo systemctl restart accounting.service
 
 # Indicate successful setup
 echo "Setup completed successfully" > /var/log/custom-setup.log
