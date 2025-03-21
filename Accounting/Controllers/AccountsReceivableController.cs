@@ -71,7 +71,7 @@ namespace Accounting.Controllers
       {
         string invoiceIdsCsv = string.Join(",", model.Invoices.Select(i => i.InvoiceId.ToString()));
         List<Invoice> latestInvoices = await FetchInvoices(invoiceIdsCsv);
-        List<Account> debitAccounts = await _accountService.GetAccountOptionsForPaymentReceptionDebit(GetOrganizationId());
+        List<Account> debitAccounts = await _accountService.GetAssetAccounts(GetOrganizationId());
 
         model = RebuildInvalidModel(model, latestInvoices, debitAccounts, validationResult);
         return View(model);
