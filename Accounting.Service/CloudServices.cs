@@ -70,6 +70,17 @@ namespace Accounting.Service
         _tenantService = tenantService;
       }
 
+      private string GetCertbotConfig(string fullyQualifiedDomainName, string ownerEmail)
+      {
+        bool isSubdomain = fullyQualifiedDomainName.Count(c => c == '.') > 1;
+
+        string certbotCommand = isSubdomain
+            ? $"sudo certbot --nginx -d {fullyQualifiedDomainName} -n --agree-tos --email {ownerEmail}"
+            : $"sudo certbot --nginx -d {fullyQualifiedDomainName} -d www.{fullyQualifiedDomainName} -n --agree-tos --email {ownerEmail}";
+
+        return certbotCommand + " > /var/log/accounting/certbot.log 2>&1";
+      }
+
       private string GetNginxConfig(string fullyQualifiedDomainName)
       {
         if (Uri.CheckHostName(fullyQualifiedDomainName) != UriHostNameType.Dns)
@@ -163,6 +174,8 @@ sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""UserOrganization\
 ";
 
         string nginxConfig = GetNginxConfig(fullyQualifiedDomainName);
+
+        string certbotConfig = GetCertbotConfig(fullyQualifiedDomainName, ownerEmail);
 
         string systemdConfiguration = File.ReadAllText("systemd.txt");
 
@@ -286,6 +299,11 @@ sudo systemctl daemon-reload
 
 # Restart the service
 sudo systemctl restart accounting.service
+
+# Install Certbot and Nginx plugin
+sudo apt-get install -y certbot python3-certbot-nginx > /var/log/accounting/certbot-install.log 2>&1
+
+""" + certbotConfig + $"""
 
 # Indicate successful setup
 echo "Setup completed successfully" > /var/log/custom-setup.log

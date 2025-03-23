@@ -166,6 +166,13 @@
       <a :href="`/tenant/tenants?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage">next</a>
     </div>
   </div>
+<pre class="color-white">
+  <code>
+sudo certbot --nginx -d example.com -d www.example.com -n --agree-tos --email admin@example.com
+or
+sudo certbot --nginx -d sub.example.com -n --agree-tos --email admin@example.com
+  </code>
+</pre>
 </div>
 
 <script>
