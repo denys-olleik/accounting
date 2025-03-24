@@ -620,7 +620,7 @@ namespace Accounting.Controllers
         {
           tenant = await _tenantService.CreateAsync(new Tenant()
           {
-            FullyQualifiedDomainName = model.FullyQualifiedDomainName,
+            //FullyQualifiedDomainName = model.FullyQualifiedDomainName,
             Email = model.Email,
             DatabasePassword = GetDatabasePassword()
           });

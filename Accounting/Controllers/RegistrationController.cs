@@ -3,6 +3,7 @@ using Accounting.Business;
 using Accounting.Common;
 using Accounting.Models.RegistrationViewModels;
 using Accounting.Service;
+using DigitalOcean.API.Exceptions;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,22 @@ namespace Accounting.Controllers
   public class RegistrationController : BaseController
   {
     private readonly TenantService _tenantService;
+    private readonly DatabaseService _databaseService = new();
+    private readonly SecretService _secretService;
+    private readonly UserService _userService;
+    private readonly UserOrganizationService _userOrganizationService = new();
 
-    public RegistrationController(RequestContext requestContext)
+    public RegistrationController(
+      RequestContext requestContext,
+      DatabaseService databaseService,
+      UserService userService,
+      UserOrganizationService userOrganizationService)
     {
       _tenantService = new TenantService();
+      _databaseService = databaseService;
+      _secretService = new SecretService();
+      _userService = new UserService();
+      _userOrganizationService = new UserOrganizationService();
     }
 
     [AllowAnonymous]
@@ -52,12 +65,80 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      Tenant tenant = new()
-      {
-        Email = model.Email
-      };
+      Tenant tenant;
 
-      tenant = await ProvisionDatabase(tenant);
+      if (model.Shared)
+      {
+        using (TransactionScope scope = new(TransactionScopeAsyncFlowOption.Enabled))
+        {
+          tenant = await _tenantService.CreateAsync(new Tenant()
+          {
+            Email = model.Email,
+            //FullyQualifiedDomainName = model.FullyQualifiedDomainName,
+            DatabasePassword = GetDatabasePassword()
+          });
+
+          scope.Complete();
+        }
+
+        string createSchemaScriptPath = Path.Combine(AppContext.BaseDirectory, "create-db-script-psql.sql");
+        string createSchemaScript = System.IO.File.ReadAllText(createSchemaScriptPath);
+
+        DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.PublicId);
+        await _databaseService.RunSQLScript(createSchemaScript, database.Name);
+        await _tenantService.UpdateDatabaseName(tenant.TenantID, database.Name);
+        User user = await _userService.CreateAsync(new User()
+        {
+          Email = model.Email,
+          FirstName = model.FirstName,
+          LastName = model.LastName,
+          Password = PasswordStorage.CreateHash(model.Password!)
+        });
+        await _userOrganizationService.CreateAsync(user.UserID, 1, tenant.DatabaseName!, tenant.DatabasePassword);
+      }
+      else
+      {
+        Secret cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, GetOrganizationId());
+        Secret emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, GetOrganizationId());
+
+        if (cloudSecret == null)
+        {
+          model.ValidationResult.Errors.Add(new ValidationFailure("Shared", "Cloud secret not found."));
+          return View(model);
+        }
+
+        using (TransactionScope scope = new(TransactionScopeAsyncFlowOption.Enabled))
+        {
+          tenant = await _tenantService.CreateAsync(new Tenant()
+          {
+            Email = model.Email,
+            FullyQualifiedDomainName = model.FullyQualifiedDomainName,
+            DatabasePassword = RandomHelper.GenerateSecureAlphanumericString(20),
+          });
+
+          var cloudServices = new CloudServices(_secretService, _tenantService);
+
+          try
+          {
+            await cloudServices.GetDigitalOceanService().CreateDropletAsync(
+              tenant,
+              GetOrganizationId(),
+              tenant.DatabasePassword, tenant.Email, null!, null!, null!, false, emailSecret.Value, model.FullyQualifiedDomainName);
+          }
+          catch (ApiException e)
+          {
+            if (e.Message != "Access Denied")
+            {
+              throw;
+            }
+
+            model.ValidationResult.Errors.Add(new ValidationFailure("Shared", "Access denied"));
+            return View(model);
+          }
+
+          scope.Complete();
+        }
+      }
 
       using (TransactionScope scope = new(TransactionScopeAsyncFlowOption.Enabled))
       {
@@ -89,6 +170,7 @@ namespace Accounting.Controllers
 
       return RedirectToAction("RegistrationComplete", "Registration");
     }
+
 
     [AllowAnonymous]
     [HttpGet]

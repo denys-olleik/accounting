@@ -10,6 +10,7 @@ namespace Accounting.Models.RegistrationViewModels
     public string? LastName { get; set; }
     public string? Password { get; set; }
     public bool Shared { get; set; }
+    public string? FullyQualifiedDomainName { get; set; }
 
     public ValidationResult ValidationResult { get; set; } = new();
 
@@ -22,6 +23,11 @@ namespace Accounting.Models.RegistrationViewModels
 
         RuleFor(x => x.FirstName).NotEmpty().WithMessage("First name is required");
         RuleFor(x => x.LastName).NotEmpty().WithMessage("Last name is required");
+
+        RuleFor(x => x.FullyQualifiedDomainName)
+          .NotEmpty()
+          .When(x => !x.Shared)
+          .WithMessage("'Fully Qualified Domain Name' is required when 'Shared' is not selected.");
       }
     }
   }

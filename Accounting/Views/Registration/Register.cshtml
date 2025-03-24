@@ -20,6 +20,13 @@
          <label asp-for="Shared">Shared</label>
       </span>
    </div>
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="FullyQualifiedDomainName" class="background-color-antiquewhite">Fully qualified domain name (accounting.example.com). *</label>
+    <input asp-for="FullyQualifiedDomainName" class="font-size-20px" />
+    <div class="background-color-antiquewhite">
+      * required if not shared
+    </div>
+  </div>
   <div class="display-flex">
     <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
       <label asp-for="FirstName" class="background-color-antiquewhite">First name</label>
