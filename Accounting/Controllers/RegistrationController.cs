@@ -65,6 +65,7 @@ namespace Accounting.Controllers
         return View(model);
       }
 
+      Tenant defaultTenant = await _tenantService.GetByDatabaseNameAsync(DatabaseThing.DatabaseConstants.DatabaseName);
       Tenant tenant;
 
       if (model.Shared)
@@ -74,8 +75,7 @@ namespace Accounting.Controllers
           tenant = await _tenantService.CreateAsync(new Tenant()
           {
             Email = model.Email,
-            //FullyQualifiedDomainName = model.FullyQualifiedDomainName,
-            DatabasePassword = GetDatabasePassword()
+            DatabasePassword = defaultTenant.DatabasePassword
           });
 
           scope.Complete();
@@ -87,14 +87,32 @@ namespace Accounting.Controllers
         DatabaseThing database = await _databaseService.CreateDatabaseAsync(tenant.PublicId);
         await _databaseService.RunSQLScript(createSchemaScript, database.Name);
         await _tenantService.UpdateDatabaseName(tenant.TenantID, database.Name);
-        User user = await _userService.CreateAsync(new User()
+
+        using (TransactionScope scope = new(TransactionScopeAsyncFlowOption.Enabled))
         {
-          Email = model.Email,
-          FirstName = model.FirstName,
-          LastName = model.LastName,
-          Password = PasswordStorage.CreateHash(model.Password!)
-        });
-        await _userOrganizationService.CreateAsync(user.UserID, 1, tenant.DatabaseName!, tenant.DatabasePassword);
+          User user = new()
+          {
+            Email = model.Email,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Password = PasswordStorage.CreateHash(model.Password!)
+          };
+
+          UserService userService = new UserService(database.Name!, tenant.DatabasePassword!);
+          user = await userService.CreateAsync(user);
+
+          OrganizationService organizationService = new(database.Name!, tenant.DatabasePassword);
+
+          string sampleDataPath = Path.Combine(AppContext.BaseDirectory, "sample-data-production.sql");
+          string sampleDataScript = System.IO.File.ReadAllText(sampleDataPath);
+
+          await organizationService.InsertSampleOrganizationDataAsync(sampleDataScript);
+
+          UserOrganizationService userOrganizationService = new();
+          await userOrganizationService.CreateAsync(user.UserID, 1, database.Name!, tenant.DatabasePassword);
+
+          scope.Complete();
+        }
       }
       else
       {
@@ -140,37 +158,8 @@ namespace Accounting.Controllers
         }
       }
 
-      using (TransactionScope scope = new(TransactionScopeAsyncFlowOption.Enabled))
-      {
-        User user = new()
-        {
-          Email = model.Email,
-          FirstName = model.FirstName,
-          LastName = model.LastName,
-          Password = PasswordStorage.CreateHash(model.Password!)
-        };
-
-        UserService userService = new UserService(tenant.DatabaseName!, tenant.DatabasePassword);
-
-        user = await userService.CreateAsync(user);
-
-        OrganizationService organizationService = new(tenant.DatabaseName!, tenant.DatabasePassword);
-
-        string sampleDataPath = Path.Combine(AppContext.BaseDirectory, "sample-data-production.sql");
-        string sampleDataScript = System.IO.File.ReadAllText(sampleDataPath);
-
-        await organizationService.InsertSampleOrganizationDataAsync(sampleDataScript);
-
-        UserOrganizationService userOrganizationService = new(tenant.DatabaseName!, tenant.DatabasePassword);
-
-        await userOrganizationService.CreateAsync(user.UserID, 1, tenant.DatabaseName!, tenant.DatabasePassword);
-
-        scope.Complete();
-      }
-
       return RedirectToAction("RegistrationComplete", "Registration");
     }
-
 
     [AllowAnonymous]
     [HttpGet]

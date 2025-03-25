@@ -29,5 +29,6 @@ namespace Accounting.Database.Interfaces
     Task<int> UpdateIpv4Async(int tenantId, string ipAddress);
     Task<bool> TenantExistsAsync(string? databaseName);
     Task<Tenant> GetByEmailAsync(string? email);
+    Task<Tenant> GetByDatabaseNameAsync(string databaseName);
   }
 }
