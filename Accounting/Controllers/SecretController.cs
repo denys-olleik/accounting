@@ -22,7 +22,7 @@ namespace Accounting.Controllers
     [Route("secrets")]
     public async Task<IActionResult> Secrets()
     {
-      List<Secret> secrets = await _secretService.GetAllAsync(GetOrganizationId());
+      List<Secret> secrets = await _secretService.GetAllAsync(GetTenantId());
 
       SecretsViewModel model = new SecretsViewModel();
       model.Secrets = secrets.Select(secret => new SecretsViewModel.SecretViewModel
@@ -64,6 +64,13 @@ namespace Accounting.Controllers
         if (model.Master)
         {
           await _secretService.DeleteMasterAsync(GetTenantId());
+        }
+
+        Secret existingSecret = await _secretService.GetAsync(model.Type, GetTenantId());
+
+        if (existingSecret != null)
+        {
+          await _secretService.DeleteAsync(existingSecret.SecretID);
         }
 
         await _secretService.CreateAsync(

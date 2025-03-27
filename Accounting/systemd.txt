@@ -8,7 +8,7 @@ User=postgres
 WorkingDirectory=/opt/accounting/Accounting
 Environment="HOME=/var/lib/postgresql"
 Environment="DOTNET_CLI_HOME=/var/lib/postgresql"
-ExecStart=/usr/bin/dotnet /opt/accounting/Accounting.dll
+ExecStart=/usr/bin/dotnet /opt/accounting/Accounting/bin/Release/net8.0/Accounting.dll
 Restart=always
 RestartSec=10
 

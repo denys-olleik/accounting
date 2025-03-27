@@ -45,11 +45,11 @@ namespace Accounting.Service
           .DeleteMasterAsync(tenantId);
     }
 
-    public async Task<List<Secret>> GetAllAsync(int organizationId)
+    public async Task<List<Secret>> GetAllAsync(int tenantId)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetSecretManager()
-          .GetAllAsync(organizationId);
+          .GetAllAsync(tenantId);
     }
 
     public async Task<Secret> GetAsync(int id, int tenantId)

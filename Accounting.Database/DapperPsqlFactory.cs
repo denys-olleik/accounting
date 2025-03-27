@@ -6768,10 +6768,10 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<List<Secret>> GetAllAsync(int organizationId)
+      public async Task<List<Secret>> GetAllAsync(int tenantId)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@OrganizationId", organizationId);
+        p.Add("@TenantId", tenantId);
 
         IEnumerable<Secret> result;
 
@@ -6780,7 +6780,7 @@ namespace Accounting.Database
           result = await con.QueryAsync<Secret>("""
                 SELECT * 
                 FROM "Secret" 
-                WHERE "OrganizationId" = @OrganizationId
+                WHERE "TenantId" = @TenantId
                 ORDER BY "SecretID" DESC
                 """, p);
         }
@@ -6815,18 +6815,28 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@Type", type);
         p.Add("@TenantId", tenantId);
-
-        if (organizationId.HasValue)
-        {
-          p.Add("@OrganizationId", organizationId);
-        }
+        p.Add("@OrganizationId", organizationId); // Always add it, even if null
 
         IEnumerable<Secret> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Secret>("""
-            
+            SELECT *
+            FROM "Secret"
+            WHERE "Type" = @Type
+              AND "TenantId" = @TenantId
+              AND (
+                @OrganizationId::INT IS NULL
+                OR "OrganizationId" = @OrganizationId
+                OR "OrganizationId" IS NULL
+              )
+            ORDER BY 
+              CASE WHEN "OrganizationId" = @OrganizationId THEN 0
+                   WHEN "OrganizationId" IS NULL THEN 1
+                   ELSE 2
+              END
+            LIMIT 1;
             """, p);
         }
 
