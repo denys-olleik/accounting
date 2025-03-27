@@ -31,18 +31,18 @@ namespace Accounting.Service
           .CreateAsync(master, value, type, purpose, organizationId, createdById, tenantId);
     }
 
-    public async Task<int> DeleteAsync(int id, int organizationId)
+    public async Task<int> DeleteAsync(int id)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetSecretManager()
-          .DeleteAsync(id, organizationId);
+          .DeleteAsync(id);
     }
 
-    public async Task<int> DeleteMasterAsync(int organizationId)
+    public async Task<int> DeleteMasterAsync(int tenantId)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetSecretManager()
-          .DeleteMasterAsync(organizationId);
+          .DeleteMasterAsync(tenantId);
     }
 
     public async Task<List<Secret>> GetAllAsync(int organizationId)

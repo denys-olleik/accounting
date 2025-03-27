@@ -6729,32 +6729,30 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> DeleteAsync(int id, int organizationId)
+      public async Task<int> DeleteAsync(int id)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@ID", id);
-        p.Add("@OrganizationId", organizationId);
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           return await con.ExecuteAsync("""
           DELETE FROM "Secret"
           WHERE "SecretID" = @ID
-          AND "OrganizationId" = @OrganizationId
           """, p);
         }
       }
 
-      public async Task<int> DeleteMasterAsync(int organizationId)
+      public async Task<int> DeleteMasterAsync(int tenantId)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@OrganizationId", organizationId);
+        p.Add("@TenantId", tenantId);
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           return await con.ExecuteAsync("""
           DELETE FROM "Secret"
-          WHERE "OrganizationId" = @OrganizationId
+          WHERE "TenantId" = @TenantId
           AND "Master" = TRUE
           """, p);
         }

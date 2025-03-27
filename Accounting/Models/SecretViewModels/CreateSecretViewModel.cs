@@ -17,7 +17,6 @@ namespace Accounting.Models.SecretViewModels
     public bool EncryptValue { get; set; }
     public bool Master { get; set; }
     public ValidationResult? ValidationResult { get; set; }
-    public int OrganizationId { get; set; }
   }
 
   public class CreateSecretViewModelValidator : AbstractValidator<CreateSecretViewModel>
@@ -41,39 +40,9 @@ namespace Accounting.Models.SecretViewModels
 
       RuleFor(x => x.Purpose).MaximumLength(100).WithMessage("Purpose cannot exceed 100 characters.");
 
-      RuleFor(x => x.OrganizationId)
-          .GreaterThan(0)
-          .WithMessage("Request was missing organization id.");
-
-      RuleFor(x => x)
-        .MustAsync(KeyNotExists)
-        .WithMessage("The key already exists.");
-
       RuleFor(x => x)
         .Must(x => !(x.Master && x.EncryptValue))
         .WithMessage("A master key cannot have its value encrypted.");
-
-      RuleFor(x => x)
-        .MustAsync(async (model, cancellationToken) => await MasterKeyExistsIfEncryptValueAsync(model))
-        .WithMessage("A master key must be present if the value is to be encrypted.");
-    }
-
-    private async Task<bool> KeyNotExists(CreateSecretViewModel model, CancellationToken cancellationToken)
-    {
-      if (string.IsNullOrEmpty(model.Type))
-        return true;
-
-      var secret = await _secretService.GetAsync(model.Type, model.OrganizationId);
-      return secret == null;
-    }
-
-    private async Task<bool> MasterKeyExistsIfEncryptValueAsync(CreateSecretViewModel model)
-    {
-      if (!model.EncryptValue)
-        return true;
-
-      var masterSecret = await _secretService.GetMasterAsync(model.OrganizationId);
-      return masterSecret != null;
     }
   }
 }

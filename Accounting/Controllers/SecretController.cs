@@ -47,7 +47,7 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Create(CreateSecretViewModel model)
     {
-      model.OrganizationId = GetOrganizationId();
+      // Secret? existingMaster = await _secretService.GetMasterAsync(GetTenantId());
 
       CreateSecretViewModelValidator validator = new CreateSecretViewModelValidator(_secretService);
       ValidationResult result = await validator.ValidateAsync(model);
@@ -63,7 +63,7 @@ namespace Accounting.Controllers
       {
         if (model.Master)
         {
-          await _secretService.DeleteMasterAsync(GetOrganizationId());
+          await _secretService.DeleteMasterAsync(GetTenantId());
         }
 
         await _secretService.CreateAsync(
@@ -95,7 +95,7 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Delete(DeleteSecretViewModel model)
     {
-      await _secretService.DeleteAsync(model.SecretID, GetOrganizationId());
+      await _secretService.DeleteAsync(model.SecretID);
 
       return RedirectToAction("Secrets");
     }
