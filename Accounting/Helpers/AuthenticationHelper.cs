@@ -7,12 +7,15 @@ namespace Accounting.Helpers
   {
     public static ClaimsPrincipal CreateClaimsPrincipal(
       Business.User user,
+      int tenantId,
       int? organizationId = null,
       string? organizationName = null,
       string? databaseName = null,
       string? databasePassword = null)
     {
       List<Claim> claims = new List<Claim>();
+
+      claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.TenantId, tenantId.ToString()));
 
       if (organizationId.HasValue && !string.IsNullOrEmpty(organizationName))
       {

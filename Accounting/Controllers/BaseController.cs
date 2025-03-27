@@ -26,15 +26,32 @@ namespace Accounting.Controllers
     }
 
     [NonAction]
+    public int GetTenantId()
+    {
+      if (User?.Identity is not { IsAuthenticated: true })
+      {
+        throw new InvalidOperationException("User is not authenticated.");
+      }
+      var identity = (ClaimsIdentity)User.Identity;
+      var tenantIdClaim = identity.FindFirst(CustomClaimTypeConstants.TenantId);
+      if (tenantIdClaim == null)
+      {
+        throw new InvalidOperationException("Tenant identifier claim is not available.");
+      }
+      return Convert.ToInt32(tenantIdClaim.Value);
+    }
+
+    [NonAction]
     public int GetOrganizationId()
     {
-      var identity = User?.Identity as ClaimsIdentity;
-      if (identity == null)
+      if (User?.Identity is not { IsAuthenticated: true })
       {
-        throw new InvalidOperationException("User identity is not available.");
+        throw new InvalidOperationException("User is not authenticated.");
       }
 
-      var organizationIdClaim = identity.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.OrganizationId);
+      var identity = (ClaimsIdentity)User.Identity;
+      var organizationIdClaim = identity.FindFirst(CustomClaimTypeConstants.OrganizationId);
+
       if (organizationIdClaim == null)
       {
         throw new InvalidOperationException("Organization identifier claim is not available.");

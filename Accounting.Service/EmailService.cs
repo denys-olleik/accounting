@@ -16,8 +16,8 @@ namespace Accounting.Service
 
     public async Task SendLoginWithoutPasswordAsync(LoginWithoutPassword loginWithoutPassword)
     {
-      Secret emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email);
-      Secret fromSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply);
+      Secret emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, 1);
+      Secret fromSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, 1);
       
       if (emailSecret == null || fromSecret == null)
       {

@@ -81,7 +81,7 @@ namespace Accounting.Controllers
         && (!string.IsNullOrEmpty(existingUser.Password) && !string.IsNullOrEmpty(model.Password))
         && PasswordStorage.VerifyPassword(model.Password, existingUser.Password))
       {
-        ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, null, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
+        ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, tenantExistingUserBelongsTo.TenantID, null, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
           claimsPrincipal,
@@ -94,8 +94,8 @@ namespace Accounting.Controllers
       }
       else if (existingUser != null && string.IsNullOrEmpty(model.Password))
       {
-        Secret? emailApiKeySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email);
-        Secret? noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply);
+        Secret? emailApiKeySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, 1);
+        Secret? noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, 1);
 
         if (emailApiKeySecret == null || noReplySecret == null)
         {
@@ -153,7 +153,7 @@ namespace Accounting.Controllers
 
       var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
      
-      ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, null, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
+      ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, tenantExistingUserBelongsTo.TenantID, null, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
    
       await HttpContext.SignInAsync(
         CookieAuthenticationDefaults.AuthenticationScheme,
@@ -221,6 +221,7 @@ namespace Accounting.Controllers
         ClaimsPrincipal claimsPrincipal
           = AuthenticationHelper.CreateClaimsPrincipal(
             user,
+            tenant.TenantID,
             userOrganization.Organization.OrganizationID,
             userOrganization.Organization.Name,
             tenant.DatabaseName,

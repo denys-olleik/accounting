@@ -23,11 +23,12 @@ namespace Accounting.Service
         string? type,
         string? purpose,
         int organizationId,
-        int createdById)
+        int createdById,
+        int tenantId)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetSecretManager()
-          .CreateAsync(master, value, type, purpose, organizationId, createdById);
+          .CreateAsync(master, value, type, purpose, organizationId, createdById, tenantId);
     }
 
     public async Task<int> DeleteAsync(int id, int organizationId)
@@ -51,32 +52,25 @@ namespace Accounting.Service
           .GetAllAsync(organizationId);
     }
 
-    public async Task<Secret> GetAsync(int id, int organizationId)
+    public async Task<Secret> GetAsync(int id, int tenantId)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetSecretManager()
-          .GetAsync(id, organizationId);
+          .GetAsync(id, tenantId);
     }
 
-    public async Task<Secret?> GetAsync(string? type, int organizationId)
+    public async Task<Secret> GetAsync(string type, int tenantId, int? organizationId = null)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetSecretManager()
-          .GetAsync(type, organizationId);
+          .GetAsync(type, tenantId, organizationId);
     }
 
-    public async Task<Secret> GetAsync(string type)
+    public async Task<Secret?> GetMasterAsync(int tenantId)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetSecretManager()
-          .GetAsync(type);
-    }
-
-    public async Task<Secret?> GetMasterAsync(int organizationId)
-    {
-      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
-      return await factoryManager.GetSecretManager()
-          .GetMasterAsync(organizationId);
+          .GetMasterAsync(tenantId);
     }
   }
 }

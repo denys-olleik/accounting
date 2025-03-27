@@ -169,7 +169,7 @@ app.Run();
 async Task LoadTenantManagementFromDatabase(WebApplication app)
 {
   var secretService = new SecretService(DatabaseThing.DatabaseConstants.DatabaseName, builder.Configuration["DatabasePassword"]);
-  var tenantManagement = await secretService.GetAsync(Secret.SecretTypeConstants.TenantManagement);
+  var tenantManagement = await secretService.GetAsync(Secret.SecretTypeConstants.TenantManagement, 1);
 
   if (tenantManagement != null)
   {

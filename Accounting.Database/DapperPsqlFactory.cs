@@ -6699,7 +6699,7 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<Secret> CreateAsync(bool master, string? value, string? type, string? purpose, int organizationId, int createdById)
+      public async Task<Secret> CreateAsync(bool master, string? value, string? type, string? purpose, int organizationId, int createdById, int tenantId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Master", master);
@@ -6708,14 +6708,15 @@ namespace Accounting.Database
         p.Add("@Purpose", purpose);
         p.Add("@OrganizationId", organizationId);
         p.Add("@CreatedById", createdById);
+        p.Add("@TenantId", tenantId);
 
         IEnumerable<Secret> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Secret>("""
-            INSERT INTO "Secret" ("Master", "Value", "Type", "Purpose", "OrganizationId", "CreatedById")
-            VALUES (@Master, @Value, @Type, @Purpose, @OrganizationId, @CreatedById)
+            INSERT INTO "Secret" ("Master", "Value", "Type", "Purpose", "OrganizationId", "CreatedById", "TenantId")
+            VALUES (@Master, @Value, @Type, @Purpose, @OrganizationId, @CreatedById, @TenantId)
             RETURNING *;
             """, p);
         }
@@ -6789,11 +6790,11 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<Secret> GetAsync(int secretId, int organizationId)
+      public async Task<Secret> GetAsync(int secretId, int tenantId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@ID", secretId);
-        p.Add("@OrganizationId", organizationId);
+        p.Add("@TenantId", tenantId);
 
         IEnumerable<Secret> result;
 
@@ -6804,28 +6805,30 @@ namespace Accounting.Database
             SELECT * 
             FROM "Secret" 
             WHERE "SecretID" = @ID
-            AND "OrganizationId" = @OrganizationId
+            AND "TenantId" = @TenantId
             """, p);
         }
 
         return result.Single();
       }
 
-      public async Task<Secret?> GetAsync(string type, int? organizationId)
+      public async Task<Secret?> GetAsync(string type, int tenantId, int? organizationId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Type", type);
-        p.Add("@OrganizationId", organizationId, DbType.Int32);
+        p.Add("@TenantId", tenantId);
+
+        if (organizationId.HasValue)
+        {
+          p.Add("@OrganizationId", organizationId);
+        }
 
         IEnumerable<Secret> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Secret>("""
-            SELECT * 
-            FROM "Secret" 
-            WHERE "Type" = @Type
-            AND (@OrganizationId IS NULL OR "OrganizationId" = @OrganizationId)
+            
             """, p);
         }
 
@@ -6851,10 +6854,10 @@ namespace Accounting.Database
         return result.SingleOrDefault();
       }
 
-      public async Task<Secret?> GetMasterAsync(int organizationId)
+      public async Task<Secret?> GetMasterAsync(int tenantId)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@OrganizationId", organizationId);
+        p.Add("@TenantId", tenantId);
 
         IEnumerable<Secret> result;
 
@@ -6863,7 +6866,7 @@ namespace Accounting.Database
           result = await con.QueryAsync<Secret>("""
             SELECT * 
             FROM "Secret" 
-            WHERE "OrganizationId" = @OrganizationId
+            WHERE "TenantId" = @TenantId
             AND "Master" = TRUE
             """, p);
         }

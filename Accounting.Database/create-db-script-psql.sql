@@ -574,27 +574,31 @@ CREATE TABLE "RequestLog"
 
 CREATE EXTENSION pgcrypto;
 
+INSERT INTO "Tenant" ("PublicId", "Email", "DatabaseName", "DatabasePassword") VALUES ('1', 'test@example.com', 'Accounting', 'password');
+
 CREATE TABLE "Secret"
 (
 	"SecretID" SERIAL PRIMARY KEY NOT NULL,
 	"Master" BOOLEAN DEFAULT FALSE,
 	"Value" TEXT NOT NULL,
 	"ValueEncrypted" BOOLEAN NOT NULL DEFAULT FALSE,
-	"Type" VARCHAR(20) CHECK ("Type" IN ('email', 'sms', 'cloud', 'no-reply', 'tenant-management')) NULL UNIQUE,
+	"Type" VARCHAR(20) CHECK ("Type" IN ('email', 'sms', 'cloud', 'no-reply', 'tenant-management')) NULL,
 	"Purpose" VARCHAR(100) NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NULL,
 	"OrganizationId" INT NULL,
+	"TenantId" INT NOT NULL,
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
+	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
+	FOREIGN KEY ("TenantId") REFERENCES "Tenant"("TenantID")
 );
 
-INSERT INTO "Secret" ("Master", "Value", "Type") VALUES -- can be set in appsettings.Development.json, but this is the final fallback
-('false', 'false', 'tenant-management');
+INSERT INTO "Secret" ("Master", "Value", "Type", "TenantId") VALUES -- can be set in appsettings.Development.json, but this is the final fallback
+('false', 'false', 'tenant-management', 1);
 
-CREATE UNIQUE INDEX unique_master_per_organization
-ON "Secret" ("OrganizationId")
+CREATE UNIQUE INDEX unique_master_per_tenant
+ON "Secret" ("TenantId")
 WHERE "Master" = TRUE;
 
-CREATE UNIQUE INDEX unique_type_per_organization
-ON "Secret" ("OrganizationId", "Type");
+CREATE UNIQUE INDEX unique_type_per_tenant
+ON "Secret" ("TenantId", "Type");

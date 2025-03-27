@@ -67,7 +67,7 @@ namespace Accounting.Controllers
         }
 
         await _secretService.CreateAsync(
-          model.Master, model.Value, model.Type, model.Purpose, GetOrganizationId(), GetUserId());
+          model.Master, model.Value, model.Type, model.Purpose, GetOrganizationId(), GetUserId(), GetTenantId());
 
         scope.Complete();
       };
@@ -79,7 +79,7 @@ namespace Accounting.Controllers
     [HttpGet]
     public async Task<IActionResult> Delete(int secretID)
     {
-      Secret secret = await _secretService.GetAsync(secretID, GetOrganizationId());
+      Secret secret = await _secretService.GetAsync(secretID, GetTenantId());
 
       DeleteSecretViewModel model = new DeleteSecretViewModel
       {
