@@ -34,7 +34,7 @@
     </div>
 
     <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
-      <label class="background-color-antiquewhite">Email key (optional)</label>
+      <label class="background-color-antiquewhite">Email key (optional, Sendgrid)</label>
       <input type="text"
              name="EmailKey"
              v-model="emailKey"
@@ -44,7 +44,7 @@
     </div>
 
     <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
-      <label class="background-color-antiquewhite">Cloud key (optional)</label>
+      <label class="background-color-antiquewhite">Cloud key (optional, Digital Ocean)</label>
       <input type="text"
              name="CloudKey"
              v-model="cloudKey"
