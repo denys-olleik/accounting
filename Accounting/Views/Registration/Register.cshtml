@@ -14,6 +14,9 @@
 
 <div id="app">
   <form asp-action="Register" asp-controller="Registration" method="post" class="display-flex flex-direction-column">
+    
+    <input type="hidden" name="EmailKey" :value="emailKey" />
+    <input type="hidden" name="CloudKey" :value="cloudKey" />
     <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
       <label asp-for="Email" class="background-color-antiquewhite"></label>
       <input asp-for="Email" class="font-size-20px font-Roboto-Mono" autocomplete="off"

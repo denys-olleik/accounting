@@ -117,11 +117,17 @@ namespace Accounting.Controllers
       else
       {
         Secret cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, defaultTenant.TenantID);
-        Secret emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, defaultTenant.TenantID);
+        string? emailSecretValue = await GetEmailSecretAsync(model, defaultTenant.TenantID);
 
         if (cloudSecret == null)
         {
           model.ValidationResult.Errors.Add(new ValidationFailure("Shared", "Cloud secret not found."));
+          return View(model);
+        }
+
+        if (string.IsNullOrEmpty(emailSecretValue))
+        {
+          model.ValidationResult.Errors.Add(new ValidationFailure("EmailKey", "Email secret not found or invalid."));
           return View(model);
         }
 
@@ -140,7 +146,7 @@ namespace Accounting.Controllers
           {
             await cloudServices.GetDigitalOceanService().CreateDropletAsync(
               tenant,
-              tenant.DatabasePassword, tenant.Email, null!, null!, null!, false, emailSecret.Value, model.FullyQualifiedDomainName);
+              tenant.DatabasePassword, tenant.Email, null!, null!, null!, false, emailSecretValue, model.FullyQualifiedDomainName);
           }
           catch (ApiException e)
           {
@@ -158,6 +164,17 @@ namespace Accounting.Controllers
       }
 
       return RedirectToAction("RegistrationComplete", "Registration");
+    }
+
+    private async Task<string?> GetEmailSecretAsync(RegisterViewModel model, int defaultTenantId)
+    {
+      if (!string.IsNullOrWhiteSpace(model.EmailKey))
+      {
+        return model.EmailKey;
+      }
+
+      Secret? emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, defaultTenantId);
+      return emailSecret?.Value;
     }
 
     [AllowAnonymous]
