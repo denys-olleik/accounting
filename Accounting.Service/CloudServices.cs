@@ -140,12 +140,12 @@ namespace Accounting.Service
 
         string emailApiKeyScript =
             @"
-sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"") VALUES (false, '${EmailApiKey}', 'email', 1, 1);"" > /var/log/accounting/email-api-key-insert.log 2>&1
+sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"", \""TenantId"") VALUES (false, '${EmailApiKey}', 'email', 1, 1, 1);"" > /var/log/accounting/email-api-key-insert.log 2>&1
 ";
 
         string noReplyScript =
             @"
-sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"") VALUES (false, 'no-reply@${FullyQualifiedDomainName}', 'no-reply', 1, 1);"" > /var/log/accounting/no-reply-insert.log 2>&1
+sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"", \""TenantId"") VALUES (false, 'no-reply@${FullyQualifiedDomainName}', 'no-reply', 1, 1, 1);"" > /var/log/accounting/no-reply-insert.log 2>&1
 ";
 
         string timeCalculationScript =
