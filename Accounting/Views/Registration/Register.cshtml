@@ -34,31 +34,23 @@
     </div>
 
     <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
-      <label class="background-color-antiquewhite">Email Key</label>
+      <label class="background-color-antiquewhite">Email key (optional)</label>
       <input type="text"
              name="EmailKey"
              v-model="emailKey"
              :disabled="useExistingEmailKey"
              @@input="onEmailKeyInput"
              class="font-size-20px font-Roboto-Mono" />
-      <span>
-        <input type="checkbox" v-model="useExistingEmailKey" class="margin-bottom-5px" />
-        <label>Use existing key</label>
-      </span>
     </div>
 
     <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
-      <label class="background-color-antiquewhite">Cloud Key</label>
+      <label class="background-color-antiquewhite">Cloud key (optional)</label>
       <input type="text"
              name="CloudKey"
              v-model="cloudKey"
              :disabled="useExistingCloudKey"
              @@input="onCloudKeyInput"
              class="font-size-20px font-Roboto-Mono" />
-      <span>
-        <input type="checkbox" v-model="useExistingCloudKey" class="margin-bottom-5px" />
-        <label>Use existing key</label>
-      </span>
     </div>
 
     <div class="display-flex">

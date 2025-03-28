@@ -12,6 +12,9 @@ namespace Accounting.Models.RegistrationViewModels
     public bool Shared { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
 
+    public string? EmailKey { get; set; }
+    public string? CloudKey { get; set; }
+
     public ValidationResult ValidationResult { get; set; } = new();
 
     public class RegisterViewModelValidator : AbstractValidator<RegisterViewModel>
