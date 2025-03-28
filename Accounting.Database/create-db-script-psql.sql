@@ -574,8 +574,6 @@ CREATE TABLE "RequestLog"
 
 CREATE EXTENSION pgcrypto;
 
-INSERT INTO "Tenant" ("PublicId", "Email", "DatabaseName", "DatabasePassword") VALUES ('1', 'test@example.com', 'Accounting', 'password');
-
 CREATE TABLE "Secret"
 (
 	"SecretID" SERIAL PRIMARY KEY NOT NULL,
@@ -593,8 +591,8 @@ CREATE TABLE "Secret"
 	FOREIGN KEY ("TenantId") REFERENCES "Tenant"("TenantID")
 );
 
-INSERT INTO "Secret" ("Master", "Value", "Type", "TenantId") VALUES -- can be set in appsettings.Development.json, but this is the final fallback
-('false', 'false', 'tenant-management', 1);
+--INSERT INTO "Secret" ("Master", "Value", "Type", "TenantId") VALUES -- can be set in appsettings.Development.json, but this is the final fallback
+--('false', 'false', 'tenant-management', 1);
 
 CREATE UNIQUE INDEX unique_master_per_tenant
 ON "Secret" ("TenantId")
