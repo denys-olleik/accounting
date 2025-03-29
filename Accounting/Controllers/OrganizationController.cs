@@ -20,6 +20,32 @@ namespace Accounting.Controllers
       _organizationService = new OrganizationService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
+    [HttpGet]
+    [Route("create")]
+    public IActionResult Create()
+    {
+      var model = new CreateOrganizationViewModel();
+      return View(model);
+    }
+
+    [HttpPost]
+    [Route("create")]
+    public async Task<IActionResult> Create(CreateOrganizationViewModel model)
+    {
+      CreateOrganizationViewModel.CreateOrganizationViewModelValidator validator = new ();
+      ValidationResult validationResult = await validator.ValidateAsync(model);
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+      
+      await _organizationService.CreateAsync(model.Name!);
+      
+      return RedirectToAction("ChooseOrganization", "UserAccount");
+    }
+
+
     [Route("update")]
     [HttpGet]
     public async Task<IActionResult> Update()

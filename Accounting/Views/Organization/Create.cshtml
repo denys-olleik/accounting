@@ -1,0 +1,35 @@
+﻿@model Accounting.Models.OrganizationViewModels.CreateOrganizationViewModel
+
+@{
+  ViewData["Title"] = "Create organization - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Create organization";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div class="margin-left-20px flex-1 text-align-right">
+    <a asp-action="Organizations" asp-controller="Organization" class="font-Roboto font-size-16px color-blue">Organizations</a>
+    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
+  </div>
+</div>
+
+<form asp-action="Create" asp-controller="Organization" method="post" class="display-flex flex-direction-column">
+  <div class="display-flex flex-direction-column">
+    <label asp-for="Name" class="background-color-antiquewhite"></label>
+    <input asp-for="Name" class="margin-bottom-5px font-size-20px" />
+  </div>
+  <button type="submit" class="full-width-regular-button">Create organization</button>
+</form>
+
+@if (Model != null && Model.ValidationResult != null)
+{
+  foreach (var error in Model.ValidationResult.Errors)
+  {
+    <div>
+      <small class="color-red">@error.ErrorMessage</small>
+    </div>
+  }
+}
