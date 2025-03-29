@@ -15,7 +15,8 @@ namespace Accounting.Models.OrganizationViewModels
       {
         RuleFor(x => x.Name)
           .Cascade(CascadeMode.Stop)
-          .NotEmpty();
+          .NotEmpty()
+          .WithMessage("'Name' is required.");
       }
     }
   }
