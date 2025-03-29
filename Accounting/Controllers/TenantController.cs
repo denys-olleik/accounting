@@ -637,8 +637,8 @@ namespace Accounting.Controllers
       }
       else
       {
-        Secret cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, GetOrganizationId());
-        Secret emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, GetOrganizationId());
+        Secret cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, 1);
+        Secret emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, 1);
 
         if (cloudSecret == null)
         {
