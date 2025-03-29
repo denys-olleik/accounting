@@ -287,10 +287,15 @@ sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/
 """ + emailApiKeyScript + """
 
 # Create cloud API key
-[ -n "$CloudApiKey" ] && echo "CloudApiKey=$CloudApiKey" | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+
+# Create cloud API key
+# [ -n "$CloudApiKey" ] && echo "CloudApiKey=$CloudApiKey" | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 
 # Create no-reply secret
 """ + noReplyScript + $"""
+
+# Create cloud API key
+""" + cloudApiKeyScript + """
 
 # Build the .NET project
 export DOTNET_CLI_HOME=/root
