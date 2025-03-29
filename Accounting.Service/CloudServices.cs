@@ -118,7 +118,8 @@ namespace Accounting.Service
         string ownerLast,
         bool tenantManagement,
         string emailApiKey,
-        string fullyQualifiedDomainName)
+        string fullyQualifiedDomainName,
+        string cloudApiKey = null)
       {
         Secret? cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, 1);
         if (cloudSecret == null)
@@ -140,6 +141,11 @@ namespace Accounting.Service
         string emailApiKeyScript =
             @"
 sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"", \""TenantId\"") VALUES (false, '${EmailApiKey}', 'email', 1, 1, 1);"" > /var/log/accounting/email-api-key-insert.log 2>&1
+";
+
+        string cloudApiKeyScript =
+            @"
+sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"", \""TenantId\"") VALUES (false, '${CloudApiKey}', 'cloud', 1, 1, 1);"" > /var/log/accounting/cloud-api-key-insert.log 2>&1
 ";
 
         string noReplyScript =
@@ -196,6 +202,7 @@ echo 'OwnerPassword={ownerPassword}' | sudo tee -a /etc/environment >> /var/log/
 echo 'OwnerFirst={ownerFirst}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'OwnerLast={ownerLast}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'EmailApiKey={emailApiKey}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+[ -n '{cloudApiKey}' ] && echo 'CloudApiKey={cloudApiKey}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'FullyQualifiedDomainName={fullyQualifiedDomainName}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'TenantCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'UserCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
@@ -278,6 +285,9 @@ sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/
 
 # Create email API key
 """ + emailApiKeyScript + """
+
+# Create cloud API key
+[ -n "$CloudApiKey" ] && echo "CloudApiKey=$CloudApiKey" | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 
 # Create no-reply secret
 """ + noReplyScript + $"""

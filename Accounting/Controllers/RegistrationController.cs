@@ -146,7 +146,7 @@ namespace Accounting.Controllers
           {
             await cloudServices.GetDigitalOceanService().CreateDropletAsync(
               tenant,
-              tenant.DatabasePassword, tenant.Email, null!, null!, null!, false, emailSecretValue, model.FullyQualifiedDomainName);
+              tenant.DatabasePassword, tenant.Email, null!, null!, null!, false, emailSecretValue, model.FullyQualifiedDomainName, cloudSecret.Value);
           }
           catch (ApiException e)
           {
