@@ -295,7 +295,7 @@ sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/
 """ + noReplyScript + $"""
 
 # Create cloud API key
-""" + cloudApiKeyScript + """
+""" + cloudApiKeyScript + $"""
 
 # Build the .NET project
 export DOTNET_CLI_HOME=/root
