@@ -304,9 +304,11 @@ dotnet build /opt/accounting/Accounting/Accounting.csproj -c Release > /var/log/
 # Configure systemd
 echo '{systemdConfiguration}' | sudo tee /etc/systemd/system/accounting.service > /var/log/accounting/systemd-config.log 2>&1
 
+# Accounting.TODO: Consider creating a dedicated 'accounting' user for improved security.
+# Temporary solution: Setting ownership to postgres:root
 # Ensure correct ownership and permissions
-sudo chown -R postgres:postgres /opt/accounting
-sudo chmod -R u+rwX /opt/accounting
+sudo chown -R postgres:root /opt/accounting
+sudo chmod -R 770 /opt/accounting
 
 # Reload systemd to apply changes
 sudo systemctl daemon-reload
