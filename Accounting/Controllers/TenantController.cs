@@ -870,7 +870,7 @@ namespace Accounting.Controllers
         return BadRequest("No SSH key.");
       }
 
-      string? ipAddress = await cloudServices.GetDigitalOceanService().DiscoverIpAsync(tenant.DropletId, tenant, privateKey, GetOrganizationId());
+      string? ipAddress = await cloudServices.GetDigitalOceanService().DiscoverIpAsync(tenant.DropletId, tenant, privateKey);
 
       if (string.IsNullOrEmpty(ipAddress))
       {

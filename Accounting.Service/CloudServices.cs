@@ -342,14 +342,14 @@ echo "Setup completed successfully" > /var/log/custom-setup.log
         await _tenantService.UpdateSshPrivateAsync(tenant.Identifiable, keygen.ToPrivateKey());
       }
 
-      public async Task<string?> DiscoverIpAsync(long? dropletId, Tenant tenant, string privateKey, int organizationId)
+      public async Task<string?> DiscoverIpAsync(long? dropletId, Tenant tenant, string privateKey)
       {
         if (dropletId == null)
         {
           throw new ArgumentNullException(nameof(dropletId));
         }
 
-        Secret cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, organizationId);
+        Secret cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, 1);
         var client = new DigitalOceanClient(cloudSecret!.Value);
 
         Droplet? droplet;

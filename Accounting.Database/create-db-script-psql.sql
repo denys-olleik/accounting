@@ -591,6 +591,7 @@ CREATE TABLE "Secret"
 	FOREIGN KEY ("TenantId") REFERENCES "Tenant"("TenantID")
 );
 
+--execute below statement to enable tenant management for instances where cloud key is inherited
 --INSERT INTO "Secret" ("Master", "Value", "Type", "TenantId") VALUES -- can be set in appsettings.Development.json, but this is the final fallback
 --('false', 'false', 'tenant-management', 1);
 
