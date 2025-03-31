@@ -13,8 +13,9 @@
 
 <div class="display-flex margin-bottom-5px background-color-antiquewhite">
   <div class="margin-left-20px">
-    <a asp-action="ProvisionTenant" asp-controller="Tenant" class="font-Roboto font-size-16px color-blue">Provision
-      tenant</a>
+    <a asp-action="ProvisionTenant" asp-controller="Tenant" class="font-Roboto font-size-16px color-blue">
+      Provision tenant
+    </a>
   </div>
   <div class="flex-1 text-align-right">
     <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue">Home</a>
@@ -33,38 +34,30 @@
             <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
             <div class="flex-1"></div>
           </div>
-          <div
-            class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
-            <a :href="'/tenant/update/' + tenant.tenantID"
-              class="font-size-16px font-Roboto color-white text-decoration-none">
+            <a :href="'/tenant/update/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
               update
             </a>
             <div class="flex-1"></div>
           </div>
-          <div
-            class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
-            <a :href="'/tenant/users/' + tenant.tenantID"
-              class="font-size-16px font-Roboto color-white text-decoration-none">
+            <a :href="'/tenant/users/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
               users
             </a>
             <div class="flex-1"></div>
           </div>
-          <div
-            class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
-            <a :href="'/tenant/organizations/' + tenant.tenantID"
-              class="font-size-16px font-Roboto color-white text-decoration-none">
+            <a :href="'/tenant/organizations/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
               organizations
             </a>
             <div class="flex-1"></div>
           </div>
-          <div
-            class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
-            <a :href="'/tenant/delete/' + tenant.tenantID"
-              class="font-size-16px font-Roboto color-white text-decoration-none">
+            <a :href="'/tenant/delete/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
               delete
             </a>
             <div class="flex-1"></div>
@@ -76,23 +69,19 @@
             <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">terminal:</a>
             <div class="flex-1"></div>
           </div>
-          <div v-if="!tenant.ipv4"
-            class="display-flex flex-direction-column background-color-lawngreen padding-right-5px padding-left-5px margin-left-2px">
+          <div v-if="!tenant.ipv4" class="display-flex flex-direction-column background-color-lawngreen padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
-            <a href="#" @@click.prevent="discover"
-              class="font-size-16px font-Roboto color-darkslategray text-decoration-none font-weight-500">
+            <a href="#" @@click.prevent="discover" class="font-size-16px font-Roboto color-darkslategray text-decoration-none font-weight-500">
               discover
             </a>
             <div class="flex-1"></div>
           </div>
           <div v-if="tenant.ipv4" class="position-relative display-flex flex-direction-column flex-1 margin-left-2px">
             <span class="blinking-cursor position-absolute color-lawngreen left-2px">█</span>
-            <input type="text" class="font-size-16px width-100 font-Roboto-Mono background-color-black color-white"
-              @@click.prevent="removeBlinkingCursor" @@keydown="handleKeyDown" />
+            <input type="text" class="font-size-16px width-100 font-Roboto-Mono background-color-black color-white" @@click.prevent="removeBlinkingCursor" @@keydown="handleKeyDown" />
           </div>
         </span>
-        <span v-if="isExpanded && tenant.dropletId"
-          class="display-flex background-color-black color-white font-Roboto-Mono">
+        <span v-if="isExpanded && tenant.dropletId" class="display-flex background-color-black color-white font-Roboto-Mono">
           {{ tenant.terminalResponse }}
         </span>
       </div>
@@ -113,8 +102,7 @@
       <tr>
         <th></th>
         <th class="text-align-left">
-          <input type="text" v-model="emailFilter" @@input="filterEmail" placeholder="Email"
-            class="font-size-16px width-100" />
+          <input type="text" v-model="emailFilter" @@input="filterEmail" placeholder="Email" class="font-size-16px width-100" />
         </th>
         <th class="text-align-center" colspan="4">
           or
@@ -136,8 +124,7 @@
           <td class="padding-right-20px">{{ tenant.rowNumber }}</td>
           @* <td class="padding-right-20px">{{ tenant.fullyQualifiedDomainName }}</td> *@
           <td class="padding-right-20px">
-            <tenant-action :tenant="tenant" :is-expanded="tenant.tenantID === expandedTenantId"
-              @@expand="handleTenantExpand(tenant.tenantID)"></tenant-action>
+            <tenant-action :tenant="tenant" :is-expanded="tenant.tenantID === expandedTenantId" @@expand="handleTenantExpand(tenant.tenantID)"></tenant-action>
           </td>
           <td v-if="tenant.databaseName" class="background-color-lightblue text-align-center" colspan="4">
             {{ tenant.databaseName }}
@@ -166,7 +153,7 @@
       <a :href="`/tenant/tenants?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage">next</a>
     </div>
   </div>
-<pre class="color-white">
+  <pre class="color-white">
   <code>
 sudo certbot --nginx -d example.com -d www.example.com -n --agree-tos --email admin@example.com
 or
