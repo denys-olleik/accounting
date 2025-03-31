@@ -79,12 +79,17 @@ namespace Accounting.Models.RegistrationViewModels
         RuleFor(x => x.FullyQualifiedDomainName)
           .NotEmpty()
           .When(x => !x.Shared)
-          .WithMessage("'Fully Qualified Domain Name' is required when 'Shared' is not selected.");
+          .WithMessage("'Fully qualified domain name' is required when 'Shared' is not selected.");
 
         RuleFor(x => x.EmailKey)
           .NotEmpty()
           .When(x => !string.IsNullOrEmpty(x.CloudKey))
           .WithMessage("'Email key' is required when 'Cloud key' is provided.");
+
+        RuleFor(x => x.NoReplyEmailAddress)
+          .NotEmpty()
+          .When(x => !string.IsNullOrEmpty(x.EmailKey))
+          .WithMessage("'No reply email address' is required when 'Email key' is provided.");
       }
     }
   }
