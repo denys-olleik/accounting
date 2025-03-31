@@ -12,6 +12,7 @@ namespace Accounting.Models.RegistrationViewModels
     public bool Shared { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
 
+    public string? NoReplyEmailAddress { get; set; }
     public string? EmailKey { get; set; }
     public string? CloudKey { get; set; }
 
@@ -21,16 +22,21 @@ namespace Accounting.Models.RegistrationViewModels
     {
       public RegisterViewModelValidator()
       {
-        RuleFor(x => x.Email).NotEmpty().EmailAddress().WithMessage("Valid email is required");
-        RuleFor(x => x.Password).NotEmpty().WithMessage("Password is required");
+        RuleFor(x => x.Email).NotEmpty().EmailAddress().WithMessage("Valid 'email' is required");
+        RuleFor(x => x.Password).NotEmpty().WithMessage("'Password' is required");
 
-        RuleFor(x => x.FirstName).NotEmpty().WithMessage("First name is required");
-        RuleFor(x => x.LastName).NotEmpty().WithMessage("Last name is required");
+        RuleFor(x => x.FirstName).NotEmpty().WithMessage("'First name' is required");
+        RuleFor(x => x.LastName).NotEmpty().WithMessage("'Last name' is required");
 
         RuleFor(x => x.FullyQualifiedDomainName)
           .NotEmpty()
           .When(x => !x.Shared)
           .WithMessage("'Fully Qualified Domain Name' is required when 'Shared' is not selected.");
+
+        RuleFor(x => x.EmailKey)
+          .NotEmpty()
+          .When(x => !string.IsNullOrEmpty(x.CloudKey))
+          .WithMessage("'Email key' is required when 'Cloud key' is provided.");
       }
     }
   }
