@@ -8,6 +8,7 @@ namespace Accounting.Helpers
     public static ClaimsPrincipal CreateClaimsPrincipal(
       Business.User user,
       int tenantId,
+      List<string> roles,
       int? organizationId = null,
       string? organizationName = null,
       string? databaseName = null,

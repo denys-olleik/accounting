@@ -12,9 +12,11 @@ using Accounting.Models.TenantViewModels;
 using Accounting.CustomAttributes;
 using Accounting.Common;
 using DigitalOcean.API.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Accounting.Controllers
 {
+  [Authorize(Roles = "tenant-management")]
   [AuthorizeWithOrganizationId]
   [Route("tenant")]
   public class TenantController : BaseController

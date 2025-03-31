@@ -7,10 +7,12 @@ using Accounting.Validators;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Transactions;
+using static Accounting.Business.Secret;
 
 namespace Accounting.Controllers
 {
@@ -81,7 +83,13 @@ namespace Accounting.Controllers
         && (!string.IsNullOrEmpty(existingUser.Password) && !string.IsNullOrEmpty(model.Password))
         && PasswordStorage.VerifyPassword(model.Password, existingUser.Password))
       {
-        ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, tenantExistingUserBelongsTo.TenantID, null, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
+        Secret tenantManagement = await _secretService.GetAsync(SecretTypeConstants.TenantManagement, 1);
+        List<string> roles = new();
+        if (tenantManagement != null)
+        {
+          roles.Add(SecretTypeConstants.TenantManagement);
+        }
+        ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, tenantExistingUserBelongsTo.TenantID, roles, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
           claimsPrincipal,
@@ -152,8 +160,15 @@ namespace Accounting.Controllers
       }
 
       var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
-     
-      ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, tenantExistingUserBelongsTo.TenantID, null, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
+
+      Secret tenantManagement = await _secretService.GetAsync(SecretTypeConstants.TenantManagement, 1);
+      List<string> roles = new();
+      if (tenantManagement != null)
+      {
+        roles.Add(SecretTypeConstants.TenantManagement);
+      }
+
+      ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, tenantExistingUserBelongsTo.TenantID, roles, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
    
       await HttpContext.SignInAsync(
         CookieAuthenticationDefaults.AuthenticationScheme,
@@ -215,6 +230,12 @@ namespace Accounting.Controllers
             model.SelectedTenantId!.Value);
 
       User user = userOrganization.User!;
+      Secret tenantManagement = await _secretService.GetAsync(SecretTypeConstants.TenantManagement, 1);
+      List<string> roles = new();
+      if (tenantManagement != null)
+      {
+        roles.Add(SecretTypeConstants.TenantManagement);
+      }
 
       if (userOrganization != null)
       {
@@ -222,6 +243,7 @@ namespace Accounting.Controllers
           = AuthenticationHelper.CreateClaimsPrincipal(
             user,
             tenant.TenantID,
+            roles,
             userOrganization.Organization.OrganizationID,
             userOrganization.Organization.Name,
             tenant.DatabaseName,
