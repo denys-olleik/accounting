@@ -72,8 +72,7 @@ namespace Accounting.Controllers
         // Example: roles = await _roleService.GetRolesByUserOrganization(userOrganization);
       }
 
-      Secret tenantManagement = await _secretService.GetAsync(SecretTypeConstants.TenantManagement, 1);
-      if (tenantManagement != null && tenantManagement.Value == "true")
+      if (ConfigurationSingleton.Instance.TenantManagement == true)
       {
         roles.Add(SecretTypeConstants.TenantManagement);
       }
