@@ -316,6 +316,9 @@ sudo chmod -R 770 /opt/accounting
 # Reload systemd to apply changes
 sudo systemctl daemon-reload
 
+# Enable the service to start on boot
+sudo systemctl enable accounting.service
+
 # Restart the service
 sudo systemctl restart accounting.service
 
@@ -327,8 +330,7 @@ sudo apt-get install -y certbot python3-certbot-nginx > /var/log/accounting/cert
 # Indicate successful setup
 echo "Setup completed successfully" > /var/log/custom-setup.log
 
-# INSERT INTO "Secret" ("Value", "Type", "TenantId") VALUES ('true', 'tenant-management', 1);
-
+# sudo -i -u postgres psql -d Accounting -c 'INSERT INTO "Secret" ("Value", "Type", "TenantId") VALUES (\'true\', \'tenant-management\', 1);'
 """ + timeCalculationScript;
 
         var dropletRequest = new DigitalOcean.API.Models.Requests.Droplet()
