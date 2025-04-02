@@ -62,6 +62,25 @@ namespace Accounting.Controllers
       return View();
     }
 
+    private async Task<List<string>> GetRolesAsync(UserOrganization userOrganization = null)
+    {
+      List<string> roles = new();
+
+      if (userOrganization != null)
+      {
+        // Logic to read user roles from the database using userOrganization
+        // Example: roles = await _roleService.GetRolesByUserOrganization(userOrganization);
+      }
+
+      Secret tenantManagement = await _secretService.GetAsync(SecretTypeConstants.TenantManagement, 1);
+      if (tenantManagement != null && tenantManagement.Value == "true")
+      {
+        roles.Add(SecretTypeConstants.TenantManagement);
+      }
+
+      return roles;
+    }
+
     [AllowAnonymous]
     [Route("login")]
     [HttpPost]
@@ -82,14 +101,15 @@ namespace Accounting.Controllers
         existingUser != null
         && (!string.IsNullOrEmpty(existingUser.Password) && !string.IsNullOrEmpty(model.Password))
         && PasswordStorage.VerifyPassword(model.Password, existingUser.Password))
-      {
-        Secret tenantManagement = await _secretService.GetAsync(SecretTypeConstants.TenantManagement, 1);
-        List<string> roles = new();
-        if (tenantManagement != null)
-        {
-          roles.Add(SecretTypeConstants.TenantManagement);
-        }
-        ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, tenantExistingUserBelongsTo.TenantID, roles, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
+      { 
+        ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
+          existingUser, 
+          tenantExistingUserBelongsTo.TenantID, 
+          await GetRolesAsync(), 
+          null, 
+          null, 
+          tenantExistingUserBelongsTo.DatabaseName, 
+          tenantExistingUserBelongsTo.DatabasePassword);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
           claimsPrincipal,
@@ -161,14 +181,14 @@ namespace Accounting.Controllers
 
       var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
 
-      Secret tenantManagement = await _secretService.GetAsync(SecretTypeConstants.TenantManagement, 1);
-      List<string> roles = new();
-      if (tenantManagement != null)
-      {
-        roles.Add(SecretTypeConstants.TenantManagement);
-      }
-
-      ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(existingUser, tenantExistingUserBelongsTo.TenantID, roles, null, tenantExistingUserBelongsTo.DatabaseName, tenantExistingUserBelongsTo.DatabasePassword);
+      ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
+        existingUser, 
+        tenantExistingUserBelongsTo.TenantID, 
+        await GetRolesAsync(), 
+        null, 
+        null, 
+        tenantExistingUserBelongsTo.DatabaseName, 
+        tenantExistingUserBelongsTo.DatabasePassword);
    
       await HttpContext.SignInAsync(
         CookieAuthenticationDefaults.AuthenticationScheme,
@@ -239,11 +259,10 @@ namespace Accounting.Controllers
 
       if (userOrganization != null)
       {
-        ClaimsPrincipal claimsPrincipal
-          = AuthenticationHelper.CreateClaimsPrincipal(
+        ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
             user,
             tenant.TenantID,
-            roles,
+            await GetRolesAsync(userOrganization),
             userOrganization.Organization.OrganizationID,
             userOrganization.Organization.Name,
             tenant.DatabaseName,

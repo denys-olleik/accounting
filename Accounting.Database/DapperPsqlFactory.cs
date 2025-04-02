@@ -6815,28 +6815,19 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@Type", type);
         p.Add("@TenantId", tenantId);
-        p.Add("@OrganizationId", organizationId); // Always add it, even if null
+        p.Add("@OrganizationId", organizationId, DbType.Int32); // Always add it, even if null
 
         IEnumerable<Secret> result;
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
+          
           result = await con.QueryAsync<Secret>("""
             SELECT *
             FROM "Secret"
             WHERE "Type" = @Type
               AND "TenantId" = @TenantId
-              AND (
-                @OrganizationId::INT IS NULL
-                OR "OrganizationId" = @OrganizationId
-                OR "OrganizationId" IS NULL
-              )
-            ORDER BY 
-              CASE WHEN "OrganizationId" = @OrganizationId THEN 0
-                   WHEN "OrganizationId" IS NULL THEN 1
-                   ELSE 2
-              END
-            LIMIT 1;
+              AND (@OrganizationId IS NULL OR "OrganizationId" = @OrganizationId)
             """, p);
         }
 

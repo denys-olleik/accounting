@@ -31,6 +31,14 @@ namespace Accounting.Helpers
         claims.Add(new Claim(ClaimTypes.Email, user.Email));
       }
 
+      if (roles.Count > 0)
+      {
+        foreach (string role in roles)
+        {
+          claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+      }
+
       claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.DatabaseName, databaseName!));
       claims.Add(new Claim(Business.Claim.CustomClaimTypeConstants.DatabasePassword, databasePassword!));
 
