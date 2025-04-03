@@ -1,4 +1,6 @@
-﻿namespace Accounting.Common
+﻿using System.Reflection;
+
+namespace Accounting.Common
 {
   public sealed class ConfigurationSingleton
   {
@@ -19,6 +21,27 @@
     private ConfigurationSingleton()
     {
 
+    }
+
+    public static class ConfigurationConstants
+    {
+      public const string TenantManagement = "tenant-management";
+
+      private static readonly List<string> _all = new List<string>();
+
+      static ConfigurationConstants()
+      {
+        var fields = typeof(ConfigurationConstants).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly);
+        foreach (var field in fields)
+        {
+          if (field.FieldType == typeof(string) && field.GetValue(null) is string value)
+          {
+            _all.Add(value);
+          }
+        }
+      }
+
+      public static IReadOnlyList<string> All => _all.AsReadOnly();
     }
   }
 }

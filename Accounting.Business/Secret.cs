@@ -26,7 +26,6 @@ namespace Accounting.Business
       public const string SMS = "sms";
       public const string Cloud = "cloud";
       public const string NoReply = "no-reply";
-      public const string TenantManagement = "tenant-management";
 
       private static readonly List<string> _all = new List<string>();
 

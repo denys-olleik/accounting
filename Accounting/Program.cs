@@ -115,10 +115,8 @@ if (app.Environment.IsDevelopment())
 #region LoadTenantManagementConfiguration
 ConfigurationSingleton.Instance.TenantManagement
     = Convert.ToBoolean(builder.Configuration["TenantManagement"]);
-
-
 if (!ConfigurationSingleton.Instance.TenantManagement)
-  await LoadTenantManagementFromDatabase(app);
+  //await LoadTenantManagementFromDatabase(app);
 #endregion
 
 // Exception handling
@@ -167,14 +165,14 @@ app.MapControllerRoute(
 
 app.Run();
 
-async Task LoadTenantManagementFromDatabase(WebApplication app)
-{
-  var secretService = new SecretService(DatabaseThing.DatabaseConstants.DatabaseName, builder.Configuration["DatabasePassword"]);
-  var tenantManagement = await secretService.GetAsync(Secret.SecretTypeConstants.TenantManagement, 1);
+//async Task LoadTenantManagementFromDatabase(WebApplication app)
+//{
+//  var secretService = new SecretService(DatabaseThing.DatabaseConstants.DatabaseName, builder.Configuration["DatabasePassword"]);
+//  var tenantManagement = await secretService.GetAsync(Secret.SecretTypeConstants.TenantManagement, 1);
 
-  if (tenantManagement != null)
-  {
-    ConfigurationSingleton.Instance.TenantManagement
-        = Convert.ToBoolean(tenantManagement.Value);
-  }
-}
+//  if (tenantManagement != null)
+//  {
+//    ConfigurationSingleton.Instance.TenantManagement
+//        = Convert.ToBoolean(tenantManagement.Value);
+//  }
+//}

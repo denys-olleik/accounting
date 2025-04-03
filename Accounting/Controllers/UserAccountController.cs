@@ -74,7 +74,7 @@ namespace Accounting.Controllers
 
       if (ConfigurationSingleton.Instance.TenantManagement == true)
       {
-        roles.Add(SecretTypeConstants.TenantManagement);
+        roles.Add(ConfigurationSingleton.ConfigurationConstants.TenantManagement);
       }
 
       return roles;
@@ -249,11 +249,11 @@ namespace Accounting.Controllers
             model.SelectedTenantId!.Value);
 
       User user = userOrganization.User!;
-      Secret tenantManagement = await _secretService.GetAsync(SecretTypeConstants.TenantManagement, 1);
+      bool tenantManagement = ConfigurationSingleton.Instance.TenantManagement;
       List<string> roles = new();
-      if (tenantManagement != null)
+      if (tenantManagement)
       {
-        roles.Add(SecretTypeConstants.TenantManagement);
+        roles.Add(ConfigurationSingleton.ConfigurationConstants.TenantManagement);
       }
 
       if (userOrganization != null)

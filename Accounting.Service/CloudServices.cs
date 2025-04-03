@@ -327,7 +327,7 @@ sudo apt-get install -y certbot python3-certbot-nginx > /var/log/accounting/cert
 # Indicate successful setup
 echo "Setup completed successfully" > /var/log/custom-setup.log
 
-# sudo -i -u postgres psql -d Accounting -c 'INSERT INTO "Secret" ("Value", "Type", "TenantId") VALUES (\'true\', \'tenant-management\', 1);'
+# sudo -i -u postgres psql -d Accounting -c 'INSERT INTO "Secret" ("Value", "Type", "TenantId") VALUES (\'true\', \'tenant-management\', 1);' <<< might have to delete this line.
 # sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Secret";' 
 
 # sudo sed -i 's/TenantManagement=True/TenantManagement=false/' /etc/environment
