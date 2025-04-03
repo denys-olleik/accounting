@@ -1,0 +1,8 @@
+﻿@{
+  ViewData["Title"] = "Unauthorized - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Unauthorized";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />

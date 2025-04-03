@@ -9,6 +9,12 @@ namespace Accounting.Controllers
       return View();
     }
 
+    [HttpGet("unauthorized")]
+    public IActionResult Unauthorized()
+    {
+      return View("Unauthorized");
+    }
+
     [Route("careers")]
     public IActionResult Careers()
     {

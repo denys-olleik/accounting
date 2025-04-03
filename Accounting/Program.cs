@@ -29,6 +29,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.SlidingExpiration = true;
     options.EventsType = typeof(CustomCookieAuthenticationEventsHandler);
     options.LoginPath = new PathString("/user-account/login");
+    options.AccessDeniedPath = new PathString("/unauthorized");
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
   });
 
