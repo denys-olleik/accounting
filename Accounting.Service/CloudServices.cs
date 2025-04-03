@@ -141,19 +141,16 @@ namespace Accounting.Service
         string emailApiKeyScript =
             @"
 sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"", \""TenantId\"") VALUES (false, '${EmailApiKey}', 'email', 1, 1, 1);"" > /var/log/accounting/email-api-key-insert.log 2>&1
-# sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM ""Secret"";'
 ";
 
         string cloudApiKeyScript =
             @"
 sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"", \""TenantId\"") VALUES (false, '${CloudApiKey}', 'cloud', 1, 1, 1);"" > /var/log/accounting/cloud-api-key-insert.log 2>&1
-# sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM ""Secret"";'
 ";
 
         string noReplyScript =
             @"
 sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"", \""TenantId\"") VALUES (false, 'no-reply@${FullyQualifiedDomainName}', 'no-reply', 1, 1, 1);"" > /var/log/accounting/no-reply-insert.log 2>&1
-# sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM ""Secret"";'
 ";
 
         string timeCalculationScript =
@@ -331,6 +328,10 @@ sudo apt-get install -y certbot python3-certbot-nginx > /var/log/accounting/cert
 echo "Setup completed successfully" > /var/log/custom-setup.log
 
 # sudo -i -u postgres psql -d Accounting -c 'INSERT INTO "Secret" ("Value", "Type", "TenantId") VALUES (\'true\', \'tenant-management\', 1);'
+# sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Secret";' 
+
+# sudo sed -i 's/TenantManagement=True/TenantManagement=false/' /etc/environment
+# sudo sed -i 's/TenantManagement=false/TenantManagement=True/' /etc/environment
 """ + timeCalculationScript;
 
         var dropletRequest = new DigitalOcean.API.Models.Requests.Droplet()
