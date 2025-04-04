@@ -37,14 +37,6 @@
   <div class="background-color-wheat padding-sides-10px font-Oswald">
     <div class="font-size-20px">How to use</div>
     <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
-      @* <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
-        <tr>
-          <th class="text-align-left width-1px padding-right-20px">#</th>
-          <th class="text-align-left width-1px padding-right-20px">Vendor</th>
-
-          <th class="text-align-left white-space-nowrap padding-right-20px">Purpose</th>
-        </tr>
-      </thead> *@
       <tbody class="font-Roboto-Mono">
         <tr>
           <td class="padding-right-20px vertical-align-top width-1px">1</td>
@@ -243,6 +235,12 @@
       </li>
       <li>
         <a href="@Url.Action("ShippingAndReceiving", "ShippingAndReceiving")">Shipping and receiving</a>
+      </li>
+      <li>
+        <a href="@Url.Action("Blogs", "Blog")">Blog</a>
+        <ul>
+          <li><a href="@Url.Action("Create", "Blog")">Create post</a></li>
+        </ul>
       </li>
       <li>
         <a href="@Url.Action("Tenants", "Tenant")">Tenants</a>
