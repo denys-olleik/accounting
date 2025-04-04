@@ -13,13 +13,6 @@ namespace Accounting.Models.TenantViewModels
       set { _email = value?.Trim(); }
     }
 
-    private string? _homepageMessage;
-    public string? HomepageMessage
-    {
-      get { return _homepageMessage; }
-      set { _homepageMessage = value?.Trim(); }
-    }
-
     public TenantViewModel? ConflictingTenant { get; set; }
     public ValidationResult? ValidationResult { get; set; }
 

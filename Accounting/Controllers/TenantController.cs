@@ -127,7 +127,6 @@ namespace Accounting.Controllers
       }
 
       await _tenantService.UpdateEmailAsync(tenantId, model.Email!);
-      await _tenantService.UpdateHomepageMessageAsync(tenantId, model.HomepageMessage);
 
       return RedirectToAction("Tenants");
     }
