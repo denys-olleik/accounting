@@ -70,7 +70,7 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
-      var model = new UpdateTenantViewModel
+      var model = new UpdateTenantEmailViewModel
       {
         TenantId = tenant.TenantID,
         Email = tenant.Email
@@ -98,7 +98,7 @@ namespace Accounting.Controllers
 
     [Route("update/{tenantId}")]
     [HttpPost]
-    public async Task<IActionResult> UpdateTenant(int tenantId, UpdateTenantViewModel model)
+    public async Task<IActionResult> UpdateTenant(int tenantId, UpdateTenantEmailViewModel model)
     {
       Tenant thisTenant = await _tenantService.GetAsync(tenantId);
       Tenant tenant = await _tenantService.GetByEmailAsync(model.Email);
@@ -110,14 +110,14 @@ namespace Accounting.Controllers
 
       if (tenant != null)
       {
-        model.PotentialTenant = new UpdateTenantViewModel.TenantViewModel
+        model.ConflictingTenant = new UpdateTenantEmailViewModel.TenantViewModel
         {
           TenantId = tenant.TenantID,
           Email = tenant.Email
         };
       }
 
-      var validator = new UpdateTenantViewModel.UpdateTenantViewModelValidator();
+      var validator = new UpdateTenantEmailViewModel.UpdateTenantViewModelValidator();
       ValidationResult validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)

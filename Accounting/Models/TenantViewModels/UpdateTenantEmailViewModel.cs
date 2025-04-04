@@ -3,7 +3,7 @@ using FluentValidation.Results;
 
 namespace Accounting.Models.TenantViewModels
 {
-  public class UpdateTenantViewModel
+  public class UpdateTenantEmailViewModel
   {
     public int TenantId { get; set; }
     private string? _email;
@@ -20,7 +20,7 @@ namespace Accounting.Models.TenantViewModels
       set { _homepageMessage = value?.Trim(); }
     }
 
-    public TenantViewModel? PotentialTenant { get; set; }
+    public TenantViewModel? ConflictingTenant { get; set; }
     public ValidationResult? ValidationResult { get; set; }
 
     public class TenantViewModel
@@ -29,7 +29,7 @@ namespace Accounting.Models.TenantViewModels
       public string? Email { get; set; }
     }
 
-    public class UpdateTenantViewModelValidator : AbstractValidator<UpdateTenantViewModel>
+    public class UpdateTenantViewModelValidator : AbstractValidator<UpdateTenantEmailViewModel>
     {
       public UpdateTenantViewModelValidator()
       {
@@ -40,9 +40,9 @@ namespace Accounting.Models.TenantViewModels
           .WithMessage("Invalid email format.");
 
         RuleFor(x => x.Email)
-          .Must((model, email) => model.PotentialTenant!.Email != email)
+          .Must((model, email) => model.ConflictingTenant!.Email != email)
           .WithMessage("The email address must be different from the current one.")
-          .When(x => x.PotentialTenant != null);
+          .When(x => x.ConflictingTenant != null);
       }
     }
   }
