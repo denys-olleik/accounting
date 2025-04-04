@@ -12,6 +12,14 @@ namespace Accounting.Models.TenantViewModels
       get { return _email; }
       set { _email = value?.Trim(); }
     }
+
+    private string? _homepageMessage;
+    public string? HomepageMessage
+    {
+      get { return _homepageMessage; }
+      set { _homepageMessage = value?.Trim(); }
+    }
+
     public TenantViewModel? PotentialTenant { get; set; }
     public ValidationResult? ValidationResult { get; set; }
 

@@ -14,6 +14,7 @@ namespace Accounting.Business
     public string? Ipv4 { get; set; }
     public string? SshPublic { get; set; }
     public string? SshPrivate { get; set; }
+    public string? HomepageMessage { get; set; }
     public int? CreatedById { get; set; }
     public DateTime Created { get; set; }
 

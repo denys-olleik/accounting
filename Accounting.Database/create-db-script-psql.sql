@@ -10,6 +10,7 @@
 	"Ipv4" VARCHAR(15) NULL,
 	"SshPublic" TEXT NULL,
 	"SshPrivate" TEXT NULL,
+	"HomepageMessage" TEXT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 

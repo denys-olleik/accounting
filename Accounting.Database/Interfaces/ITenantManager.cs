@@ -30,5 +30,6 @@ namespace Accounting.Database.Interfaces
     Task<bool> TenantExistsAsync(string? databaseName);
     Task<Tenant> GetByEmailAsync(string? email);
     Task<Tenant> GetByDatabaseNameAsync(string databaseName);
+    Task<int> UpdateHomepageMessageAsync(int tenantId, string? homepageMessage);
   }
 }

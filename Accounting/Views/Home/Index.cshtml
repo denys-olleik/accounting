@@ -15,24 +15,155 @@
 
 @if (!User.Identity.IsAuthenticated)
 {
-  <div class="display-flex margin-bottom-5px background-color-wheat padding-15px box-shadow">
-    <p class="font-size-20px text-align-center font-weight-500">The only system capable of managing everything from a laundromat to a cartel, an aircraft carrier, and everything in between, uncontaminated by Silicon Valley 🐂💩.</p>
+  <div class="display-flex margin-bottom-5px background-color-wheat padding-15px">
+    <p class="font-size-20px text-align-center font-weight-500 font-Oswald">The only system capable of managing everything from a laundromat to a cartel, an aircraft carrier, and everything in between, uncontaminated by Silicon Valley 🐂💩.</p>
   </div>
 
-  <div class="display-flex background-color-wheat margin-bottom-5px padding-15px box-shadow font-size-20px font-weight-500">
-    <div class="flex-1">
+  <div class="display-flex background-color-wheat margin-bottom-5px padding-15px font-size-20px font-weight-500">
+    <div class="flex-1 font-Oswald">
       GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
     </div>
   </div>
 
   <div class="display-flex margin-bottom-5px">
-    <div class="flex-1 background-color-A62626 text-align-center box-shadow">
-      <a href="https://github.com/denys-olleik/accounting" class="font-Oswald color-white font-size-40px">source code</a>
+    <div class="flex-1 background-color-A62626 text-align-center">
+      <a href="https://github.com/denys-olleik/accounting" class="font-Oswald color-white font-size-40px">source</a>
     </div>
     <div class="width-5px"></div>
-    <div class="flex-1 background-color-A62626 text-align-center box-shadow">
+    <div class="flex-1 background-color-A62626 text-align-center">
       <a asp-action="Register" asp-controller="Registration" class="font-Oswald color-white font-size-40px">register</a>
     </div>
+  </div>
+  <div class="background-color-wheat padding-sides-10px font-Oswald">
+    <div class="font-size-20px">How to use</div>
+    <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
+      @* <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+        <tr>
+          <th class="text-align-left width-1px padding-right-20px">#</th>
+          <th class="text-align-left width-1px padding-right-20px">Vendor</th>
+
+          <th class="text-align-left white-space-nowrap padding-right-20px">Purpose</th>
+        </tr>
+      </thead> *@
+      <tbody class="font-Roboto-Mono">
+        <tr>
+          <td class="padding-right-20px vertical-align-top width-1px">1</td>
+          <td class="padding-right-20px vertical-align-top white">
+            Create invoice
+          </td>
+        </tr>
+        <tr>
+          <td class="padding-right-20px vertical-align-top width-1px">2</td>
+          <td class="padding-right-20px vertical-align-top white-space-nowrap">
+            Receive payment
+          </td>
+        </tr>
+        <tr>
+          <td class="padding-right-20px vertical-align-top width-1px">3</td>
+          <td class="padding-right-20px vertical-align-top white-space-nowrap">
+            Ask for more features
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="background-color-wheat padding-sides-10px font-Oswald">
+    <div class="font-size-20px">Hosting options</div>
+    <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
+      <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+        <tr>
+          <th class="text-align-left width-1px padding-right-20px">#</th>
+          <th class="text-align-left width-1px padding-right-20px">Option</th>
+          <th class="text-align-left width-1px white-space-nowrap padding-right-20px">SSH</th>
+          <th class="text-align-left width-1px white-space-nowrap padding-right-20px">DNS</th>
+          <th class="text-align-left white-space-nowrap padding-right-20px">Notes</th>
+          <th class="text-align-right white-space-nowrap">Pricing</th>
+        </tr>
+      </thead>
+      <tbody class="font-Roboto-Mono">
+        <tr>
+          <td class="padding-right-20px vertical-align-top">1</td>
+          <td class="padding-right-20px vertical-align-top">
+            Shared
+          </td>
+          <td class="text-align-left padding-right-20px vertical-align-top">no</td>
+          <td class="text-align-left padding-right-20px vertical-align-top">no</td>
+          <td class="text-align-left padding-right-20px">
+            max two organizations
+          </td>
+          <td class="text-align-right vertical-align-top">free</td>
+        </tr>
+        <tr>
+          <td class="padding-right-20px vertical-align-top">2</td>
+          <td class="padding-right-20px vertical-align-top">
+            Dedicated
+          </td>
+          <td class="text-align-left white-space-nowrap padding-right-20px vertical-align-top">no</td>
+          <td class="text-align-left white-space-nowrap padding-right-20px vertical-align-top">yes</td>
+          <td class="text-align-left padding-right-20px vertical-align-top">
+            
+          </td>
+          <td class="text-align-right vertical-align-top">$1,000/year<br /><span class="white-space-nowrap">+ cloud usage</span></td>
+        </tr>
+        <tr>
+          <td class="padding-right-20px vertical-align-top">3</td>
+          <td class="padding-right-20px vertical-align-top">
+            Dedicated (BYOK)
+          </td>
+          <td class="text-align-left white-space-nowrap padding-right-20px vertical-align-top">yes</td>
+          <td class="text-align-left white-space-nowrap padding-right-20px vertical-align-top">yes</td>
+          <td class="text-align-left padding-right-20px vertical-align-top">
+            bring your own keys for 3rd party services, multi-tenancy enabled
+          </td>
+          <td class="text-align-right vertical-align-top">n/a</td>
+        </tr>
+        <tr>
+          <td class="padding-right-20px vertical-align-top">4</td>
+          <td class="padding-right-20px vertical-align-top">
+            localhost
+          </td>
+          <td class="text-align-left white-space-nowrap padding-right-20px vertical-align-top">n/a</td>
+          <td class="text-align-left white-space-nowrap padding-right-20px vertical-align-top">n/a</td>
+          <td class="text-align-left padding-right-20px vertical-align-top">
+            run this application localhost without 3rd party services on your own computer
+          </td>
+          <td class="text-align-right vertical-align-top">n/a</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="background-color-wheat padding-sides-10px font-Oswald">
+    <div class="font-size-20px">3rd party integrations</div>
+    <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
+      <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+        <tr>
+          <th class="text-align-left width-1px padding-right-20px">#</th>
+          <th class="text-align-left width-1px padding-right-20px">Vendor</th>
+
+          <th class="text-align-left white-space-nowrap padding-right-20px">Purpose</th>
+        </tr>
+      </thead>
+      <tbody class="font-Roboto-Mono">
+        <tr>
+          <td class="padding-right-20px">1</td>
+          <td class="padding-right-20px vertical-align-top">
+            SendGrid
+          </td>
+          <td class="text-align-left padding-right-20px">
+            for sending password recovery emails
+          </td>
+        </tr>
+        <tr>
+          <td class="padding-right-20px">2</td>
+          <td class="padding-right-20px vertical-align-top">
+            DigitalOcean
+          </td>
+          <td class="text-align-left padding-right-20px vertical-align-top">
+            for provisioning dedicated instances of this application
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 }
 

@@ -79,6 +79,23 @@ namespace Accounting.Controllers
       return View(model);
     }
 
+    //public class UpdateTenantViewModel
+    //{
+    //  public int TenantId { get; set; }
+    //  private string? _email;
+    //  public string? Email
+    //  {
+    //    get { return _email; }
+    //    set { _email = value?.Trim(); }
+    //  }
+
+    //  private string? _homepageMessage;
+    //  public string? HomepageMessage
+    //  {
+    //    get { return _homepageMessage; }
+    //    set { _homepageMessage = value?.Trim(); }
+    //  }
+
     [Route("update/{tenantId}")]
     [HttpPost]
     public async Task<IActionResult> UpdateTenant(int tenantId, UpdateTenantViewModel model)
@@ -110,6 +127,7 @@ namespace Accounting.Controllers
       }
 
       await _tenantService.UpdateEmailAsync(tenantId, model.Email!);
+      await _tenantService.UpdateHomepageMessageAsync(tenantId, model.HomepageMessage);
 
       return RedirectToAction("Tenants");
     }

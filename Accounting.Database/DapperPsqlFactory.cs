@@ -6673,6 +6673,26 @@ namespace Accounting.Database
 
         return result.SingleOrDefault();
       }
+
+      public async Task<int> UpdateHomepageMessageAsync(int tenantId, string? homepageMessage)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantId", tenantId);
+        p.Add("@HomepageMessage", homepageMessage);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            UPDATE "Tenant" 
+            SET "HomepageMessage" = @HomepageMessage
+            WHERE "TenantID" = @TenantId
+            """, p);
+        }
+
+        return rowsAffected;
+      }
     }
 
     public ISecretManager GetSecretManager()
