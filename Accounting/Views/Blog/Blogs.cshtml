@@ -28,7 +28,7 @@
           padding-left-5px
           margin-left-2px">
           <div class="flex-1"></div>
-          <a href="#" class="font-size-16px font-Roboto color-white text-decoration-none">Option 1</a>
+          <a href="#" class="font-size-16px font-Roboto color-white text-decoration-none">update</a>
           <div class="flex-1"></div>
         </div>
         <div class="display-flex
@@ -38,7 +38,7 @@
           padding-left-5px
           margin-left-2px">
           <div class="flex-1"></div>
-          <a href="#" class="font-size-16px font-Roboto color-white text-decoration-none">Option 2</a>
+          <a href="#" class="font-size-16px font-Roboto color-white text-decoration-none">link</a>
           <div class="flex-1"></div>
         </div>
         <div class="display-flex
@@ -48,7 +48,10 @@
           padding-left-5px
           margin-left-2px">
           <div class="flex-1"></div>
-          <a href="#" class="font-size-16px font-Roboto color-white text-decoration-none">Option 3</a>
+          <a :href="'/blog/delete/' + blog.blogID"
+             class="font-size-16px font-Roboto color-white text-decoration-none">
+            delete
+          </a>
           <div class="flex-1"></div>
         </div>
       </span>
