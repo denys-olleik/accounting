@@ -20,6 +20,33 @@ namespace Accounting.Controllers
         requestContext.DatabasePassword);
     }
 
+    [HttpGet("delete/{blogID}")]
+    public async Task<IActionResult> Delete(int blogID)
+    {
+      Blog blog = await _blogService.GetAsync(blogID);
+
+      if (blog == null)
+      {
+        return NotFound();
+      }
+
+      var deleteBlogViewModel = new DeleteBlogViewModel
+      {
+        BlogID = blog.BlogID,
+        Title = blog.Title,
+        Content = blog.Content
+      };
+
+      return View(deleteBlogViewModel);
+    }
+
+    [HttpPost("delete/{blogID}")]
+    public async Task<IActionResult> Delete(DeleteBlogViewModel model)
+    {
+      await _blogService.DeleteAsync(model.BlogID);
+      return RedirectToAction("Blogs");
+    }
+
     [Route("create")]
     [HttpGet]
     public async Task<IActionResult> Create()

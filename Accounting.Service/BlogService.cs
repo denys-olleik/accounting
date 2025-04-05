@@ -24,6 +24,13 @@ namespace Accounting.Service
       await blogManager.CreateAsync(blog);
     }
 
+    public async Task<int> DeleteAsync(int blogId)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var blogManager = factoryManager.GetBlogManager();
+      return await blogManager.DeleteAsync(blogId);
+    }
+
     public async Task<(List<Blog> blogs, int? nextPage)> GetAllAsync(
       int page, 
       int pageSize)
@@ -32,6 +39,13 @@ namespace Accounting.Service
       var blogManager = factoryManager.GetBlogManager();
       var (blogs, nextPage) = await blogManager.GetAllAsync(page, pageSize);
       return (blogs, nextPage);
+    }
+
+    public async Task<Blog> GetAsync(int blogID)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var blogManager = factoryManager.GetBlogManager();
+      return await blogManager.GetAsync(blogID);
     }
   }
 }

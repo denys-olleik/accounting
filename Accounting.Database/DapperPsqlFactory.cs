@@ -7365,6 +7365,24 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<int> DeleteAsync(int blogId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@BlogID", blogId);
+        
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            DELETE FROM "Blog"
+            WHERE "BlogID" = @BlogID
+            """, p);
+        }
+
+        return rowsAffected;
+      }
+
       public Blog Get(int id)
       {
         throw new NotImplementedException();
@@ -7405,6 +7423,25 @@ namespace Accounting.Database
         }
 
         return (result, nextPage);
+      }
+
+      public async Task<Blog> GetAsync(int blogId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@BlogID", blogId);
+
+        IEnumerable<Blog> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = await con.QueryAsync<Blog>("""
+            SELECT * 
+            FROM "Blog" 
+            WHERE "BlogID" = @BlogID
+            """, p);
+        }
+
+        return result.SingleOrDefault();
       }
 
       public int Update(Blog entity)

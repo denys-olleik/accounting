@@ -1,0 +1,38 @@
+﻿@model Accounting.Models.BlogViewModels.DeleteBlogViewModel
+
+@{
+  ViewData["Title"] = "Delete Blog - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Delete Blog";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="Delete" asp-controller="Blog" method="post"
+      class="display-flex flex-direction-column margin-bottom-5px">
+
+  <input asp-for="BlogID" type="hidden" />
+
+  <div class="display-flex">
+    <div class="display-flex flex-1 flex-direction-column background-color-antiquewhite margin-bottom-5px">
+      <label asp-for="Title">Title</label>
+      <input asp-for="Title" class="font-size-20px" readonly />
+    </div>
+  </div>
+
+  <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
+    <label asp-for="Content">Content</label>
+    <textarea asp-for="Content" class="font-size-20px" readonly rows="5"></textarea>
+  </div>
+
+  <div class="display-flex">
+    <div class="flex-1">
+      <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Index", "Blog")';">Cancel</button>
+    </div>
+    <div class="width-5px"></div>
+    <div class="flex-1">
+      <button type="submit" class="full-width-orange-red-button width-100">Delete</button>
+    </div>
+  </div>
+</form>
