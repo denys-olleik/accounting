@@ -98,6 +98,7 @@ namespace Accounting.Controllers
           BlogID = b.BlogID,
           Title = b.Title,
           Content = b.Content,
+          RowNumber = b.RowNumber
         }).ToList(),
         Page = page,
         NextPage = nextPage,
