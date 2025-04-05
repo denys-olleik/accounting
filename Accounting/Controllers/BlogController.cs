@@ -27,34 +27,8 @@ namespace Accounting.Controllers
       return View();
     }
 
-//    using FluentValidation.Results;
-//using FluentValidation;
-
-//namespace Accounting.Models.BlogViewModels
-//  {
-//    public class CreateBlogViewModel
-//    {
-//      public string? Title { get; set; }
-//      public string? Content { get; set; }
-
-//      public ValidationResult ValidationResult { get; set; } = new();
-
-//      public class CreateBlogViewModelValidator : AbstractValidator<CreateBlogViewModel>
-//      {
-//        public CreateBlogViewModelValidator()
-//        {
-//          RuleFor(x => x.Title)
-//            .NotEmpty().WithMessage("Title is required.");
-
-//          RuleFor(x => x.Content)
-//            .NotEmpty().WithMessage("Content is required.");
-//        }
-//      }
-//    }
-//  }
-
-  [Route("create")]
-    [HttpGet]
+    [Route("create")]
+    [HttpPost]
     public async Task<IActionResult> Create(CreateBlogViewModel createBlogViewModel)
     {
       var validator = new CreateBlogViewModel.CreateBlogViewModelValidator();
@@ -70,6 +44,7 @@ namespace Accounting.Controllers
       {
         Title = createBlogViewModel.Title,
         Content = createBlogViewModel.Content,
+        CreatedById = GetUserId(),
       };
 
       await _blogService.CreateAsync(blog);

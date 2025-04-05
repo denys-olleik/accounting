@@ -7344,14 +7344,15 @@ namespace Accounting.Database
         DynamicParameters p = new DynamicParameters();
         p.Add("@Title", entity.Title);
         p.Add("@Content", entity.Content);
+        p.Add("@CreatedById", entity.CreatedById);
 
         IEnumerable<Blog> result;
         
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<Blog>(""" 
-            INSERT INTO "Blog" ("Title", "Content") 
-            VALUES (@Title, @Content)
+            INSERT INTO "Blog" ("Title", "Content", "CreatedById") 
+            VALUES (@Title, @Content, @CreatedById)
             RETURNING *;
             """, p);
         }
