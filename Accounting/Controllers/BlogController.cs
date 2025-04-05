@@ -2,8 +2,8 @@
 using Accounting.CustomAttributes;
 using Accounting.Models.BlogViewModels;
 using Accounting.Service;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Ganss.Xss;
 
 namespace Accounting.Controllers
 {
@@ -93,13 +93,14 @@ namespace Accounting.Controllers
 
       var markdownPipeline = new Markdig.MarkdownPipelineBuilder().Build();
 
+      var sanitizer = new HtmlSanitizer();
       GetBlogsViewModel getBlogsViewModel = new GetBlogsViewModel
       {
         Blogs = blogs.Select(b => new GetBlogsViewModel.BlogViewModel
         {
           BlogID = b.BlogID,
           Title = b.Title,
-          Content = Markdig.Markdown.ToHtml(b.Content, markdownPipeline),
+          Content = sanitizer.Sanitize(Markdig.Markdown.ToHtml(b.Content, markdownPipeline)),
           RowNumber = b.RowNumber
         }).ToList(),
         Page = page,
