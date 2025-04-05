@@ -10,6 +10,18 @@ namespace Accounting.Controllers
   [Route("blog")]
   public class BlogController : BaseController
   {
+    private readonly BlogService _blogService;
+
+    public BlogController(RequestContext requestContext, BlogService blogService)
+    {
+      _blogService = new BlogService(
+        requestContext.DatabaseName,
+        requestContext.DatabasePassword);
+    }
+
+    [Route("create")]
+    [HttpGet]
+
     [HttpGet]
     [Route("blogs")]
     public IActionResult Blogs(
