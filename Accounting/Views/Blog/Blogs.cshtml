@@ -126,8 +126,8 @@
           this.pageSize = storedPageSize;
         }
         let apiUrl = this.isFiltered ?
-          `/api/b/get-blogs-filtered` :
-          `/api/b/get-blogs?page=${this.page}&pageSize=${this.pageSize}`;
+          `/api/blog/get-blogs-filtered` :
+          `/api/blog/get-blogs?page=${this.page}&pageSize=${this.pageSize}`;
         const queryParams = [];
         if (this.isFiltered) {
           if (this.blogsFilter) {
