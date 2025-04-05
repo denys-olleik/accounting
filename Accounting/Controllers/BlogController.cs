@@ -91,13 +91,15 @@ namespace Accounting.Controllers
     {
       var (blogs, nextPage) = await _blogService.GetAllAsync(page, pageSize);
 
+      var markdownPipeline = new Markdig.MarkdownPipelineBuilder().Build();
+
       GetBlogsViewModel getBlogsViewModel = new GetBlogsViewModel
       {
         Blogs = blogs.Select(b => new GetBlogsViewModel.BlogViewModel
         {
           BlogID = b.BlogID,
           Title = b.Title,
-          Content = b.Content,
+          Content = Markdig.Markdown.ToHtml(b.Content, markdownPipeline),
           RowNumber = b.RowNumber
         }).ToList(),
         Page = page,
