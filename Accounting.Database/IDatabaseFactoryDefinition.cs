@@ -40,5 +40,6 @@ namespace Accounting.Database
     ITenantManager GetTenantManager();
     ISecretManager GetSecretManager();
     ILoginWithoutPasswordManager GetLoginWithoutPasswordManager();
+    IBlogManager GetBlogManager();
   }
 }

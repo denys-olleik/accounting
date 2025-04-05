@@ -7320,6 +7320,50 @@ namespace Accounting.Database
       }
     }
 
+    public IBlogManager GetBlogManager()
+    {
+      return new BlogManager(_connectionString);
+    }
+
+    public class BlogManager : IBlogManager
+    {
+      private readonly string _connectionString;
+      public BlogManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+      public Blog Create(Blog entity)
+      {
+        throw new NotImplementedException();
+      }
+      public Task<Blog> CreateAsync(Blog entity)
+      {
+        throw new NotImplementedException();
+      }
+      public int Delete(int id)
+      {
+        throw new NotImplementedException();
+      }
+      public Blog Get(int id)
+      {
+        throw new NotImplementedException();
+      }
+      public IEnumerable<Blog> GetAll()
+      {
+        throw new NotImplementedException();
+      }
+
+      public async Task<(List<Blog> blogs, int? nextPage)> GetAllAsync(int page, int pageSize)
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Update(Blog entity)
+      {
+        throw new NotImplementedException();
+      }
+    }
+
     public IUserToDoManager GetUserToDoManager()
     {
       return new UserTaskManager(_connectionString);

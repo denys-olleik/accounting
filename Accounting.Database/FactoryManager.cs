@@ -196,5 +196,10 @@ namespace Accounting.Database
     {
       return databaseFactoryDefinition.GetLoginWithoutPasswordManager();
     }
+
+    public IBlogManager GetBlogManager()
+    {
+      return databaseFactoryDefinition.GetBlogManager();
+    }
   }
 }
