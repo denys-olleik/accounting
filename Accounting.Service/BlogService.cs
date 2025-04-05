@@ -17,6 +17,13 @@ namespace Accounting.Service
 
     }
 
+    public async Task CreateAsync(Blog blog)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var blogManager = factoryManager.GetBlogManager();
+      await blogManager.CreateAsync(blog);
+    }
+
     public async Task<(List<Blog> blogs, int? nextPage)> GetAllAsync(
       int page, 
       int pageSize)

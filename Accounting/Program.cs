@@ -71,6 +71,7 @@ builder.Services.AddScoped<TagService>();
 builder.Services.AddScoped<UserTaskService>();
 builder.Services.AddScoped<ToDoService>();
 builder.Services.AddScoped<ToDoTagService>();
+builder.Services.AddScoped<BlogService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 //ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];

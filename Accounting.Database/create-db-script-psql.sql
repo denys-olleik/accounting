@@ -606,9 +606,5 @@ CREATE TABLE "Blog"
 	"Content" TEXT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
-	"OrganizationId" INT NULL,
-	"TenantId" INT NOT NULL,
-	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
-	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
-	FOREIGN KEY ("TenantId") REFERENCES "Tenant"("TenantID")
+	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID")
 );

@@ -2,6 +2,7 @@
 using Accounting.CustomAttributes;
 using Accounting.Models.BlogViewModels;
 using Accounting.Service;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Accounting.Controllers
@@ -21,6 +22,59 @@ namespace Accounting.Controllers
 
     [Route("create")]
     [HttpGet]
+    public async Task<IActionResult> Create()
+    {
+      return View();
+    }
+
+//    using FluentValidation.Results;
+//using FluentValidation;
+
+//namespace Accounting.Models.BlogViewModels
+//  {
+//    public class CreateBlogViewModel
+//    {
+//      public string? Title { get; set; }
+//      public string? Content { get; set; }
+
+//      public ValidationResult ValidationResult { get; set; } = new();
+
+//      public class CreateBlogViewModelValidator : AbstractValidator<CreateBlogViewModel>
+//      {
+//        public CreateBlogViewModelValidator()
+//        {
+//          RuleFor(x => x.Title)
+//            .NotEmpty().WithMessage("Title is required.");
+
+//          RuleFor(x => x.Content)
+//            .NotEmpty().WithMessage("Content is required.");
+//        }
+//      }
+//    }
+//  }
+
+  [Route("create")]
+    [HttpGet]
+    public async Task<IActionResult> Create(CreateBlogViewModel createBlogViewModel)
+    {
+      var validator = new CreateBlogViewModel.CreateBlogViewModelValidator();
+      var validationResult = await validator.ValidateAsync(createBlogViewModel);
+      
+      if (!validationResult.IsValid)
+      {
+        createBlogViewModel.ValidationResult = validationResult;
+        return View(createBlogViewModel);
+      }
+
+      var blog = new Blog
+      {
+        Title = createBlogViewModel.Title,
+        Content = createBlogViewModel.Content,
+      };
+
+      await _blogService.CreateAsync(blog);
+      return RedirectToAction("Blogs");
+    }
 
     [HttpGet]
     [Route("blogs")]
@@ -64,7 +118,7 @@ namespace Accounting.Controllers
 
       GetBlogsViewModel getBlogsViewModel = new GetBlogsViewModel
       {
-        Blogs = blogs.Select(b => new  GetBlogsViewModel.BlogViewModel
+        Blogs = blogs.Select(b => new GetBlogsViewModel.BlogViewModel
         {
           BlogID = b.BlogID,
           Title = b.Title,
