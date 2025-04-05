@@ -13,7 +13,7 @@
 
 <template id="blog-action-template">
   <div class="display-flex padding-top-bottom-2px">
-    <div class="display-flex flex-1">
+    <div class="display-flex flex-direction-column flex-1">
       <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ blog.title }}</a>
       <span v-if="isExpanded" class="display-flex margin-left-2px">
         <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
@@ -71,7 +71,7 @@
   <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
       <tr>
-				<th class="fitwidth"></th>
+        <th class="fitwidth"></th>
         <th>
           <input type="text" v-model="blogsFilter" @@input="fetchBlogs" placeholder="Search"
                  class="font-size-16px width-100" />
@@ -89,11 +89,15 @@
     <tbody class="font-Roboto-Mono">
       <template v-for="blog in blogs" :key="blog.blogID">
         <tr>
-          <td>{{ blog.rowNumber }}</td>
-          <td>{{ blog.title}}</td>
+          <td class="vertical-align-top">{{ blog.rowNumber }}</td>
+          <td>
+            <blog-action :blog="blog"
+                         :is-expanded="expandedBlogId === blog.blogID"
+                         @@expand="handleBlogExpand(blog.blogID)"></blog-action>
+          </td>
         </tr>
         <tr>
-					<td></td>
+          <td></td>
           <td v-html="blog.content"></td>
         </tr>
       </template>
