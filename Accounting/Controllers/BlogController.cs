@@ -4,6 +4,7 @@ using Accounting.Models.BlogViewModels;
 using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
 using Ganss.Xss;
+using Accounting.Common;
 
 namespace Accounting.Controllers
 {
@@ -73,6 +74,12 @@ namespace Accounting.Controllers
         Content = createBlogViewModel.Content,
         CreatedById = GetUserId(),
       };
+
+      if (createBlogViewModel.Public)
+      {
+        blog.PublicId = RandomHelper.GenerateSecureAlphanumericString(10);
+        blog.Slug = blog.PublicId;
+      }
 
       await _blogService.CreateAsync(blog);
       return RedirectToAction("Blogs");
