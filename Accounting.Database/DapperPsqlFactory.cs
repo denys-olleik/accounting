@@ -7345,19 +7345,24 @@ namespace Accounting.Database
         p.Add("@Title", entity.Title);
         p.Add("@Content", entity.Content);
         p.Add("@CreatedById", entity.CreatedById);
+        if (!string.IsNullOrEmpty(entity.PublicId)) p.Add("@PublicId", entity.PublicId);
 
-        IEnumerable<Blog> result;
-        
-        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        string columns = "\"Title\", \"Content\", \"CreatedById\"";
+        string values = "@Title, @Content, @CreatedById";
+
+        if (!string.IsNullOrEmpty(entity.PublicId))
         {
-          result = await con.QueryAsync<Blog>(""" 
-            INSERT INTO "Blog" ("Title", "Content", "CreatedById") 
-            VALUES (@Title, @Content, @CreatedById)
-            RETURNING *;
-            """, p);
+          columns += ", \"PublicId\"";
+          values += ", @PublicId";
         }
 
-        return result.Single();
+        string query = $"INSERT INTO \"Blog\" ({columns}) VALUES ({values}) RETURNING *;";
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          var result = await con.QueryAsync<Blog>(query, p);
+          return result.Single();
+        }
       }
 
       public int Delete(int id)

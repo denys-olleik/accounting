@@ -78,7 +78,6 @@ namespace Accounting.Controllers
       if (createBlogViewModel.Public)
       {
         blog.PublicId = RandomHelper.GenerateSecureAlphanumericString(10);
-        blog.Slug = blog.PublicId;
       }
 
       await _blogService.CreateAsync(blog);
