@@ -132,6 +132,7 @@ namespace Accounting.Controllers
         Blogs = blogs.Select(b => new GetBlogsViewModel.BlogViewModel
         {
           BlogID = b.BlogID,
+          PublicId = b.PublicId,
           Title = b.Title,
           Content = sanitizer.Sanitize(Markdig.Markdown.ToHtml(b.Content, markdownPipeline)),
           RowNumber = b.RowNumber
