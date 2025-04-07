@@ -259,7 +259,7 @@ sudo apt-get install -y postgis > /var/log/accounting/postgis-install.log 2>&1
 
 # Clone repository
 git clone https://github.com/denys-olleik/accounting /opt/accounting > /var/log/accounting/git-clone.log 2>&1
-git config core.fileMode false
+git -C /opt/accounting config core.fileMode false
 
 # Adjust directory permissions and group access
 # Create a new group for accounting
