@@ -11,8 +11,10 @@
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <div>
-  <a href="@Url.Action("View", "Blog", new { id = Model.PublicId })" class="color-white font-size-40px">@Model.Title</a>
-  <div>
+  <div class="background-color-antiquewhite padding-5px-5px-5px-10px margin-bottom-5px">
+    <a href="@Url.Action("View", "Blog", new { id = Model.PublicId })" class="color-333333 font-size-40px">@Model.Title</a>
+  </div>
+  <div class="background-color-antiquewhite color-333333 no-top-margin-for-children font-Roboto-Mono-all-children-elemetns">
     @Html.Raw(Model.ContentHtml)
   </div>
 </div>

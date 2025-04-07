@@ -50,6 +50,13 @@ p {
   margin: 0;
 }
 
+pre {
+  -webkit-box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.9);
+  -moz-box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.9);
+  box-shadow: 10px 10px 5px -3px rgba(0,0,0,0.9);
+  border: 5px solid black;
+}
+
 /*#region Clearfix*/
 .clearfix:after {
   content: ".";
@@ -168,6 +175,10 @@ td.fitwidth, th.fitwidth {
 
 .color-0079C4 {
   color: #0079C4;
+}
+
+.color-333333 {
+  color: #333333;
 }
 
 .background-color-yellow {
@@ -416,6 +427,10 @@ td.fitwidth, th.fitwidth {
   padding-bottom: 10px;
 }
 
+.padding-5px-5px-5px-10px {
+  padding: 5px 5px 5px 10px;
+}
+
 .padding-sides-2px {
   padding-left: 2px;
   padding-right: 2px;
@@ -553,6 +568,10 @@ td.fitwidth, th.fitwidth {
 
 .margin-top-5px {
   margin-top: 5px;
+}
+
+.no-top-margin-for-children > * {
+  margin-top: 0px;
 }
 
 .margin-0 {
@@ -716,6 +735,10 @@ td.fitwidth, th.fitwidth {
 }
 
 .font-Roboto-Mono {
+  font-family: 'font-Roboto-Mono', monospace;
+}
+
+.font-Roboto-Mono-all-children-elemetns code {
   font-family: 'font-Roboto-Mono', monospace;
 }
 
