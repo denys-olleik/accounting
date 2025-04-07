@@ -260,6 +260,20 @@ sudo apt-get install -y postgis > /var/log/accounting/postgis-install.log 2>&1
 # Clone repository
 git clone https://github.com/denys-olleik/accounting /opt/accounting > /var/log/accounting/git-clone.log 2>&1
 
+# Adjust directory permissions and group access
+# Create a new group for accounting
+sudo groupadd accounting
+
+# Add both root and postgres users to the group
+sudo usermod -aG accounting root
+sudo usermod -aG accounting postgres
+
+# Change the group ownership of the directory
+sudo chown -R :accounting /opt/accounting
+
+# Set permissions to allow group access
+sudo chmod -R 775 /opt/accounting
+
 # Create database
 sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
 sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/create-db-script-psql.sql > /var/log/accounting/create-db.log 2>&1
@@ -307,8 +321,8 @@ echo '{systemdConfiguration}' | sudo tee /etc/systemd/system/accounting.service 
 # Accounting.TODO: Consider creating a dedicated 'accounting' user for improved security.
 # Temporary solution: Setting ownership to postgres:root
 # Ensure correct ownership and permissions
-sudo chown -R postgres:root /opt/accounting
-sudo chmod -R 770 /opt/accounting
+# sudo chown -R postgres:root /opt/accounting
+# sudo chmod -R 770 /opt/accounting
 
 # Reload systemd to apply changes
 sudo systemctl daemon-reload
