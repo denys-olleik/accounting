@@ -154,12 +154,13 @@ namespace Accounting.Controllers
 
     [HttpGet("get-blogs")]
     public async Task<IActionResult> GetBlogs(
-  int page = 1,
-  int pageSize = 2)
+      int page = 1,
+      int pageSize = 2)
     {
       var (blogs, nextPage) = await _blogService.GetAllAsync(page, pageSize);
 
-      var markdownPipeline = new Markdig.MarkdownPipelineBuilder().Build();
+      var markdownPipeline = new Markdig.MarkdownPipelineBuilder()
+          .Build();
 
       var sanitizer = new HtmlSanitizer();
       GetBlogsViewModel getBlogsViewModel = new GetBlogsViewModel
@@ -169,7 +170,7 @@ namespace Accounting.Controllers
           BlogID = b.BlogID,
           PublicId = b.PublicId,
           Title = b.Title,
-          Content = sanitizer.Sanitize(Markdig.Markdown.ToHtml(b.Content.Replace("\r\n", "\n").Replace("\n", "<br>"), markdownPipeline)),
+          Content = sanitizer.Sanitize(Markdig.Markdown.ToHtml(b.Content, markdownPipeline)),
           RowNumber = b.RowNumber
         }).ToList(),
         Page = page,
