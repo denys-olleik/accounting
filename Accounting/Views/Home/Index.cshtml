@@ -39,7 +39,11 @@
   @if (!string.IsNullOrEmpty(Model.BlogHtmlSanitizedContent))
   {
     <div class="background-color-wheat padding-sides-10px margin-bottom-5px padding-bottom-5px">
-      <div class="font-size-20px font-Oswald">@Model.Title</div>
+      <div class="display-flex">
+        <div class="flex-1 font-size-20px font-Oswald">@Model.Title</div>
+        <div class="width-5px"></div>
+        <div class="flex-1 font-size-20px font-Oswald text-align-right">@Model.Created?.ToString("MMMM dd yyyy")</div>
+      </div>
       <div class="background-color-antiquewhite font-Roboto-Mono-all-children-elemetns no-top-margin-for-children padding-5px">
         @Html.Raw(Model.BlogHtmlSanitizedContent)
       </div>

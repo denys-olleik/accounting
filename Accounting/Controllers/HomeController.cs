@@ -26,6 +26,7 @@ namespace Accounting.Controllers
       LatestPostViewModel indexHomeViewModel = new LatestPostViewModel
       {
         Title = latestPublicPost?.Title,
+        Created = latestPublicPost?.Created,
         BlogHtmlSanitizedContent = latestPublicPost?.Content != null
           ? new HtmlSanitizer().Sanitize(
               Markdig.Markdown.ToHtml(latestPublicPost.Content, markdownPipeline))
