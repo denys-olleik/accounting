@@ -5,6 +5,7 @@ using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
 using Ganss.Xss;
 using Accounting.Common;
+using Markdig;
 
 namespace Accounting.Controllers
 {
@@ -91,25 +92,25 @@ namespace Accounting.Controllers
 
     [Route("create")]
     [HttpPost]
-    public async Task<IActionResult> Create(CreateBlogViewModel createBlogViewModel)
+    public async Task<IActionResult> Create(CreateBlogViewModel model)
     {
       var validator = new CreateBlogViewModel.CreateBlogViewModelValidator();
-      var validationResult = await validator.ValidateAsync(createBlogViewModel);
+      var validationResult = await validator.ValidateAsync(model);
       
       if (!validationResult.IsValid)
       {
-        createBlogViewModel.ValidationResult = validationResult;
-        return View(createBlogViewModel);
+        model.ValidationResult = validationResult;
+        return View(model);
       }
 
       var blog = new Blog
       {
-        Title = createBlogViewModel.Title,
-        Content = createBlogViewModel.Content,
+        Title = model.Title,
+        Content = model.Content,
         CreatedById = GetUserId(),
       };
 
-      if (createBlogViewModel.Public)
+      if (model.Public)
       {
         blog.PublicId = RandomHelper.GenerateSecureAlphanumericString(10, true);
       }
@@ -153,8 +154,8 @@ namespace Accounting.Controllers
 
     [HttpGet("get-blogs")]
     public async Task<IActionResult> GetBlogs(
-      int page = 1,
-      int pageSize = 2)
+  int page = 1,
+  int pageSize = 2)
     {
       var (blogs, nextPage) = await _blogService.GetAllAsync(page, pageSize);
 
@@ -168,7 +169,7 @@ namespace Accounting.Controllers
           BlogID = b.BlogID,
           PublicId = b.PublicId,
           Title = b.Title,
-          Content = sanitizer.Sanitize(Markdig.Markdown.ToHtml(b.Content, markdownPipeline)),
+          Content = sanitizer.Sanitize(Markdig.Markdown.ToHtml(b.Content.Replace("\r\n", "\n").Replace("\n", "<br>"), markdownPipeline)),
           RowNumber = b.RowNumber
         }).ToList(),
         Page = page,
