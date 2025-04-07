@@ -21,6 +21,37 @@ namespace Accounting.Controllers
         requestContext.DatabasePassword);
     }
 
+    [HttpGet("view/{id}")]
+    public async Task<IActionResult> View(string id)
+    {
+      Blog blog;
+
+      if (int.TryParse(id, out int blogId))
+      {
+        blog = await _blogService.GetAsync(blogId);
+      }
+      else
+      {
+        blog = await _blogService.GetByPublicIdAsync(id);
+      }
+
+      if (blog == null)
+      {
+        return NotFound();
+      }
+
+      var viewBlogViewModel = new ViewBlogViewModel
+      {
+        BlogID = blog.BlogID,
+        PublicId = blog.PublicId,
+        Title = blog.Title,
+        Content = blog.Content
+      };
+
+      return View(viewBlogViewModel);
+    }
+
+
     [HttpGet("delete/{blogID}")]
     public async Task<IActionResult> Delete(int blogID)
     {
@@ -77,7 +108,7 @@ namespace Accounting.Controllers
 
       if (createBlogViewModel.Public)
       {
-        blog.PublicId = RandomHelper.GenerateSecureAlphanumericString(10);
+        blog.PublicId = RandomHelper.GenerateSecureAlphanumericString(10, true);
       }
 
       await _blogService.CreateAsync(blog);

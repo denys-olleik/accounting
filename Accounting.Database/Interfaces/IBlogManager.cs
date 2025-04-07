@@ -7,5 +7,6 @@ namespace Accounting.Database.Interfaces
     Task<int> DeleteAsync(int blogId);
     Task<(List<Blog> blogs, int? nextPage)> GetAllAsync(int page, int pageSize);
     Task<Blog> GetAsync(int blogID);
+    Task<Blog> GetByPublicIdAsync(string publicId);
   }
 }

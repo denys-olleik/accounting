@@ -1,0 +1,18 @@
+﻿@model Accounting.Models.BlogViewModels.ViewBlogViewModel
+
+@{
+  ViewData["Title"] = Model.Title + " | " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = Model.Title;
+}
+
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<div>
+  <a href="@Url.Action("View", "Blog", new { id = Model.PublicId })" class="color-white font-size-40px">@Model.Title</a>
+  <div>
+
+  </div>
+</div>

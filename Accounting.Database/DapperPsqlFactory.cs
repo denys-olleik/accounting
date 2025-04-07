@@ -7449,6 +7449,25 @@ namespace Accounting.Database
         return result.SingleOrDefault();
       }
 
+      public async Task<Blog> GetByPublicIdAsync(string publicId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@PublicId", publicId);
+
+        IEnumerable<Blog> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = await con.QueryAsync<Blog>("""
+            SELECT * 
+            FROM "Blog" 
+            WHERE "PublicId" = @PublicId
+            """, p);
+        }
+
+        return result.SingleOrDefault();
+      }
+
       public int Update(Blog entity)
       {
         throw new NotImplementedException();

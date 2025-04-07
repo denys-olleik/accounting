@@ -47,5 +47,12 @@ namespace Accounting.Service
       var blogManager = factoryManager.GetBlogManager();
       return await blogManager.GetAsync(blogID);
     }
+
+    public async Task<Blog> GetByPublicIdAsync(string publicId)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var blogManager = factoryManager.GetBlogManager();
+      return await blogManager.GetByPublicIdAsync(publicId);
+    }
   }
 }
