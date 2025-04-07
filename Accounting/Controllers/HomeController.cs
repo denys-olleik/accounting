@@ -1,12 +1,37 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Accounting.Business;
+using Accounting.Models.HomeViewModels;
+using Accounting.Service;
+using Ganss.Xss;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Accounting.Controllers
 {
   public class HomeController : BaseController
   {
-    public IActionResult Index()
+    private readonly BlogService _blogService;
+
+    public HomeController(RequestContext requestContext, BlogService blogService)
     {
-      return View();
+      _blogService = new BlogService(
+        requestContext.DatabaseName,
+        requestContext.DatabasePassword);
+    }
+
+    public async Task<IActionResult> Index()
+    {
+      Blog latestPublicPost = await _blogService.GetFirstPublicAsync();
+
+      var markdownPipeline = new Markdig.MarkdownPipelineBuilder().Build();
+
+      LatestPostViewModel indexHomeViewModel = new LatestPostViewModel
+      {
+        Title = latestPublicPost.Title,
+        BlogHtmlSanitizedContent =
+          new HtmlSanitizer().Sanitize(
+            Markdig.Markdown.ToHtml(latestPublicPost.Content, markdownPipeline)),
+      };
+
+      return View(indexHomeViewModel);
     }
 
     [HttpGet("unauthorized")]

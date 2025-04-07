@@ -7468,6 +7468,24 @@ namespace Accounting.Database
         return result.SingleOrDefault();
       }
 
+      public async Task<Blog> GetFirstPublicAsync()
+      {
+        IEnumerable<Blog> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = await con.QueryAsync<Blog>("""
+            SELECT * 
+            FROM "Blog" 
+            WHERE "PublicId" IS NOT NULL
+            ORDER BY "BlogID" DESC
+            LIMIT 1
+            """);
+        }
+
+        return result.SingleOrDefault();
+      }
+
       public int Update(Blog entity)
       {
         throw new NotImplementedException();

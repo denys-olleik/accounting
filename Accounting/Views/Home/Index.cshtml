@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Accounting.Models.HomeViewModels.LatestPostViewModel
+
+@{
   ViewData["Title"] = ConfigurationSingleton.Instance.ApplicationName;
 }
 
@@ -34,6 +36,12 @@
       <a asp-action="Register" asp-controller="Registration" class="font-Oswald color-white font-size-40px">register</a>
     </div>
   </div>
+  <div class="background-color-wheat padding-sides-10px margin-bottom-5px padding-bottom-5px">
+    <div class="font-size-20px font-Oswald">@Model.Title</div>
+    <div class="background-color-antiquewhite font-Roboto-Mono-all-children-elemetns no-top-margin-for-children padding-5px">
+      @Html.Raw(Model.BlogHtmlSanitizedContent)
+    </div>
+  </div>
   <div class="background-color-wheat padding-sides-10px font-Oswald">
     <div class="font-size-20px">How to use</div>
     <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
@@ -52,6 +60,9 @@
         </tr>
       </tbody>
     </table>
+  </div>
+  <div>
+
   </div>
   <div class="background-color-wheat padding-sides-10px font-Oswald">
     <div class="font-size-20px">Hosting options</div>
