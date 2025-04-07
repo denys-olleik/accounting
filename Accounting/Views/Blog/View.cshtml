@@ -13,6 +13,6 @@
 <div>
   <a href="@Url.Action("View", "Blog", new { id = Model.PublicId })" class="color-white font-size-40px">@Model.Title</a>
   <div>
-
+    @Html.Raw(Model.ContentHtml)
   </div>
 </div>

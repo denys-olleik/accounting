@@ -40,12 +40,15 @@ namespace Accounting.Controllers
         return NotFound();
       }
 
+      var markdownPipeline = new Markdig.MarkdownPipelineBuilder().Build();
+
       var viewBlogViewModel = new ViewBlogViewModel
       {
         BlogID = blog.BlogID,
         PublicId = blog.PublicId,
         Title = blog.Title,
-        Content = blog.Content
+        Content = blog.Content,
+        ContentHtml = new HtmlSanitizer().Sanitize(Markdig.Markdown.ToHtml(blog.Content, markdownPipeline))
       };
 
       return View(viewBlogViewModel);
