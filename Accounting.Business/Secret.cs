@@ -26,6 +26,7 @@ namespace Accounting.Business
       public const string SMS = "sms";
       public const string Cloud = "cloud";
       public const string NoReply = "no-reply";
+      public const string DropletLimit = "droplet-limit";
 
       private static readonly List<string> _all = new List<string>();
 
