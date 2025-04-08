@@ -119,7 +119,8 @@ namespace Accounting.Service
         bool tenantManagement,
         string emailApiKey,
         string fullyQualifiedDomainName,
-        string cloudApiKey = null)
+        string cloudApiKey = null,
+        string noReplyEmailAddress = null)
       {
         Secret? cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, 1);
         if (cloudSecret == null)
@@ -150,7 +151,7 @@ sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Mas
 
         string noReplyScript =
             @"
-sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"", \""TenantId\"") VALUES (false, 'no-reply@${FullyQualifiedDomainName}', 'no-reply', 1, 1, 1);"" > /var/log/accounting/no-reply-insert.log 2>&1
+sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Secret\"" (\""Master\"", \""Value\"", \""Type\"", \""CreatedById\"", \""OrganizationId\"", \""TenantId\"") VALUES (false, '${NoReplyEmailAddress}', 'no-reply', 1, 1, 1);"" > /var/log/accounting/no-reply-insert.log 2>&1
 ";
 
         string timeCalculationScript =
@@ -202,6 +203,7 @@ echo 'OwnerPassword={ownerPassword}' | sudo tee -a /etc/environment >> /var/log/
 echo 'OwnerFirst={ownerFirst}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'OwnerLast={ownerLast}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'EmailApiKey={emailApiKey}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
+echo 'NoReplyEmailAddress={noReplyEmailAddress}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 [ -n '{cloudApiKey}' ] && echo 'CloudApiKey={cloudApiKey}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'FullyQualifiedDomainName={fullyQualifiedDomainName}' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
 echo 'TenantCreated=false' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1

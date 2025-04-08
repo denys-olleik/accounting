@@ -7490,6 +7490,27 @@ namespace Accounting.Database
       {
         throw new NotImplementedException();
       }
+
+      public async Task<int> UpdateAsync(Blog blog)
+      {
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("@BlogID", blog.BlogID);
+        parameters.Add("@Title", blog.Title);
+        parameters.Add("@Content", blog.Content);
+        parameters.Add("@PublicId", blog.PublicId);
+
+        using (NpgsqlConnection connection = new NpgsqlConnection(_connectionString))
+        {
+          int rowsAffected = await connection.ExecuteAsync("""
+            UPDATE "Blog" 
+            SET "Title" = @Title,
+            "Content" = @Content, 
+            "PublicId" = @PublicId
+            WHERE "BlogID" = @BlogID
+            """, parameters);
+          return rowsAffected;
+        }
+      }
     }
 
     public IUserToDoManager GetUserToDoManager()

@@ -22,6 +22,55 @@ namespace Accounting.Controllers
         requestContext.DatabasePassword);
     }
 
+    [HttpGet("update/{blogID}")]
+    public async Task<IActionResult> Update(int blogID)
+    {
+      Blog blog = await _blogService.GetAsync(blogID);
+
+      if (blog == null)
+      {
+        return NotFound();
+      }
+
+      var updateBlogViewModel = new UpdateBlogViewModel
+      {
+        BlogID = blog.BlogID,
+        Title = blog.Title,
+        Content = blog.Content,
+        Public = !string.IsNullOrEmpty(blog.PublicId)
+      };
+
+      return View(updateBlogViewModel);
+    }
+
+    [HttpPost("update/{blogID}")]
+    public async Task<IActionResult> Update(UpdateBlogViewModel model)
+    {
+      var validator = new UpdateBlogViewModel.UpdateBlogViewModelValidator();
+      var validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      var blog = new Blog
+      {
+        BlogID = model.BlogID,
+        Title = model.Title,
+        Content = model.Content
+      };
+
+      if (model.Public)
+      {
+        blog.PublicId = RandomHelper.GenerateSecureAlphanumericString(10, true);
+      }
+
+      await _blogService.UpdateAsync(blog);
+      return RedirectToAction("Blogs");
+    }
+
     [HttpGet("view/{id}")]
     public async Task<IActionResult> View(string id)
     {

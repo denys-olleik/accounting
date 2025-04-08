@@ -1,0 +1,29 @@
+﻿@model Accounting.Models.BlogViewModels.UpdateBlogViewModel
+
+@{
+  ViewData["Title"] = "Update post - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+<script src="~/js/vue-3-5-13.js" asp-append-version="true"></script>
+
+@{
+  string headerText = "Update post";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="Update" asp-controller="Blog" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+  <input type="hidden" asp-for="BlogID" />
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="Title" class="background-color-antiquewhite"></label>
+    <input asp-for="Title" class="font-size-20px" maxlength="100" autocomplete="off" />
+  </div>
+  <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
+    <label asp-for="Content" class="background-color-antiquewhite"></label>
+    <textarea asp-for="Content" class="font-size-20px" rows="6"></textarea>
+    <span>
+      <input asp-for="Public" type="checkbox" class="margin-bottom-5px" />
+      <label asp-for="Public">Public</label>
+    </span>
+  </div>
+  <button type="submit" class="full-width-regular-button">Update post</button>
+</form>

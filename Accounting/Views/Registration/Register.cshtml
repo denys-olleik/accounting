@@ -22,10 +22,10 @@
       <input asp-for="Email" class="font-size-20px font-Roboto-Mono" autocomplete="off" tabindex="1" />
       <span>
         <input asp-for="Shared" type="checkbox" class="margin-bottom-5px" v-model="isShared" />
-        <label asp-for="Shared">Shared</label>
+        <label asp-for="Shared">shared</label>
       </span>
     </div>
-    <div class="display-flex flex-direction-column margin-bottom-5px">
+    <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px">
       <label asp-for="FullyQualifiedDomainName" class="background-color-antiquewhite">
         Fully qualified domain name (accounting.example.com). *
       </label>
@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
+    <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
       <label asp-for="NoReplyEmailAddress" class="background-color-antiquewhite">No reply email address</label>
       <input asp-for="NoReplyEmailAddress" type="text" class="font-size-20px font-Roboto-Mono" />
     </div>

@@ -28,6 +28,16 @@
           padding-left-5px
           margin-left-2px">
           <div class="flex-1"></div>
+          <a :href="'/blog/update/' + blog.blogID" class="font-size-16px font-Roboto color-white text-decoration-none">update</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex
+          flex-direction-column
+          background-color-333333
+          padding-right-5px
+          padding-left-5px
+          margin-left-2px">
+          <div class="flex-1"></div>
           <a :href="'/blog/view/' + (blog.publicId || blog.blogID)" class="font-size-16px font-Roboto color-white text-decoration-none">view</a>
           <div class="flex-1"></div>
         </div>

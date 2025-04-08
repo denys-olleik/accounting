@@ -9,5 +9,6 @@ namespace Accounting.Database.Interfaces
     Task<Blog> GetAsync(int blogID);
     Task<Blog> GetByPublicIdAsync(string publicId);
     Task<Blog> GetFirstPublicAsync();
+    Task<int> UpdateAsync(Blog blog);
   }
 }
