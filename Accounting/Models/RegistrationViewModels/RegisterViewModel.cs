@@ -13,6 +13,8 @@ namespace Accounting.Models.RegistrationViewModels
     private string? _noReplyEmailAddress;
     private string? _emailKey;
     private string? _cloudKey;
+    private SecretViewModel? _dropletLimitSecret;
+    private int _currentDropletCount;
 
     public string? Email
     {
@@ -64,17 +66,47 @@ namespace Accounting.Models.RegistrationViewModels
       set => _cloudKey = value?.Trim();
     }
 
+    public SecretViewModel? DropletLimitSecret
+    {
+      get => _dropletLimitSecret;
+      set => _dropletLimitSecret = value;
+    }
+
+    public int CurrentDropletCount
+    {
+      get => _currentDropletCount;
+      set => _currentDropletCount = value;
+    }
+
+    public class SecretViewModel
+    {
+      public string? SecretID { get; set; }
+      public string? Type { get; set; }
+      public string? Value { get; set; }
+    }
+
     public ValidationResult ValidationResult { get; set; } = new();
 
     public class RegisterViewModelValidator : AbstractValidator<RegisterViewModel>
     {
       public RegisterViewModelValidator()
       {
-        RuleFor(x => x.Email).NotEmpty().EmailAddress().WithMessage("Valid 'email' is required");
-        RuleFor(x => x.Password).NotEmpty().WithMessage("'Password' is required");
+        RuleFor(x => x.Email)
+          .NotEmpty()
+          .EmailAddress()
+          .WithMessage("Valid 'email' is required");
 
-        RuleFor(x => x.FirstName).NotEmpty().WithMessage("'First name' is required");
-        RuleFor(x => x.LastName).NotEmpty().WithMessage("'Last name' is required");
+        RuleFor(x => x.Password)
+          .NotEmpty()
+          .WithMessage("'Password' is required");
+
+        RuleFor(x => x.FirstName)
+          .NotEmpty()
+          .WithMessage("'First name' is required");
+
+        RuleFor(x => x.LastName)
+          .NotEmpty()
+          .WithMessage("'Last name' is required");
 
         RuleFor(x => x.FullyQualifiedDomainName)
           .NotEmpty()
@@ -90,6 +122,27 @@ namespace Accounting.Models.RegistrationViewModels
           .NotEmpty()
           .When(x => !string.IsNullOrEmpty(x.EmailKey))
           .WithMessage("'No reply email address' is required when 'Email key' is provided.");
+
+        RuleFor(x => x.DropletLimitSecret)
+          .NotNull()
+          .When(x => !x.Shared)
+          .WithMessage("Droplet limit secret must be set for non-shared instances.");
+
+        RuleFor(x => x.DropletLimitSecret!.Value)
+          .Must(value => int.TryParse(value, out _))
+          .When(x => !x.Shared && x.DropletLimitSecret != null)
+          .WithMessage("Invalid droplet limit value.");
+
+        RuleFor(x => x)
+          .Must(x =>
+          {
+            if (!x.Shared && x.DropletLimitSecret != null && int.TryParse(x.DropletLimitSecret.Value, out var limit))
+            {
+              return x.CurrentDropletCount < limit;
+            }
+            return true;
+          })
+          .WithMessage("Droplet limit reached. Cannot create more non-shared instances.");
       }
     }
   }

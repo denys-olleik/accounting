@@ -6,6 +6,9 @@ using Npgsql;
 using System.Data;
 using System.Text.RegularExpressions;
 using static Dapper.SqlMapper;
+using Renci.SshNet.Security;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Accounting.Database
 {
@@ -6692,6 +6695,22 @@ namespace Accounting.Database
         }
 
         return rowsAffected;
+      }
+
+      public async Task<int> GetCurrentDropletCountAsync()
+      {
+        int numberOfTenantsWithDropletId = 0;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          numberOfTenantsWithDropletId = await con.ExecuteScalarAsync<int>("""
+            SELECT COUNT(*)
+            FROM "Tenant"
+            WHERE "DropletId" IS NOT NULL
+            """);
+        }
+
+        return numberOfTenantsWithDropletId;
       }
     }
 
