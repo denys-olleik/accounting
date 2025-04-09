@@ -148,6 +148,13 @@ namespace Accounting.Controllers
           }
         }
 
+        ValidationResult dedicatedValidationResult = await validator.ValidateAsync(model);
+        if (!dedicatedValidationResult.IsValid)
+        {
+          model.ValidationResult = dedicatedValidationResult;
+          return View(model);
+        }
+
         using (TransactionScope scope = new(TransactionScopeAsyncFlowOption.Enabled))
         {
           tenant = await _tenantService.CreateAsync(new Tenant()
