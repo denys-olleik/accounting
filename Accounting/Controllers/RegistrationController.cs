@@ -50,9 +50,22 @@ namespace Accounting.Controllers
     [Route("register")]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
+      Tenant defaultTenant = await _tenantService.GetByDatabaseNameAsync(DatabaseThing.DatabaseConstants.DatabaseName);
       RegisterViewModelValidator validator = new();
-      ValidationResult validationResult = await validator.ValidateAsync(model);
+      if (!model.Shared)
+      {
+        var dropletLimitSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.DropletLimit, defaultTenant.TenantID);
+        model.DropletLimitSecret = dropletLimitSecret != null ? new SecretViewModel()
+        {
+          SecretID = dropletLimitSecret.SecretID,
+          Type = dropletLimitSecret.Type,
+          Value = dropletLimitSecret.Value
+        } : null;
 
+        model.CurrentDropletCount = await _tenantService.GetCurrentDropletCountAsync();
+      }
+
+      ValidationResult validationResult = await validator.ValidateAsync(model);
       if (!validationResult.IsValid)
       {
         model.ValidationResult = validationResult;
@@ -65,7 +78,6 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      Tenant defaultTenant = await _tenantService.GetByDatabaseNameAsync(DatabaseThing.DatabaseConstants.DatabaseName);
       Tenant tenant;
 
       if (model.Shared)
@@ -116,15 +128,6 @@ namespace Accounting.Controllers
       }
       else
       {
-        var dropletLimitSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.DropletLimit, defaultTenant.TenantID);
-        model.DropletLimitSecret = dropletLimitSecret != null ? new SecretViewModel()
-        {
-          SecretID = dropletLimitSecret.SecretID,
-          Type = dropletLimitSecret.Type,
-          Value = dropletLimitSecret.Value
-        } : null;
-        model.CurrentDropletCount = await _tenantService.GetCurrentDropletCountAsync();
-
         Secret cloudSecret = null;
         string? emailSecretValue = null;
 
@@ -146,13 +149,6 @@ namespace Accounting.Controllers
             model.ValidationResult.Errors.Add(new ValidationFailure("EmailKey", "Email secret not found or invalid."));
             return View(model);
           }
-        }
-
-        ValidationResult dedicatedValidationResult = await validator.ValidateAsync(model);
-        if (!dedicatedValidationResult.IsValid)
-        {
-          model.ValidationResult = dedicatedValidationResult;
-          return View(model);
         }
 
         using (TransactionScope scope = new(TransactionScopeAsyncFlowOption.Enabled))
