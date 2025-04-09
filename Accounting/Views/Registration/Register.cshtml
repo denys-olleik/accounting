@@ -29,25 +29,25 @@
       <label asp-for="FullyQualifiedDomainName" class="background-color-antiquewhite">
         Fully qualified domain name (accounting.example.com). *
       </label>
-      <input asp-for="FullyQualifiedDomainName" class="font-size-20px" />
+      <input asp-for="FullyQualifiedDomainName" autocomplete="off" class="font-size-20px" />
       <div class="background-color-antiquewhite">
         * required if not shared
       </div>
     </div>
 
     <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
-      <label asp-for="NoReplyEmailAddress" class="background-color-antiquewhite">No reply email address</label>
+      <label class="background-color-antiquewhite">Email key (optional, Sendgrid)</label>
+      <input type="text" name="EmailKey" v-model="emailKey" :disabled="useExistingEmailKey" @@input="onEmailKeyInput" autocomplete="off" class="font-size-20px font-Roboto-Mono" />
+    </div>
+
+    <div v-if="!isShared && emailKey" class="display-flex flex-direction-column margin-bottom-5px margin-left-20px background-color-antiquewhite">
+      <label asp-for="NoReplyEmailAddress" class="background-color-antiquewhite">No reply email address (required)</label>
       <input asp-for="NoReplyEmailAddress" type="text" class="font-size-20px font-Roboto-Mono" />
     </div>
 
     <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
-      <label class="background-color-antiquewhite">Email key (optional, Sendgrid)</label>
-      <input type="text" name="EmailKey" v-model="emailKey" :disabled="useExistingEmailKey" @@input="onEmailKeyInput" class="font-size-20px font-Roboto-Mono" />
-    </div>
-
-    <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
       <label class="background-color-antiquewhite">Cloud key (optional, Digital Ocean)</label>
-      <input type="text" name="CloudKey" v-model="cloudKey" :disabled="useExistingCloudKey" @@input="onCloudKeyInput" class="font-size-20px font-Roboto-Mono" />
+      <input type="text" name="CloudKey" v-model="cloudKey" :disabled="useExistingCloudKey" @@input="onCloudKeyInput" autocomplete="off" class="font-size-20px font-Roboto-Mono" />
     </div>
 
     <div class="display-flex">
