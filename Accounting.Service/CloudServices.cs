@@ -1,4 +1,5 @@
 ﻿using Accounting.Business;
+using Accounting.Common;
 using DigitalOcean.API;
 using DigitalOcean.API.Models.Responses;
 using Google.Protobuf.WellKnownTypes;
@@ -93,7 +94,7 @@ namespace Accounting.Service
           throw new ArgumentException("Domain contains invalid characters", nameof(fullyQualifiedDomainName));
         }
 
-        string nginxTemplate = File.ReadAllText("nginx.txt");
+        string nginxTemplate = System.IO.File.ReadAllText("nginx.txt");
         bool isSubdomain = fullyQualifiedDomainName.Count(c => c == '.') > 1;
 
         string serverNameLine;
@@ -167,6 +168,8 @@ echo ""SetupTimeInSeconds=${seconds_to_run_script}"" | sudo tee -a /etc/environm
 sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Tenant\"" (\""PublicId\"", \""Email\"", \""DatabaseName\"", \""DatabasePassword\"") VALUES ('1', '${OwnerEmail}', 'Accounting', '${DatabasePassword}');"" > /var/log/accounting/tenant-insert.log 2>&1
 ";
 
+        ownerPassword = PasswordStorage.CreateHash(ownerPassword);
+
         string createUserRecordScript =
         @"
 # Create user record
@@ -183,7 +186,7 @@ sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""UserOrganization\
 
         string certbotConfig = GetCertbotConfig(fullyQualifiedDomainName, ownerEmail);
 
-        string systemdConfiguration = File.ReadAllText("systemd.txt");
+        string systemdConfiguration = System.IO.File.ReadAllText("systemd.txt");
 
         string setupScript = $"""
 #!/bin/bash
