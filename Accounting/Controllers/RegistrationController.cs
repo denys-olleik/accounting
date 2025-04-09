@@ -116,25 +116,14 @@ namespace Accounting.Controllers
       }
       else
       {
-        Secret dropletLimitSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.DropletLimit, defaultTenant.TenantID);
-        if (dropletLimitSecret == null)
+        var dropletLimitSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.DropletLimit, defaultTenant.TenantID);
+        model.DropletLimitSecret = dropletLimitSecret != null ? new SecretViewModel()
         {
-          model.ValidationResult.Errors.Add(new ValidationFailure("Shared", "Droplet limit secret must be set for non-shared instances."));
-          return View(model);
-        }
-
-        if (!int.TryParse(dropletLimitSecret.Value, out int dropletLimit))
-        {
-          model.ValidationResult.Errors.Add(new ValidationFailure("Shared", "Invalid droplet limit value."));
-          return View(model);
-        }
-
-        int currentDropletCount = await _tenantService.GetCurrentDropletCountAsync();
-        if (currentDropletCount >= dropletLimit)
-        {
-          model.ValidationResult.Errors.Add(new ValidationFailure("Shared", "Droplet limit reached. Cannot create more non-shared instances."));
-          return View(model);
-        }
+          SecretID = dropletLimitSecret.SecretID,
+          Type = dropletLimitSecret.Type,
+          Value = dropletLimitSecret.Value
+        } : null;
+        model.CurrentDropletCount = await _tenantService.GetCurrentDropletCountAsync();
 
         Secret cloudSecret = null;
         string? emailSecretValue = null;

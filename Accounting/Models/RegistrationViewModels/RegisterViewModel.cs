@@ -80,7 +80,7 @@ namespace Accounting.Models.RegistrationViewModels
 
     public class SecretViewModel
     {
-      public string? SecretID { get; set; }
+      public int? SecretID { get; set; }
       public string? Type { get; set; }
       public string? Value { get; set; }
     }
