@@ -167,7 +167,7 @@ namespace Accounting.Controllers
             await cloudServices.GetDigitalOceanService().CreateDropletAsync(
                 tenant,
                 tenant.DatabasePassword, tenant.Email, model.Password, null!, null!, false,
-                model.EmailKey ?? emailSecretValue, model.FullyQualifiedDomainName, model.CloudKey ?? cloudSecret.Value, model.NoReplyEmailAddress);
+                model.EmailKey ?? emailSecretValue, model.FullyQualifiedDomainName, model.CloudKey ?? null, model.NoReplyEmailAddress);
           }
           catch (ApiException e)
           {
