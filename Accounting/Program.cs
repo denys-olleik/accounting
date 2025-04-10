@@ -165,15 +165,3 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-
-//async Task LoadTenantManagementFromDatabase(WebApplication app)
-//{
-//  var secretService = new SecretService(DatabaseThing.DatabaseConstants.DatabaseName, builder.Configuration["DatabasePassword"]);
-//  var tenantManagement = await secretService.GetAsync(Secret.SecretTypeConstants.TenantManagement, 1);
-
-//  if (tenantManagement != null)
-//  {
-//    ConfigurationSingleton.Instance.TenantManagement
-//        = Convert.ToBoolean(tenantManagement.Value);
-//  }
-//}
