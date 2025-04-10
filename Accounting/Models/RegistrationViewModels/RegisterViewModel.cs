@@ -113,10 +113,9 @@ namespace Accounting.Models.RegistrationViewModels
           .When(x => !x.Shared)
           .WithMessage("'Fully qualified domain name' is required when 'Shared' is not selected.");
 
-        RuleFor(x => x.EmailKey)
-          .NotEmpty()
-          .When(x => !string.IsNullOrEmpty(x.CloudKey))
-          .WithMessage("'Email key' is required when 'Cloud key' is provided.");
+        RuleFor(x => x)
+          .Must(x => string.IsNullOrEmpty(x.CloudKey) == string.IsNullOrEmpty(x.EmailKey))
+          .WithMessage("'Cloud key' and 'Email key' must both be provided or both be empty.");
 
         RuleFor(x => x.NoReplyEmailAddress)
           .NotEmpty()
