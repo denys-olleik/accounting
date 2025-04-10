@@ -89,29 +89,56 @@ namespace Accounting.Models.RegistrationViewModels
 
     public class RegisterViewModelValidator : AbstractValidator<RegisterViewModel>
     {
+      private readonly char[] _disallowedCharacters = { ';', '&', '|', '>', '<', '$', '\\', '`', '"', '\'', '/', '%', '*' };
+
+      private bool DoesNotContainDisallowedCharacters(string? input)
+      {
+        if (string.IsNullOrEmpty(input))
+          return true;
+
+        foreach (var ch in _disallowedCharacters)
+        {
+          if (input.Contains(ch))
+          {
+            return false;
+          }
+        }
+        return true;
+      }
+
       public RegisterViewModelValidator()
       {
         RuleFor(x => x.Email)
           .NotEmpty()
           .EmailAddress()
-          .WithMessage("Valid 'email' is required");
+          .WithMessage("Valid 'email' is required")
+          .Must(DoesNotContainDisallowedCharacters)
+          .WithMessage("Email contains disallowed characters.");
 
         RuleFor(x => x.Password)
           .NotEmpty()
-          .WithMessage("'Password' is required");
+          .WithMessage("'Password' is required")
+          .Must(DoesNotContainDisallowedCharacters)
+          .WithMessage("Password contains disallowed characters.");
 
         RuleFor(x => x.FirstName)
           .NotEmpty()
-          .WithMessage("'First name' is required");
+          .WithMessage("'First name' is required")
+          .Must(DoesNotContainDisallowedCharacters)
+          .WithMessage("First name contains disallowed characters.");
 
         RuleFor(x => x.LastName)
           .NotEmpty()
-          .WithMessage("'Last name' is required");
+          .WithMessage("'Last name' is required")
+          .Must(DoesNotContainDisallowedCharacters)
+          .WithMessage("Last name contains disallowed characters.");
 
         RuleFor(x => x.FullyQualifiedDomainName)
           .NotEmpty()
           .When(x => !x.Shared)
-          .WithMessage("'Fully qualified domain name' is required when 'Shared' is not selected.");
+          .WithMessage("'Fully qualified domain name' is required when 'Shared' is not selected.")
+          .Must(DoesNotContainDisallowedCharacters)
+          .WithMessage("Fully qualified domain name contains disallowed characters.");
 
         RuleFor(x => x)
           .Must(x => string.IsNullOrEmpty(x.CloudKey) == string.IsNullOrEmpty(x.EmailKey))
@@ -120,7 +147,17 @@ namespace Accounting.Models.RegistrationViewModels
         RuleFor(x => x.NoReplyEmailAddress)
           .NotEmpty()
           .When(x => !string.IsNullOrEmpty(x.EmailKey))
-          .WithMessage("'No reply email address' is required when 'Email key' is provided.");
+          .WithMessage("'No reply email address' is required when 'Email key' is provided.")
+          .Must(DoesNotContainDisallowedCharacters)
+          .WithMessage("No reply email address contains disallowed characters.");
+
+        RuleFor(x => x.EmailKey)
+          .Must(DoesNotContainDisallowedCharacters)
+          .WithMessage("Email key contains disallowed characters.");
+
+        RuleFor(x => x.CloudKey)
+          .Must(DoesNotContainDisallowedCharacters)
+          .WithMessage("Cloud key contains disallowed characters.");
 
         RuleFor(x => x.DropletLimitSecret)
           .NotNull()
@@ -128,9 +165,9 @@ namespace Accounting.Models.RegistrationViewModels
           .WithMessage("Droplet limit secret must be set for non-shared instances.");
 
         RuleFor(x => x.DropletLimitSecret!.Value)
-          .Must(value => int.TryParse(value, out _))
-          .When(x => !x.Shared && x.DropletLimitSecret != null)
-          .WithMessage("Invalid droplet limit value.");
+           .Must(value => int.TryParse(value, out _))
+           .When(x => !x.Shared && x.DropletLimitSecret != null)
+           .WithMessage("Invalid droplet limit value.");
 
         RuleFor(x => x)
           .Must(x =>
