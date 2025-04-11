@@ -114,7 +114,7 @@ namespace Accounting.Service
         Tenant tenant,
         string databasePassword,
         string ownerEmail,
-        string ownerPassword,
+        string? ownerPassword,
         string ownerFirst,
         string ownerLast,
         bool tenantManagement,
@@ -168,7 +168,7 @@ echo ""SetupTimeInSeconds=${seconds_to_run_script}"" | sudo tee -a /etc/environm
 sudo -i -u postgres psql -d ""Accounting"" -c ""INSERT INTO \""Tenant\"" (\""PublicId\"", \""Email\"", \""DatabaseName\"", \""DatabasePassword\"") VALUES ('1', '${OwnerEmail}', 'Accounting', '${DatabasePassword}');"" > /var/log/accounting/tenant-insert.log 2>&1
 ";
 
-        ownerPassword = PasswordStorage.CreateHash(ownerPassword);
+        ownerPassword = string.IsNullOrEmpty(ownerPassword) ? null : PasswordStorage.CreateHash(ownerPassword);
 
         string createUserRecordScript =
         @"
