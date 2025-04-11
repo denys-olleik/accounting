@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Newtonsoft.Json;
 using static Accounting.Business.Claim;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +73,7 @@ builder.Services.AddScoped<UserTaskService>();
 builder.Services.AddScoped<ToDoService>();
 builder.Services.AddScoped<ToDoTagService>();
 builder.Services.AddScoped<BlogService>();
+builder.Services.AddScoped<RequestLogService>();
 
 ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
 //ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
@@ -159,6 +161,39 @@ app.Use(async (context, next) =>
 });
 
 app.UseMiddleware<UpdateOrganizationNameClaimMiddleware>();
+
+app.Use(async (context, next) =>
+{
+  var logService = context.RequestServices.GetRequiredService<RequestLogService>();
+  var sw = Stopwatch.StartNew();
+  var originalBodyStream = context.Response.Body;
+
+  using var responseBody = new MemoryStream();
+  context.Response.Body = responseBody;
+
+  await next();
+
+  sw.Stop();
+
+  context.Response.Body.Seek(0, SeekOrigin.Begin);
+  var responseLength = context.Response.Body.Length;
+  context.Response.Body.Seek(0, SeekOrigin.Begin);
+  await responseBody.CopyToAsync(originalBodyStream);
+
+  var log = new RequestLog
+  {
+    RemoteIp = context.Connection.RemoteIpAddress?.ToString(),
+    CountryCode = "", // Use geo service if desired
+    Referer = context.Request.Headers["Referer"].ToString(),
+    UserAgent = context.Request.Headers["User-Agent"].ToString(),
+    Path = context.Request.Path,
+    StatusCode = context.Response.StatusCode.ToString(),
+    ResponseLengthBytes = responseLength
+  };
+
+  await logService.CreateAsync(log);
+});
+
 
 app.MapControllerRoute(
     name: "default",
