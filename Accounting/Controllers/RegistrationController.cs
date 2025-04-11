@@ -153,6 +153,8 @@ namespace Accounting.Controllers
 
         using (TransactionScope scope = new(TransactionScopeAsyncFlowOption.Enabled))
         {
+          Secret noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, defaultTenant.TenantID);
+
           tenant = await _tenantService.CreateAsync(new Tenant()
           {
             Email = model.Email,
@@ -168,7 +170,7 @@ namespace Accounting.Controllers
               tenant,
               tenant.DatabasePassword, tenant.Email, model.Password, null!, null!, false,
               model.EmailKey ?? emailSecretValue, model.FullyQualifiedDomainName,
-              string.IsNullOrEmpty(model.CloudKey) ? null : model.CloudKey, model.NoReplyEmailAddress);
+              string.IsNullOrEmpty(model.CloudKey) ? null : model.CloudKey, model.NoReplyEmailAddress ?? noReplySecret?.Value);
           }
           catch (ApiException e)
           {

@@ -10,6 +10,7 @@ namespace Accounting.Models.RegistrationViewModels
     private string? _lastName;
     private string? _password;
     private string? _fullyQualifiedDomainName;
+    private string? _defaultNoReplyEmailAddress;
     private string? _noReplyEmailAddress;
     private string? _emailKey;
     private string? _cloudKey;
@@ -40,12 +41,16 @@ namespace Accounting.Models.RegistrationViewModels
       set => _password = value?.Trim();
     }
 
-    public bool Shared { get; set; }
-
     public string? FullyQualifiedDomainName
     {
       get => _fullyQualifiedDomainName;
       set => _fullyQualifiedDomainName = value?.Trim();
+    }
+
+    public string? DefaultNoReplyEmailAddress
+    {
+      get => _defaultNoReplyEmailAddress;
+      set => _defaultNoReplyEmailAddress = value?.Trim();
     }
 
     public string? NoReplyEmailAddress
@@ -77,6 +82,8 @@ namespace Accounting.Models.RegistrationViewModels
       get => _currentDropletCount;
       set => _currentDropletCount = value;
     }
+
+    public bool Shared { get; set; }
 
     public class SecretViewModel
     {
@@ -151,6 +158,15 @@ namespace Accounting.Models.RegistrationViewModels
           .Must(DoesNotContainDisallowedCharacters)
           .WithMessage("No reply email address contains disallowed characters.");
 
+        RuleFor(x => x.DefaultNoReplyEmailAddress)
+          .NotEmpty()
+          .When(x => string.IsNullOrEmpty(x.NoReplyEmailAddress) && string.IsNullOrEmpty(x.EmailKey))
+          .WithMessage("'Default no reply email address' is required if 'No reply email address' and 'Email key' are not provided.")
+          .EmailAddress()
+          .WithMessage("Valid 'default no reply email address' is required.")
+          .Must(DoesNotContainDisallowedCharacters)
+          .WithMessage("Default no reply email address contains disallowed characters.");
+
         RuleFor(x => x.EmailKey)
           .Must(DoesNotContainDisallowedCharacters)
           .WithMessage("Email key contains disallowed characters.");
@@ -165,9 +181,9 @@ namespace Accounting.Models.RegistrationViewModels
           .WithMessage("Droplet limit secret must be set for non-shared instances.");
 
         RuleFor(x => x.DropletLimitSecret!.Value)
-           .Must(value => int.TryParse(value, out _))
-           .When(x => !x.Shared && x.DropletLimitSecret != null)
-           .WithMessage("Invalid droplet limit value.");
+          .Must(value => int.TryParse(value, out _))
+          .When(x => !x.Shared && x.DropletLimitSecret != null)
+          .WithMessage("Invalid droplet limit value.");
 
         RuleFor(x => x)
           .Must(x =>
