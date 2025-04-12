@@ -158,6 +158,8 @@
 sudo certbot --nginx -d example.com -d www.example.com -n --agree-tos --email admin@example.com
 or
 sudo certbot --nginx -d sub.example.com -n --agree-tos --email admin@example.com
+also...
+sudo git -C /opt/accounting pull > /var/log/accounting/update.log 2>&1 && sudo dotnet publish /opt/accounting/Accounting/Accounting.csproj -c Release >> /var/log/accounting/update.log 2>&1 && sudo systemctl restart accounting.service &
   </code>
 </pre>
 </div>
