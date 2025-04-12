@@ -33,7 +33,7 @@
     <input asp-for="Email" class="font-size-20px" disabled autocomplete="off" readonly="@(Model.UserID != Model.CurrentRequestingUserId)" />
     <div class="display-flex background-color-antiquewhite">
       <div class="flex-1"></div>
-      <a asp-controller="User" asp-action="UpdateEmail" asp-route-id="@Model.UserID">Update email</a>
+      <a asp-action="UpdateEmail" asp-controller="User" asp-route-id="@Model.UserID">update email</a>
     </div>
   </div>
 

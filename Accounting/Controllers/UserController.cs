@@ -34,10 +34,10 @@ namespace Accounting.Controllers
     }
 
     [HttpGet]
-    [Route("update-email/{userid}")]
-    public async Task<IActionResult> UpdateEmail(int userid)
+    [Route("update-email/{id}")]
+    public async Task<IActionResult> UpdateEmail(int id)
     {
-      var user = await _userService.GetAsync(userid);
+      var user = await _userService.GetAsync(id);
       if (user == null) return NotFound();
 
       if (user.UserID != GetUserId())
@@ -56,7 +56,7 @@ namespace Accounting.Controllers
     }
 
     [HttpPost]
-    [Route("update-email/{userid}")]
+    [Route("update-email/{id}")]
     public async Task<IActionResult> UpdateEmail(UpdateEmailViewModel model)
     {
       var user = await _userService.GetAsync(model.UserID);
