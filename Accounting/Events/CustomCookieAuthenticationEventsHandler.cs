@@ -71,6 +71,13 @@ namespace Accounting.Events
         user = existingUser;
       }
 
+      if (user == null || user.Email != email)
+      {
+        context.RejectPrincipal();
+        await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return;
+      }
+
       if (user == null || user.Password != password)
       {
         context.RejectPrincipal();
