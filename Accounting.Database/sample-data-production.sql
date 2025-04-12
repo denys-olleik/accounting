@@ -8,7 +8,7 @@ INSERT INTO "Organization" (
   "Website",
   "TenantId"
 ) VALUES (
-  'Test Organization LLC', 
+  'Example Organization LLC', 
   '123 Greenway Blvd
 Suite 101
 Beverly Hills, CA 90210', 

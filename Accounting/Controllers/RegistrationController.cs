@@ -51,6 +51,10 @@ namespace Accounting.Controllers
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
       Tenant defaultTenant = await _tenantService.GetByDatabaseNameAsync(DatabaseThing.DatabaseConstants.DatabaseName);
+      Secret noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, defaultTenant.TenantID);
+      
+      model.DefaultNoReplyEmailAddress = noReplySecret?.Value;
+
       RegisterViewModelValidator validator = new();
       if (!model.Shared)
       {
@@ -153,8 +157,6 @@ namespace Accounting.Controllers
 
         using (TransactionScope scope = new(TransactionScopeAsyncFlowOption.Enabled))
         {
-          Secret noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, defaultTenant.TenantID);
-
           tenant = await _tenantService.CreateAsync(new Tenant()
           {
             Email = model.Email,
