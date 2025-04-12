@@ -377,6 +377,10 @@ td.fitwidth, th.fitwidth {
   border-bottom: 1px solid lightgray;
 }
 
+.letter-spacing-10px {
+  letter-spacing: 10px;
+}
+
 .padding-0px {
   padding: 0px;
 }
