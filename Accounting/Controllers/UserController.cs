@@ -57,9 +57,9 @@ namespace Accounting.Controllers
 
     [HttpPost]
     [Route("update-email/{id}")]
-    public async Task<IActionResult> UpdateEmail(UpdateEmailViewModel model)
+    public async Task<IActionResult> UpdateEmail(UpdateEmailViewModel model, int id)
     {
-      var user = await _userService.GetAsync(model.UserID);
+      var user = await _userService.GetAsync(id);
       if (user == null) return NotFound();
 
       if (user.UserID != GetUserId())
@@ -86,9 +86,9 @@ namespace Accounting.Controllers
         return View(model);
       }
 
-      await _tenantService.UpdateUserAsync(model.NewEmail, user.FirstName, user.LastName);
+      await _tenantService.UpdateUserEmailAsync(user.Email, model.NewEmail);
 
-      return RedirectToAction("Users");
+      return RedirectToAction("Users", new { page = 1, pageSize = 2 });
     }
 
     [HttpGet]
@@ -169,8 +169,8 @@ namespace Accounting.Controllers
       return RedirectToAction("Users");
     }
 
-    [HttpGet]
     [Route("users")]
+    [HttpGet]
     public IActionResult Users(int page = 1, int pageSize = 2)
     {
       var refererHeader = Request.Headers["Referer"];

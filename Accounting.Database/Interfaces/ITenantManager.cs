@@ -32,5 +32,6 @@ namespace Accounting.Database.Interfaces
     Task<Tenant> GetByDatabaseNameAsync(string databaseName);
     Task<int> UpdateHomepageMessageAsync(int tenantId, string? homepageMessage);
     Task<int> GetCurrentDropletCountAsync();
+    Task<int> UpdateUserEmailAsync(string oldEmail, string newEmail);
   }
 }

@@ -6712,6 +6712,34 @@ namespace Accounting.Database
 
         return numberOfTenantsWithDropletId;
       }
+
+      public async Task<int> UpdateUserEmailAsync(string oldEmail, string newEmail)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@OldEmail", oldEmail);
+        p.Add("@NewEmail", newEmail);
+
+        int rowsAffected = 0;
+
+        List<Tenant> tenants = await GetAllAsync();
+        foreach (var tenant in tenants.Where(t => !t.DropletId.HasValue))
+        {
+          NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
+          {
+            Database = tenant.DatabaseName
+          };
+          using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+          {
+            rowsAffected += await con.ExecuteAsync("""
+              UPDATE "User"
+              SET "Email" = @NewEmail
+              WHERE "Email" = @OldEmail
+              """, p);
+          }
+        }
+
+        return rowsAffected;
+      }
     }
 
     public ISecretManager GetSecretManager()

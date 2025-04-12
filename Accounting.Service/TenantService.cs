@@ -118,5 +118,11 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetTenantManager().GetCurrentDropletCountAsync();
     }
+
+    public async Task<int> UpdateUserEmailAsync(string oldEmail, string newEmail)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      return await factoryManager.GetTenantManager().UpdateUserEmailAsync(oldEmail, newEmail);
+    }
   }
 }
