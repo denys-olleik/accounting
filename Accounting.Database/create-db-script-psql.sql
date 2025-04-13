@@ -610,3 +610,14 @@ CREATE TABLE "Blog"
 	"CreatedById" INT NOT NULL,
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID")
 );
+
+CREATE TABLE "PlaylistLover"
+(
+	"PlaylistLoverID" SERIAL PRIMARY KEY NOT NULL,
+	"Email" VARCHAR(100) NOT NULL UNIQUE,
+	"Code" VARCHAR(100) NOT NULL,
+	"CodeExpiration" TIMESTAMPTZ NOT NULL,
+	"Gender" BOOLEAN NOT NULL, -- true = male, false = female (for example)
+	"PlaylistJSON" TEXT NOT NULL,
+	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+);
