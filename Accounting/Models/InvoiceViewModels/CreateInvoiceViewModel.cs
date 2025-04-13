@@ -1,4 +1,4 @@
-﻿  using Accounting.Business;
+﻿using Accounting.Business;
 using Accounting.Models.Account;
 using Accounting.Models.AddressViewModels;
 using Accounting.Models.BusinessEntityViewModels;
