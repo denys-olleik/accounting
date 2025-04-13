@@ -1,4 +1,4 @@
-﻿using Accounting.Business;
+﻿  using Accounting.Business;
 using Accounting.Models.Account;
 using Accounting.Models.AddressViewModels;
 using Accounting.Models.BusinessEntityViewModels;
@@ -30,9 +30,7 @@ namespace Accounting.Models.InvoiceViewModels
     public DateTime? InvoiceDate { get; set; }
     public DateTime? DueDate { get; set; }
     public List<AccountViewModel>? DebitAccounts { get; set; }
-    public int? SelectedDebitAccountId { get; set; }
-    public List<AccountViewModel>? CreditAccounts { get; set; }
-    public int? SelectedCreditAccountId { get; set; }
+      public List<AccountViewModel>? CreditAccounts { get; set; }
     public List<InvoiceAttachment>? InvoiceAttachments { get; set; }
     public string? InvoiceAttachmentsJSON { get; set; }
     public string? PaymentInstructions { get; set; }
