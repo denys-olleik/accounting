@@ -51,9 +51,9 @@ namespace Accounting.Controllers
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
       Tenant defaultTenant = await _tenantService.GetByDatabaseNameAsync(DatabaseThing.DatabaseConstants.DatabaseName);
-      Secret noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, defaultTenant.TenantID);
+      Secret defaultNoReplyEmailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, defaultTenant.TenantID);
       
-      model.DefaultNoReplyEmailAddress = noReplySecret?.Value;
+      model.DefaultNoReplyEmailAddress = defaultNoReplyEmailSecret?.Value;
 
       RegisterViewModelValidator validator = new();
       if (!model.Shared)
@@ -172,7 +172,7 @@ namespace Accounting.Controllers
               tenant,
               tenant.DatabasePassword, tenant.Email, model.Password, null!, null!, false,
               model.EmailKey ?? emailSecretValue, model.FullyQualifiedDomainName,
-              string.IsNullOrEmpty(model.CloudKey) ? null : model.CloudKey, model.NoReplyEmailAddress ?? noReplySecret?.Value);
+              string.IsNullOrEmpty(model.CloudKey) ? null : model.CloudKey, model.NoReplyEmailAddress ?? defaultNoReplyEmailSecret?.Value!);
           }
           catch (ApiException e)
           {

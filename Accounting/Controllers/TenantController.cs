@@ -659,6 +659,9 @@ namespace Accounting.Controllers
         Secret cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, 1);
         Secret emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, 1);
 
+        Tenant defaultTenant = await _tenantService.GetByDatabaseNameAsync(DatabaseThing.DatabaseConstants.DatabaseName);
+        Secret noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, defaultTenant.TenantID);
+
         if (cloudSecret == null)
         {
           model.ValidationResult.Errors.Add(new ValidationFailure("Shared", "Cloud secret not found."));
@@ -687,7 +690,8 @@ namespace Accounting.Controllers
               model.EnableTenantManagement, 
               emailSecret.Value, 
               model.FullyQualifiedDomainName, 
-              cloudSecret.Value);
+              cloudSecret.Value,
+              noReplySecret.Value);
           }
           catch (ApiException e)
           {
