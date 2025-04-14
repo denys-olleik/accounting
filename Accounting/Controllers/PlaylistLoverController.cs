@@ -11,11 +11,12 @@ namespace Accounting.Controllers
   public class PlaylistLoverController : BaseController
   {
     private readonly PlaylistLoverService _playlistLoverService;
-    private readonly TrackService trackService;
+    private readonly TrackService _trackService;
 
     public PlaylistLoverController()
     {
       _playlistLoverService = new();
+      _trackService = new();
     }
 
     [HttpGet("process-lover")]
@@ -38,7 +39,7 @@ namespace Accounting.Controllers
 
       List<Track> tracks = await _playlistLoverService.ExtractTracksFromSpotifyPlaylist(lover.Email, lover.Address);
 
-
+      List<Track> track = await _trackService.AddAsync(tracks);
 
       throw new NotImplementedException();
     }

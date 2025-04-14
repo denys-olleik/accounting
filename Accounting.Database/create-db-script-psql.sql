@@ -613,21 +613,45 @@ CREATE TABLE "Blog"
 
 CREATE TABLE "PlaylistLover"
 (
-	"PlaylistLoverID" SERIAL PRIMARY KEY NOT NULL,
-	"Email" VARCHAR(100) NOT NULL UNIQUE,
-	"Code" VARCHAR(100) NOT NULL,
-	"CodeExpiration" TIMESTAMPTZ NOT NULL,
-	"Gender" BOOLEAN NOT NULL, -- true = male, false = female (for example)
-	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+    "PlaylistLoverID" SERIAL PRIMARY KEY NOT NULL,
+    "Email" VARCHAR(100) NOT NULL UNIQUE,
+    "Code" VARCHAR(100) NOT NULL,
+    "CodeExpiration" TIMESTAMPTZ NOT NULL,
+    "Gender" BOOLEAN NOT NULL,
+    "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
 CREATE TABLE "Track"
 (
-	"TrackID" SERIAL PRIMARY KEY NOT NULL,
-	"SpotifyTrackId" VARCHAR(100) NOT NULL UNIQUE,
-	"Title" VARCHAR(2000) NOT NULL,
-	"Artist" VARCHAR(2000) NULL,
-	"Album" VARCHAR(2000) NULL,
-	"Transaction" UUID NOT NULL,
-	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+    "TrackID" SERIAL PRIMARY KEY NOT NULL,
+    "SpotifyTrackId" VARCHAR(100) NOT NULL UNIQUE,
+    "Title" VARCHAR(2000) NOT NULL,
+    "Artist" VARCHAR(2000) NULL,
+    "Album" VARCHAR(2000) NULL,
+    "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+);
+
+CREATE TABLE "PlaylistTrack"
+(
+    "PlaylistTrackID" SERIAL PRIMARY KEY,
+    "PlaylistLoverID" INTEGER NOT NULL REFERENCES "PlaylistLover"("PlaylistLoverID"),
+    "TrackID" INTEGER NOT NULL REFERENCES "Track"("TrackID"),
+		"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+    UNIQUE ("PlaylistLoverID", "TrackID")
+);
+
+CREATE TABLE "PlaylistSubmission"
+(
+    "PlaylistSubmissionID" SERIAL PRIMARY KEY,
+    "PlaylistLoverID" INTEGER NOT NULL REFERENCES "PlaylistLover"("PlaylistLoverID"),
+    "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+);
+
+CREATE TABLE "PlaylistSubmissionTrack"
+(
+    "PlaylistSubmissionTrackID" SERIAL PRIMARY KEY,
+    "PlaylistSubmissionID" INTEGER NOT NULL REFERENCES "PlaylistSubmission"("PlaylistSubmissionID"),
+    "TrackID" INTEGER NOT NULL REFERENCES "Track"("TrackID"),
+		"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+    UNIQUE ("PlaylistSubmissionID", "TrackID")
 );
