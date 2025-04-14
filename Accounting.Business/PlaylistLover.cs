@@ -1,9 +1,4 @@
 ﻿using Accounting.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Accounting.Business
 {
@@ -16,6 +11,6 @@ namespace Accounting.Business
     public bool Gender { get; set; }
     public DateTime Created { get; set; }
 
-    public int Identifiable => throw new NotImplementedException();
+    public int Identifiable => this.PlaylistLoverID;
   }
 }
