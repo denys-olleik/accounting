@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Accounting.Common;
 using SpotifyAPI.Web;
+using Accounting.Business;
 
 namespace Accounting.Service
 {
@@ -49,7 +50,7 @@ namespace Accounting.Service
       return null;
     }
 
-    public async Task ProcessLover(string email, string spotifyOnRepeatSharedPlaylistUri)
+    public async Task<List<Track>> ExtractTracksFromSpotifyPlaylist(string email, string spotifyOnRepeatSharedPlaylistUri)
     {
       var playlistId = ExtractPlaylistId(spotifyOnRepeatSharedPlaylistUri);
 
@@ -86,19 +87,24 @@ namespace Accounting.Service
           playlist = await GetPlaylistWithToken(); // retry once
         }
 
+        var tracks = new List<Track>();
         foreach (var item in playlist.Tracks.Items)
         {
           if (item.Track is FullTrack track)
           {
-            string spotifyTrackId = track.Id;
-            string title = track.Name;
-            string artist = track.Artists != null && track.Artists.Count > 0
-                ? string.Join(", ", track.Artists.Select(a => a.Name))
-                : "";
-            string album = track.Album?.Name ?? "";
-            Console.WriteLine($"Track ID: {spotifyTrackId}, Title: {title}, Artist: {artist}, Album: {album}");
+            tracks.Add(new Track
+            {
+              SpotifyTrackId = track.Id,
+              Title = track.Name,
+              Artist = track.Artists != null && track.Artists.Count > 0
+                    ? string.Join(", ", track.Artists.Select(a => a.Name))
+                    : "",
+              Album = track.Album?.Name ?? "",
+              Created = DateTime.UtcNow
+            });
           }
         }
+        return tracks;
       }
       catch (APIUnauthorizedException)
       {

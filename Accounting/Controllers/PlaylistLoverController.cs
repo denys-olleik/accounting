@@ -3,6 +3,7 @@ using Accounting.Models.PlaylistLoverViewModels;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
 using Accounting.Service;
+using Accounting.Business;
 
 namespace Accounting.Controllers
 {
@@ -34,7 +35,7 @@ namespace Accounting.Controllers
         return View(lover);
       }
 
-      await _playlistLoverService.ProcessLover(lover.Email, lover.Address);
+      List<Track> tracks = await _playlistLoverService.ExtractTracksFromSpotifyPlaylist(lover.Email, lover.Address);
 
       throw new NotImplementedException();
     }
