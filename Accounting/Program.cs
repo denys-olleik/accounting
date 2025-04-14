@@ -79,6 +79,8 @@ ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["Applica
 //ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
 //ConfigurationSingleton.Instance.ConnectionStringAdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
 ConfigurationSingleton.Instance.DatabasePassword = builder.Configuration["DatabasePassword"];
+ConfigurationSingleton.Instance.SpotifyClientID = builder.Configuration["SpotifyClientID"];
+ConfigurationSingleton.Instance.SpotifyClientSecret = builder.Configuration["SpotifyClientSecret"];
 
 #region Configure Paths
 bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);

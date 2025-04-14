@@ -16,6 +16,9 @@ namespace Accounting.Common
     public string DatabaseName { get; set; }
     public string DatabasePassword { get; set; }
     public bool TenantManagement { get; set; }
+    public string SpotifyClientID { get; set; }
+    public string SpotifyClientSecret { get; set; }
+    public string SpotifyBearerToken { get; set; }
 
 
     private ConfigurationSingleton()

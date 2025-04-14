@@ -29,7 +29,6 @@
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.4" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.9.2" />
 		<PackageReference Include="SendGrid" Version="9.29.3" />
-		<PackageReference Include="SpotifyAPI.Web" Version="7.2.1" />
 	</ItemGroup>
 
 	<ItemGroup>

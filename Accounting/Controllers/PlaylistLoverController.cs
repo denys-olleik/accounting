@@ -1,11 +1,21 @@
-﻿using Accounting.Models.PlaylistLoverViewModels;
+﻿using Accounting.Common;
+using Accounting.Models.PlaylistLoverViewModels;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
+using Accounting.Service;
 
 namespace Accounting.Controllers
 {
   [Route("playlist-lovers")]
   public class PlaylistLoverController : BaseController
   {
+    private readonly PlaylistLoverService _playlistLoverService;
+
+    public PlaylistLoverController()
+    {
+      _playlistLoverService = new();
+    }
+
     [HttpGet("process-lover")]
     public IActionResult ProcessLover()
     {
@@ -23,6 +33,8 @@ namespace Accounting.Controllers
         lover.ValidationResult = validationResult;
         return View(lover);
       }
+
+      await _playlistLoverService.ProcessLover(lover.Email, lover.Address);
 
       throw new NotImplementedException();
     }
