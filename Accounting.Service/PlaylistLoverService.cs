@@ -53,24 +53,41 @@ namespace Accounting.Service
     {
       var playlistId = ExtractPlaylistId(spotifyOnRepeatSharedPlaylistUri);
 
-      if (string.IsNullOrEmpty(ConfigurationSingleton.Instance.SpotifyBearerToken))
+      async Task<FullPlaylist> GetPlaylistWithToken()
       {
-        ConfigurationSingleton.Instance.SpotifyBearerToken
-            = await GetSpotifyBearerToken(
-                ConfigurationSingleton.Instance.SpotifyClientID,
-                ConfigurationSingleton.Instance.SpotifyClientSecret);
+        var config = SpotifyClientConfig.CreateDefault().WithToken(ConfigurationSingleton.Instance.SpotifyBearerToken);
+        var spotify = new SpotifyClient(config);
+        return await spotify.Playlists.Get(playlistId);
       }
-
-      var config = SpotifyClientConfig.CreateDefault().WithToken(ConfigurationSingleton.Instance.SpotifyBearerToken);
-      var spotify = new SpotifyClient(config);
 
       try
       {
-        FullPlaylist playlist = await spotify.Playlists.Get(playlistId);
+        if (string.IsNullOrEmpty(ConfigurationSingleton.Instance.SpotifyBearerToken))
+        {
+          ConfigurationSingleton.Instance.SpotifyBearerToken
+              = await GetSpotifyBearerToken(
+                  ConfigurationSingleton.Instance.SpotifyClientID,
+                  ConfigurationSingleton.Instance.SpotifyClientSecret);
+        }
+
+        FullPlaylist playlist;
+        try
+        {
+          playlist = await GetPlaylistWithToken();
+        }
+        catch (APIUnauthorizedException)
+        {
+          // Token expired. Refresh and retry once.
+          ConfigurationSingleton.Instance.SpotifyBearerToken
+              = await GetSpotifyBearerToken(
+                  ConfigurationSingleton.Instance.SpotifyClientID,
+                  ConfigurationSingleton.Instance.SpotifyClientSecret);
+
+          playlist = await GetPlaylistWithToken(); // retry once
+        }
 
         foreach (var item in playlist.Tracks.Items)
         {
-          // Each item is a PlaylistTrack<IPlayableItem>
           if (item.Track is FullTrack track)
           {
             string spotifyTrackId = track.Id;
@@ -79,20 +96,19 @@ namespace Accounting.Service
                 ? string.Join(", ", track.Artists.Select(a => a.Name))
                 : "";
             string album = track.Album?.Name ?? "";
-
-            // Example: Console.WriteLine, or insert into DB here
             Console.WriteLine($"Track ID: {spotifyTrackId}, Title: {title}, Artist: {artist}, Album: {album}");
           }
         }
       }
       catch (APIUnauthorizedException)
       {
-        Console.WriteLine("Token expired or invalid.");
-        // Optionally, handle token refresh here.
+        // If we get here, token refresh didn't help. Inform user appropriately.
+        throw new Exception("There was a problem accessing Spotify. Please try again."); // or handle as needed
       }
       catch (APIException ex)
       {
         Console.WriteLine($"Spotify API error: {ex.Message}");
+        throw;
       }
     }
 
