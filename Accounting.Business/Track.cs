@@ -9,6 +9,8 @@ namespace Accounting.Business
     public string? Title { get; set; }
     public string? Artist { get; set; }
     public string? Album { get; set; }
+    public Guid Transaction { get; set; }
+
     public DateTime Created { get; set; }
 
     public int Identifiable => this.TrackID;

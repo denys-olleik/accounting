@@ -11,6 +11,7 @@ namespace Accounting.Controllers
   public class PlaylistLoverController : BaseController
   {
     private readonly PlaylistLoverService _playlistLoverService;
+    private readonly TrackService trackService;
 
     public PlaylistLoverController()
     {
@@ -36,6 +37,8 @@ namespace Accounting.Controllers
       }
 
       List<Track> tracks = await _playlistLoverService.ExtractTracksFromSpotifyPlaylist(lover.Email, lover.Address);
+
+
 
       throw new NotImplementedException();
     }
