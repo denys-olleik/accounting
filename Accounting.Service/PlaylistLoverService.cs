@@ -148,5 +148,10 @@ namespace Accounting.Service
 
       return accessToken;
     }
+
+    public async Task<PlaylistLover> GetOrCreateAsync(string email, bool gender)
+    {
+      throw new NotImplementedException();
+    }
   }
 }

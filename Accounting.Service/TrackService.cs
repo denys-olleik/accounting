@@ -1,22 +1,5 @@
-﻿//using Accounting.Business;
-//using Accounting.Common;
-//using Accounting.Database;
-
-//namespace Accounting.Service
-//{
-//  public class InvoiceService : BaseService
-//  {
-//    private readonly JournalService _journalService;
-//    private readonly JournalInvoiceInvoiceLineService _journalInvoiceInvoiceLineService;
-
-//    public InvoiceService(
-//      JournalService journalService,
-//      JournalInvoiceInvoiceLineService journalInvoiceInvoiceLineService) : base()
-//    {
-//      _journalService = journalService;
-//      _journalInvoiceInvoiceLineService = journalInvoiceInvoiceLineService;
-//    }
-
+﻿
+using Accounting.Business;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +18,11 @@ namespace Accounting.Service
       : base(databaseName, databasePassword)
     {
 
+    }
+
+    public async Task<List<Track>> UpsertRangeAsync(List<Track> tracks)
+    {
+      throw new NotImplementedException();
     }
   }
 }

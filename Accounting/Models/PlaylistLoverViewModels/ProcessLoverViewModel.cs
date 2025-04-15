@@ -7,6 +7,7 @@ namespace Accounting.Models.PlaylistLoverViewModels
   {
     private string _email;
     private string _address;
+    private bool _gender;
 
     public string Email
     {
@@ -18,6 +19,12 @@ namespace Accounting.Models.PlaylistLoverViewModels
     {
       get => _address;
       set => _address = value?.Trim();
+    }
+
+    public bool Gender
+    {
+      get => _gender;
+      set => _gender = value;
     }
 
     public ValidationResult? ValidationResult { get; set; }
