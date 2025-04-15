@@ -12,11 +12,13 @@ namespace Accounting.Controllers
   {
     private readonly PlaylistLoverService _playlistLoverService;
     private readonly TrackService _trackService;
+    private readonly PlaylistSubmissionService _submissionService;
 
     public PlaylistLoverController()
     {
       _playlistLoverService = new();
       _trackService = new();
+      _submissionService = new();
     }
 
     [HttpGet("process-lover")]
@@ -28,7 +30,7 @@ namespace Accounting.Controllers
     [HttpPost("process-lover")]
     public async Task<IActionResult> ProcessLover(ProcessLoverViewModel lover)
     {
-      ProcessLoverViewModel.ProcessLoverViewModelValidator validator = new();
+      var validator = new ProcessLoverViewModel.ProcessLoverViewModelValidator();
       var validationResult = await validator.ValidateAsync(lover);
 
       if (!validationResult.IsValid)
@@ -37,9 +39,22 @@ namespace Accounting.Controllers
         return View(lover);
       }
 
-      List<Track> tracks = await _playlistLoverService.ExtractTracksFromSpotifyPlaylist(lover.Email, lover.Address);
+      // Ensure the user exists or create them
+      var playlistLover = await _playlistLoverService.GetOrCreateAsync(lover.Email, lover.Gender);
 
-      List<Track> track = await _trackService.AddAsync(tracks);
+      // Extract tracks from Spotify playlist
+      var tracks = await _playlistLoverService.ExtractTracksFromSpotifyPlaylist(lover.Email, lover.Address);
+
+      // Upsert tracks (add only if not existing)
+      var trackEntities = await _trackService.UpsertRangeAsync(tracks);
+
+      // Create a new submission
+      var submission = await _submissionService.CreateSubmissionAsync(playlistLover.PlaylistLoverID);
+
+      // Link tracks to submission
+      await _submissionService.AddTracksToSubmissionAsync(submission.PlaylistSubmissionID, trackEntities.Select(t => t.TrackID).ToList());
+
+      // Optionally: Update PlaylistTrack to reflect current playlist if desired
 
       throw new NotImplementedException();
     }
