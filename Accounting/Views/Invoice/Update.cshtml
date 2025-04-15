@@ -14,16 +14,16 @@
 <template id="invoice-line-removal-template">
   <div class="background-color-red text-align-center">
     <div v-if="!isRemoveConfirmationVisible">
-      <a href="#" class="color-white text-decoration-none width-100 display-block"
-         @@click.prevent="toggleConfirmationVisibility">remove</a>
+      <a href="#" class="color-white text-decoration-none width-100 display-block" @@click.prevent="toggleConfirmationVisibility">
+        remove
+      </a>
     </div>
     <div v-else>
       <div class="margin-bottom-5px">
         <a href="#" class="color-white text-decoration-none" @@click.prevent="confirmRemoval">remove</a>
       </div>
       <div>
-        <a href="#" class="color-white text-decoration-none"
-           @@click.prevent="toggleConfirmationVisibility">cancel</a>
+        <a href="#" class="color-white text-decoration-none" @@click.prevent="toggleConfirmationVisibility">cancel</a>
       </div>
     </div>
   </div>
@@ -62,8 +62,7 @@
     </div>
     <div class="display-flex">
       <div class="flex-1"></div>
-      <invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)"
-                            @@cancel-removal="$emit('cancel-removal', invoiceLine)">
+      <invoice-line-removal :invoice-line="invoiceLine" @@confirm-removal="$emit('confirm-removal', invoiceLine)" @@cancel-removal="$emit('cancel-removal', invoiceLine)">
       </invoice-line-removal>
     </div>
   </div>
@@ -170,10 +169,7 @@
       <div>
         Billing
       </div>
-      <addresses-and-selected-address :selected-address="billingAddress"
-                                      @@update:selected-address="handleSelectedAddress($event, 'billing')"
-                                      :addresses="customer ? customer.addresses : []"
-                                      :customer="customer">
+      <addresses-and-selected-address :selected-address="billingAddress" @@update:selected-address="handleSelectedAddress($event, 'billing')" :addresses="customer ? customer.addresses : []" :customer="customer">
       </addresses-and-selected-address>
     </div>
     <div class="width-5px"></div>
@@ -181,10 +177,7 @@
       <div>
         Shipping
       </div>
-      <addresses-and-selected-address :selected-address="shippingAddress"
-                                      @@update:selected-address="handleSelectedAddress($event, 'shipping')"
-                                      :addresses="customer ? customer.addresses : []"
-                                      :customer="customer">
+      <addresses-and-selected-address :selected-address="shippingAddress" @@update:selected-address="handleSelectedAddress($event, 'shipping')" :addresses="customer ? customer.addresses : []" :customer="customer">
       </addresses-and-selected-address>
     </div>
   </div>
@@ -206,10 +199,7 @@
     <tbody class="font-Roboto-Mono">
       <tr v-for="attachment in attachments" :key="attachment.invoiceAttachmentID">
         <td class="padding-right-20px white-space-nowrap">
-          <attachment-action :attachment='attachment'
-                             :is-expanded="attachment.invoiceAttachmentID === expandedAttachmentId"
-                             @@expand="handleAttachmentExpand(attachment.invoiceAttachmentID)"
-                             @@remove="removeAttachment"></attachment-action>
+          <attachment-action :attachment='attachment' :is-expanded="attachment.invoiceAttachmentID === expandedAttachmentId" @@expand="handleAttachmentExpand(attachment.invoiceAttachmentID)" @@remove="removeAttachment"></attachment-action>
         </td>
       </tr>
     </tbody>
@@ -224,8 +214,7 @@
 
   <div class="display-flex">
     <div class="flex-1">
-      <button type="button" class="full-width-regular-button width-100"
-              onclick="event.preventDefault(); window.location.href='@Url.Action("Invoices", "Invoice")';">
+      <button type="button" class="full-width-regular-button width-100" onclick="event.preventDefault(); window.location.href='@Url.Action("Invoices", "Invoice")';">
         Cancel
       </button>
     </div>
@@ -253,6 +242,20 @@
 
 <script>
   const { createApp } = Vue;
+
+  const AttachmentAction = {
+    name: 'AttachmentAction',
+    props: ['attachment', 'isExpanded'],
+    template: '#attachment-action-template',
+    methods: {
+      toggleAction() {
+        this.$emit('expand');
+      },
+      removeAttachment() {
+        this.$emit('remove', this.attachment.invoiceAttachmentID);
+      }
+    }
+  };
 
   const Total = {
     name: 'Total',
@@ -436,27 +439,28 @@
       'products-and-services-search': ProductsAndServicesSearch,
       'business-entity-name-display': BusinessEntityNameDisplay,
       'customer-detail': CustomerDetail,
+      'attachment-action': AttachmentAction,
     },
-      data() {
-        return {
-          customer: @Html.Raw(Json.Serialize(Model.Customer).ToString() ?? "null"),
-          billingAddress: @Html.Raw(Json.Serialize(Model.BillingAddress).ToString() ?? "null"),
-          shippingAddress: @Html.Raw(Json.Serialize(Model.ShippingAddress).ToString() ?? "null"),
-          invoiceLines: @Html.Raw(Json.Serialize(Model.ExistingInvoiceLines).ToString() ?? "[]"),
-          deletedInoiceLines: [],
-          paymentTerms: @Html.Raw(Json.Serialize(Model.PaymentTerms).ToString() ?? "[]"),
-          selectedPaymentTerm: @Html.Raw(Json.Serialize(Model.SelectedPaymentTerm).ToString() ?? "null"),
-          invoiceDate: @Html.Raw(Json.Serialize(Model.InvoiceDate).ToString() ?? "null"),
-          dueDate: @Html.Raw(Json.Serialize(Model.DueDate).ToString() ?? "null"),
-          activeInvoiceLine: null,
-          dropdownPosition: { top: 0, left: 0 },
-          productsOrServices: @Html.Raw(Json.Serialize(Model.ProductsAndServices).ToString() ?? "[]"),
-          blurTimeout: null,
-          appWidth: 0,
+    data() {
+      return {
+        customer: @Html.Raw(Json.Serialize(Model.Customer).ToString() ?? "null"),
+        billingAddress: @Html.Raw(Json.Serialize(Model.BillingAddress).ToString() ?? "null"),
+        shippingAddress: @Html.Raw(Json.Serialize(Model.ShippingAddress).ToString() ?? "null"),
+        invoiceLines: @Html.Raw(Json.Serialize(Model.ExistingInvoiceLines).ToString() ?? "[]"),
+        deletedInoiceLines: [],
+        paymentTerms: @Html.Raw(Json.Serialize(Model.PaymentTerms).ToString() ?? "[]"),
+        selectedPaymentTerm: @Html.Raw(Json.Serialize(Model.SelectedPaymentTerm).ToString() ?? "null"),
+        invoiceDate: @Html.Raw(Json.Serialize(Model.InvoiceDate).ToString() ?? "null"),
+        dueDate: @Html.Raw(Json.Serialize(Model.DueDate).ToString() ?? "null"),
+        activeInvoiceLine: null,
+        dropdownPosition: { top: 0, left: 0 },
+        productsOrServices: @Html.Raw(Json.Serialize(Model.ProductsAndServices).ToString() ?? "[]"),
+        blurTimeout: null,
+        appWidth: 0,
 
-          attachments: @Html.Raw(Json.Serialize(Model.Attachments).ToString() ?? "[]"),
-          deletedAttachmentIds: [],
-          expandedAttachmentId: null,
+        attachments: @Html.Raw(Json.Serialize(Model.Attachments).ToString() ?? "[]"),
+        deletedAttachmentIds: [],
+        expandedAttachmentId: null,
       };
     },
     watch: {
