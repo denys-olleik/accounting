@@ -1,7 +1,6 @@
 ﻿using Accounting.Models.AddressViewModels;
 using Accounting.Models.BusinessEntityViewModels;
 using Accounting.Models.Item;
-using Accounting.Models.ItemViewModels;
 using Accounting.Models.PaymentTermViewModels;
 using FluentValidation.Results;
 
@@ -30,6 +29,14 @@ namespace Accounting.Models.InvoiceViewModels
     public DateTime? DueDate { get; set; }
     public DateTime LastUpdated { get; set; }
 
+    public List<InvoiceAttachmentViewModel> Attachments { get; set; } = new List<InvoiceAttachmentViewModel>();
+
     public ValidationResult? ValidationResult { get; set; }
+
+    public class InvoiceAttachmentViewModel
+    {
+      public int InvoiceAttachmentID { get; set; }
+      public string OriginalFileName { get; set; }
+    }
   }
 }

@@ -197,6 +197,24 @@
 
   <total :invoice-lines="invoiceLines"></total>
 
+  <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th class="text-align-left width-1px padding-right-20px">File name</th>
+      </tr>
+    </thead>
+    <tbody class="font-Roboto-Mono">
+      <tr v-for="attachment in attachments" :key="attachment.invoiceAttachmentID">
+        <td class="padding-right-20px white-space-nowrap">
+          <attachment-action :attachment='attachment'
+                             :is-expanded="attachment.invoiceAttachmentID === expandedAttachmentId"
+                             @@expand="handleAttachmentExpand(attachment.invoiceAttachmentID)"
+                             @@remove="removeAttachment"></attachment-action>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
   <input type="hidden" name="InvoiceLinesJson" :value="JSON.stringify(invoiceLines)" />
   <input type="hidden" name="DeletedInvoiceLinesJson" :value="JSON.stringify(deletedInoiceLines)" />
   <input type="hidden" name="SelectedPaymentTermJSON" :value="JSON.stringify(selectedPaymentTerm)" />
@@ -419,22 +437,26 @@
       'business-entity-name-display': BusinessEntityNameDisplay,
       'customer-detail': CustomerDetail,
     },
-    data() {
-      return {
-        customer: @Html.Raw(Json.Serialize(Model.Customer).ToString() ?? "null"),
-        billingAddress: @Html.Raw(Json.Serialize(Model.BillingAddress).ToString() ?? "null"),
-        shippingAddress: @Html.Raw(Json.Serialize(Model.ShippingAddress).ToString() ?? "null"),
-        invoiceLines: @Html.Raw(Json.Serialize(Model.ExistingInvoiceLines).ToString() ?? "[]"),
-        deletedInoiceLines: [],
-        paymentTerms: @Html.Raw(Json.Serialize(Model.PaymentTerms).ToString() ?? "[]"),
-        selectedPaymentTerm: @Html.Raw(Json.Serialize(Model.SelectedPaymentTerm).ToString() ?? "null"),
-        invoiceDate: @Html.Raw(Json.Serialize(Model.InvoiceDate).ToString() ?? "null"),
-        dueDate: @Html.Raw(Json.Serialize(Model.DueDate).ToString() ?? "null"),
-        activeInvoiceLine: null,
-        dropdownPosition: { top: 0, left: 0 },
-        productsOrServices: @Html.Raw(Json.Serialize(Model.ProductsAndServices).ToString() ?? "[]"),
-        blurTimeout: null,
-        appWidth: 0,
+      data() {
+        return {
+          customer: @Html.Raw(Json.Serialize(Model.Customer).ToString() ?? "null"),
+          billingAddress: @Html.Raw(Json.Serialize(Model.BillingAddress).ToString() ?? "null"),
+          shippingAddress: @Html.Raw(Json.Serialize(Model.ShippingAddress).ToString() ?? "null"),
+          invoiceLines: @Html.Raw(Json.Serialize(Model.ExistingInvoiceLines).ToString() ?? "[]"),
+          deletedInoiceLines: [],
+          paymentTerms: @Html.Raw(Json.Serialize(Model.PaymentTerms).ToString() ?? "[]"),
+          selectedPaymentTerm: @Html.Raw(Json.Serialize(Model.SelectedPaymentTerm).ToString() ?? "null"),
+          invoiceDate: @Html.Raw(Json.Serialize(Model.InvoiceDate).ToString() ?? "null"),
+          dueDate: @Html.Raw(Json.Serialize(Model.DueDate).ToString() ?? "null"),
+          activeInvoiceLine: null,
+          dropdownPosition: { top: 0, left: 0 },
+          productsOrServices: @Html.Raw(Json.Serialize(Model.ProductsAndServices).ToString() ?? "[]"),
+          blurTimeout: null,
+          appWidth: 0,
+
+          attachments: @Html.Raw(Json.Serialize(Model.Attachments).ToString() ?? "[]"),
+          deletedAttachmentIds: [],
+          expandedAttachmentId: null,
       };
     },
     watch: {
