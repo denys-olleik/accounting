@@ -151,6 +151,26 @@
   </div>
 </template>
 
+<template id="attachment-action-template">
+  <div class="display-flex padding-top-bottom-2px">
+    <div class="display-flex flex-1">
+      <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ attachment.fileName }}</a>
+      <span v-if="isExpanded" class="display-flex margin-left-2px">
+        <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+          <div class="flex-1"></div>
+          <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">options:</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="flex-1"></div>
+          <a href="#" @@click.prevent="$emit('remove', attachment.invoiceAttachmentID)" class="font-size-16px font-Roboto color-white text-decoration-none">remove</a>
+          <div class="flex-1"></div>
+        </div>
+      </span>
+    </div>
+  </div>
+</template>
+
 <form id="app" asp-action="Update" asp-controller="Invoice" method="post" class="display-flex flex-direction-column margin-bottom-5px">
 
   <div class="display-flex margin-bottom-5px max-width-768-flex-direction-column">
@@ -189,6 +209,12 @@
   </invoice-line>
 
   <total :invoice-lines="invoiceLines"></total>
+
+  <div class="display-flex margin-bottom-5px">
+    <div class="flex-1 padding-5px background-color-antiquewhite">
+      <input type="file" @@change="uploadFile" ref="fileInput" />
+    </div>
+  </div>
 
   <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
     <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
@@ -468,6 +494,30 @@
 
     },
     methods: {
+      uploadFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('formFile', file);
+
+        fetch('/api/invoice-attachment/upload', {
+          method: 'POST',
+          body: formData,
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          })
+          .then(data => {
+            this.attachments.push(data);
+            this.$refs.fileInput.value = '';
+          })
+          .catch(error => {
+            console.log('There was a problem with the fetch operation: ', error);
+          });
+      },
       handleAttachmentExpand(id) {
         this.expandedAttachmentId = this.expandedAttachmentId === id ? null : id;
       },
