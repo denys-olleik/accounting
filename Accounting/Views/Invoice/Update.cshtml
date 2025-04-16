@@ -211,6 +211,7 @@
   <input type="hidden" name="InvoiceDate" value="@Model.InvoiceDate!.Value.ToString("o")" />
   <input type="hidden" name="DueDate" :value="dueDate" />
   <input type="hidden" name="LastUpdated" value="@Model.LastUpdated" />
+  <input type="hidden" name="DeletedAttachmentIdsJson" :value="JSON.stringify(deletedAttachmentIds)" />
 
   <div class="display-flex">
     <div class="flex-1">
@@ -467,6 +468,17 @@
 
     },
     methods: {
+      handleAttachmentExpand(id) {
+        this.expandedAttachmentId = this.expandedAttachmentId === id ? null : id;
+      },
+      removeAttachment(id) {
+        // Remove from attachments list and track for deletion
+        const index = this.attachments.findIndex(att => att.invoiceAttachmentID === id);
+        if (index !== -1) {
+          this.deletedAttachmentIds.push(id);
+          this.attachments.splice(index, 1);
+        }
+      },
       removeInvoiceLine(invoiceLine) {
         const index = this.invoiceLines.indexOf(invoiceLine);
         if (index !== -1) {
