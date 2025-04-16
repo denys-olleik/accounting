@@ -225,7 +225,11 @@
     <tbody class="font-Roboto-Mono">
       <tr v-for="attachment in attachments" :key="attachment.invoiceAttachmentID">
         <td class="padding-right-20px white-space-nowrap">
-          <attachment-action :attachment='attachment' :is-expanded="attachment.invoiceAttachmentID === expandedAttachmentId" @@expand="handleAttachmentExpand(attachment.invoiceAttachmentID)" @@remove="removeAttachment"></attachment-action>
+          <attachment-action
+            :attachment='attachment'
+            :is-expanded="attachment.invoiceAttachmentID === expandedAttachmentId"
+            @@expand="handleAttachmentExpand(attachment.invoiceAttachmentID)"
+            @@remove="removeAttachment"></attachment-action>
         </td>
       </tr>
     </tbody>

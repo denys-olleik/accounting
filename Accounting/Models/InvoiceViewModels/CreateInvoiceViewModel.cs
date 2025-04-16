@@ -31,13 +31,19 @@ namespace Accounting.Models.InvoiceViewModels
     public DateTime? DueDate { get; set; }
     public List<AccountViewModel>? DebitAccounts { get; set; }
       public List<AccountViewModel>? CreditAccounts { get; set; }
-    public List<InvoiceAttachment>? InvoiceAttachments { get; set; }
+    public List<InvoiceAttachmentViewModel>? InvoiceAttachments { get; set; }
     public string? InvoiceAttachmentsJSON { get; set; }
     public string? PaymentInstructions { get; set; }
     public bool RememberPaymentInstructions { get; set; }
 
     public ValidationResult? ValidationResult { get; set; }
     public int OrganizationId { get; set; }
+
+    public class InvoiceAttachmentViewModel
+    {
+      public int InvoiceAttachmentID { get; set; }
+      public string? FileName { get; set; }
+    }
 
     public class CreateInvoiceViewModelValidator : InvoiceViewModelValidatorBase<CreateInvoiceViewModel>
     {

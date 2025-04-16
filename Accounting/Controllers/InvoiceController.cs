@@ -96,7 +96,7 @@ namespace Accounting.Controllers
 
       model.SelectedPaymentTerm = JsonConvert.DeserializeObject<PaymentTermViewModel>(model.SelectedPaymentTermJSON!);
       model.InvoiceLines = JsonConvert.DeserializeObject<List<InvoiceLineViewModel>>(model.InvoiceLinesJson!);
-      model.InvoiceAttachments = JsonConvert.DeserializeObject<List<InvoiceAttachment>>(model.InvoiceAttachmentsJSON!);
+      model.InvoiceAttachments = JsonConvert.DeserializeObject<List<CreateInvoiceViewModel.InvoiceAttachmentViewModel>>(model.InvoiceAttachmentsJSON!);
 
       if (model.SelectedBillingAddressId.HasValue)
       {
