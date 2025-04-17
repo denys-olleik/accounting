@@ -65,7 +65,7 @@ namespace Accounting.Controllers
     [Route("invoices")]
     [HttpGet]
     public IActionResult Invoices(
-      int page = 1, 
+      int page = 1,
       int pageSize = 2)
     {
       var referer = Request.Headers["Referer"].ToString() ?? string.Empty;
@@ -356,6 +356,12 @@ namespace Accounting.Controllers
         LastUpdated = invoice.LastUpdated,
         InvoiceStatuses = Invoice.InvoiceStatusConstants.All.ToList(),
         ProductsAndServices = await GetAllProductsAndServices(GetOrganizationId()),
+        Attachments = (await _invoiceAttachmentService.GetAllAsync(invoice.InvoiceID, GetOrganizationId()))
+          .Select(a => new UpdateInvoiceViewModel.InvoiceAttachmentViewModel
+          {
+            InvoiceAttachmentID = a.InvoiceAttachmentID,
+            OriginalFileName = a.OriginalFileName
+          }).ToList(),
         Customer = new BusinessEntityViewModel()
         {
           ID = invoice.BusinessEntity.BusinessEntityID,
@@ -510,24 +516,24 @@ namespace Accounting.Controllers
 
         await _journalInvoiceInvoiceLineService
           .UpdateInvoiceLinesAsync(
-            existingLines.Where(x => x.QuantityOrPriceModified).ToList(), 
+            existingLines.Where(x => x.QuantityOrPriceModified).ToList(),
             newLines,
             deletedLines,
-            invoice, 
-            GetUserId(), 
+            invoice,
+            GetUserId(),
             GetOrganizationId());
 
         await _invoiceService
           .ComputeAndUpdateInvoiceStatus(
-            invoice.InvoiceID, 
+            invoice.InvoiceID,
             GetOrganizationId());
         await _invoiceService
           .ComputeAndUpdateTotalAmountAndReceivedAmount(
-            invoice.InvoiceID, 
+            invoice.InvoiceID,
             GetOrganizationId());
         await _invoiceService
           .UpdateLastUpdated(
-            invoice.InvoiceID, 
+            invoice.InvoiceID,
             GetOrganizationId());
 
         scope.Complete();

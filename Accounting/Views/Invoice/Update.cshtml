@@ -154,7 +154,7 @@
 <template id="attachment-action-template">
   <div class="display-flex padding-top-bottom-2px">
     <div class="display-flex flex-1">
-      <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ attachment.fileName }}</a>
+      <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ attachment.originalFileName }}</a>
       <span v-if="isExpanded" class="display-flex margin-left-2px">
         <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
           <div class="flex-1"></div>
