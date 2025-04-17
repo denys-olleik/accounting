@@ -458,6 +458,15 @@ namespace Accounting.Controllers
 
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
+        if (!string.IsNullOrEmpty(model.DeletedAttachmentIdsCsv))
+        {
+          var ids = model.DeletedAttachmentIdsCsv
+              .Split(',', StringSplitOptions.RemoveEmptyEntries)
+              .Select(id => int.Parse(id.Trim()))
+              .ToList();
+          await _invoiceAttachmentService.DeleteAttachmentsAsync(ids, invoice.InvoiceID, GetOrganizationId());
+        }
+
         List<InvoiceLine> existingLines = model.ExistingInvoiceLines!.Select(x => new InvoiceLine()
         {
           InvoiceLineID = x.ID,

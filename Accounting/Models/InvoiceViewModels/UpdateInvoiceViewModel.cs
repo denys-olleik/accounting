@@ -29,6 +29,8 @@ namespace Accounting.Models.InvoiceViewModels
     public DateTime? DueDate { get; set; }
     public DateTime LastUpdated { get; set; }
 
+    public string? DeletedAttachmentIdsCsv { get; set; }
+
     public List<InvoiceAttachmentViewModel> Attachments { get; set; } = new List<InvoiceAttachmentViewModel>();
 
     public ValidationResult? ValidationResult { get; set; }

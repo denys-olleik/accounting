@@ -241,7 +241,7 @@
   <input type="hidden" name="InvoiceDate" value="@Model.InvoiceDate!.Value.ToString("o")" />
   <input type="hidden" name="DueDate" :value="dueDate" />
   <input type="hidden" name="LastUpdated" value="@Model.LastUpdated" />
-  <input type="hidden" name="DeletedAttachmentIdsJson" :value="JSON.stringify(deletedAttachmentIds)" />
+  <input type="hidden" name="DeletedAttachmentIdsCsv" :value="deletedAttachmentIds.join(',')" />
 
   <div class="display-flex">
     <div class="flex-1">
