@@ -84,9 +84,23 @@ namespace Accounting.Service
       return await factoryManager.GetInvoiceAttachmentManager().GetAllAsync(invoiceId, organizationId);
     }
 
-    public async Task DeleteAttachmentsAsync(List<int> invoiceAttachmentsIds, int invoiceID, int organizationId)
+    public async Task DeleteAttachmentsAsync(List<int> invoiceAttachmentIds, int invoiceID, int organizationId)
     {
-      throw new NotImplementedException();
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var invoiceAttachmentManager = factoryManager.GetInvoiceAttachmentManager();
+
+      var attachments = await invoiceAttachmentManager.GetAllAsync(invoiceAttachmentIds.ToArray(), organizationId);
+
+      foreach (var attachment in attachments)
+      {
+        if (attachment != null)
+        {
+          if (System.IO.File.Exists(attachment.FilePath))
+            System.IO.File.Delete(attachment.FilePath);
+
+          await invoiceAttachmentManager.DeleteAsync(attachment.InvoiceAttachmentID, invoiceID, organizationId);
+        }
+      }
     }
   }
 }

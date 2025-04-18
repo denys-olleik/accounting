@@ -1352,6 +1352,28 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<int> DeleteAsync(int invoiceAttachmentID, int invoiceID, int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@InvoiceAttachmentID", invoiceAttachmentID);
+        p.Add("@InvoiceId", invoiceID);
+        p.Add("@OrganizationId", organizationId);
+        
+        int rowsAffected;
+        
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            DELETE FROM "InvoiceAttachment" 
+            WHERE "InvoiceAttachmentID" = @InvoiceAttachmentID
+            AND "InvoiceId" = @InvoiceId
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return rowsAffected;
+      }
+
       public InvoiceAttachment Get(int id)
       {
         throw new NotImplementedException();
