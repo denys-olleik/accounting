@@ -242,6 +242,7 @@
   <input type="hidden" name="DueDate" :value="dueDate" />
   <input type="hidden" name="LastUpdated" value="@Model.LastUpdated" />
   <input type="hidden" name="DeletedAttachmentIdsCsv" :value="deletedAttachmentIds.join(',')" />
+  <input type="hidden" name="NewAttachmentIdsCsv" :value="newAttachmentIds.join(',')" />
 
   <div class="display-flex">
     <div class="flex-1">
@@ -492,6 +493,7 @@
         attachments: @Html.Raw(Json.Serialize(Model.Attachments).ToString() ?? "[]"),
         deletedAttachmentIds: [],
         expandedAttachmentId: null,
+        newAttachmentIds: [],
       };
     },
     watch: {
@@ -516,6 +518,7 @@
           })
           .then(data => {
             this.attachments.push(data);
+            this.newAttachmentIds.push(data.invoiceAttachmentID);
             this.$refs.fileInput.value = '';
           })
           .catch(error => {

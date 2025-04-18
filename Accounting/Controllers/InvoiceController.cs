@@ -360,7 +360,7 @@ namespace Accounting.Controllers
           .Select(a => new UpdateInvoiceViewModel.InvoiceAttachmentViewModel
           {
             InvoiceAttachmentID = a.InvoiceAttachmentID,
-            OriginalFileName = a.OriginalFileName
+            FileName = a.OriginalFileName
           }).ToList(),
         Customer = new BusinessEntityViewModel()
         {
@@ -465,6 +465,23 @@ namespace Accounting.Controllers
               .Select(id => int.Parse(id.Trim()))
               .ToList();
           await _invoiceAttachmentService.DeleteAttachmentsAsync(ids, invoice.InvoiceID, GetOrganizationId());
+        }
+
+        if (!string.IsNullOrEmpty(model.NewAttachmentIdsCsv))
+        {
+          var newAttachmentIds = model.NewAttachmentIdsCsv
+              .Split(',', StringSplitOptions.RemoveEmptyEntries)
+              .Select(id => int.Parse(id.Trim()))
+              .ToList();
+
+          var newAttachments = await _invoiceAttachmentService.GetAllAsync(newAttachmentIds.ToArray(), GetOrganizationId());
+
+          foreach (var attachment in newAttachments)
+          {
+            await _invoiceAttachmentService.UpdateInvoiceIdAsync(attachment.InvoiceAttachmentID, invoice.InvoiceID, GetOrganizationId());
+            //Optionally move file or update path if needed
+            await _invoiceAttachmentService.MoveAndUpdateInvoiceAttachmentPathAsync(attachment, ConfigurationSingleton.Instance.PermPath, GetOrganizationId());
+          }
         }
 
         List<InvoiceLine> existingLines = model.ExistingInvoiceLines!.Select(x => new InvoiceLine()

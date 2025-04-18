@@ -39,7 +39,7 @@ namespace Accounting.Models.InvoiceViewModels
     public class InvoiceAttachmentViewModel
     {
       public int InvoiceAttachmentID { get; set; }
-      public string OriginalFileName { get; set; }
+      public string FileName { get; set; }
     }
   }
 }
