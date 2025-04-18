@@ -76,6 +76,10 @@ html[xmlns] .clearfix {
 }
 /*#endregion Clearfix*/
 
+td {
+  vertical-align: top;
+}
+
 input[readonly] {
   background-color: lightgray;
 }
