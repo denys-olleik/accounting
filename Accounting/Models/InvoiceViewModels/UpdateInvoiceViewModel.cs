@@ -30,6 +30,7 @@ namespace Accounting.Models.InvoiceViewModels
     public DateTime LastUpdated { get; set; }
 
     public string? DeletedAttachmentIdsCsv { get; set; }
+    public string? NewAttachmentIdsCsv { get; set; }
 
     public List<InvoiceAttachmentViewModel> Attachments { get; set; } = new List<InvoiceAttachmentViewModel>();
 
