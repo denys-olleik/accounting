@@ -611,6 +611,20 @@ CREATE TABLE "Blog"
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID")
 );
 
+CREATE TABLE "Exception"
+(
+    "ExceptionID" SERIAL PRIMARY KEY NOT NULL,
+    "Message" TEXT NOT NULL,
+    "StackTrace" TEXT NOT NULL,
+    "Source" TEXT NULL,
+    "HResult" INT NULL,
+    "TargetSite" TEXT NULL,
+    "InnerException" TEXT NULL,
+    "RequestLogId" INT NULL,
+    "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+    FOREIGN KEY ("RequestLogId") REFERENCES "RequestLog"("RequestLogID")
+);
+
 CREATE TABLE "PlaylistLover"
 (
     "PlaylistLoverID" SERIAL PRIMARY KEY NOT NULL,
