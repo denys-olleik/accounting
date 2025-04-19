@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using static Accounting.Business.Claim;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -120,14 +121,29 @@ if (app.Environment.IsDevelopment())
 #region LoadTenantManagementConfiguration
 ConfigurationSingleton.Instance.TenantManagement
     = Convert.ToBoolean(builder.Configuration["TenantManagement"]);
-if (!ConfigurationSingleton.Instance.TenantManagement)
-  //await LoadTenantManagementFromDatabase(app);
+//if (!ConfigurationSingleton.Instance.TenantManagement)
+//await LoadTenantManagementFromDatabase(app);
 #endregion
 
 // Exception handling
 if (!app.Environment.IsDevelopment())
 {
-  app.UseExceptionHandler("/Home/Error");
+  app.UseExceptionHandler(errorApp =>
+  {
+    errorApp.Run(async context =>
+    {
+      // Get the exception
+      var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+      var exception = exceptionHandlerPathFeature?.Error;
+
+      // Log the exception
+      var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+      logger.LogError(exception, "Unhandled exception");
+
+      // Redirect to the error page
+      context.Response.Redirect("/Home/Error");
+    });
+  });
 }
 else
 {
