@@ -6076,9 +6076,49 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<RequestLog> GetByIdAsync(int requestLogId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@RequestLogId", requestLogId);
+        
+        IEnumerable<RequestLog> result;
+        
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = await con.QueryAsync<RequestLog>("""
+            SELECT * 
+            FROM "RequestLog" 
+            WHERE "RequestLogID" = @RequestLogId;
+            """, p);
+        }
+
+        return result.SingleOrDefault()!;
+      }
+
       public int Update(RequestLog entity)
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<int> UpdateResponseAsync(int requestLogID, string statusCode, long responseLength)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@RequestLogID", requestLogID);
+        p.Add("@StatusCode", statusCode);
+        p.Add("@ResponseLength", responseLength);
+        
+        int rowsAffected;
+        
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            UPDATE "RequestLog" 
+            SET "StatusCode" = @StatusCode, "ResponseLengthBytes" = @ResponseLength
+            WHERE "RequestLogID" = @RequestLogID;
+            """, p);
+        }
+
+        return rowsAffected;
       }
     }
 

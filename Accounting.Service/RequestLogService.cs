@@ -22,5 +22,21 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
       return await factoryManager.GetRequestLogManager().CreateAsync(requestLog);
     }
+
+    public async Task<int> UpdateResponseAsync(int requestLogId, string statusCode, long responseLength)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var requestLog = await factoryManager.GetRequestLogManager().GetByIdAsync(requestLogId);
+      if (requestLog != null)
+      {
+        requestLog.StatusCode = statusCode;
+        requestLog.ResponseLengthBytes = responseLength;
+        return await factoryManager.GetRequestLogManager().UpdateResponseAsync(requestLog.RequestLogID, statusCode, responseLength);
+      }
+      else
+      {
+        throw new Exception("Request log not found");
+      }
+    }
   }
 }

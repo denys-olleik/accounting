@@ -189,6 +189,19 @@ app.Use(async (context, next) =>
   using var responseBody = new MemoryStream();
   context.Response.Body = responseBody;
 
+  // Create and persist the initial request log at the start of the request
+  var log = new RequestLog
+  {
+    RemoteIp = context.Connection.RemoteIpAddress?.ToString(),
+    CountryCode = "",
+    Referer = context.Request.Headers["Referer"].ToString(),
+    UserAgent = context.Request.Headers["User-Agent"].ToString(),
+    Path = context.Request.Path,
+    // Optionally add other initial fields
+  };
+  log = await logService.CreateAsync(log);
+  context.Items["RequestLogId"] = log.RequestLogID;
+
   await next();
 
   sw.Stop();
@@ -198,20 +211,13 @@ app.Use(async (context, next) =>
   context.Response.Body.Seek(0, SeekOrigin.Begin);
   await responseBody.CopyToAsync(originalBodyStream);
 
-  var log = new RequestLog
-  {
-    RemoteIp = context.Connection.RemoteIpAddress?.ToString(),
-    CountryCode = "", // Use geo service if desired
-    Referer = context.Request.Headers["Referer"].ToString(),
-    UserAgent = context.Request.Headers["User-Agent"].ToString(),
-    Path = context.Request.Path,
-    StatusCode = context.Response.StatusCode.ToString(),
-    ResponseLengthBytes = responseLength
-  };
+  // Update the initial log with new info
+  log.StatusCode = context.Response.StatusCode.ToString();
+  log.ResponseLengthBytes = responseLength;
+  // (Optionally update CountryCode, etc.)
 
-  await logService.CreateAsync(log);
+  int rowsUpdated = await logService.UpdateResponseAsync(log.RequestLogID, context.Response.StatusCode.ToString(), responseLength);
 });
-
 
 app.MapControllerRoute(
     name: "default",
