@@ -5107,7 +5107,7 @@ namespace Accounting.Database
             }
             else
             {
-              throw new Exception("Tenant not found or invalid tenant configuration.");
+              throw new System.Exception("Tenant not found or invalid tenant configuration.");
             }
           }
           else
@@ -7619,6 +7619,44 @@ namespace Accounting.Database
             """, parameters);
           return rowsAffected;
         }
+      }
+    }
+
+    public IExceptionManager GetExceptionManager()
+    {
+      throw new NotImplementedException();
+    }
+
+    public class ExceptionManager : IExceptionManager
+    {
+      public Business.Exception Create(Business.Exception entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Task<Business.Exception> CreateAsync(Business.Exception entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Delete(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Business.Exception Get(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public IEnumerable<Business.Exception> GetAll()
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Update(Business.Exception entity)
+      {
+        throw new NotImplementedException();
       }
     }
 

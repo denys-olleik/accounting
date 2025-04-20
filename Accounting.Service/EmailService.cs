@@ -21,7 +21,7 @@ namespace Accounting.Service
       
       if (emailSecret == null || fromSecret == null)
       {
-        throw new Exception("Email secret not found.");
+        throw new System.Exception("Email secret not found.");
       }
 
       var client = new SendGridClient(emailSecret!.Value);

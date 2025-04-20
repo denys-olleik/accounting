@@ -201,5 +201,10 @@ namespace Accounting.Database
     {
       return databaseFactoryDefinition.GetBlogManager();
     }
+
+    public IExceptionManager GetExceptionManager()
+    {
+      return databaseFactoryDefinition.GetExceptionManager();
+    }
   }
 }

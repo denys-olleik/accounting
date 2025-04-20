@@ -109,7 +109,7 @@ namespace Accounting.Service
       catch (APIUnauthorizedException)
       {
         // If we get here, token refresh didn't help. Inform user appropriately.
-        throw new Exception("There was a problem accessing Spotify. Please try again."); // or handle as needed
+        throw new System.Exception("There was a problem accessing Spotify. Please try again."); // or handle as needed
       }
       catch (APIException ex)
       {
@@ -138,7 +138,7 @@ namespace Accounting.Service
       if (!response.IsSuccessStatusCode)
       {
         // Handle error response
-        throw new Exception($"Error retrieving Spotify token: {response.StatusCode}");
+        throw new System.Exception($"Error retrieving Spotify token: {response.StatusCode}");
       }
 
       // Deserialize the response JSON to get the access token

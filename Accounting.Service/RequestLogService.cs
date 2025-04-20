@@ -35,7 +35,7 @@ namespace Accounting.Service
       }
       else
       {
-        throw new Exception("Request log not found");
+        throw new System.Exception("Request log not found");
       }
     }
   }

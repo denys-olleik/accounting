@@ -78,7 +78,7 @@ namespace Accounting.Controllers
           return BadRequest(new { error = "The parent task was not updated. Check your input and try again." });
         }
       }
-      catch (Exception ex)
+      catch (System.Exception ex)
       {
         return StatusCode(500, new { error = ex.Message });
       }
@@ -120,7 +120,7 @@ namespace Accounting.Controllers
           return BadRequest(new { error = "The task status was not updated. Check your input and try again." });
         }
       }
-      catch (Exception ex)
+      catch (System.Exception ex)
       {
         return StatusCode(500, new { error = ex.Message });
       }

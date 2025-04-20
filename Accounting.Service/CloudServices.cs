@@ -53,7 +53,7 @@ namespace Accounting.Service
           client.Disconnect();
         }
       }
-      catch (Exception ex)
+      catch (System.Exception ex)
       {
         //Console.WriteLine($"An error occurred while executing command: {ex.Message}");
       }

@@ -137,7 +137,7 @@ namespace Accounting.Controllers
       {
         return false;
       }
-      catch (Exception)
+      catch (System.Exception)
       {
         return false;
       }
