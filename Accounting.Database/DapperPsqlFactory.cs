@@ -6076,6 +6076,38 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<(IEnumerable<RequestLog> requestLogs, int? nextPage)> GetAllAsync(int page, int pageSize)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Page", page);
+        p.Add("@PageSize", pageSize);
+
+        IEnumerable<RequestLog> paginatedResult;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          paginatedResult = await con.QueryAsync<RequestLog>($"""
+            SELECT * FROM (
+              SELECT *,
+                     ROW_NUMBER() OVER (ORDER BY "RequestLogID" DESC) AS RowNumber
+              FROM "RequestLog"
+            ) AS NumberedLogs
+            WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
+            """, p);
+        }
+
+        var result = paginatedResult.ToList();
+        int? nextPage = null;
+
+        if (result.Count > pageSize)
+        {
+          result.RemoveAt(result.Count - 1);
+          nextPage = page + 1;
+        }
+
+        return (result, nextPage);
+      }
+
       public async Task<RequestLog> GetByIdAsync(int requestLogId)
       {
         DynamicParameters p = new DynamicParameters();

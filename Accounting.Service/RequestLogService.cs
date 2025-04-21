@@ -23,6 +23,12 @@ namespace Accounting.Service
       return await factoryManager.GetRequestLogManager().CreateAsync(requestLog);
     }
 
+    public async Task<(IEnumerable<RequestLog> requestLogs, int? nextPage)> GetAllAsync(int page, int pageSize)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      return await factoryManager.GetRequestLogManager().GetAllAsync(page, pageSize);
+    }
+
     public async Task<int> UpdateResponseAsync(int requestLogId, string statusCode, long responseLength)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);

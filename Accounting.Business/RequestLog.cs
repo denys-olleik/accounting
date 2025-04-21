@@ -4,6 +4,7 @@ namespace Accounting.Business
 {
   public class RequestLog : IIdentifiable<int>
   {
+    public int RowNumber { get; set; }
     public int RequestLogID { get; set; }
     public string? RemoteIp { get; set; }
     public string? CountryCode { get; set; }
