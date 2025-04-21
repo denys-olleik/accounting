@@ -1,4 +1,5 @@
-﻿CREATE TABLE "Tenant"
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Tenant";'
+CREATE TABLE "Tenant"
 (
 	"TenantID" SERIAL PRIMARY KEY NOT NULL,
 	"PublicId" VARCHAR(10) NOT NULL UNIQUE,
@@ -15,6 +16,7 @@
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Organization";'
 CREATE TABLE "Organization"
 (
   "OrganizationID" SERIAL PRIMARY KEY,
@@ -32,6 +34,7 @@ CREATE TABLE "Organization"
   "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "User";'
 CREATE TABLE "User"
 (
 	"UserID" SERIAL PRIMARY KEY,
@@ -44,6 +47,7 @@ CREATE TABLE "User"
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "UserOrganization";'
 CREATE TABLE "UserOrganization"
 (
 	"UserOrganizationID" SERIAL PRIMARY KEY NOT NULL,
@@ -57,6 +61,7 @@ CREATE TABLE "UserOrganization"
 	UNIQUE ("UserId", "OrganizationId")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "LoginWithoutPassword";'
 CREATE TABLE "LoginWithoutPassword"
 (
 	"LoginWithoutPasswordID" SERIAL PRIMARY KEY NOT NULL,
@@ -79,6 +84,7 @@ CREATE TABLE "LoginWithoutPassword"
 -- 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 -- );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Reconciliation";'
 CREATE TABLE "Reconciliation"
 (
 	"ReconciliationID" SERIAL PRIMARY KEY NOT NULL,
@@ -91,6 +97,7 @@ CREATE TABLE "Reconciliation"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "ReconciliationAttachment";'
 CREATE TABLE "ReconciliationAttachment"
 (
 	"ReconciliationAttachmentID" SERIAL PRIMARY KEY NOT NULL,
@@ -106,6 +113,7 @@ CREATE TABLE "ReconciliationAttachment"
 	UNIQUE ("ReconciliationId", "OrganizationId")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Account";'
 CREATE TABLE "Account"
 (
 	"AccountID" SERIAL PRIMARY KEY NOT NULL,
@@ -127,6 +135,7 @@ CREATE TABLE "Account"
 	UNIQUE ("Name", "OrganizationId")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "ReconciliationTransaction";'
 CREATE TABLE "ReconciliationTransaction"
 (
 	"ReconciliationTransactionID" SERIAL PRIMARY KEY NOT NULL,
@@ -151,6 +160,7 @@ CREATE TABLE "ReconciliationTransaction"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "PaymentTerm";'
 CREATE TABLE "PaymentTerm"
 (
 	"PaymentTermID" SERIAL PRIMARY KEY NOT NULL,
@@ -163,6 +173,7 @@ CREATE TABLE "PaymentTerm"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "BusinessEntity";'
 CREATE TABLE "BusinessEntity"
 (
 	"BusinessEntityID" SERIAL PRIMARY KEY NOT NULL,
@@ -181,6 +192,7 @@ CREATE TABLE "BusinessEntity"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Address";'
 CREATE TABLE "Address"
 (
 	"AddressID" SERIAL PRIMARY KEY NOT NULL,
@@ -201,6 +213,7 @@ CREATE TABLE "Address"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Claim";'
 CREATE TABLE "Claim"
 (
 	"ClaimID" SERIAL PRIMARY KEY NOT NULL,
@@ -216,6 +229,7 @@ CREATE TABLE "Claim"
 	UNIQUE ("OrganizationId", "UserId", "ClaimType", "ClaimValue")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Tag";'
 CREATE TABLE "Tag"
 (
 	"TagID" SERIAL PRIMARY KEY NOT NULL,
@@ -228,6 +242,7 @@ CREATE TABLE "Tag"
 	UNIQUE ("Name")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "UnitType";'
 CREATE TABLE "UnitType"
 (
 	"UnitTypeID" SERIAL PRIMARY KEY NOT NULL,
@@ -238,6 +253,7 @@ CREATE TABLE "UnitType"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Item";'
 CREATE TABLE "Item"
 (
 	"ItemID" SERIAL PRIMARY KEY NOT NULL,
@@ -263,6 +279,7 @@ CREATE TABLE "Item"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Location";'
 CREATE TABLE "Location"
 (
 	"LocationID" SERIAL PRIMARY KEY NOT NULL,
@@ -294,6 +311,7 @@ CREATE TABLE "Inventory"
 	UNIQUE ("ItemId", "LocationId")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "InventoryAdjustment";'
 CREATE TABLE "InventoryAdjustment"
 (
 	"InventoryAdjustmentID" SERIAL PRIMARY KEY NOT NULL,
@@ -311,6 +329,7 @@ CREATE TABLE "InventoryAdjustment"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "ToDo";'
 CREATE TABLE "ToDo"
 (
 	"ToDoID" SERIAL PRIMARY KEY NOT NULL,
@@ -326,6 +345,7 @@ CREATE TABLE "ToDo"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "ToDoTag";'
 CREATE TABLE "ToDoTag"
 (
 	"ToDoTagID" SERIAL PRIMARY KEY NOT NULL,
@@ -341,6 +361,7 @@ CREATE TABLE "ToDoTag"
 	UNIQUE ("ToDoId", "TagId")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "UserToDo";'
 CREATE TABLE "UserToDo"
 (
 	"UserToDoID" SERIAL PRIMARY KEY NOT NULL,
@@ -357,6 +378,7 @@ CREATE TABLE "UserToDo"
 	UNIQUE ("UserId", "ToDoId")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Payment";'
 CREATE TABLE "Payment"
 (
 	"PaymentID" SERIAL PRIMARY KEY NOT NULL,
@@ -374,6 +396,7 @@ CREATE SEQUENCE "InvoiceNumberSeq" AS INT
 START WITH 1500
 INCREMENT BY 1;
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Invoice";'
 CREATE TABLE "Invoice"
 (
 	"InvoiceID" SERIAL PRIMARY KEY NOT NULL,
@@ -396,6 +419,7 @@ CREATE TABLE "Invoice"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "InvoiceLine";'
 CREATE TABLE "InvoiceLine"
 (
 	"InvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
@@ -416,6 +440,7 @@ CREATE TABLE "InvoiceLine"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "InvoiceAttachment";'
 CREATE TABLE "InvoiceAttachment"
 (
 	"InvoiceAttachmentID" SERIAL PRIMARY KEY NOT NULL,
@@ -432,6 +457,7 @@ CREATE TABLE "InvoiceAttachment"
 	UNIQUE ("InvoiceId", "PrintOrder")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Journal";'
 CREATE TABLE "Journal"
 (
 	"JournalID" SERIAL PRIMARY KEY NOT NULL,
@@ -449,6 +475,7 @@ CREATE TABLE "Journal"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "JournalInventoryAdjustment";'
 CREATE TABLE "JournalInventoryAdjustment"
 (
 	"JournalInventoryAdjustmentID" SERIAL PRIMARY KEY NOT NULL,
@@ -466,6 +493,7 @@ CREATE TABLE "JournalInventoryAdjustment"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "JournalInvoiceInvoiceLine";'
 CREATE TABLE "JournalInvoiceInvoiceLine"
 (
 	"JournalInvoiceInvoiceLineID" SERIAL PRIMARY KEY NOT NULL,
@@ -485,6 +513,7 @@ CREATE TABLE "JournalInvoiceInvoiceLine"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "InvoiceInvoiceLinePayment";'
 CREATE TABLE "InvoiceInvoiceLinePayment"
 (
 	"InvoiceInvoiceLinePaymentID" SERIAL PRIMARY KEY NOT NULL,
@@ -502,6 +531,7 @@ CREATE TABLE "InvoiceInvoiceLinePayment"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "JournalInvoiceInvoiceLinePayment";'
 CREATE TABLE "JournalInvoiceInvoiceLinePayment"
 (
 	"JournalInvoiceInvoiceLinePaymentID" SERIAL PRIMARY KEY NOT NULL,
@@ -519,6 +549,7 @@ CREATE TABLE "JournalInvoiceInvoiceLinePayment"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "JournalReconciliationTransaction";'
 CREATE TABLE "JournalReconciliationTransaction"
 (
 	"JournalReconciliationTransactionID" SERIAL PRIMARY KEY NOT NULL,
@@ -536,6 +567,7 @@ CREATE TABLE "JournalReconciliationTransaction"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "PaymentInstruction";'
 CREATE TABLE "PaymentInstruction"
 (
 	"PaymentInstructionID" SERIAL PRIMARY KEY NOT NULL,
@@ -548,6 +580,7 @@ CREATE TABLE "PaymentInstruction"
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "RequestLog";'
 CREATE TABLE "RequestLog"
 (
 	"RequestLogID" SERIAL PRIMARY KEY NOT NULL,
@@ -576,6 +609,7 @@ CREATE TABLE "RequestLog"
 
 CREATE EXTENSION pgcrypto;
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Secret";'
 CREATE TABLE "Secret"
 (
 	"SecretID" SERIAL PRIMARY KEY NOT NULL,
@@ -600,6 +634,7 @@ WHERE "Master" = TRUE;
 CREATE UNIQUE INDEX unique_type_per_tenant
 ON "Secret" ("TenantId", "Type");
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Blog";'
 CREATE TABLE "Blog"
 (
 	"BlogID" SERIAL PRIMARY KEY NOT NULL,
@@ -611,6 +646,7 @@ CREATE TABLE "Blog"
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Exception";'
 CREATE TABLE "Exception"
 (
     "ExceptionID" SERIAL PRIMARY KEY NOT NULL,
@@ -625,6 +661,7 @@ CREATE TABLE "Exception"
     FOREIGN KEY ("RequestLogId") REFERENCES "RequestLog"("RequestLogID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "PlaylistLover";'
 CREATE TABLE "PlaylistLover"
 (
     "PlaylistLoverID" SERIAL PRIMARY KEY NOT NULL,
@@ -635,6 +672,7 @@ CREATE TABLE "PlaylistLover"
     "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Track";'
 CREATE TABLE "Track"
 (
     "TrackID" SERIAL PRIMARY KEY NOT NULL,
@@ -645,6 +683,7 @@ CREATE TABLE "Track"
     "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "PlaylistTrack";'
 CREATE TABLE "PlaylistTrack"
 (
     "PlaylistTrackID" SERIAL PRIMARY KEY,
@@ -654,6 +693,7 @@ CREATE TABLE "PlaylistTrack"
     UNIQUE ("PlaylistLoverID", "TrackID")
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "PlaylistSubmission";'
 CREATE TABLE "PlaylistSubmission"
 (
     "PlaylistSubmissionID" SERIAL PRIMARY KEY,
@@ -661,6 +701,7 @@ CREATE TABLE "PlaylistSubmission"
     "Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
+-- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "PlaylistSubmissionTrack";'
 CREATE TABLE "PlaylistSubmissionTrack"
 (
     "PlaylistSubmissionTrackID" SERIAL PRIMARY KEY,

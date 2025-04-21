@@ -7624,19 +7624,46 @@ namespace Accounting.Database
 
     public IExceptionManager GetExceptionManager()
     {
-      throw new NotImplementedException();
+      return new ExceptionManager(_connectionString);
     }
 
     public class ExceptionManager : IExceptionManager
     {
+      private readonly string _connectionString;
+
+      public ExceptionManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
       public Business.Exception Create(Business.Exception entity)
       {
         throw new NotImplementedException();
       }
-
-      public Task<Business.Exception> CreateAsync(Business.Exception entity)
+      
+      public async Task<Business.Exception> CreateAsync(Business.Exception entity)
       {
-        throw new NotImplementedException();
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Message", entity.Message);
+        p.Add("@StackTrace", entity.StackTrace);
+        p.Add("@Source", entity.Source);
+        p.Add("@HResult", entity.HResult);
+        p.Add("@TargetSite", entity.TargetSite);
+        p.Add("@InnerException", entity.InnerException);
+        p.Add("@RequestLogId", entity.RequestLogId);
+
+        IEnumerable<Business.Exception> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = await con.QueryAsync<Business.Exception>(""" 
+            INSERT INTO "Exception" ("Message", "StackTrace", "Source", "HResult", "TargetSite", "InnerException", "RequestLogId") 
+            VALUES (@Message, @StackTrace, @Source, @HResult, @TargetSite, @InnerException, @RequestLogId)
+            RETURNING *;
+            """, p);
+        }
+
+        return result.Single();
       }
 
       public int Delete(int id)

@@ -137,8 +137,18 @@ if (!app.Environment.IsDevelopment())
       var exception = exceptionHandlerPathFeature?.Error;
 
       // Log the exception
-      var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-      logger.LogError(exception, "Unhandled exception");
+      //var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+      //logger.LogError(exception, "Unhandled exception");
+      ExceptionService exceptionService = new ();
+      await exceptionService.CreateAsync(new Accounting.Business.Exception()
+      {
+        Message = exception?.Message,
+        StackTrace = exception?.StackTrace,
+        InnerException = exception?.InnerException?.ToString(),
+        Source = exception?.Source,
+        TargetSite = exception?.TargetSite.ToString(),
+        RequestLogId = (int?)context.Items["RequestLogId"],
+      });
 
       // Redirect to the error page
       context.Response.Redirect("/Home/Error");
