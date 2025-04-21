@@ -10,8 +10,8 @@ namespace Accounting.Controllers
   public class RequestLogController : BaseController
   {
     [HttpGet]
-    [Route("logs")]
-    public IActionResult Logs(int page = 1, int pageSize = 2)
+    [Route("request-logs")]
+    public IActionResult RequestLogs(int page = 1, int pageSize = 2)
     {
       var referer = Request.Headers["Referer"].ToString() ?? string.Empty;
 
