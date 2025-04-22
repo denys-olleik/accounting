@@ -483,6 +483,10 @@ td.fitwidth, th.fitwidth {
   padding-left: 2px;
 }
 
+.padding-left-20px {
+  padding-left: 20px;
+}
+
 .padding-left-25px {
   padding-left: 25px;
 }
