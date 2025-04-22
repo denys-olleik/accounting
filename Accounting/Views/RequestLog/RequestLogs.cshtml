@@ -1,0 +1,115 @@
+﻿@model Accounting.Models.RequestLogViewModels.RequestLogsPaginatedViewModel
+
+@{
+  ViewData["Title"] = "Request Logs - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Request Logs";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<script src="~/js/vue-3-5-13.js" asp-append-version="true"></script>
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div>
+    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">
+      Home
+    </a>
+  </div>
+</div>
+
+<div id="app">
+  <table ref="requestLogsTable" class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th class="text-align-left width-1px padding-right-20px">#</th>
+        <th class="text-align-left padding-right-20px">ID</th>
+        <th class="text-align-left padding-right-20px">IP</th>
+        <th class="text-align-left padding-right-20px">Country</th>
+        <th class="text-align-left padding-right-20px">Referer</th>
+        <th class="text-align-left padding-right-20px">Agent</th>
+        <th class="text-align-left padding-right-20px flex-1">Path</th>
+        <th class="text-align-right padding-right-20px white-space-nowrap">Length</th>
+        <th class="text-align-right padding-right-20px white-space-nowrap">Status</th>
+        <th class="text-align-right white-space-nowrap">Created</th>
+      </tr>
+    </thead>
+    <tbody class="font-Roboto-Mono">
+      <tr v-for="log in requestLogs" :key="log.requestLogID">
+        <td class="padding-right-20px">{{ log.rowNumber }}</td>
+        <td class="padding-right-20px">{{ log.requestLogID }}</td>
+        <td class="padding-right-20px">{{ log.remoteIp }}</td>
+        <td class="padding-right-20px">{{ log.countryCode }}</td>
+        <td class="padding-right-20px">
+          <div>{{ log.referer }}</div>
+        </td>
+        <td class="padding-right-20px">{{ log.userAgent }}</td>
+        <td class="padding-right-20px flex-1">{{ log.path }}</td>
+        <td class="text-align-right padding-right-20px white-space-nowrap">{{ log.responseLengthBytes }}</td>
+        <td class="text-align-right padding-right-20px white-space-nowrap">{{ log.statusCode }}</td>
+        <td class="text-align-right white-space-nowrap">{{ log.created }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div v-if="(page > 1 || nextPage)" class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
+    <div>
+      <a :href="`/u/requestlogs?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
+    </div>
+    <div class="flex-1"></div>
+    <div>
+      <a :href="`/u/requestlogs?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const { createApp } = Vue;
+
+  const app = createApp({
+    data() {
+      return {
+        requestLogs: [],
+        page: @Model.Page,
+        pageSize: @Model.PageSize,
+        nextPage: null,
+        headerWidths: []
+      };
+    },
+    methods: {
+      fetchRequestLogs() {
+        fetch(`/api/request-log/get-request-logs?page=${this.page}&pageSize=${this.pageSize}`)
+          .then(response => response.json())
+          .then(data => {
+            this.requestLogs = data.requestLogs;
+            if (data.page > 0) {
+              this.page = data.page;
+            }
+            if (data.nextPage > 0) {
+              this.nextPage = data.nextPage;
+            } else {
+              this.nextPage = null;
+            }
+          });
+      },
+      recordHeaderWidths() {
+        this.headerWidths = [];
+        const table = this.$refs.requestLogsTable;
+        if (!table) return;
+        const ths = table.querySelectorAll('thead th');
+        ths.forEach(th => {
+          this.headerWidths.push(th.offsetWidth);
+        });
+      }
+    },
+    mounted() {
+      this.$nextTick(() => {
+        this.recordHeaderWidths();
+      });
+      this.fetchRequestLogs();
+    }
+  });
+
+  app.mount('#app');
+</script>

@@ -36,7 +36,7 @@ namespace Accounting.Controllers
           UserAgent = log.UserAgent,
           Path = log.Path,
           ResponseLengthBytes = log.ResponseLengthBytes,
-          StatusCode = log.StatusCode.ToString(),
+          StatusCode = log.StatusCode,
           Created = log.Created
         }).ToList(),
         Page = page,
