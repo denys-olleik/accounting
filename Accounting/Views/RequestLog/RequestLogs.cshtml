@@ -1,11 +1,11 @@
 ﻿@model Accounting.Models.RequestLogViewModels.RequestLogsPaginatedViewModel
 
 @{
-  ViewData["Title"] = "Request Logs - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Request logs - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 @{
-  string headerText = "Request Logs";
+  string headerText = "Request logs";
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
@@ -71,21 +71,24 @@
     </tbody>
   </table>
 
-  <div v-if="(page > 1 || nextPage)" class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
-    <div>
-      <a :href="`/u/requestlogs?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
-    </div>
-    <div class="flex-1"></div>
-    <div>
-      <a :href="`/u/requestlogs?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
-    </div>
-  </div>
+  <pagination-component
+    :prev-page-url="`/request-log/request-logs?page=${page - 1}&pageSize=${pageSize}`"
+    :next-page-url="nextPage ? `/request-log/request-logs?page=${nextPage}&pageSize=${pageSize}` : ''"
+    :is-filtered="false"
+    :page="page">
+  </pagination-component>
+
 </div>
+
+<script src="~/js/PaginationComponent.js" asp-append-version="true"></script>
 
 <script>
   const { createApp } = Vue;
 
   const app = createApp({
+    components: {
+      'pagination-component': PaginationComponent
+    },
     data() {
       return {
         requestLogs: [],
