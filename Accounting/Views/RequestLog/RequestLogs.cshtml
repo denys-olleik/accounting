@@ -38,34 +38,34 @@
     <tbody class="font-Roboto-Mono">
       <tr v-for="log in requestLogs" :key="log.requestLogID">
         <td class="padding-0px">
-          <div class="hidden-nowrap-ellipsis">.</div>
+          <div class="hidden-nowrap-ellipsis">{{ log.rowNumber }}</div>
         </td>
         <td class="padding-0px">
-          <div class="hidden-nowrap-ellipsis">.</div>
+          <div class="hidden-nowrap-ellipsis">{{ log.requestLogID }}</div>
         </td>
         <td class="padding-0px">
-          <div class="hidden-nowrap-ellipsis">.</div>
+          <div class="hidden-nowrap-ellipsis">{{ log.remoteIp }}</div>
         </td>
         <td class="padding-0px">
-          <div class="hidden-nowrap-ellipsis">.</div>
+          <div class="hidden-nowrap-ellipsis">{{ log.countryCode }}</div>
         </td>
         <td class="padding-0px">
-          <div class="hidden-nowrap-ellipsis">.</div>
+          <div class="hidden-nowrap-ellipsis">{{ log.referer }}</div>
         </td>
         <td class="padding-0px">
-          <div class="hidden-nowrap-ellipsis">.</div>
+          <div class="hidden-nowrap-ellipsis">{{ log.userAgent }}</div>
         </td>
         <td class="padding-0px">
-          <div class="hidden-nowrap-ellipsis">.</div>
+          <div class="hidden-nowrap-ellipsis">{{ log.path }}</div>
         </td>
         <td class="text-align-right white-space-nowrap padding-0px">
-          <div class="hidden-nowrap-ellipsis">.</div>
+          <div class="hidden-nowrap-ellipsis">{{ log.responseLengthBytes }}</div>
         </td>
         <td class="text-align-right white-space-nowrap padding-0px">
-          <div class="hidden-nowrap-ellipsis">.</div>
+          <div class="hidden-nowrap-ellipsis">{{ log.statusCode }}</div>
         </td>
         <td class="text-align-right white-space-nowrap padding-0px">
-          <div class="hidden-nowrap-ellipsis">.</div>
+          <div class="hidden-nowrap-ellipsis">{{ log.created }}</div>
         </td>
       </tr>
     </tbody>
