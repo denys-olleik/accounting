@@ -742,6 +742,12 @@ td.fitwidth, th.fitwidth {
   white-space: pre-wrap;
 }
 
+.hidden-nowrap-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .flex-1 {
   flex: 1
 }

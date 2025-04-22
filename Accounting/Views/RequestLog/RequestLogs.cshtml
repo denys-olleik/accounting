@@ -37,18 +37,36 @@
     </thead>
     <tbody class="font-Roboto-Mono">
       <tr v-for="log in requestLogs" :key="log.requestLogID">
-        <td class="padding-right-20px">{{ log.rowNumber }}</td>
-        <td class="padding-right-20px">{{ log.requestLogID }}</td>
-        <td class="padding-right-20px">{{ log.remoteIp }}</td>
-        <td class="padding-right-20px">{{ log.countryCode }}</td>
         <td class="padding-right-20px">
-          <div>{{ log.referer }}</div>
+          <div class="hidden-nowrap-ellipsis">{{ log.rowNumber }}</div>
         </td>
-        <td class="padding-right-20px">{{ log.userAgent }}</td>
-        <td class="padding-right-20px flex-1">{{ log.path }}</td>
-        <td class="text-align-right padding-right-20px white-space-nowrap">{{ log.responseLengthBytes }}</td>
-        <td class="text-align-right padding-right-20px white-space-nowrap">{{ log.statusCode }}</td>
-        <td class="text-align-right white-space-nowrap">{{ log.created }}</td>
+        <td class="padding-right-20px">
+          <div class="hidden-nowrap-ellipsis">{{ log.requestLogID }}</div>
+        </td>
+        <td class="padding-right-20px">
+          <div class="hidden-nowrap-ellipsis">{{ log.remoteIp }}</div>
+        </td>
+        <td class="padding-right-20px">
+          <div class="hidden-nowrap-ellipsis">{{ log.countryCode }}</div>
+        </td>
+        <td class="padding-right-20px">
+          <div class="hidden-nowrap-ellipsis">{{ log.referer }}</div>
+        </td>
+        <td class="padding-right-20px">
+          <div class="hidden-nowrap-ellipsis">{{ log.userAgent }}</div>
+        </td>
+        <td class="padding-right-20px flex-1">
+          <div class="hidden-nowrap-ellipsis">{{ log.path }}</div>
+        </td>
+        <td class="text-align-right padding-right-20px white-space-nowrap">
+          <div class="hidden-nowrap-ellipsis">{{ log.responseLengthBytes }}</div>
+        </td>
+        <td class="text-align-right padding-right-20px white-space-nowrap">
+          <div class="hidden-nowrap-ellipsis">{{ log.statusCode }}</div>
+        </td>
+        <td class="text-align-right white-space-nowrap">
+          <div class="hidden-nowrap-ellipsis">{{ log.created }}</div>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -78,11 +96,28 @@
       };
     },
     methods: {
+      setTdWidths() {
+        const table = this.$refs.requestLogsTable;
+        if (!table) return;
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+          const tds = row.querySelectorAll('td');
+          tds.forEach((td, i) => {
+            const innerDiv = td.querySelector('div');
+            if (innerDiv && this.headerWidths[i]) {
+              innerDiv.style.width = this.headerWidths[i] + 'px';
+            }
+          });
+        });
+      },
       fetchRequestLogs() {
         fetch(`/api/request-log/get-request-logs?page=${this.page}&pageSize=${this.pageSize}`)
           .then(response => response.json())
           .then(data => {
             this.requestLogs = data.requestLogs;
+            this.$nextTick(() => {
+              this.setTdWidths();
+            });
             if (data.page > 0) {
               this.page = data.page;
             }
