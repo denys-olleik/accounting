@@ -1,4 +1,4 @@
-﻿namespace Accounting.Models.RequestLogViewModels
+﻿namespace Accounting.Models.DiagnosticsViewModels
 {
   public class RequestLogsPaginatedViewModel : PaginatedViewModel
   {

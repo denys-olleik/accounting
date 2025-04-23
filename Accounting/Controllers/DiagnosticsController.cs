@@ -1,6 +1,6 @@
 ﻿using Accounting.Business;
 using Accounting.CustomAttributes;
-using Accounting.Models.RequestLogViewModels;
+using Accounting.Models.DiagnosticsViewModels;
 using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -60,9 +60,9 @@ namespace Accounting.Controllers
     {
       var (requestLogs, nextPage) = await _requestLogService.GetAllAsync(page, pageSize);
 
-      Models.RequestLogViewModels.GetRequestLogsViewModel getRequestLogsViewModel = new Models.RequestLogViewModels.GetRequestLogsViewModel()
+      Models.DiagnosticsViewModels.GetRequestLogsViewModel getRequestLogsViewModel = new Models.DiagnosticsViewModels.GetRequestLogsViewModel()
       {
-        RequestLogs = requestLogs.Select(log => new Models.RequestLogViewModels.GetRequestLogsViewModel.RequestLogViewModel()
+        RequestLogs = requestLogs.Select(log => new Models.DiagnosticsViewModels.GetRequestLogsViewModel.RequestLogViewModel()
         {
           RowNumber = log.RowNumber,
           RequestLogID = log.RequestLogID,

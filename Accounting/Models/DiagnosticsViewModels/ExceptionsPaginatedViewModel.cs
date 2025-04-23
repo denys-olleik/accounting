@@ -1,8 +1,8 @@
-﻿namespace Accounting.Models.RequestLogViewModels
+﻿namespace Accounting.Models.DiagnosticsViewModels
 {
   public class ExceptionsPaginatedViewModel : PaginatedViewModel
   {
-    public List<ExceptionViewModel>? Exceptions { get; set; }
+    public List<ExceptionViewModel>? Exceptions { get; set; } = new ();
 
     public class ExceptionViewModel
     {
