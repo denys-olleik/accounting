@@ -330,6 +330,9 @@ echo '{systemdConfiguration}' | sudo tee /etc/systemd/system/accounting.service 
 # sudo chown -R postgres:root /opt/accounting
 # sudo chmod -R 770 /opt/accounting
 
+sudo chown -R postgres:root /var/accounting
+sudo chmod -R 770 /var/accounting
+
 # Reload systemd to apply changes
 sudo systemctl daemon-reload
 
