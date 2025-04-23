@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Accounting.Controllers
 {
   [AuthorizeWithOrganizationId]
-  [Route("request-log")]
-  public class RequestLogController : BaseController
+  [Route("diagnostics")]
+  public class DiagnosticsController : BaseController
   {
     [HttpGet]
     [Route("request-logs")]
@@ -30,12 +30,12 @@ namespace Accounting.Controllers
 
   [AuthorizeWithOrganizationId]
   [ApiController]
-  [Route("api/request-log")]
-  public class RequestLogApiController : BaseController
+  [Route("api/diagnostics")]
+  public class DiagnosticsApiController : BaseController
   {
     private readonly RequestLogService _requestLogService;
 
-    public RequestLogApiController(RequestContext requestContext, RequestLogService requestLogService)
+    public DiagnosticsApiController(RequestContext requestContext, RequestLogService requestLogService)
     {
       _requestLogService = new RequestLogService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }

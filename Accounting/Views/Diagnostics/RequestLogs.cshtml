@@ -72,8 +72,8 @@
   </table>
 
   <pagination-component
-    :prev-page-url="`/request-log/request-logs?page=${page - 1}&pageSize=${pageSize}`"
-    :next-page-url="nextPage ? `/request-log/request-logs?page=${nextPage}&pageSize=${pageSize}` : ''"
+    :prev-page-url="`/diagnostics/request-logs?page=${page - 1}&pageSize=${pageSize}`"
+    :next-page-url="nextPage ? `/diagnostics/request-logs?page=${nextPage}&pageSize=${pageSize}` : ''"
     :is-filtered="false"
     :page="page">
   </pagination-component>
@@ -114,7 +114,7 @@
         });
       },
       fetchRequestLogs() {
-        fetch(`/api/request-log/get-request-logs?page=${this.page}&pageSize=${this.pageSize}`)
+        fetch(`/api/diagnostics/get-request-logs?page=${this.page}&pageSize=${this.pageSize}`)
           .then(response => response.json())
           .then(data => {
             this.requestLogs = data.requestLogs;
