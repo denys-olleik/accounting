@@ -271,6 +271,10 @@ td.fitwidth, th.fitwidth {
   filter: blur(1px);
 }
 
+.filter-blur-5px {
+  filter: blur(5px);
+}
+
 .position-relative {
   position: relative;
 }
