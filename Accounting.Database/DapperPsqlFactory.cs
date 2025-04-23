@@ -7713,6 +7713,35 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<(IEnumerable<Business.Exception> exceptions, int? nextPage)> GetAllAsync(
+        int page, 
+        int pageSize)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Page", page);
+        p.Add("@PageSize", pageSize);
+        IEnumerable<Business.Exception> paginatedResult;
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          paginatedResult = await con.QueryAsync<Business.Exception>($"""
+            SELECT * FROM (
+                SELECT *,
+                       ROW_NUMBER() OVER (ORDER BY "ExceptionID" DESC) AS RowNumber
+                FROM "Exception"
+            ) AS NumberedExceptions
+            WHERE RowNumber BETWEEN @PageSize * (@Page - 1) + 1 AND @PageSize * @Page + 1
+            """, p);
+        }
+        var result = paginatedResult.ToList();
+        int? nextPage = null;
+        if (result.Count > pageSize)
+        {
+          result.RemoveAt(result.Count - 1);
+          nextPage = page + 1;
+        }
+        return (result, nextPage);
+      }
+
       public int Update(Business.Exception entity)
       {
         throw new NotImplementedException();

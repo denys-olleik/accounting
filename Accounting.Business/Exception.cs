@@ -4,6 +4,7 @@ namespace Accounting.Business
 {
   public class Exception : IIdentifiable<int>
   {
+    public int RowNumber { get; set; }
     public int ExceptionID { get; set; }
     public string Message { get; set; }
     public string StackTrace { get; set; }

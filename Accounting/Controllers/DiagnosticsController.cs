@@ -47,10 +47,12 @@ namespace Accounting.Controllers
   public class DiagnosticsApiController : BaseController
   {
     private readonly RequestLogService _requestLogService;
+    private readonly ExceptionService _exceptionService;
 
-    public DiagnosticsApiController(RequestContext requestContext, RequestLogService requestLogService)
+    public DiagnosticsApiController(RequestContext requestContext, RequestLogService requestLogService, ExceptionService exceptionService)
     {
       _requestLogService = new RequestLogService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _exceptionService = new ExceptionService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet("get-request-logs")]
@@ -60,9 +62,9 @@ namespace Accounting.Controllers
     {
       var (requestLogs, nextPage) = await _requestLogService.GetAllAsync(page, pageSize);
 
-      Models.DiagnosticsViewModels.GetRequestLogsViewModel getRequestLogsViewModel = new Models.DiagnosticsViewModels.GetRequestLogsViewModel()
+      RequestLogsPaginatedViewModel getRequestLogsViewModel = new RequestLogsPaginatedViewModel()
       {
-        RequestLogs = requestLogs.Select(log => new Models.DiagnosticsViewModels.GetRequestLogsViewModel.RequestLogViewModel()
+        RequestLogs = requestLogs.Select(log => new RequestLogsPaginatedViewModel.RequestLogViewModel()
         {
           RowNumber = log.RowNumber,
           RequestLogID = log.RequestLogID,
@@ -80,6 +82,35 @@ namespace Accounting.Controllers
       };
 
       return Ok(getRequestLogsViewModel);
+    }
+
+    [HttpGet("get-exceptions")]
+    public async Task<IActionResult> GetExceptions(
+      int page = 1,
+      int pageSize = 10)
+    {
+      var (exceptions, nextPage) = await _exceptionService.GetAllAsync(page, pageSize);
+
+      var getExceptionsViewModel = new ExceptionsPaginatedViewModel()
+      {
+        Exceptions = exceptions.Select(ex => new ExceptionsPaginatedViewModel.ExceptionViewModel()
+        {
+          RowNumber = ex.RowNumber,
+          ExceptionID = ex.ExceptionID,
+          Message = ex.Message,
+          StackTrace = ex.StackTrace,
+          Source = ex.Source,
+          HResult = ex.HResult,
+          TargetSite = ex.TargetSite,
+          InnerException = ex.InnerException,
+          RequestLogId = ex.RequestLogId,
+          Created = ex.Created
+        }).ToList(),
+        Page = page,
+        NextPage = nextPage
+      };
+
+      return Ok(getExceptionsViewModel);
     }
   }
 }
