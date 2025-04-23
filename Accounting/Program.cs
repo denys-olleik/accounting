@@ -201,15 +201,19 @@ app.Use(async (context, next) =>
   context.Response.Body = responseBody;
 
   // Create and persist the initial request log at the start of the request
+  var remoteIp = context.Request.Headers["X-Forwarded-For"].FirstOrDefault()
+    ?? context.Connection.RemoteIpAddress?.ToString();
+
   var log = new RequestLog
   {
-    RemoteIp = context.Connection.RemoteIpAddress?.ToString(),
+    RemoteIp = remoteIp,
     CountryCode = "",
     Referer = context.Request.Headers["Referer"].ToString(),
     UserAgent = context.Request.Headers["User-Agent"].ToString(),
     Path = context.Request.Path,
     // Optionally add other initial fields
   };
+
   log = await logService.CreateAsync(log);
   context.Items["RequestLogId"] = log.RequestLogID;
 

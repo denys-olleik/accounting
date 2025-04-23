@@ -276,9 +276,11 @@ sudo usermod -aG accounting postgres
 
 # Change the group ownership of the directory
 sudo chown -R :accounting /opt/accounting
+sudo chown -R :accounting /var/accounting
 
 # Set permissions to allow group access
 sudo chmod -R 775 /opt/accounting
+sudo chmod -R 770 /var/accounting
 
 # Create database
 sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
@@ -329,9 +331,6 @@ echo '{systemdConfiguration}' | sudo tee /etc/systemd/system/accounting.service 
 # Ensure correct ownership and permissions
 # sudo chown -R postgres:root /opt/accounting
 # sudo chmod -R 770 /opt/accounting
-
-sudo chown -R postgres:root /var/accounting
-sudo chmod -R 770 /var/accounting
 
 # Reload systemd to apply changes
 sudo systemctl daemon-reload
