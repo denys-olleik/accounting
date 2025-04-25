@@ -6,19 +6,6 @@ namespace Accounting.Models.RegistrationViewModels
   {
     public BaseRegistrationViewModelValidator()
     {
-      RuleFor(x => x.Email)
-        .NotEmpty()
-        .EmailAddress()
-        .WithMessage("Valid 'email' is required")
-        .Must(BaseRegistrationViewModel.DoesNotContainDisallowedCharacters)
-        .WithMessage("'Email' contains disallowed characters.");
-
-      RuleFor(x => x.Password)
-        .NotEmpty()
-        .WithMessage("'Password' is required")
-        .Must(BaseRegistrationViewModel.DoesNotContainDisallowedCharacters)
-        .WithMessage("'Password' contains disallowed characters.");
-
       RuleFor(x => x.FirstName)
         .NotEmpty()
         .WithMessage("'First name' is required")
@@ -30,6 +17,19 @@ namespace Accounting.Models.RegistrationViewModels
         .WithMessage("'Last name' is required")
         .Must(BaseRegistrationViewModel.DoesNotContainDisallowedCharacters)
         .WithMessage("'Last name' contains disallowed characters.");
+
+      RuleFor(x => x.Password)
+        .NotEmpty()
+        .WithMessage("'Password' is required")
+        .Must(BaseRegistrationViewModel.DoesNotContainDisallowedCharacters)
+        .WithMessage("'Password' contains disallowed characters.");
+
+      RuleFor(x => x.Email)
+        .NotEmpty()
+        .EmailAddress()
+        .WithMessage("Valid 'email' is required")
+        .Must(BaseRegistrationViewModel.DoesNotContainDisallowedCharacters)
+        .WithMessage("'Email' contains disallowed characters.");
     }
   }
 }
