@@ -1,4 +1,4 @@
-@model Accounting.Models.RegistrationViewModels.RegisterViewModel
+@model Accounting.Models.RegistrationViewModels.CompositeRegistrationViewModel
 
 @{
   ViewData["Title"] = "Register - " + ConfigurationSingleton.Instance.ApplicationName;
@@ -10,127 +10,126 @@
 
 <partial name="_H1HeaderPartial" model="@headerText" />
 
-<script src="~/js/vue-3-5-13.js" asp-append-version="true"></script>
-
 <div id="app">
-  <form asp-action="Register" asp-controller="Registration" method="post" class="display-flex flex-direction-column">
-
-    <input type="hidden" name="EmailKey" :value="emailKey" />
-    <input type="hidden" name="CloudKey" :value="cloudKey" />
-    <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
-      <label asp-for="Email" class="background-color-antiquewhite"></label>
-      <input asp-for="Email" class="font-size-20px font-Roboto-Mono" autocomplete="off" tabindex="1" />
-      <span>
-        <div class="display-flex">
-          <span>
-            <input asp-for="Shared" type="checkbox" class="margin-bottom-5px" v-model="isShared" />
-            <label asp-for="Shared">shared</label>
-          </span>
-          <span>
-            <input asp-for="Shared" type="checkbox" class="margin-bottom-5px" v-model="isShared" />
-            <label asp-for="Shared">shared</label>
-          </span>
-          <span>
-            <input asp-for="Shared" type="checkbox" class="margin-bottom-5px" v-model="isShared" />
-            <label asp-for="Shared">shared</label>
-          </span>
-        </div>
-      </span>
+  <!-- Email input always visible -->
+  <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
+    <div class="background-color-antiquewhite margin-bottom-5px">
+      <label class="background-color-antiquewhite">Email</label>
+      <input name="Email" class="font-size-20px font-Roboto-Mono" autocomplete="off" tabindex="1" placeholder="Email" />
     </div>
-    <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px">
-      <label asp-for="FullyQualifiedDomainName" class="background-color-antiquewhite">
-        Fully qualified domain name (accounting.example.com). *
-      </label>
-      <input asp-for="FullyQualifiedDomainName" autocomplete="off" class="font-size-20px" />
-      <div class="background-color-antiquewhite">
-        * required if not shared
+    <span>
+      <div class="display-flex margin-bottom-10px">
+        <span class="margin-right-15px">
+          <input type="radio" id="shared-radio" value="shared" v-model="selectedType" class="margin-bottom-5px" />
+          <label for="shared-radio">shared</label>
+        </span>
+        <span class="margin-right-15px">
+          <input type="radio" id="dedicated-radio" value="dedicated" v-model="selectedType" class="margin-bottom-5px" />
+          <label for="dedicated-radio">dedicated</label>
+        </span>
+        <span>
+          <input type="radio" id="independent-radio" value="independent" v-model="selectedType" class="margin-bottom-5px" />
+          <label for="independent-radio">independent</label>
+        </span>
       </div>
-    </div>
+    </span>
+  </div>
 
-    <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
-      <label class="background-color-antiquewhite">Email key (optional, Sendgrid)</label>
-      <input type="text" name="EmailKey" v-model="emailKey" :disabled="useExistingEmailKey" @@input="onEmailKeyInput" autocomplete="off" class="font-size-20px font-Roboto-Mono" />
-    </div>
-
-    <div v-if="!isShared && emailKey" class="display-flex flex-direction-column margin-bottom-5px margin-left-20px background-color-antiquewhite">
-      <label asp-for="NoReplyEmailAddress" class="background-color-antiquewhite">No reply email address (required)</label>
-      <input asp-for="NoReplyEmailAddress" type="text" class="font-size-20px font-Roboto-Mono" />
-    </div>
-
-    <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
-      <label class="background-color-antiquewhite">Cloud key (optional, Digital Ocean)</label>
-      <input type="text" name="CloudKey" v-model="cloudKey" :disabled="useExistingCloudKey" @@input="onCloudKeyInput" autocomplete="off" class="font-size-20px font-Roboto-Mono" />
-    </div>
-
-    <div class="display-flex">
-      <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
-        <label asp-for="FirstName" class="background-color-antiquewhite">First name</label>
-        <input asp-for="FirstName" class="font-size-20px" maxlength="100" autocomplete="off" tabindex="2" />
-      </div>
-      <div class="width-5px"></div>
-      <div class="flex-1 display-flex flex-direction-column margin-bottom-5px">
-        <label asp-for="LastName" class="background-color-antiquewhite">Last name</label>
-        <input asp-for="LastName" class="font-size-20px" maxlength="100" autocomplete="off" tabindex="3" />
-      </div>
-    </div>
-
+  <!-- Shared Registration Form -->
+  <form v-if="selectedType === 'shared'" asp-action="RegisterShared" asp-controller="Registration" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+    <input type="hidden" name="Email" :value="getEmail()" />
     <div class="display-flex flex-direction-column">
-      <label asp-for="Password" class="background-color-antiquewhite">Password</label>
-      <input asp-for="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" tabindex="4" />
-    </div>
-
+  <label class="background-color-antiquewhite">Password</label>
+  <input name="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Password" />
+</div>
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">First Name</label>
+  <input name="FirstName" class="margin-bottom-5px font-size-20px" placeholder="First Name" />
+</div>
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">Last Name</label>
+  <input name="LastName" class="margin-bottom-5px font-size-20px" placeholder="Last Name" />
+</div>
     <button type="submit" class="full-width-regular-button">Register</button>
   </form>
 
-  @if (Model != null && Model.ValidationResult != null)
-  {
-    foreach (var error in Model.ValidationResult.Errors)
-    {
-      <div>
-        <small class="color-red">@error.ErrorMessage</small>
-      </div>
-    }
-  }
+  <!-- Dedicated Registration Form -->
+  <form v-if="selectedType === 'dedicated'" asp-action="RegisterDedicated" asp-controller="Registration" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+    <input type="hidden" name="Email" :value="getEmail()" />
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">Password</label>
+  <input name="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Password" />
+</div>
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">First Name</label>
+  <input name="FirstName" class="margin-bottom-5px font-size-20px" placeholder="First Name" />
+</div>
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">Last Name</label>
+  <input name="LastName" class="margin-bottom-5px font-size-20px" placeholder="Last Name" />
+</div>
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">Fully Qualified Domain Name</label>
+  <input name="FullyQualifiedDomainName" class="margin-bottom-5px font-size-20px" placeholder="Fully Qualified Domain Name" />
+</div>
+    <button type="submit" class="full-width-regular-button">Register</button>
+  </form>
+
+  <!-- Independent Registration Form -->
+  <form v-if="selectedType === 'independent'" asp-action="RegisterIndependent" asp-controller="Registration" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+    <input type="hidden" name="Email" :value="getEmail()" />
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">Password</label>
+  <input name="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Password" />
+</div>
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">First Name</label>
+  <input name="FirstName" class="margin-bottom-5px font-size-20px" placeholder="First Name" />
+</div>
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">Last Name</label>
+  <input name="LastName" class="margin-bottom-5px font-size-20px" placeholder="Last Name" />
+</div>
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">Fully Qualified Domain Name</label>
+  <input name="FullyQualifiedDomainName" class="margin-bottom-5px font-size-20px" placeholder="Fully Qualified Domain Name" />
+</div>
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">No Reply Email Address</label>
+  <input name="NoReplyEmailAddress" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="No Reply Email Address" />
+</div>
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">Email Key</label>
+  <input name="EmailKey" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Email Key" />
+</div>
+    <div class="display-flex flex-direction-column">
+  <label class="background-color-antiquewhite">Cloud Key</label>
+  <input name="CloudKey" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Cloud Key" />
+</div>
+    <button type="submit" class="full-width-regular-button">Register</button>
+  </form>
 </div>
 
+<script src="~/js/vue-3-5-13.js" asp-append-version="true"></script>
 <script>
   const { createApp } = Vue;
-
-  const app = createApp({
+  createApp({
     data() {
       return {
-        isShared: @Model.Shared.ToString().ToLower(),
-        useExistingEmailKey: false,
-        useExistingCloudKey: false,
-        emailKey: '',
-        cloudKey: ''
-      };
+        selectedType: 'shared',
+        email: ''
+      }
     },
     methods: {
-      onEmailKeyInput() {
-        if (this.useExistingEmailKey) {
-          this.emailKey = '';
-        }
-      },
-      onCloudKeyInput() {
-        if (this.useExistingCloudKey) {
-          this.cloudKey = '';
-        }
+      getEmail() {
+        // Get email from the always-visible input
+        return this.email;
       }
     },
     watch: {
-      useExistingEmailKey(newVal) {
-        if (newVal) {
-          this.emailKey = '';
-        }
-      },
-      useExistingCloudKey(newVal) {
-        if (newVal) {
-          this.cloudKey = '';
-        }
+      email(val) {
+        // Keep hidden email fields in sync
       }
     }
-  });
-
-  app.mount('#app');
+  }).mount('#app');
 </script>

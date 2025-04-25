@@ -1,4 +1,4 @@
-﻿using System.Transactions;
+using System.Transactions;
 using Accounting.Business;
 using Accounting.Common;
 using Accounting.Models.RegistrationViewModels;
@@ -39,9 +39,8 @@ namespace Accounting.Controllers
     [Route("register")]
     public IActionResult Register()
     {
-      RegisterViewModel model = new();
-      model.Shared = true;
-
+      var model = new CompositeRegistrationViewModel();
+      model.SelectedRegistrationType = RegistrationType.Shared;
       return View(model);
     }
 
