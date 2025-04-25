@@ -2,23 +2,13 @@ using FluentValidation;
 
 namespace Accounting.Models.RegistrationViewModels
 {
-  public class DedicatedRegistrationViewModel : BaseRegistrationViewModel
+  public class DedicatedRegistrationViewModel : DomainRegistrationViewModel
   {
-    private string? _fullyQualifiedDomainName;
-
-    public string? FullyQualifiedDomainName
-    {
-      get => _fullyQualifiedDomainName;
-      set => _fullyQualifiedDomainName = value?.Trim();
-    }
-
-    public new FluentValidation.Results.ValidationResult? ValidationResult { get; set; } = new();
-
     public class DedicatedRegistrationViewModelValidator : AbstractValidator<DedicatedRegistrationViewModel>
     {
       public DedicatedRegistrationViewModelValidator()
       {
-        RuleFor(x => x.FullyQualifiedDomainName)
+        RuleFor(x => ((DomainRegistrationViewModel)x).FullyQualifiedDomainName)
           .NotEmpty()
           .WithMessage("'Fully Qualified Domain Name' is required")
           .Must(BaseRegistrationViewModel.DoesNotContainDisallowedCharacters)
