@@ -53,11 +53,11 @@ namespace Accounting.Controllers
       var validationResult = await validator.ValidateAsync(model);
       if (!validationResult.IsValid)
       {
-        model.ValidationResult = validationResult;
         var compositeModel = new CompositeRegistrationViewModel
         {
           SelectedRegistrationType = RegistrationType.Shared,
-          Shared = model
+          Shared = model,
+          ValidationResult = validationResult
         };
         return View("Register", compositeModel);
       }
@@ -65,11 +65,12 @@ namespace Accounting.Controllers
       // Check for duplicate email
       if (await _tenantService.ExistsAsync(model.Email!))
       {
-        model.ValidationResult.Errors.Add(new ValidationFailure("Email", "Email already exists"));
+        validationResult.Errors.Add(new ValidationFailure("Email", "Email already exists"));
         var compositeModel = new CompositeRegistrationViewModel
         {
           SelectedRegistrationType = RegistrationType.Shared,
-          Shared = model
+          Shared = model,
+          ValidationResult = validationResult
         };
         return View("Register", compositeModel);
       }
