@@ -54,14 +54,24 @@ namespace Accounting.Controllers
       if (!validationResult.IsValid)
       {
         model.ValidationResult = validationResult;
-        return View("Register", model);
+        var compositeModel = new CompositeRegistrationViewModel
+        {
+          SelectedRegistrationType = RegistrationType.Shared,
+          Shared = model
+        };
+        return View("Register", compositeModel);
       }
 
       // Check for duplicate email
       if (await _tenantService.ExistsAsync(model.Email!))
       {
         model.ValidationResult.Errors.Add(new ValidationFailure("Email", "Email already exists"));
-        return View("Register", model);
+        var compositeModel = new CompositeRegistrationViewModel
+        {
+          SelectedRegistrationType = RegistrationType.Shared,
+          Shared = model
+        };
+        return View("Register", compositeModel);
       }
 
       Tenant tenant;
