@@ -2,9 +2,8 @@ using FluentValidation;
 
 namespace Accounting.Models.RegistrationViewModels
 {
-  public class BaseRegistrationViewModelValidator : AbstractValidator<BaseRegistrationViewModel>
+  public class BaseRegistrationViewModelValidator<T> : AbstractValidator<T> where T : BaseRegistrationViewModel
   {
-
     public BaseRegistrationViewModelValidator()
     {
       RuleFor(x => x.Email)

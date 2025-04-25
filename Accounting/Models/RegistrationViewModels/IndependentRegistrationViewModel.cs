@@ -26,9 +26,9 @@ namespace Accounting.Models.RegistrationViewModels
       set => _cloudKey = value?.Trim();
     }
 
-    public class IndependentRegistrationViewModelValidator : AbstractValidator<IndependentRegistrationViewModel>
+    public class IndependentRegistrationViewModelValidator : BaseRegistrationViewModelValidator<IndependentRegistrationViewModel>
     {
-      public IndependentRegistrationViewModelValidator()
+      public IndependentRegistrationViewModelValidator() : base()
       {
         RuleFor(x => x.FullyQualifiedDomainName)
           .NotEmpty()

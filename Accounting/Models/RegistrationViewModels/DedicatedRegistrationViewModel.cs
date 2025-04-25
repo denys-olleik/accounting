@@ -4,9 +4,9 @@ namespace Accounting.Models.RegistrationViewModels
 {
   public class DedicatedRegistrationViewModel : DomainRegistrationViewModel
   {
-    public class DedicatedRegistrationViewModelValidator : AbstractValidator<DedicatedRegistrationViewModel>
+    public class DedicatedRegistrationViewModelValidator : BaseRegistrationViewModelValidator<DedicatedRegistrationViewModel>
     {
-      public DedicatedRegistrationViewModelValidator()
+      public DedicatedRegistrationViewModelValidator() : base()
       {
         RuleFor(x => ((DomainRegistrationViewModel)x).FullyQualifiedDomainName)
           .NotEmpty()

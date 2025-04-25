@@ -4,12 +4,9 @@ namespace Accounting.Models.RegistrationViewModels
 {
   public class SharedRegistrationViewModel : BaseRegistrationViewModel
   {
-    public class SharedRegistrationViewModelValidator : AbstractValidator<SharedRegistrationViewModel>
+    public class SharedRegistrationViewModelValidator : BaseRegistrationViewModelValidator<SharedRegistrationViewModel>
     {
-      public SharedRegistrationViewModelValidator()
-      {
-
-      }
+      public SharedRegistrationViewModelValidator() : base() { }
     }
   }
 }
