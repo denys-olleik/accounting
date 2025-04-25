@@ -31,7 +31,7 @@ namespace Accounting.Models.RegistrationViewModels
 
     protected static readonly char[] _disallowedCharacters = { ';', '&', '|', '>', '<', '$', '\\', '`', '"', '\'', '/', '%', '*' };
 
-    protected static bool DoesNotContainDisallowedCharacters(string? input)
+    public static bool DoesNotContainDisallowedCharacters(string? input)
     {
       if (string.IsNullOrEmpty(input))
         return true;
