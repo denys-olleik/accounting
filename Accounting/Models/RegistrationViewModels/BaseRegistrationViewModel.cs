@@ -35,6 +35,7 @@ namespace Accounting.Models.RegistrationViewModels
     {
       if (string.IsNullOrEmpty(input))
         return true;
+
       foreach (var ch in _disallowedCharacters)
       {
         if (input.Contains(ch))
@@ -42,6 +43,7 @@ namespace Accounting.Models.RegistrationViewModels
           return false;
         }
       }
+
       return true;
     }
   }
