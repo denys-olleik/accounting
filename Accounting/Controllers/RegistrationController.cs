@@ -46,6 +46,72 @@ namespace Accounting.Controllers
 
     [AllowAnonymous]
     [HttpPost]
+    [Route("register-shared")]
+    public async Task<IActionResult> RegisterShared(SharedRegistrationViewModel model)
+    {
+      var validator = new SharedRegistrationViewModel.SharedRegistrationViewModelValidator();
+      var validationResult = await validator.ValidateAsync(model);
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View("Register", model);
+      }
+
+      // Check for duplicate email
+      if (await _tenantService.ExistsAsync(model.Email!))
+      {
+        model.ValidationResult.Errors.Add(new ValidationFailure("Email", "Email already exists"));
+        return View("Register", model);
+      }
+
+      Tenant tenant;
+      using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+      {
+        var defaultTenant = await _tenantService.GetByDatabaseNameAsync(DatabaseThing.DatabaseConstants.DatabaseName);
+        tenant = await _tenantService.CreateAsync(new Tenant()
+        {
+          Email = model.Email,
+          DatabasePassword = defaultTenant.DatabasePassword
+        });
+        scope.Complete();
+      }
+
+      string createSchemaScriptPath = Path.Combine(AppContext.BaseDirectory, "create-db-script-psql.sql");
+      string createSchemaScript = System.IO.File.ReadAllText(createSchemaScriptPath);
+
+      var database = await _databaseService.CreateDatabaseAsync(tenant.PublicId);
+      await _databaseService.RunSQLScript(createSchemaScript, database.Name);
+      await _tenantService.UpdateDatabaseName(tenant.TenantID, database.Name);
+
+      using (var scope = new System.Transactions.TransactionScope(System.Transactions.TransactionScopeAsyncFlowOption.Enabled))
+      {
+        var user = new User()
+        {
+          Email = model.Email,
+          FirstName = model.FirstName,
+          LastName = model.LastName,
+          Password = PasswordStorage.CreateHash(model.Password!)
+        };
+
+        var userService = new UserService(database.Name!, tenant.DatabasePassword!);
+        user = await userService.CreateAsync(user);
+
+        var organizationService = new OrganizationService(database.Name!, tenant.DatabasePassword);
+        string sampleDataPath = Path.Combine(System.AppContext.BaseDirectory, "sample-data-production.sql");
+        string sampleDataScript = System.IO.File.ReadAllText(sampleDataPath);
+        await organizationService.InsertSampleOrganizationDataAsync(sampleDataScript);
+
+        var userOrganizationService = new UserOrganizationService();
+        await userOrganizationService.CreateAsync(user.UserID, 1, database.Name!, tenant.DatabasePassword);
+
+        scope.Complete();
+      }
+
+      return RedirectToAction("RegistrationComplete", "Registration");
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
     [Route("register")]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
@@ -193,21 +259,6 @@ namespace Accounting.Controllers
       }
 
       return RedirectToAction("RegistrationComplete", "Registration");
-    }
-
-    [AllowAnonymous]
-    [HttpPost]
-    [Route("register-shared")]
-    public IActionResult RegisterShared(SharedRegistrationViewModel model)
-    {
-      SharedRegistrationViewModel.SharedRegistrationViewModelValidator validator = new();
-      ValidationResult validationResult = validator.Validate(model);
-      if (!validationResult.IsValid)
-      {
-        model.ValidationResult = validationResult;
-        return View("Register", model);
-      }
-      return RedirectToAction("Register", "Registration");
     }
 
     private async Task<string?> GetEmailSecretAsync(int defaultTenantId)
