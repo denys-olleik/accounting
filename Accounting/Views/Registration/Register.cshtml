@@ -40,16 +40,16 @@
   <form v-if="selectedType === 'shared'" asp-action="RegisterShared" asp-controller="Registration" method="post" class="display-flex flex-direction-column margin-bottom-5px">
     <input type="hidden" name="Email" :value="getEmail()" />
     <div class="display-flex flex-direction-column">
-      <label class="background-color-antiquewhite">Password</label>
-      <input name="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Password" />
-    </div>
-    <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">First name</label>
       <input name="FirstName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="First name" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Last name</label>
       <input name="LastName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Last name" />
+    </div>
+    <div class="display-flex flex-direction-column">
+      <label class="background-color-antiquewhite">Password</label>
+      <input name="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Password" />
     </div>
     <button type="submit" class="full-width-regular-button">Register</button>
   </form>
@@ -58,16 +58,16 @@
   <form v-if="selectedType === 'dedicated'" asp-action="RegisterDedicated" asp-controller="Registration" method="post" class="display-flex flex-direction-column margin-bottom-5px">
     <input type="hidden" name="Email" :value="getEmail()" />
     <div class="display-flex flex-direction-column">
-      <label class="background-color-antiquewhite">Password</label>
-      <input name="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Password" />
-    </div>
-    <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">First name</label>
-      <input name="FirstName" class="margin-bottom-5px font-size-20px" placeholder="First name" />
+      <input name="FirstName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="First name" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Last name</label>
-      <input name="LastName" class="margin-bottom-5px font-size-20px" placeholder="Last name" />
+      <input name="LastName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Last name" />
+    </div>
+    <div class="display-flex flex-direction-column">
+      <label class="background-color-antiquewhite">Password</label>
+      <input name="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Password" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Fully qualified domain name</label>
@@ -80,16 +80,16 @@
   <form v-if="selectedType === 'independent'" asp-action="RegisterIndependent" asp-controller="Registration" method="post" class="display-flex flex-direction-column margin-bottom-5px">
     <input type="hidden" name="Email" :value="getEmail()" />
     <div class="display-flex flex-direction-column">
-      <label class="background-color-antiquewhite">Password</label>
-      <input name="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Password" />
-    </div>
-    <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">First name</label>
-      <input name="FirstName" class="margin-bottom-5px font-size-20px" placeholder="First name" />
+      <input name="FirstName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="First name" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Last name</label>
-      <input name="LastName" class="margin-bottom-5px font-size-20px" placeholder="Last name" />
+      <input name="LastName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Last name" />
+    </div>
+    <div class="display-flex flex-direction-column">
+      <label class="background-color-antiquewhite">Password</label>
+      <input name="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Password" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Fully qualified domain name</label>
