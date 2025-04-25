@@ -21,8 +21,20 @@
       <label asp-for="Email" class="background-color-antiquewhite"></label>
       <input asp-for="Email" class="font-size-20px font-Roboto-Mono" autocomplete="off" tabindex="1" />
       <span>
-        <input asp-for="Shared" type="checkbox" class="margin-bottom-5px" v-model="isShared" />
-        <label asp-for="Shared">shared</label>
+        <div class="display-flex">
+          <span>
+            <input asp-for="Shared" type="checkbox" class="margin-bottom-5px" v-model="isShared" />
+            <label asp-for="Shared">shared</label>
+          </span>
+          <span>
+            <input asp-for="Shared" type="checkbox" class="margin-bottom-5px" v-model="isShared" />
+            <label asp-for="Shared">shared</label>
+          </span>
+          <span>
+            <input asp-for="Shared" type="checkbox" class="margin-bottom-5px" v-model="isShared" />
+            <label asp-for="Shared">shared</label>
+          </span>
+        </div>
       </span>
     </div>
     <div v-if="!isShared" class="display-flex flex-direction-column margin-bottom-5px">
