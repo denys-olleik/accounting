@@ -196,6 +196,21 @@ namespace Accounting.Controllers
       return RedirectToAction("RegistrationComplete", "Registration");
     }
 
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("register-shared")]
+    public IActionResult RegisterShared(SharedRegistrationViewModel model)
+    {
+      SharedRegistrationViewModel.SharedRegistrationViewModelValidator validator = new();
+      ValidationResult validationResult = validator.Validate(model);
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View("Register", model);
+      }
+      return RedirectToAction("Register", "Registration");
+    }
+
     private async Task<string?> GetEmailSecretAsync(int defaultTenantId)
     {
       Secret? emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, defaultTenantId);

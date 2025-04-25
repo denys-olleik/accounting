@@ -1,40 +1,9 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
+using FluentValidation;
 
 namespace Accounting.Models.RegistrationViewModels
 {
-  public class SharedRegistrationViewModel
+  public class SharedRegistrationViewModel : BaseRegistrationViewModel
   {
-    private string? _email;
-    private string? _firstName;
-    private string? _lastName;
-    private string? _password;
-
-    public string? Email
-    {
-      get => _email;
-      set => _email = value?.Trim();
-    }
-
-    public string? FirstName
-    {
-      get => _firstName;
-      set => _firstName = value?.Trim();
-    }
-
-    public string? LastName
-    {
-      get => _lastName;
-      set => _lastName = value?.Trim();
-    }
-
-    public string? Password
-    {
-      get => _password;
-      set => _password = value?.Trim();
-    }
-
-    public ValidationResult? ValidationResult { get; set; } = new();
 
     public class SharedRegistrationViewModelValidator : AbstractValidator<SharedRegistrationViewModel>
     {
