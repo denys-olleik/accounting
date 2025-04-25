@@ -52,7 +52,7 @@ namespace Accounting.Controllers
     {
       Tenant defaultTenant = await _tenantService.GetByDatabaseNameAsync(DatabaseThing.DatabaseConstants.DatabaseName);
       Secret defaultNoReplyEmailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, defaultTenant.TenantID);
-      
+
       model.DefaultNoReplyEmailAddress = defaultNoReplyEmailSecret?.Value;
 
       RegisterViewModelValidator validator = new();
@@ -132,7 +132,7 @@ namespace Accounting.Controllers
       }
       else
       {
-        Secret cloudSecret = null;
+        Secret? cloudSecret = null;
         string? emailSecretValue = null;
 
         if (string.IsNullOrEmpty(model.CloudKey))
@@ -145,9 +145,13 @@ namespace Accounting.Controllers
           }
         }
 
-        if (string.IsNullOrEmpty(model.EmailKey))
+        if (!string.IsNullOrWhiteSpace(model.EmailKey))
         {
-          emailSecretValue = await GetEmailSecretAsync(model, defaultTenant.TenantID);
+          emailSecretValue = model.EmailKey;
+        }
+        else
+        {
+          emailSecretValue = await GetEmailSecretAsync(defaultTenant.TenantID);
           if (string.IsNullOrEmpty(emailSecretValue))
           {
             model.ValidationResult.Errors.Add(new ValidationFailure("EmailKey", "Email secret not found or invalid."));
@@ -171,7 +175,7 @@ namespace Accounting.Controllers
             await cloudServices.GetDigitalOceanService().CreateDropletAsync(
               tenant,
               tenant.DatabasePassword, tenant.Email, model.Password, null!, null!, false,
-              model.EmailKey ?? emailSecretValue, model.FullyQualifiedDomainName,
+              emailSecretValue, model.FullyQualifiedDomainName,
               string.IsNullOrEmpty(model.CloudKey) ? null : model.CloudKey, model.NoReplyEmailAddress ?? defaultNoReplyEmailSecret?.Value!);
           }
           catch (ApiException e)
@@ -192,13 +196,8 @@ namespace Accounting.Controllers
       return RedirectToAction("RegistrationComplete", "Registration");
     }
 
-    private async Task<string?> GetEmailSecretAsync(RegisterViewModel model, int defaultTenantId)
+    private async Task<string?> GetEmailSecretAsync(int defaultTenantId)
     {
-      if (!string.IsNullOrWhiteSpace(model.EmailKey))
-      {
-        return model.EmailKey;
-      }
-
       Secret? emailSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Email, defaultTenantId);
       return emailSecret?.Value;
     }

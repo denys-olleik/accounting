@@ -470,6 +470,7 @@ CREATE TABLE "Journal"
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
+	--"ApplicationVersion" VARCHAR(100) NULL,
 	FOREIGN KEY ("AccountId") REFERENCES "Account"("AccountID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID")

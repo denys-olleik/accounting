@@ -194,7 +194,7 @@ start_time=$(date +%s)
 
 # Create log directory
 sudo mkdir -p /var/log/accounting > /dev/null 2>&1
-sudo mkdir -p /var/accounting > /dev/null 2>&1
+sudo mkdir -p /var/accounting/attachments > /dev/null 2>&1
 
 # Set environment variables
 echo 'ConnectionStrings__Psql="Host=localhost;Database=Accounting;Username=postgres;Password={databasePassword};"' | sudo tee -a /etc/environment >> /var/log/accounting/env-setup.log 2>&1
@@ -277,10 +277,12 @@ sudo usermod -aG accounting postgres
 # Change the group ownership of the directory
 sudo chown -R :accounting /opt/accounting
 sudo chown -R :accounting /var/accounting
+sudo chown -R :accounting /var/accounting/attachments
 
 # Set permissions to allow group access
 sudo chmod -R 775 /opt/accounting
 sudo chmod -R 770 /var/accounting
+sudo chmod -R 770 /var/accounting/attachments
 
 # Create database
 sudo -i -u postgres psql -c "CREATE DATABASE \"Accounting\";"
