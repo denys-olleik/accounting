@@ -28,5 +28,21 @@ namespace Accounting.Models.RegistrationViewModels
       set => _password = value?.Trim();
     }
     public FluentValidation.Results.ValidationResult? ValidationResult { get; set; } = new();
+
+    protected static readonly char[] _disallowedCharacters = { ';', '&', '|', '>', '<', '$', '\\', '`', '"', '\'', '/', '%', '*' };
+
+    protected static bool DoesNotContainDisallowedCharacters(string? input)
+    {
+      if (string.IsNullOrEmpty(input))
+        return true;
+      foreach (var ch in _disallowedCharacters)
+      {
+        if (input.Contains(ch))
+        {
+          return false;
+        }
+      }
+      return true;
+    }
   }
 }
