@@ -121,11 +121,11 @@
   }
 
   <div v-if="selectedType === 'dedicated' || selectedType === 'independent'" class="background-color-A62626 color-white font-size-40px font-weight-600 text-align-center padding-10px font-Oswald">
-      WARNING
+      SSL WARNING
   </div>
   <div v-if="selectedType === 'dedicated' || selectedType === 'independent'" class="background-color-antiquewhite font-size-18px" style="padding:8px;">
     <p>
-      For dedicated or independent instances, you must provide your own domain or subdomain. This will be used to set up your secure environment and SSL certificate.
+      For dedicated or independent instances, you must provide your own domain or subdomain. This will be used to set up your SSL certificate with Let's Encrypt using CertBot.
     </p>
     <ul>
       <li>Enter your root domain or subdomain (e.g. <b>example.com</b>, <b>accounting.example.com</b>).</li>
