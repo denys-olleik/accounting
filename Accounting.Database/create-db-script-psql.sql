@@ -5,7 +5,7 @@ CREATE TABLE "Tenant"
 	"PublicId" VARCHAR(10) NOT NULL UNIQUE,
 	"DatabaseName" VARCHAR(100) NULL UNIQUE,
 	"DatabasePassword" VARCHAR(100) NULL,
-	"FullyQualifiedDomainName" VARCHAR(100) NULL, -- accounting.example.com
+	"FullyQualifiedDomainName" VARCHAR(100) NULL UNIQUE, -- accounting.example.com
 	"Email" VARCHAR(100) NOT NULL UNIQUE,
 	"DropletId" BIGINT NULL,
 	"DropletLimit" INT NULL,
