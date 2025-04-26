@@ -6834,6 +6834,31 @@ namespace Accounting.Database
 
         return rowsAffected;
       }
+
+      public async Task<Tenant?> GetByDomainAsync(string fullyQualifiedDomainName)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@FullyQualifiedDomainName", fullyQualifiedDomainName);
+        
+        IEnumerable<Tenant> result;
+        
+        // change db name to default db
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
+        {
+          Database = DatabaseThing.DatabaseConstants.DatabaseName
+        };
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          result = await con.QueryAsync<Tenant>("""
+            SELECT * 
+            FROM "Tenant" 
+            WHERE "FullyQualifiedDomainName" = @FullyQualifiedDomainName
+            """, p);
+        }
+
+        return result.SingleOrDefault();
+      }
     }
 
     public ISecretManager GetSecretManager()

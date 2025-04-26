@@ -185,7 +185,7 @@ namespace Accounting.Controllers
       string? emailSecretValue = null;
       Secret? noReplySecret = null;
       var defaultTenant = await _tenantService.GetByDatabaseNameAsync(DatabaseThing.DatabaseConstants.DatabaseName);
-      
+
       cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, defaultTenant.TenantID);
       if (cloudSecret == null)
       {
@@ -200,24 +200,29 @@ namespace Accounting.Controllers
       }
 
       noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, defaultTenant.TenantID);
-      if (!string.IsNullOrWhiteSpace(model.EmailKey))
+      if (noReplySecret == null)
       {
-        emailSecretValue = model.EmailKey;
-      }
-      else
-      {
-        emailSecretValue = await GetEmailSecretAsync(defaultTenant.TenantID);
-        if (string.IsNullOrEmpty(emailSecretValue))
+        validationResult.Errors.Add(new ValidationFailure("Dedicated", "No-reply secret not found."));
+        var compositeModel = new CompositeRegistrationViewModel
         {
-          validationResult.Errors.Add(new ValidationFailure("EmailKey", "Email secret not found or invalid."));
-          var compositeModel = new CompositeRegistrationViewModel
-          {
-            SelectedRegistrationType = RegistrationType.Dedicated,
-            Dedicated = model,
-            ValidationResult = validationResult
-          };
-          return View("Register", compositeModel);
-        }
+          SelectedRegistrationType = RegistrationType.Dedicated,
+          Dedicated = model,
+          ValidationResult = validationResult
+        };
+        return View("Register", compositeModel);
+      }
+
+      emailSecretValue = await GetEmailSecretAsync(defaultTenant.TenantID);
+      if (string.IsNullOrEmpty(emailSecretValue))
+      {
+        validationResult.Errors.Add(new ValidationFailure("EmailKey", "Email secret not found or invalid."));
+        var compositeModel = new CompositeRegistrationViewModel
+        {
+          SelectedRegistrationType = RegistrationType.Dedicated,
+          Dedicated = model,
+          ValidationResult = validationResult
+        };
+        return View("Register", compositeModel);
       }
 
       var cloudServices = new CloudServices(_secretService, _tenantService);
@@ -225,7 +230,7 @@ namespace Accounting.Controllers
       {
         await cloudServices.GetDigitalOceanService().CreateDropletAsync(
           tenant,
-          tenant.DatabasePassword,
+          tenant.DatabasePassword!,
           model.Email!,
           model.Password!,
           model.FirstName!,
@@ -233,8 +238,8 @@ namespace Accounting.Controllers
           false,
           emailSecretValue,
           model.FullyQualifiedDomainName!,
-          string.IsNullOrEmpty(model.CloudKey) ? null : model.CloudKey,
-          model.NoReplyEmailAddress ?? noReplySecret?.Value!
+          null!,
+          noReplySecret?.Value!
         );
       }
       catch (ApiException e)
