@@ -740,6 +740,7 @@ namespace Accounting.Controllers
     }
   }
 
+  [Authorize(Roles = "tenant-management")]
   [AuthorizeWithOrganizationId]
   [Route("api/tenant")]
   [ApiController]
