@@ -1,3 +1,4 @@
+using System;
 using System.Transactions;
 using Accounting.Business;
 using Accounting.Common;
@@ -119,6 +120,14 @@ namespace Accounting.Controllers
       }
 
       return RedirectToAction("RegistrationComplete", "Registration");
+    }
+
+    [AllowAnonymous]
+    [HttpPost]
+    [Route("register-dedicated")]
+    public async Task<IActionResult> RegisterDedicated(DedicatedRegistrationViewModel model)
+    {
+        throw new NotImplementedException();
     }
 
     [AllowAnonymous]
