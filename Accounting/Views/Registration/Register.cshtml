@@ -41,11 +41,11 @@
     <input type="hidden" name="Email" :value="getEmail()" />
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">First name</label>
-      <input name="FirstName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="First name" autocomplete="off" />
+      <input name="FirstName" v-model="firstName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="First name" autocomplete="off" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Last name</label>
-      <input name="LastName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Last name" autocomplete="off" />
+      <input name="LastName" v-model="lastName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Last name" autocomplete="off" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Password</label>
@@ -59,11 +59,11 @@
     <input type="hidden" name="Email" :value="getEmail()" />
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">First name</label>
-      <input name="FirstName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="First name" autocomplete="off" />
+      <input name="FirstName" v-model="firstName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="First name" autocomplete="off" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Last name</label>
-      <input name="LastName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Last name" autocomplete="off" />
+      <input name="LastName" v-model="lastName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Last name" autocomplete="off" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Password</label>
@@ -71,7 +71,7 @@
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Fully qualified domain name</label>
-      <input name="FullyQualifiedDomainName" class="margin-bottom-5px font-size-20px" placeholder="e.g. example.com, accounting.example.com" autocomplete="off" />
+      <input name="FullyQualifiedDomainName" v-model="fullyQualifiedDomainName" class="margin-bottom-5px font-size-20px" placeholder="e.g. example.com, accounting.example.com" autocomplete="off" />
     </div>
     <button type="submit" class="full-width-regular-button">Register</button>
   </form>
@@ -81,11 +81,11 @@
     <input type="hidden" name="Email" :value="getEmail()" />
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">First name</label>
-      <input name="FirstName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="First name" autocomplete="off" />
+      <input name="FirstName" v-model="firstName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="First name" autocomplete="off" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Last name</label>
-      <input name="LastName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Last name" autocomplete="off" />
+      <input name="LastName" v-model="lastName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Last name" autocomplete="off" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Password</label>
@@ -93,11 +93,11 @@
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Fully qualified domain name</label>
-      <input name="FullyQualifiedDomainName" class="margin-bottom-5px font-size-20px" placeholder="e.g. example.com, accounting.example.com" autocomplete="off" />
+      <input name="FullyQualifiedDomainName" v-model="fullyQualifiedDomainName" class="margin-bottom-5px font-size-20px" placeholder="e.g. example.com, accounting.example.com" autocomplete="off" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">No reply email address</label>
-      <input name="NoReplyEmailAddress" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="No reply email address" autocomplete="off" />
+      <input name="NoReplyEmailAddress" v-model="noReplyEmailAddress" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="No reply email address" autocomplete="off" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Email key</label>
@@ -123,11 +123,11 @@
   }
 
   <div v-if="selectedType === 'dedicated' || selectedType === 'independent'" class="background-color-A62626 color-white font-size-40px font-weight-600 text-align-center padding-10px font-Oswald">
-      SSL WARNING
+    Let's Encrypt Certificate Setup
   </div>
   <div v-if="selectedType === 'dedicated' || selectedType === 'independent'" class="background-color-antiquewhite font-size-18px" style="padding:8px;">
     <p>
-      For dedicated or independent instances, you must provide your own domain or subdomain. This will be used to set up your SSL certificate with Let's Encrypt using CertBot.
+      For dedicated or independent instances, you must provide your own domain or subdomain. This will be used to set up your SSL certificate with <a href="https://letsencrypt.org/">Let's Encrypt</a> using CertBot. The email address you provide here will be used in the CertBot command to request your SSL certificate and to receive important notifications. For more information, visit <a href="https://letsencrypt.org/">letsencrypt.org</a>.
     </p>
     <ul>
       <li>Enter your root domain or subdomain (e.g. <b>example.com</b>, <b>accounting.example.com</b>).</li>
@@ -135,7 +135,7 @@
       <li>Update your DNS as soon as you get the IP—within three minutes.</li>
     </ul>
     <p>
-      If you miss the DNS update window and the certificate cannot be issued, please contact support from your registration email address to request a certificate retry.
+      If you miss the DNS update window and the certificate cannot be issued, contact support from your registration email address to request a certificate retry.
     </p>
   </div>
 </div>
@@ -146,8 +146,11 @@
   createApp({
     data() {
       return {
-        selectedType: 'shared',
-        email: ''
+        selectedType: '@Model.SelectedRegistrationType.ToString().ToLower()',
+        email: '@(Model.Shared?.Email ?? Model.Dedicated?.Email ?? Model.Independent?.Email ?? "")',
+        firstName: '@(Model.Shared?.FirstName ?? Model.Dedicated?.FirstName ?? Model.Independent?.FirstName ?? "")',
+        lastName: '@(Model.Shared?.LastName ?? Model.Dedicated?.LastName ?? Model.Independent?.LastName ?? "")',
+        fullyQualifiedDomainName: '@(Model.Dedicated?.FullyQualifiedDomainName ?? Model.Independent?.FullyQualifiedDomainName ?? "")',
       }
     },
     methods: {
