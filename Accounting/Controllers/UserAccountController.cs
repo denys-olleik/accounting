@@ -62,7 +62,7 @@ namespace Accounting.Controllers
       return View();
     }
 
-    private async Task<List<string>> GetRolesAsync(UserOrganization userOrganization = null)
+    private async Task<List<string>> GetRolesAsync(UserOrganization userOrganization = null!, List<string> addTheseRoles = null!)
     {
       List<string> roles = new();
 
@@ -75,6 +75,12 @@ namespace Accounting.Controllers
       if (ConfigurationSingleton.Instance.TenantManagement == true)
       {
         roles.Add(ConfigurationSingleton.ConfigurationConstants.TenantManagement);
+      }
+
+      // add addTheseRoles to roles
+      if (addTheseRoles != null && addTheseRoles.Count > 0)
+      {
+        roles.AddRange(addTheseRoles);
       }
 
       return roles;
@@ -95,7 +101,7 @@ namespace Accounting.Controllers
       }
 
       var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
-
+      
       if (
         existingUser != null
         && (!string.IsNullOrEmpty(existingUser.Password) && !string.IsNullOrEmpty(model.Password))
@@ -104,7 +110,7 @@ namespace Accounting.Controllers
         ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
           existingUser, 
           tenantExistingUserBelongsTo.TenantID, 
-          await GetRolesAsync(), 
+          await GetRolesAsync(/*addTheseRoles: new List<string>() { UserRoleClaimConstants.Administrator}*/), 
           null, 
           null, 
           tenantExistingUserBelongsTo.DatabaseName, 

@@ -9,7 +9,7 @@ namespace Accounting.Common
 {
   public static class UserRoleClaimConstants
   {
-    public const string UserRole = "administrator";
+    public const string Administrator = "administrator";
 
     private static readonly List<string> _all = new List<string>();
 
