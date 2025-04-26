@@ -49,10 +49,10 @@ namespace Accounting.Controllers
     private readonly RequestLogService _requestLogService;
     private readonly ExceptionService _exceptionService;
 
-    public DiagnosticsApiController(RequestContext requestContext, RequestLogService requestLogService, ExceptionService exceptionService)
+    public DiagnosticsApiController()
     {
-      _requestLogService = new RequestLogService(requestContext.DatabaseName, requestContext.DatabasePassword);
-      _exceptionService = new ExceptionService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _requestLogService = new RequestLogService();
+      _exceptionService = new ExceptionService();
     }
 
     [HttpGet("get-request-logs")]
