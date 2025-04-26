@@ -84,6 +84,8 @@ input[readonly] {
   background-color: lightgray;
 }
 
+[v-cloak] { display: none; }
+
 .display-flex {
   display: flex;
 }
