@@ -71,7 +71,7 @@
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Fully qualified domain name</label>
-      <input name="FullyQualifiedDomainName" class="margin-bottom-5px font-size-20px" placeholder="Fully qualified domain name" autocomplete="off" />
+      <input name="FullyQualifiedDomainName" class="margin-bottom-5px font-size-20px" placeholder="e.g. example.com, accounting.example.com" autocomplete="off" />
     </div>
     <button type="submit" class="full-width-regular-button">Register</button>
   </form>
@@ -93,7 +93,7 @@
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Fully qualified domain name</label>
-      <input name="FullyQualifiedDomainName" class="margin-bottom-5px font-size-20px" placeholder="Fully qualified domain name" autocomplete="off" />
+      <input name="FullyQualifiedDomainName" class="margin-bottom-5px font-size-20px" placeholder="e.g. example.com, accounting.example.com" autocomplete="off" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">No reply email address</label>
@@ -120,10 +120,22 @@
     }
   }
 
-</div>
-
-<div v-if="selectedType === 'dedicated' || selectedType === 'independent'" class="background-color-A62626 color-white font-size-40px font-weight-600 text-align-center padding-10px margin-bottom-25px font-Oswald">
-    WARNING
+  <div v-if="selectedType === 'dedicated' || selectedType === 'independent'" class="background-color-A62626 color-white font-size-40px font-weight-600 text-align-center padding-10px font-Oswald">
+      WARNING
+  </div>
+  <div v-if="selectedType === 'dedicated' || selectedType === 'independent'" class="background-color-antiquewhite font-size-18px" style="padding:8px;">
+    <p>
+      For dedicated or independent instances, you must provide your own domain or subdomain. This will be used to set up your secure environment and SSL certificate.
+    </p>
+    <ul>
+      <li>Enter your root domain or subdomain (e.g. <b>example.com</b>, <b>accounting.example.com</b>).</li>
+      <li>After registering, check your email for your assigned IP address.</li>
+      <li>Update your DNS as soon as you get the IP—within three minutes.</li>
+    </ul>
+    <p>
+      If you miss the DNS update window and the certificate cannot be issued, please contact support from your registration email address to request a certificate retry.
+    </p>
+  </div>
 </div>
 
 <script src="~/js/vue-3-5-13.js" asp-append-version="true"></script>
