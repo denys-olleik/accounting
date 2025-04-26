@@ -1,4 +1,4 @@
-﻿@model Accounting.Models.HomeViewModels.LatestPostViewModel
+@model Accounting.Models.HomeViewModels.LatestPostViewModel
 
 @{
   ViewData["Title"] = ConfigurationSingleton.Instance.ApplicationName;
@@ -17,11 +17,11 @@
 
 @if (!User.Identity.IsAuthenticated)
 {
-  <div class="display-flex margin-bottom-5px background-color-wheat padding-15px">
+  <div class="display-flex margin-bottom-5px background-color-antiquewhite padding-15px">
     <p class="font-size-20px text-align-center font-weight-500 font-Oswald">The only system capable of managing everything from a laundromat to a cartel, an aircraft carrier, and everything in between, uncontaminated by Silicon Valley 🐂💩.</p>
   </div>
 
-  <div class="display-flex background-color-wheat margin-bottom-5px padding-15px font-size-20px font-weight-500">
+  <div class="display-flex background-color-antiquewhite margin-bottom-5px padding-15px font-size-20px font-weight-500">
     <div class="flex-1 font-Oswald">
       GAAP and IFRS compliant implementation of a forward-only double-entry accounting method with a relational database. Suitable for U.S. and international organizations.
     </div>
@@ -38,7 +38,7 @@
   </div>
   @if (!string.IsNullOrEmpty(Model.BlogHtmlSanitizedContent))
   {
-    <div class="background-color-wheat padding-sides-10px margin-bottom-5px padding-bottom-5px">
+    <div class="background-color-antiquewhite padding-sides-10px margin-bottom-5px padding-bottom-5px">
       <div class="display-flex">
         <div class="flex-1 font-size-20px font-Oswald">@Model.Title</div>
         <div class="width-5px"></div>
@@ -49,7 +49,7 @@
       </div>
     </div>
   }
-  <div class="background-color-wheat padding-sides-10px padding-bottom-10px font-Oswald">
+  <div class="background-color-antiquewhite padding-sides-10px padding-bottom-10px font-Oswald">
     <div class="font-size-20px">Hosting options</div>
     <table class="border-collapse width-100 background-color-antiquewhite">
       <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
@@ -101,7 +101,7 @@
       </tbody>
     </table>
   </div>
-  <div class="background-color-wheat padding-sides-10px margin-top-5px padding-bottom-10px font-Oswald margin-bottom-5px">
+  <div class="background-color-antiquewhite padding-sides-10px margin-top-5px padding-bottom-10px font-Oswald margin-bottom-5px">
     <div class="font-size-20px">3rd party integrations</div>
     <table class="border-collapse width-100 background-color-antiquewhite">
       <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
@@ -139,7 +139,7 @@
       <a href="#" class="font-Oswald color-white font-size-40px letter-spacing-10px">unlimited</a>
     </div>
   </div>
-  <div class="background-color-wheat padding-sides-10px padding-bottom-10px font-Oswald">
+  <div class="background-color-antiquewhite padding-sides-10px padding-bottom-10px font-Oswald">
     <div class="font-size-20px">Features</div>
     <table class="border-collapse width-100 background-color-antiquewhite">
       <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
