@@ -112,12 +112,14 @@
 
   @if (Model != null && Model.ValidationResult != null)
   {
-    foreach (var error in Model.ValidationResult.Errors)
+    <div class="display-flex flex-direction-column margin-bottom-5px">
+    @foreach (var error in Model.ValidationResult.Errors)
     {
       <div>
         <small class="color-red">@error.ErrorMessage</small>
       </div>
     }
+    </div>
   }
 
   <div v-if="selectedType === 'dedicated' || selectedType === 'independent'" class="background-color-A62626 color-white font-size-40px font-weight-600 text-align-center padding-10px font-Oswald">
