@@ -114,14 +114,18 @@ namespace Accounting.Controllers
         existingUser != null
         && (!string.IsNullOrEmpty(existingUser.Password) && !string.IsNullOrEmpty(model.Password))
         && PasswordStorage.VerifyPassword(model.Password, existingUser.Password))
-      { 
+      {
+        var rolesToAdd = tenantManagerClaim != null
+          ? new List<string>() { tenantManagerClaim.ClaimValue }
+          : new List<string>();
+
         ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
-          existingUser, 
-          tenantExistingUserBelongsTo.TenantID, 
-          await GetRolesAsync(addTheseRoles: new List<string>() { tenantManagerClaim.ClaimValue }),
-          null, 
-          null, 
-          tenantExistingUserBelongsTo.DatabaseName, 
+          existingUser,
+          tenantExistingUserBelongsTo.TenantID,
+          await GetRolesAsync(addTheseRoles: rolesToAdd),
+          null,
+          null,
+          tenantExistingUserBelongsTo.DatabaseName,
           tenantExistingUserBelongsTo.DatabasePassword);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,

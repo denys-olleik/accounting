@@ -222,7 +222,7 @@ CREATE TABLE "Claim"
 	"ClaimValue" VARCHAR(100) NOT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
-	"OrganizationId" INT NOT NULL,
+	"OrganizationId" INT NULL,
 	"TenantId" INT NOT NULL,
 	FOREIGN KEY ("UserId") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),

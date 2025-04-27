@@ -15,7 +15,6 @@ namespace Accounting.Business
     public static class CustomClaimTypeConstants
     {
       public const string Password = "password";
-      public const string Role = "role";
       public const string OrganizationId = "organizationId";
       public const string OrganizationName = "organizationName";
       public const string TenantId = "tenantId";

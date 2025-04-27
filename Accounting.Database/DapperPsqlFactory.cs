@@ -7812,9 +7812,33 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public Task<Claim> GetAsync(int userId, string databaseName, string inRole)
+      public async Task<Claim> GetAsync(int userId, string databaseName, string inRole)
       {
-        throw new NotImplementedException();
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@UserID", userId);
+        p.Add("@DatabaseName", databaseName);
+        p.Add("@ClaimValue", inRole);
+        p.Add("@ClaimType", System.Security.Claims.ClaimTypes.Role);
+
+        IEnumerable<Claim> result;
+
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
+        {
+          Database = databaseName
+        };
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          result = await con.QueryAsync<Claim>("""
+            SELECT * 
+            FROM "Claim" 
+            WHERE "UserId" = @UserID
+            AND "ClaimType" = @ClaimType
+            AND "ClaimValue" = @ClaimValue
+            """, p);
+        }
+
+        return result.SingleOrDefault();
       }
 
       public int Update(Claim entity)
