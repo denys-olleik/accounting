@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
 namespace Accounting.Common
 {
   public static class UserRoleClaimConstants
   {
-    public const string Administrator = "administrator";
+    public const string TenantManager = "tenant-manager";
 
     private static readonly List<string> _all = new List<string>();
 

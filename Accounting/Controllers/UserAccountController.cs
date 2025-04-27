@@ -27,6 +27,7 @@ namespace Accounting.Controllers
     private readonly EmailService _emailService;
     private readonly SecretService _secretService;
     private readonly TenantService _tenantService;
+    private readonly ClaimService _claimService;
 
     public UserAccountController(
       RequestContext requestContext,
@@ -36,7 +37,8 @@ namespace Accounting.Controllers
       LoginWithoutPasswordService loginWithoutPasswordService,
       EmailService emailService,
       SecretService secretService,
-      TenantService tenantService)
+      TenantService tenantService,
+      ClaimService claimService)
     {
       _organizationService = new OrganizationService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName, requestContext.DatabasePassword);
@@ -45,6 +47,7 @@ namespace Accounting.Controllers
       _secretService = new SecretService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _emailService = new EmailService(_secretService);
       _tenantService = new TenantService(requestContext.DatabaseName, requestContext.DatabasePassword);
+      _claimService = new ClaimService(requestContext.DatabaseName, requestContext.DatabasePassword); 
     }
 
     [HttpGet]
@@ -101,7 +104,12 @@ namespace Accounting.Controllers
       }
 
       var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
-      
+
+      Business.Claim tenantManagerClaim = await _claimService.GetAsync(
+        existingUser.UserID, 
+        tenantExistingUserBelongsTo.DatabaseName, 
+        UserRoleClaimConstants.TenantManager);
+
       if (
         existingUser != null
         && (!string.IsNullOrEmpty(existingUser.Password) && !string.IsNullOrEmpty(model.Password))
@@ -110,7 +118,7 @@ namespace Accounting.Controllers
         ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
           existingUser, 
           tenantExistingUserBelongsTo.TenantID, 
-          await GetRolesAsync(/*addTheseRoles: new List<string>() { UserRoleClaimConstants.Administrator}*/), 
+          await GetRolesAsync(addTheseRoles: new List<string>() { tenantManagerClaim.ClaimValue }),
           null, 
           null, 
           tenantExistingUserBelongsTo.DatabaseName, 

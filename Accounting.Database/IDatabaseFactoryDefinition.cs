@@ -42,5 +42,6 @@ namespace Accounting.Database
     ILoginWithoutPasswordManager GetLoginWithoutPasswordManager();
     IBlogManager GetBlogManager();
     IExceptionManager GetExceptionManager();
+    IClaimManager GetClaimManager();
   }
 }

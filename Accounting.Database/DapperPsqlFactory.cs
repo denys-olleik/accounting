@@ -7773,6 +7773,56 @@ namespace Accounting.Database
       }
     }
 
+    public IClaimManager GetClaimManager()
+    {
+      return new ClaimManager(_connectionString);
+    }
+
+    public class ClaimManager : IClaimManager
+    {
+      private readonly string _connectionString;
+
+      public ClaimManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
+      public Claim Create(Claim entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Task<Claim> CreateAsync(Claim entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Delete(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Claim Get(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public IEnumerable<Claim> GetAll()
+      {
+        throw new NotImplementedException();
+      }
+
+      public Task<Claim> GetAsync(int userId, string databaseName, string inRole)
+      {
+        throw new NotImplementedException();
+      }
+
+      public int Update(Claim entity)
+      {
+        throw new NotImplementedException();
+      }
+    }
+
     public IUserToDoManager GetUserToDoManager()
     {
       return new UserTaskManager(_connectionString);

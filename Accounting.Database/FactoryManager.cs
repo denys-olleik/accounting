@@ -206,5 +206,10 @@ namespace Accounting.Database
     {
       return databaseFactoryDefinition.GetExceptionManager();
     }
+
+    public IClaimManager GetClaimManager()
+    {
+      return databaseFactoryDefinition.GetClaimManager();
+    }
   }
 }
