@@ -9,7 +9,7 @@ INSERT INTO "User" ("Email", "FirstName", "LastName", "Password", "CreatedById")
 VALUES ('test2@example.com', 'Derp', 'Herp', 'sha1:64000:18:IofuE0pk3LtysdvPabvlsENb9NJ4x7XZ:Ui8pLvVoSzlwUXVARJj8MFEL', 1);
 
 INSERT INTO "Claim" ("UserId", "ClaimType", "ClaimValue", "CreatedById", "OrganizationId", "TenantId")
-VALUES (1, 'role', 'tenant-manager', 1, NULL, 1);
+VALUES (1, 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role', 'tenant-manager', 1, NULL, 1);
 
 INSERT INTO "Organization" (
   "Name", 

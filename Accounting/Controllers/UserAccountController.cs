@@ -108,7 +108,8 @@ namespace Accounting.Controllers
       Business.Claim tenantManagerClaim = await _claimService.GetAsync(
         existingUser.UserID, 
         tenantExistingUserBelongsTo.DatabaseName, 
-        UserRoleClaimConstants.TenantManager);
+        UserRoleClaimConstants.TenantManager, 
+        tenantExistingUserBelongsTo.TenantID);
 
       if (
         existingUser != null

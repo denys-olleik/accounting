@@ -9,6 +9,7 @@ using static Dapper.SqlMapper;
 using Renci.SshNet.Security;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using static Accounting.Business.Claim;
 
 namespace Accounting.Database
 {
@@ -7812,13 +7813,14 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<Claim> GetAsync(int userId, string databaseName, string inRole)
+      public async Task<Claim> GetAsync(int userId, string databaseName, string inRole, int tenantID)
       {
         DynamicParameters p = new DynamicParameters();
-        p.Add("@UserID", userId);
+        p.Add("@UserId", userId);
         p.Add("@DatabaseName", databaseName);
+        p.Add("@ClaimType", CustomClaimTypeConstants.Role);
         p.Add("@ClaimValue", inRole);
-        p.Add("@ClaimType", System.Security.Claims.ClaimTypes.Role);
+        p.Add("@TenantID", tenantID);
 
         IEnumerable<Claim> result;
 
@@ -7832,9 +7834,10 @@ namespace Accounting.Database
           result = await con.QueryAsync<Claim>("""
             SELECT * 
             FROM "Claim" 
-            WHERE "UserId" = @UserID
+            WHERE "UserId" = @UserId
             AND "ClaimType" = @ClaimType
             AND "ClaimValue" = @ClaimValue
+            AND "TenantId" = @TenantID
             """, p);
         }
 

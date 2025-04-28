@@ -1,5 +1,6 @@
 ﻿using Accounting.Common;
 using System.Reflection;
+using System.Security.Claims;
 
 namespace Accounting.Business
 {
@@ -15,6 +16,7 @@ namespace Accounting.Business
     public static class CustomClaimTypeConstants
     {
       public const string Password = "password";
+      public const string Role = ClaimTypes.Role;
       public const string OrganizationId = "organizationId";
       public const string OrganizationName = "organizationName";
       public const string TenantId = "tenantId";
