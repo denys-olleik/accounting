@@ -28,7 +28,9 @@ namespace Accounting.Models.UserViewModels
       set => lastName = value?.Trim();
     }
 
-    public List<OrganizationViewModel> AvailableOrganizations { get; set; } = new List<OrganizationViewModel>();
+    public List<OrganizationViewModel> AvailableOrganizations { get; set; } = new ();
+    public List<string> AvailableRoles { get; set; } = new ();
+    public List<string> SelectedRoles { get; set; } = new ();
     public string? SelectedOrganizationIdsCsv { get; set; }
 
     public int CurrentRequestingUserId { get; set; }

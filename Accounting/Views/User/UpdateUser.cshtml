@@ -26,7 +26,7 @@
       class="display-flex flex-direction-column margin-bottom-5px">
 
   <input type="hidden" asp-for="SelectedOrganizationIdsCsv" :value="selectedOrganizationIds.join(',')" />
-  <input type="hidden" asp-for="Email" />
+  <input type="hidden" name="Email" value="@Model.Email" id="HiddenEmail" />
 
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label asp-for="Email" class="background-color-antiquewhite">Email</label>
@@ -63,6 +63,20 @@
     </div>
   </div>
 
+  <div class="margin-bottom-5px background-color-antiquewhite">
+    <label>Available roles:</label>
+    <div class="display-flex flex-direction-column margin-top-5px">
+      <div v-for="role in roles" :key="role" class="display-flex flex-1 margin-bottom-5px">
+        <input type="checkbox"
+               :id="'role-' + role"
+               :value="role"
+               :checked="selectedRoles.includes(role)"
+               @@change="updateSelectedRoles" />
+        <label :for="'role-' + role" class="margin-left-5px">{{ role }}</label>
+      </div>
+    </div>
+  </div>
+
   <div class="display-flex">
     <div class="flex-1">
       <button class="full-width-regular-button width-100" type="button" onclick="event.preventDefault(); window.location.href='@Url.Action("Users", "User")';">Cancel</button>
@@ -89,22 +103,34 @@
   const { createApp } = Vue;
 
   const app = createApp({
-      data() {
-          return {
-              organizations: @Html.Raw(Json.Serialize(Model.AvailableOrganizations)),
-              selectedOrganizationIds: @Html.Raw(Json.Serialize(Model.SelectedOrganizationIdsCsv?.Split(',') ?? []))
-          };
+    data() {
+      return {
+        organizations: @Html.Raw(Json.Serialize(Model.AvailableOrganizations)),
+        roles: @Html.Raw(Json.Serialize(Model.AvailableRoles)),
+        selectedOrganizationIds: @Html.Raw(Json.Serialize(Model.SelectedOrganizationIdsCsv?.Split(',') ?? [])),
+        selectedRoles: @Html.Raw(Json.Serialize(Model.SelectedRoles ?? new List<string>()))
+      };
+    },
+    methods: {
+      updateSelectedOrganizations(event) {
+        const value = event.target.value;
+        if (event.target.checked) {
+          this.selectedOrganizationIds.push(value);
+        } else {
+          this.selectedOrganizationIds = this.selectedOrganizationIds.filter(id => id !== value);
+        }
       },
-      methods: {
-          updateSelectedOrganizations(event) {
-              const value = event.target.value;
-              if (event.target.checked) {
-                  this.selectedOrganizationIds.push(value);
-              } else {
-                  this.selectedOrganizationIds = this.selectedOrganizationIds.filter(id => id !== value);
-              }
+      updateSelectedRoles(event) {
+        const value = event.target.value;
+        if (event.target.checked) {
+          if (!this.selectedRoles.includes(value)) {
+            this.selectedRoles.push(value);
           }
+        } else {
+          this.selectedRoles = this.selectedRoles.filter(role => role !== value);
+        }
       }
+    }
   });
 
   app.mount('#app');
