@@ -47,7 +47,7 @@ namespace Accounting.Controllers
       _secretService = new SecretService(requestContext.DatabaseName, requestContext.DatabasePassword);
       _emailService = new EmailService(_secretService);
       _tenantService = new TenantService(requestContext.DatabaseName, requestContext.DatabasePassword);
-      _claimService = new ClaimService(requestContext.DatabaseName, requestContext.DatabasePassword); 
+      _claimService = new ClaimService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
     [HttpGet]
@@ -106,9 +106,9 @@ namespace Accounting.Controllers
       var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
 
       Business.Claim tenantManagerClaim = await _claimService.GetAsync(
-        existingUser.UserID, 
-        tenantExistingUserBelongsTo.DatabaseName, 
-        UserRoleClaimConstants.TenantManager, 
+        existingUser.UserID,
+        tenantExistingUserBelongsTo.DatabaseName,
+        UserRoleClaimConstants.TenantManager,
         tenantExistingUserBelongsTo.TenantID);
 
       if (
@@ -120,10 +120,16 @@ namespace Accounting.Controllers
           ? new List<string>() { tenantManagerClaim.ClaimValue }
           : new List<string>();
 
+        var roles = await GetRolesWithTenantManagerClaimAsync(
+          existingUser.UserID,
+          tenantExistingUserBelongsTo.DatabaseName,
+          tenantExistingUserBelongsTo.TenantID,
+          rolesToAdd);
+
         ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
           existingUser,
           tenantExistingUserBelongsTo.TenantID,
-          await GetRolesAsync(addTheseRoles: rolesToAdd),
+          roles,
           null,
           null,
           tenantExistingUserBelongsTo.DatabaseName,
@@ -146,9 +152,9 @@ namespace Accounting.Controllers
         if (emailApiKeySecret == null || noReplySecret == null)
         {
           model.ValidationResult = new ValidationResult(new List<ValidationFailure>()
-          {
-              new ValidationFailure("Email", "Password-less login requires an API key and 'no-reply' secrets to be set up.")
-          });
+      {
+          new ValidationFailure("Email", "Password-less login requires an API key and 'no-reply' secrets to be set up.")
+      });
           return View(model);
         }
 
@@ -166,9 +172,9 @@ namespace Accounting.Controllers
       else
       {
         model.ValidationResult = new ValidationResult(new List<ValidationFailure>()
-          {
-            new ValidationFailure("Email", "'Email' or 'password' is incorrect.")
-          });
+      {
+        new ValidationFailure("Email", "'Email' or 'password' is incorrect.")
+      });
         return View(model);
       }
     }
@@ -200,14 +206,14 @@ namespace Accounting.Controllers
       var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
 
       ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
-        existingUser, 
-        tenantExistingUserBelongsTo.TenantID, 
-        await GetRolesAsync(), 
-        null, 
-        null, 
-        tenantExistingUserBelongsTo.DatabaseName, 
+        existingUser,
+        tenantExistingUserBelongsTo.TenantID,
+        await GetRolesAsync(),
+        null,
+        null,
+        tenantExistingUserBelongsTo.DatabaseName,
         tenantExistingUserBelongsTo.DatabasePassword);
-   
+
       await HttpContext.SignInAsync(
         CookieAuthenticationDefaults.AuthenticationScheme,
         claimsPrincipal,
@@ -267,24 +273,23 @@ namespace Accounting.Controllers
             model.SelectedOrganizationId,
             model.SelectedTenantId!.Value);
 
-      User user = userOrganization.User!;
-      bool tenantManagement = ConfigurationSingleton.Instance.TenantManagement;
-      List<string> roles = new();
-      if (tenantManagement)
-      {
-        roles.Add(ConfigurationSingleton.ConfigurationConstants.TenantManagement);
-      }
-
       if (userOrganization != null)
       {
+        User user = userOrganization.User!;
+
+        var roles = await GetRolesWithTenantManagerClaimAsync(
+          user.UserID,
+          tenant.DatabaseName,
+          tenant.TenantID);
+
         ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
-            user,
-            tenant.TenantID,
-            await GetRolesAsync(userOrganization),
-            userOrganization.Organization.OrganizationID,
-            userOrganization.Organization.Name,
-            tenant.DatabaseName,
-            tenant.DatabasePassword);
+          user,
+          tenant.TenantID,
+          roles,
+          userOrganization.Organization.OrganizationID,
+          userOrganization.Organization.Name,
+          tenant.DatabaseName,
+          tenant.DatabasePassword);
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
           claimsPrincipal,
@@ -309,6 +314,33 @@ namespace Accounting.Controllers
       await HttpContext.SignOutAsync();
 
       return RedirectToAction("Index", "Home");
+    }
+
+    private async Task<List<string>> GetRolesWithTenantManagerClaimAsync(int userId, string databaseName, int tenantId, List<string>? additionalRoles = null)
+    {
+      var roles = new List<string>();
+      var tenantManagerClaim = await _claimService.GetAsync(
+          userId,
+          databaseName,
+          UserRoleClaimConstants.TenantManager,
+          tenantId);
+
+      if (tenantManagerClaim != null)
+      {
+        roles.Add(tenantManagerClaim.ClaimValue);
+      }
+
+      if (ConfigurationSingleton.Instance.TenantManagement)
+      {
+        roles.Add(ConfigurationSingleton.ConfigurationConstants.TenantManagement);
+      }
+
+      if (additionalRoles != null && additionalRoles.Count > 0)
+      {
+        roles.AddRange(additionalRoles);
+      }
+
+      return roles;
     }
   }
 }
