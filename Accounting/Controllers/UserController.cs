@@ -85,6 +85,7 @@ namespace Accounting.Controllers
         {
             new ValidationFailure("NewEmail", "Email already exists.")
         });
+        model.UserID = id;
         return View(model);
       }
 
