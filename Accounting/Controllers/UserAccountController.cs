@@ -105,17 +105,17 @@ namespace Accounting.Controllers
 
       var (existingUser, tenantExistingUserBelongsTo) = await _userService.GetFirstOfAnyTenantAsync(model.Email!);
 
-      Business.Claim tenantManagerClaim = await _claimService.GetAsync(
-        existingUser.UserID,
-        tenantExistingUserBelongsTo.DatabaseName,
-        UserRoleClaimConstants.TenantManager,
-        tenantExistingUserBelongsTo.TenantID);
-
       if (
         existingUser != null
         && (!string.IsNullOrEmpty(existingUser.Password) && !string.IsNullOrEmpty(model.Password))
         && PasswordStorage.VerifyPassword(model.Password, existingUser.Password))
       {
+        Business.Claim tenantManagerClaim = await _claimService.GetAsync(
+        existingUser.UserID,
+        tenantExistingUserBelongsTo.DatabaseName,
+        UserRoleClaimConstants.TenantManager,
+        tenantExistingUserBelongsTo.TenantID);
+
         var rolesToAdd = tenantManagerClaim != null
           ? new List<string>() { tenantManagerClaim.ClaimValue }
           : new List<string>();
