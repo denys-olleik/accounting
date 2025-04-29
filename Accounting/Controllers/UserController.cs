@@ -107,7 +107,7 @@ namespace Accounting.Controllers
       UserOrganizationService _userOrganizationService = new UserOrganizationService(GetDatabaseName(), GetDatabasePassword());
       var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, GetDatabaseName(), GetDatabasePassword());
 
-      return View(new Models.UserViewModels.UpdateUserViewModel
+      var viewModel = new Models.UserViewModels.UpdateUserViewModel
       {
         UserID = user.UserID,
         Email = user.Email,
@@ -118,14 +118,16 @@ namespace Accounting.Controllers
           OrganizationID = x.OrganizationID,
           Name = x.Name
         }).ToList(),
-        AvailableRoles = new List<string>()
+        AvailableRoles = new List<string>
         {
           UserRoleClaimConstants.TenantManager,
         },
         SelectedOrganizationIdsCsv = string.Join(',', userOrganizations.Select(x => x.OrganizationID)),
         CurrentRequestingUserId = GetUserId(),
         SelectedRoles = await _claimService.GetUserRolesAsync(user.UserID, GetOrganizationId(), Claim.CustomClaimTypeConstants.Role)
-      });
+      };
+
+      return View(viewModel);
     }
 
     [HttpPost]
