@@ -107,6 +107,8 @@ namespace Accounting.Controllers
       UserOrganizationService _userOrganizationService = new UserOrganizationService(GetDatabaseName(), GetDatabasePassword());
       var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, GetDatabaseName(), GetDatabasePassword());
 
+      var selectedRoles = await _claimService.GetUserRolesAsync(user.UserID, GetOrganizationId(), Claim.CustomClaimTypeConstants.Role);
+
       var viewModel = new Models.UserViewModels.UpdateUserViewModel
       {
         UserID = user.UserID,
@@ -124,7 +126,7 @@ namespace Accounting.Controllers
         },
         SelectedOrganizationIdsCsv = string.Join(',', userOrganizations.Select(x => x.OrganizationID)),
         CurrentRequestingUserId = GetUserId(),
-        SelectedRoles = await _claimService.GetUserRolesAsync(user.UserID, GetOrganizationId(), Claim.CustomClaimTypeConstants.Role)
+        SelectedRoles = selectedRoles
       };
 
       return View(viewModel);
