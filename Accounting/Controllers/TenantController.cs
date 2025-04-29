@@ -16,8 +16,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Accounting.Controllers
 {
-  [Authorize(Roles = "tenant-management")]
-  [Authorize(Roles = "tenant-manager")]
+  [Authorize(Roles = ConfigurationSingleton.ConfigurationConstants.TenantManagement)]
+  [Authorize(Roles = UserRoleClaimConstants.TenantManager)]
   [AuthorizeWithOrganizationId]
   [Route("tenant")]
   public class TenantController : BaseController
