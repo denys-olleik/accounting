@@ -1359,9 +1359,9 @@ namespace Accounting.Database
         p.Add("@InvoiceAttachmentID", invoiceAttachmentID);
         p.Add("@InvoiceId", invoiceID);
         p.Add("@OrganizationId", organizationId);
-        
+
         int rowsAffected;
-        
+
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
@@ -6113,9 +6113,9 @@ namespace Accounting.Database
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@RequestLogId", requestLogId);
-        
+
         IEnumerable<RequestLog> result;
-        
+
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           result = await con.QueryAsync<RequestLog>("""
@@ -6139,9 +6139,9 @@ namespace Accounting.Database
         p.Add("@RequestLogID", requestLogID);
         p.Add("@StatusCode", statusCode);
         p.Add("@ResponseLength", responseLength);
-        
+
         int rowsAffected;
-        
+
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""
@@ -6840,9 +6840,9 @@ namespace Accounting.Database
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@FullyQualifiedDomainName", fullyQualifiedDomainName);
-        
+
         IEnumerable<Tenant> result;
-        
+
         // change db name to default db
         NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
         {
@@ -7008,7 +7008,7 @@ namespace Accounting.Database
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
-          
+
           result = await con.QueryAsync<Secret>("""
             SELECT *
             FROM "Secret"
@@ -7541,7 +7541,7 @@ namespace Accounting.Database
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@BlogID", blogId);
-        
+
         int rowsAffected;
 
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
@@ -7698,7 +7698,7 @@ namespace Accounting.Database
       {
         throw new NotImplementedException();
       }
-      
+
       public async Task<Business.Exception> CreateAsync(Business.Exception entity)
       {
         DynamicParameters p = new DynamicParameters();
@@ -7740,7 +7740,7 @@ namespace Accounting.Database
       }
 
       public async Task<(IEnumerable<Business.Exception> exceptions, int? nextPage)> GetAllAsync(
-        int page, 
+        int page,
         int pageSize)
       {
         DynamicParameters p = new DynamicParameters();
@@ -7811,6 +7811,29 @@ namespace Accounting.Database
       public IEnumerable<Claim> GetAll()
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<List<Claim>> GetAllAsync(int userID, int organizationId, string claimType)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@UserId", userID);
+        p.Add("@ClaimType", claimType);
+        p.Add("@OrganizationId", organizationId);
+
+        IEnumerable<Claim> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = await con.QueryAsync<Claim>("""
+            SELECT * 
+            FROM "Claim" 
+            WHERE "UserId" = @UserId
+            AND "ClaimType" = @ClaimType
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return result.ToList();
       }
 
       public async Task<Claim> GetAsync(int userId, string databaseName, string inRole, int tenantID)

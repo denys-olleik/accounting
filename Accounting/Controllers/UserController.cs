@@ -18,18 +18,21 @@ namespace Accounting.Controllers
     private readonly UserService _userService;
     private readonly SecretService _secretService;
     private readonly TenantService _tenantService;
+    private readonly ClaimService _claimService;
 
     public UserController(
       RequestContext requestContext,
       UserOrganizationService userOrganizationService,
       UserService userService,
       SecretService secretService,
-      TenantService tenantService)
+      TenantService tenantService,
+      ClaimService claimService)
     {
       _userOrganizationService = new UserOrganizationService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
       _userService = new UserService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
       _secretService = new SecretService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
       _tenantService = new TenantService();
+      _claimService = new ClaimService(requestContext.DatabaseName!, requestContext.DatabasePassword!);
     }
 
     [HttpGet]
@@ -120,18 +123,19 @@ namespace Accounting.Controllers
           UserRoleClaimConstants.TenantManager,
         },
         SelectedOrganizationIdsCsv = string.Join(',', userOrganizations.Select(x => x.OrganizationID)),
-        CurrentRequestingUserId = GetUserId()
+        CurrentRequestingUserId = GetUserId(),
+        SelectedRoles = await _claimService.GetUserRolesAsync(user.UserID, GetOrganizationId(), Claim.CustomClaimTypeConstants.Role)
       });
     }
 
     [HttpPost]
     [Route("update/{userId}")]
-    public async Task<IActionResult> UpdateUser(Models.UserViewModels.UpdateUserViewModel model)
+    public async Task<IActionResult> UpdateUser(UpdateUserViewModel model)
     {
       var user = await _userService.GetAsync(model.UserID);
       if (user == null) return NotFound();
 
-      var validator = new Models.UserViewModels.UpdateUserViewModel.UpdateUserViewModelValidator();
+      var validator = new UpdateUserViewModel.UpdateUserViewModelValidator();
       var validationResult = await validator.ValidateAsync(model);
 
       if (!validationResult.IsValid)

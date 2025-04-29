@@ -15,5 +15,20 @@ namespace Accounting.Service
       var claimManager = factoryManager.GetClaimManager();
       return await claimManager.GetAsync(userID, databaseName, inRole, tenantID);
     }
+
+    public async Task<List<string>> GetUserRolesAsync(int userID, int organizationId, string claimType)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var claimManager = factoryManager.GetClaimManager();
+      var claims = await claimManager.GetAllAsync(userID, organizationId, claimType);
+      if (claims == null || claims.Count == 0)
+      {
+        return new List<string>();
+      }
+      else
+      {
+        return claims.Select(c => c.ClaimValue).ToList();
+      }
+    }
   }
 }
