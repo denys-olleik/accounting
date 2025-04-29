@@ -30,5 +30,25 @@ namespace Accounting.Service
         return claims.Select(c => c.ClaimValue).ToList();
       }
     }
+
+    public async Task<int> UpdateUserRolesAsync(int userID, List<string> selectedRoles, int organizationId, int createdById)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var claimManager = factoryManager.GetClaimManager();
+
+      await claimManager.DeleteRoles(userID, organizationId);
+
+      int addedCount = 0;
+      if (selectedRoles != null && selectedRoles.Count > 0)
+      {
+        foreach (var role in selectedRoles)
+        {
+          await claimManager.CreateClaimAsync(userID, Claim.CustomClaimTypeConstants.Role, role, organizationId, createdById);
+          addedCount++;
+        }
+      }
+
+      return addedCount;
+    }
   }
 }

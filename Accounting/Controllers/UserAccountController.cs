@@ -7,12 +7,10 @@ using Accounting.Validators;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Transactions;
-using static Accounting.Business.Secret;
 
 namespace Accounting.Controllers
 {

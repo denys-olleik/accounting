@@ -7798,9 +7798,53 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<int> CreateClaimAsync(int userId, string claimType, string claimKey, int organizationId, int createdById)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@UserId", userId);
+        p.Add("@ClaimType", claimType);
+        p.Add("@ClaimValue", claimKey);
+        p.Add("@CreatedById", createdById);
+        p.Add("@OrganizationId", organizationId);
+
+        int rowsAffected;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            INSERT INTO "Claim" ("UserId", "ClaimType", "ClaimValue", "OrganizationId", "CreatedById") 
+            VALUES (@UserId, @ClaimType, @ClaimValue, @OrganizationId, @CreatedById)
+            """, p);
+        }
+
+        return rowsAffected;
+      }
+
       public int Delete(int id)
       {
         throw new NotImplementedException();
+      }
+
+      public async Task<int> DeleteRoles(int userId, int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@UserId", userId);
+        p.Add("@ClaimType", CustomClaimTypeConstants.Role);
+        p.Add("@OrganizationId", organizationId);
+        
+        int rowsAffected;
+        
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          rowsAffected = await con.ExecuteAsync("""
+            DELETE FROM "Claim" 
+            WHERE "UserId" = @UserId
+            AND "ClaimType" = @ClaimType
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return rowsAffected;
       }
 
       public Claim Get(int id)

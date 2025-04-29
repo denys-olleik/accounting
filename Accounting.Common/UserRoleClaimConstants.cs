@@ -5,6 +5,7 @@ namespace Accounting.Common
   public static class UserRoleClaimConstants
   {
     public const string TenantManager = "tenant-manager";
+    public const string RoleManager = "role-manager";
 
     private static readonly List<string> _all = new List<string>();
 

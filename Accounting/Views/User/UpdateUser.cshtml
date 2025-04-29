@@ -28,6 +28,10 @@
   <input type="hidden" asp-for="SelectedOrganizationIdsCsv" :value="selectedOrganizationIds.join(',')" />
   <input type="hidden" name="Email" value="@Model.Email" id="HiddenEmail" />
 
+  <div v-for="role in selectedRoles" :key="'hidden-role-' + role">
+    <input type="hidden" name="SelectedRoles" :value="role" />
+  </div>
+
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label asp-for="Email" class="background-color-antiquewhite">Email</label>
     <input asp-for="Email" class="font-size-20px" disabled autocomplete="off" readonly="@(Model.UserID != Model.CurrentRequestingUserId)" />

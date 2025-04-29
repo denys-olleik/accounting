@@ -163,20 +163,32 @@ namespace Accounting.Controllers
         return Unauthorized("Cannot un-associate yourself from the current organization.");
       }
 
-      if (user.UserID == GetUserId())
+      using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        user.Email = model.Email;
-        user.FirstName = model.FirstName;
-        user.LastName = model.LastName;
-        await _tenantService.UpdateUserAsync(user.Email, model.FirstName, model.LastName);
-      }
+        if (user.UserID == GetUserId())
+        {
+          user.Email = model.Email;
+          user.FirstName = model.FirstName;
+          user.LastName = model.LastName;
+          await _tenantService.UpdateUserAsync(user.Email, model.FirstName, model.LastName);
+        }
 
-      await _userOrganizationService.UpdateUserOrganizationsAsync(
-          user.UserID,
-          selectedOrganizationIds,
-          GetDatabaseName(),
-          GetDatabasePassword()
-      );
+        await _userOrganizationService.UpdateUserOrganizationsAsync(
+            user.UserID,
+            selectedOrganizationIds,
+            GetDatabaseName(),
+            GetDatabasePassword()
+        );
+        
+        await _claimService.UpdateUserRolesAsync(
+            user.UserID,
+            model.SelectedRoles,
+            GetOrganizationId(),
+            GetUserId()
+        );
+
+        scope.Complete();
+      }
 
       return RedirectToAction("Users");
     }
