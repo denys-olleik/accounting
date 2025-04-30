@@ -273,9 +273,14 @@ namespace Accounting.Controllers
       {
         User user = userOrganization.User!;
 
+        List<string> userRoles = await _claimService.GetUserRolesAsync(
+          user.UserID,
+          userOrganization.Organization.OrganizationID,
+          Business.Claim.CustomClaimTypeConstants.Role);
+
         var roles = await ComposeRoles(
           user.UserID,
-          tenant.DatabaseName);
+          tenant.DatabaseName, userRoles);
 
         ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
           user,
@@ -314,15 +319,15 @@ namespace Accounting.Controllers
     private async Task<List<string>> ComposeRoles(int userId, string databaseName, List<string>? additionalRoles = null)
     {
       var roles = new List<string>();
-      var tenantManagerClaim = await _claimService.GetAsync(
-          userId,
-          databaseName,
-          UserRoleClaimConstants.TenantManager);
+      //var tenantManagerClaim = await _claimService.GetAsync(
+      //    userId,
+      //    databaseName,
+      //    UserRoleClaimConstants.TenantManager);
 
-      if (tenantManagerClaim != null)
-      {
-        roles.Add(tenantManagerClaim.ClaimValue);
-      }
+      //if (tenantManagerClaim != null)
+      //{
+      //  roles.Add(tenantManagerClaim.ClaimValue);
+      //}
 
       if (ConfigurationSingleton.Instance.TenantManagement)
       {
