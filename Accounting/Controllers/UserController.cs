@@ -123,6 +123,7 @@ namespace Accounting.Controllers
         AvailableRoles = new List<string>
         {
           UserRoleClaimConstants.TenantManager,
+          UserRoleClaimConstants.RoleManager
         },
         SelectedOrganizationIdsCsv = string.Join(',', userOrganizations.Select(x => x.OrganizationID)),
         CurrentRequestingUserId = GetUserId(),
@@ -179,13 +180,16 @@ namespace Accounting.Controllers
             GetDatabaseName(),
             GetDatabasePassword()
         );
-        
-        await _claimService.UpdateUserRolesAsync(
-            user.UserID,
-            model.SelectedRoles,
-            GetOrganizationId(),
-            GetUserId()
-        );
+
+        if (User.IsInRole(UserRoleClaimConstants.RoleManager))
+        {
+          await _claimService.UpdateUserRolesAsync(
+              user.UserID,
+              model.SelectedRoles,
+              GetOrganizationId(),
+              GetUserId()
+          );
+        }
 
         scope.Complete();
       }

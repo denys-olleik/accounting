@@ -7880,14 +7880,13 @@ namespace Accounting.Database
         return result.ToList();
       }
 
-      public async Task<Claim> GetAsync(int userId, string databaseName, string inRole, int tenantID)
+      public async Task<Claim> GetAsync(int userId, string databaseName, string inRole)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@UserId", userId);
         p.Add("@DatabaseName", databaseName);
         p.Add("@ClaimType", CustomClaimTypeConstants.Role);
         p.Add("@ClaimValue", inRole);
-        p.Add("@TenantID", tenantID);
 
         IEnumerable<Claim> result;
 
@@ -7904,7 +7903,6 @@ namespace Accounting.Database
             WHERE "UserId" = @UserId
             AND "ClaimType" = @ClaimType
             AND "ClaimValue" = @ClaimValue
-            AND "TenantId" = @TenantID
             """, p);
         }
 

@@ -75,6 +75,7 @@
                :id="'role-' + role"
                :value="role"
                :checked="selectedRoles.includes(role)"
+               :disabled="!@User.IsInRole(Accounting.Common.UserRoleClaimConstants.RoleManager)"
                @@change="updateSelectedRoles" />
         <label :for="'role-' + role" class="margin-left-5px">{{ role }}</label>
       </div>

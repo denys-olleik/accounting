@@ -223,12 +223,10 @@ CREATE TABLE "Claim"
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
-	"TenantId" INT NULL,
 	FOREIGN KEY ("UserId") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID"),
 	FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("OrganizationID"),
-	FOREIGN KEY ("TenantId") REFERENCES "Tenant"("TenantID"),
-	UNIQUE ("TenantId", "OrganizationId", "UserId", "ClaimType", "ClaimValue")
+	UNIQUE ("OrganizationId", "UserId", "ClaimType", "ClaimValue")
 );
 
 -- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Tag";'

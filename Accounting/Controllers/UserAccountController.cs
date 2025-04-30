@@ -111,17 +111,15 @@ namespace Accounting.Controllers
         Business.Claim tenantManagerClaim = await _claimService.GetAsync(
         existingUser.UserID,
         tenantExistingUserBelongsTo.DatabaseName,
-        UserRoleClaimConstants.TenantManager,
-        tenantExistingUserBelongsTo.TenantID);
+        UserRoleClaimConstants.TenantManager);
 
         var rolesToAdd = tenantManagerClaim != null
           ? new List<string>() { tenantManagerClaim.ClaimValue }
           : new List<string>();
 
-        var roles = await GetRolesWithTenantManagerClaimAsync(
+        var roles = await ComposeRoles(
           existingUser.UserID,
           tenantExistingUserBelongsTo.DatabaseName,
-          tenantExistingUserBelongsTo.TenantID,
           rolesToAdd);
 
         ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
@@ -275,10 +273,9 @@ namespace Accounting.Controllers
       {
         User user = userOrganization.User!;
 
-        var roles = await GetRolesWithTenantManagerClaimAsync(
+        var roles = await ComposeRoles(
           user.UserID,
-          tenant.DatabaseName,
-          tenant.TenantID);
+          tenant.DatabaseName);
 
         ClaimsPrincipal claimsPrincipal = AuthenticationHelper.CreateClaimsPrincipal(
           user,
@@ -314,14 +311,13 @@ namespace Accounting.Controllers
       return RedirectToAction("Index", "Home");
     }
 
-    private async Task<List<string>> GetRolesWithTenantManagerClaimAsync(int userId, string databaseName, int tenantId, List<string>? additionalRoles = null)
+    private async Task<List<string>> ComposeRoles(int userId, string databaseName, List<string>? additionalRoles = null)
     {
       var roles = new List<string>();
       var tenantManagerClaim = await _claimService.GetAsync(
           userId,
           databaseName,
-          UserRoleClaimConstants.TenantManager,
-          tenantId);
+          UserRoleClaimConstants.TenantManager);
 
       if (tenantManagerClaim != null)
       {
