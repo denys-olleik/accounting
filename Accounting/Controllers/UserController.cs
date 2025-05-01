@@ -94,41 +94,59 @@ namespace Accounting.Controllers
       return RedirectToAction("Users", new { page = 1, pageSize = 2 });
     }
 
+    private async Task PopulateUpdateUserViewModelAsync(UpdateUserViewModel model)
+    {
+      // Fetch organizations
+      OrganizationService organizationService = new OrganizationService(GetDatabaseName(), GetDatabasePassword());
+      var organizations = await organizationService.GetAllAsync(GetDatabaseName(), GetDatabasePassword());
+      model.AvailableOrganizations = organizations.Select(x => new UpdateUserViewModel.OrganizationViewModel
+      {
+        OrganizationID = x.OrganizationID,
+        Name = x.Name
+      }).ToList();
+
+      // Fetch user organizations if not already set
+      if (string.IsNullOrEmpty(model.SelectedOrganizationIdsCsv))
+      {
+        UserOrganizationService userOrganizationService = new UserOrganizationService(GetDatabaseName(), GetDatabasePassword());
+        var userOrganizations = await userOrganizationService.GetByUserIdAsync(model.UserID, GetDatabaseName(), GetDatabasePassword());
+        model.SelectedOrganizationIdsCsv = string.Join(',', userOrganizations.Select(x => x.OrganizationID));
+      }
+
+      // Set available roles
+      model.AvailableRoles = new List<string>
+      {
+        UserRoleClaimConstants.TenantManager,
+        UserRoleClaimConstants.RoleManager
+      };
+
+      // Fetch selected roles if not already set
+      if (model.SelectedRoles == null || !model.SelectedRoles.Any())
+      {
+        var claimService = new ClaimService(GetDatabaseName(), GetDatabasePassword());
+        model.SelectedRoles = await claimService.GetUserRolesAsync(model.UserID, GetOrganizationId(), Claim.CustomClaimTypeConstants.Role);
+      }
+
+      // Set current requesting user id
+      model.CurrentRequestingUserId = GetUserId();
+    }
+
     [HttpGet]
     [Route("update/{userId}")]
     public async Task<IActionResult> UpdateUser(int userId)
     {
-      UserService _userService = new UserService(GetDatabaseName(), GetDatabasePassword());
       User user = await _userService.GetAsync(userId);
       if (user == null) return NotFound();
 
-      OrganizationService _organizationService = new OrganizationService(GetDatabaseName(), GetDatabasePassword());
-      var organizations = await _organizationService.GetAllAsync(GetDatabaseName(), GetDatabasePassword());
-      UserOrganizationService _userOrganizationService = new UserOrganizationService(GetDatabaseName(), GetDatabasePassword());
-      var userOrganizations = await _userOrganizationService.GetByUserIdAsync(user.UserID, GetDatabaseName(), GetDatabasePassword());
-
-      var selectedRoles = await _claimService.GetUserRolesAsync(user.UserID, GetOrganizationId(), Claim.CustomClaimTypeConstants.Role);
-
-      var viewModel = new Models.UserViewModels.UpdateUserViewModel
+      var viewModel = new UpdateUserViewModel
       {
         UserID = user.UserID,
         Email = user.Email,
         FirstName = user.FirstName,
-        LastName = user.LastName,
-        AvailableOrganizations = organizations.Select(x => new Models.UserViewModels.UpdateUserViewModel.OrganizationViewModel
-        {
-          OrganizationID = x.OrganizationID,
-          Name = x.Name
-        }).ToList(),
-        AvailableRoles = new List<string>
-        {
-          UserRoleClaimConstants.TenantManager,
-          UserRoleClaimConstants.RoleManager
-        },
-        SelectedOrganizationIdsCsv = string.Join(',', userOrganizations.Select(x => x.OrganizationID)),
-        CurrentRequestingUserId = GetUserId(),
-        SelectedRoles = selectedRoles
+        LastName = user.LastName
       };
+
+      await PopulateUpdateUserViewModelAsync(viewModel);
 
       return View(viewModel);
     }
@@ -146,6 +164,7 @@ namespace Accounting.Controllers
       if (!validationResult.IsValid)
       {
         model.ValidationResult = validationResult;
+        await PopulateUpdateUserViewModelAsync(model);
         return View(model);
       }
 
@@ -174,7 +193,10 @@ namespace Accounting.Controllers
         // Only block if this user is the last one with the role
         if (usersWithRole == 1 && currentRoles.Contains(role))
         {
+          if (model.ValidationResult == null)
+            model.ValidationResult = new ValidationResult();
           model.ValidationResult.Errors.Add(new ValidationFailure("SelectedRoles", $"At least one user must have the {role} role in this organization."));
+          await PopulateUpdateUserViewModelAsync(model);
           return View(model);
         }
       }
