@@ -16,6 +16,13 @@ namespace Accounting.Service
       return await claimManager.GetAsync(userId, databaseName, inRole);
     }
 
+    public async Task<int> GetUserCountWithRoleAsync(string role, int currentOrganizationId)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var claimManager = factoryManager.GetClaimManager();
+      return await claimManager.GetUserCountWithRoleAsync(role, currentOrganizationId);
+    }
+
     public async Task<List<string>> GetUserRolesAsync(int userID, int organizationId, string claimType)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);

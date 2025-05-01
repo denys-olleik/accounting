@@ -8,5 +8,6 @@ namespace Accounting.Database.Interfaces
     Task<int> DeleteRoles(int userID, int organizationId);
     Task<List<Claim>> GetAllAsync(int userID, int organizationId, string claimType);
     Task<Claim> GetAsync(int userId, string databaseName, string inRole);
+    Task<int> GetUserCountWithRoleAsync(string role, int currentOrganizationId);
   }
 }

@@ -161,8 +161,24 @@ namespace Accounting.Controllers
 
       if (user.UserID == currentUserId && !selectedOrganizationIds.Contains(currentOrganizationId))
       {
-        return Unauthorized("Cannot un-associate yourself from the current organization.");
+        return Forbid();
       }
+
+      // --- Begin role minimum check logic ---
+      var currentRoles = await _claimService.GetUserRolesAsync(user.UserID, currentOrganizationId, Claim.CustomClaimTypeConstants.Role);
+      var rolesToRemove = currentRoles.Except(model.SelectedRoles).ToList();
+
+      foreach (var role in rolesToRemove)
+      {
+        var usersWithRole = await _claimService.GetUserCountWithRoleAsync(role, currentOrganizationId);
+        // Only block if this user is the last one with the role
+        if (usersWithRole == 1 && currentRoles.Contains(role))
+        {
+          model.ValidationResult.Errors.Add(new ValidationFailure("SelectedRoles", $"At least one user must have the {role} role in this organization."));
+          return View(model);
+        }
+      }
+      // --- End role minimum check logic ---
 
       using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {

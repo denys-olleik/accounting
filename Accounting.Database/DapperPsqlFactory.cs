@@ -7909,6 +7909,29 @@ namespace Accounting.Database
         return result.SingleOrDefault();
       }
 
+      public async Task<int> GetUserCountWithRoleAsync(string role, int currentOrganizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@ClaimType", CustomClaimTypeConstants.Role);
+        p.Add("@ClaimValue", role);
+        p.Add("@OrganizationId", currentOrganizationId);
+
+        int userCount;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          userCount = await con.ExecuteScalarAsync<int>("""
+            SELECT COUNT(*)
+            FROM "Claim"
+            WHERE "ClaimType" = @ClaimType
+            AND "ClaimValue" = @ClaimValue
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return userCount;
+      }
+
       public int Update(Claim entity)
       {
         throw new NotImplementedException();
