@@ -307,6 +307,9 @@ sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/
 # Create user organization record
 """ + createUserOrganizationRecordScript + """
 
+# Load sample claims data - /opt/accounting/Accounting.Database/sample-data-production-claims.sql
+sudo -i -u postgres psql -d "Accounting" -f /opt/accounting/Accounting.Database/sample-data-production-claims.sql > /var/log/accounting/sample-data-claims.log 2>&1
+
 # Create email API key
 """ + emailApiKeyScript + """
 
