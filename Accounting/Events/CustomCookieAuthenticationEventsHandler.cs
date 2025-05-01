@@ -1,4 +1,5 @@
 ﻿using Accounting.Business;
+using Accounting.Common;
 using Accounting.Service;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -34,13 +35,15 @@ namespace Accounting.Events
         databaseName = databaseNameClaim.Value;
       }
 
+      List<string> roleClaims = principal?.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList();
+
       var databaseExists = await TenantExistsAsync(databaseName);
       if (!databaseExists)
       {
         context.RejectPrincipal();
         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return;
-      } 
+      }
 
       int organizationId = Convert.ToInt32(principal?.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.OrganizationId)?.Value);
       string password = principal?.Claims.SingleOrDefault(x => x.Type == CustomClaimTypeConstants.Password)?.Value;
@@ -61,12 +64,23 @@ namespace Accounting.Events
           return;
         }
 
+        await CompareAuthorizationClaimsExcept(
+          context,
+          userOrganization,
+          roleClaims,
+          databaseName,
+          databasePassword,
+          new List<string>
+          {
+            ConfigurationSingleton.ConfigurationConstants.TenantManagement
+          });
+
         user = userOrganization.User!;
         organization = userOrganization.Organization!;
       }
       else
       {
-        UserService userService = new ();
+        UserService userService = new();
         var (existingUser, _) = await userService.GetFirstOfAnyTenantAsync(email);
         user = existingUser;
       }
@@ -83,6 +97,32 @@ namespace Accounting.Events
         context.RejectPrincipal();
         await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return;
+      }
+    }
+
+    private async Task CompareAuthorizationClaimsExcept(
+      CookieValidatePrincipalContext context,
+      UserOrganization userOrganization,
+      List<string>? roleClaims,
+      string databaseName,
+      string databasePassword,
+      List<string>? roleClaimsToNotCompare = null)
+    {
+      ClaimService claimService = new(databaseName, databasePassword);
+
+      List<string>? cookiesRoles = context.Principal.Claims.Where(x => x.Type == ClaimTypes.Role).Select(x => x.Value).ToList();
+      cookiesRoles?.RemoveAll(x => roleClaimsToNotCompare?.Contains(x) ?? false);
+
+      List<string>? databaseRoles = await claimService.GetUserRolesAsync(userOrganization.UserId, userOrganization.OrganizationId, CustomClaimTypeConstants.Role);
+
+      if (cookiesRoles != null && databaseRoles != null)
+      {
+        if (!cookiesRoles.OrderBy(x => x).SequenceEqual(databaseRoles.OrderBy(x => x)))
+        {
+          context.RejectPrincipal();
+          await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+          return;
+        }
       }
     }
 
