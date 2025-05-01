@@ -1,13 +1,16 @@
 ﻿using Accounting.Business;
+using Accounting.Common;
 using Accounting.CustomAttributes;
 using Accounting.Models.SecretViewModels;
 using Accounting.Service;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
 
 namespace Accounting.Controllers
 {
+  [Authorize(Roles = UserRoleClaimConstants.TenantManager)]
   [AuthorizeWithOrganizationId]
   [Route("secret")]
   public class SecretController : BaseController

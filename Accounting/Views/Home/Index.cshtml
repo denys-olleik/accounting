@@ -306,9 +306,11 @@
       </li>
       <li>
         <a href="@Url.Action("Tenants", "Tenant")">Tenants</a>
-      </li>
-      <li>
-        <a href="@Url.Action("Secrets", "Secret")">Secrets</a>
+        <ul>
+          <li>
+            <a href="@Url.Action("Secrets", "Secret")">Secrets</a>
+          </li>
+        </ul>
       </li>
       <li>
         <a href="@Url.Action("UpdatePassword", "User")">Update password</a>
