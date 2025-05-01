@@ -6,6 +6,7 @@ namespace Accounting.Common
   {
     public const string TenantManager = "tenant-manager";
     public const string RoleManager = "role-manager";
+    public const string OrganizationManager = "organization-manager";
 
     private static readonly List<string> _all = new List<string>();
 

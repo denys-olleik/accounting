@@ -117,7 +117,8 @@ namespace Accounting.Controllers
       model.AvailableRoles = new List<string>
       {
         UserRoleClaimConstants.TenantManager,
-        UserRoleClaimConstants.RoleManager
+        UserRoleClaimConstants.RoleManager,
+        UserRoleClaimConstants.OrganizationManager
       };
 
       // Fetch selected roles if not already set

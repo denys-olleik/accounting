@@ -61,6 +61,7 @@
                :id="'org-' + organization.organizationID"
                :value="organization.organizationID"
                :checked="selectedOrganizationIds.includes(organization.organizationID.toString())"
+               :disabled="!isOrganizationManager"
                @@change="updateSelectedOrganizations" />
         <label :for="'org-' + organization.organizationID" class="margin-left-5px">{{ organization.name }}</label>
       </div>
@@ -114,7 +115,8 @@
         roles: @Html.Raw(Json.Serialize(Model.AvailableRoles)),
         selectedOrganizationIds: @Html.Raw(Json.Serialize(Model.SelectedOrganizationIdsCsv?.Split(',') ?? [])),
         selectedRoles: @Html.Raw(Json.Serialize(Model.SelectedRoles ?? new List<string>())),
-        isRoleManager: @User.IsInRole(Accounting.Common.UserRoleClaimConstants.RoleManager).ToString().ToLower()
+        isRoleManager: @User.IsInRole(Accounting.Common.UserRoleClaimConstants.RoleManager).ToString().ToLower(),
+        isOrganizationManager: @User.IsInRole(Accounting.Common.UserRoleClaimConstants.OrganizationManager).ToString().ToLower()
       };
     },
     methods: {
