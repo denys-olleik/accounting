@@ -75,7 +75,7 @@
                :id="'role-' + role"
                :value="role"
                :checked="selectedRoles.includes(role)"
-               :disabled="!@User.IsInRole(Accounting.Common.UserRoleClaimConstants.RoleManager)"
+               :disabled="!isRoleManager"
                @@change="updateSelectedRoles" />
         <label :for="'role-' + role" class="margin-left-5px">{{ role }}</label>
       </div>
@@ -113,7 +113,8 @@
         organizations: @Html.Raw(Json.Serialize(Model.AvailableOrganizations)),
         roles: @Html.Raw(Json.Serialize(Model.AvailableRoles)),
         selectedOrganizationIds: @Html.Raw(Json.Serialize(Model.SelectedOrganizationIdsCsv?.Split(',') ?? [])),
-        selectedRoles: @Html.Raw(Json.Serialize(Model.SelectedRoles ?? new List<string>()))
+        selectedRoles: @Html.Raw(Json.Serialize(Model.SelectedRoles ?? new List<string>())),
+        isRoleManager: @User.IsInRole(Accounting.Common.UserRoleClaimConstants.RoleManager).ToString().ToLower()
       };
     },
     methods: {
