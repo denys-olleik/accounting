@@ -27,7 +27,7 @@
     <div class="display-flex flex-direction-column flex-1">
       <a href="#" @@click.prevent="toggleAction" class="margin-right-5px">{{ tenant.email }}</a>
       <div>
-        <a href="#" v-if="isExpanded" class="font-size-12px">{{ tenant.fullyQualifiedDomainName }}</a>
+        <a href="#" v-if="isExpanded" class="font-size-12px" @@click.prevent="copyFqdn">{{ tenant.fullyQualifiedDomainName }}</a>
         <span v-if="isExpanded" class="display-flex margin-bottom-2px">
           <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
             <div class="flex-1"></div>
@@ -154,14 +154,14 @@
     </div>
   </div>
   <pre class="color-white">
-  <code>
-sudo certbot --nginx -d example.com -d www.example.com -n --agree-tos --email admin@example.com
-or
-sudo certbot --nginx -d sub.example.com -n --agree-tos --email admin@example.com
-also...
-sudo git -C /opt/accounting pull > /var/log/accounting/update.log 2>&1 && sudo dotnet publish /opt/accounting/Accounting/Accounting.csproj -c Release >> /var/log/accounting/update.log 2>&1 && sudo systemctl restart accounting.service &
-  </code>
-</pre>
+    <code>
+      sudo certbot --nginx -d example.com -d www.example.com -n --agree-tos --email admin@example.com
+      or
+      sudo certbot --nginx -d sub.example.com -n --agree-tos --email admin@example.com
+      also...
+      sudo git -C /opt/accounting pull > /var/log/accounting/update.log 2>&1 && sudo dotnet publish /opt/accounting/Accounting/Accounting.csproj -c Release >> /var/log/accounting/update.log 2>&1 && sudo systemctl restart accounting.service &
+    </code>
+  </pre>
 </div>
 
 <script>
@@ -172,6 +172,9 @@ sudo git -C /opt/accounting pull > /var/log/accounting/update.log 2>&1 && sudo d
     props: ['tenant', 'isExpanded'],
     template: '#tenant-action-template',
     methods: {
+      copyFqdn() {
+        navigator.clipboard.writeText(this.tenant.fullyQualifiedDomainName);
+      },
       installNginx() {
         fetch(`/api/tenant/${this.tenant.tenantID}/install-nginx`, {
           method: 'POST'
