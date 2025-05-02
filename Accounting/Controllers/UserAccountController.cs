@@ -261,7 +261,6 @@ namespace Accounting.Controllers
       }
 
       Tenant tenant = await _tenantService.GetAsync(model.SelectedTenantId!.Value);
-
       UserOrganization userOrganization
         = await _userOrganizationService
           .GetByEmailAsync(
@@ -273,7 +272,8 @@ namespace Accounting.Controllers
       {
         User user = userOrganization.User!;
 
-        List<string> userRoles = await _claimService.GetUserRolesAsync(
+        ClaimService claimService = new ClaimService(tenant.DatabaseName!, tenant.DatabasePassword!);
+        List<string> userRoles = await claimService.GetUserRolesAsync(
           user.UserID,
           userOrganization.Organization.OrganizationID,
           Business.Claim.CustomClaimTypeConstants.Role);
