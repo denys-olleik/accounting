@@ -10,6 +10,7 @@ using System.Transactions;
 
 namespace Accounting.Controllers
 {
+  [Authorize(Roles = ConfigurationSingleton.ConfigurationConstants.TenantManagement)]
   [Authorize(Roles = UserRoleClaimConstants.TenantManager)]
   [AuthorizeWithOrganizationId]
   [Route("secret")]

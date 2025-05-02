@@ -741,7 +741,8 @@ namespace Accounting.Controllers
     }
   }
 
-  [Authorize(Roles = "tenant-management")]
+  [Authorize(Roles = ConfigurationSingleton.ConfigurationConstants.TenantManagement)]
+  [Authorize(Roles = UserRoleClaimConstants.TenantManager)]
   [AuthorizeWithOrganizationId]
   [Route("api/tenant")]
   [ApiController]
