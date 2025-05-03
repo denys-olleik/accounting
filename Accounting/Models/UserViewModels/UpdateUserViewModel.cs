@@ -48,8 +48,6 @@ namespace Accounting.Models.UserViewModels
       {
         RuleFor(x => x.UserID).GreaterThan(0);
         RuleFor(x => x.Email).EmailAddress().NotEmpty();
-        RuleFor(x => x.FirstName).NotEmpty();
-        RuleFor(x => x.LastName).NotEmpty();
       }
     }
   }
