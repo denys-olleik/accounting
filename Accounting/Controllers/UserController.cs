@@ -183,7 +183,19 @@ namespace Accounting.Controllers
       {
         return Forbid();
       }
-
+      // --- Begin: Ensure user can only assign roles they have ---
+      foreach (var role in model.SelectedRoles)
+      {
+        if (!User.IsInRole(role))
+        {
+          if (model.ValidationResult == null)
+            model.ValidationResult = new ValidationResult();
+          model.ValidationResult.Errors.Add(new ValidationFailure("SelectedRoles", $"You cannot assign the {role} role because you do not have it."));
+          await PopulateUpdateUserViewModelAsync(model);
+          return View(model);
+        }
+      }
+      // --- End: Ensure user can only assign roles they have ---
       // --- Begin role minimum check logic ---
       var currentRoles = await _claimService.GetUserRolesAsync(user.UserID, currentOrganizationId, Claim.CustomClaimTypeConstants.Role);
       var rolesToRemove = currentRoles.Except(model.SelectedRoles).ToList();
@@ -214,19 +226,19 @@ namespace Accounting.Controllers
       using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
         await _userOrganizationService.UpdateUserOrganizationsAsync(
-            user.UserID,
-            selectedOrganizationIds,
-            GetDatabaseName(),
-            GetDatabasePassword()
+          user.UserID,
+          selectedOrganizationIds,
+          GetDatabaseName(),
+          GetDatabasePassword()
         );
 
         if (User.IsInRole(UserRoleClaimConstants.RoleManager))
         {
           await _claimService.UpdateUserRolesAsync(
-              user.UserID,
-              model.SelectedRoles,
-              GetOrganizationId(),
-              GetUserId()
+            user.UserID,
+            model.SelectedRoles,
+            GetOrganizationId(),
+            GetUserId()
           );
         }
 
