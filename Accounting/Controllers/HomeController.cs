@@ -42,7 +42,7 @@ namespace Accounting.Controllers
       return View(indexHomeViewModel);
     }
 
-    private IActionResult WhiteLabelIndex()
+    public IActionResult WhiteLabelIndex()
     {
       return View("WhiteLabelIndex");
     }
