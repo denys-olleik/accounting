@@ -78,7 +78,11 @@ builder.Services.AddScoped<RequestLogService>();
 builder.Services.AddScoped<ExceptionService>();
 builder.Services.AddScoped<ClaimService>();
 
-ConfigurationSingleton.Instance.ApplicationName = builder.Configuration["ApplicationName5"];
+ConfigurationSingleton.Instance.ApplicationName =
+    !string.IsNullOrEmpty(builder.Configuration["Whitelabel"])
+    ? builder.Configuration["Whitelabel"]
+    : builder.Configuration["ApplicationName5"];
+ConfigurationSingleton.Instance.Whitelabel = builder.Configuration["Whitelabel"];
 //ConfigurationSingleton.Instance.ConnectionStringDefaultPsql = builder.Configuration["ConnectionStrings:Psql"];
 //ConfigurationSingleton.Instance.ConnectionStringAdminPsql = builder.Configuration["ConnectionStrings:AdminPsql"];
 ConfigurationSingleton.Instance.DatabasePassword = builder.Configuration["DatabasePassword"];

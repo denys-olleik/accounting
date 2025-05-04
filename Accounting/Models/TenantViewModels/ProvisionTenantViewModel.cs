@@ -9,6 +9,7 @@ namespace Accounting.Models.TenantViewModels
     public string? Email { get; set; }
     public bool Shared { get; set; }
     public string? FullyQualifiedDomainName { get; set; }
+    public string? ApplicationName { get; set; }
     public string? DefaultNoReplyEmailAddress { get; set; }
     public string? NoReplyEmailAddress { get; set; }
 

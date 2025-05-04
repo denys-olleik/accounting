@@ -1,4 +1,5 @@
 ﻿using Accounting.Business;
+using Accounting.Common;
 using Accounting.Models.HomeViewModels;
 using Accounting.Service;
 using Ganss.Xss;
@@ -19,6 +20,11 @@ namespace Accounting.Controllers
 
     public async Task<IActionResult> Index()
     {
+      if (!string.IsNullOrWhiteSpace(ConfigurationSingleton.Instance.Whitelabel))
+      {
+        return WhiteLabelIndex();
+      }
+
       Blog latestPublicPost = await _blogService.GetFirstPublicAsync();
 
       var markdownPipeline = new Markdig.MarkdownPipelineBuilder().Build();
@@ -34,6 +40,11 @@ namespace Accounting.Controllers
       };
 
       return View(indexHomeViewModel);
+    }
+
+    private IActionResult WhiteLabelIndex()
+    {
+      return View("WhiteLabelIndex");
     }
 
     [HttpGet("unauthorized")]

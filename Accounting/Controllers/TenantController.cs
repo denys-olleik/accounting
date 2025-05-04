@@ -692,7 +692,7 @@ namespace Accounting.Controllers
               emailSecret.Value, 
               model.FullyQualifiedDomainName, 
               cloudSecret.Value,
-              noReplySecret.Value);
+              noReplySecret.Value, whitelabel: model.ApplicationName);
           }
           catch (ApiException e)
           {

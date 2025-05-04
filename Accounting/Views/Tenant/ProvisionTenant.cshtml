@@ -43,6 +43,14 @@
     </div>
   </div>
 
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="ApplicationName" class="font-Roboto font-size-20px background-color-antiquewhite">Whitelabel*</label>
+    <input type="text" asp-for="ApplicationName" class="font-size-20px" />
+    <div class="background-color-antiquewhite">
+      * overrides all instances of 'Journal BMS'.
+    </div>
+  </div>
+
   <div class="display-flex flex-direction-column">
     <button type="submit" class="full-width-regular-button">Provision tenant</button>
   </div>
