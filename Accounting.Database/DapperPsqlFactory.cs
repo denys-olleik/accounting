@@ -7798,12 +7798,12 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
-      public async Task<int> CreateClaimAsync(int userId, string claimType, string claimKey, int organizationId, int createdById)
+      public async Task<int> CreateClaimAsync(int userId, string claimType, string claimValue, int organizationId, int createdById)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@UserId", userId);
         p.Add("@ClaimType", claimType);
-        p.Add("@ClaimValue", claimKey);
+        p.Add("@ClaimValue", claimValue);
         p.Add("@CreatedById", createdById);
         p.Add("@OrganizationId", organizationId);
 

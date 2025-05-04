@@ -94,7 +94,7 @@ namespace Accounting.Controllers
       await _databaseService.RunSQLScript(createSchemaScript, database.Name);
       await _tenantService.UpdateDatabaseName(tenant.TenantID, database.Name);
 
-      using (var scope = new System.Transactions.TransactionScope(System.Transactions.TransactionScopeAsyncFlowOption.Enabled))
+      using (TransactionScope scope = new (TransactionScopeAsyncFlowOption.Enabled))
       {
         var user = new User()
         {
@@ -108,12 +108,16 @@ namespace Accounting.Controllers
         user = await userService.CreateAsync(user);
 
         var organizationService = new OrganizationService(database.Name!, tenant.DatabasePassword);
-        string sampleDataPath = Path.Combine(System.AppContext.BaseDirectory, "sample-data-production.sql");
+        string sampleDataPath = Path.Combine(AppContext.BaseDirectory, "sample-data-production.sql");
         string sampleDataScript = System.IO.File.ReadAllText(sampleDataPath);
         await organizationService.InsertSampleOrganizationDataAsync(sampleDataScript);
 
         var userOrganizationService = new UserOrganizationService();
         await userOrganizationService.CreateAsync(user.UserID, 1, database.Name!, tenant.DatabasePassword);
+
+        var claimService = new ClaimService(database.Name!, tenant.DatabasePassword);
+        await claimService.CreateRoleAsync(user.UserID, 1, UserRoleClaimConstants.RoleManager);
+        await claimService.CreateRoleAsync(user.UserID, 1, UserRoleClaimConstants.OrganizationManager);
 
         scope.Complete();
       }

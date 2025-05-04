@@ -9,6 +9,13 @@ namespace Accounting.Service
     public ClaimService(string databaseName, string databasePassword)
       : base(databaseName, databasePassword) { }
 
+    public async Task<int> CreateRoleAsync(int userID, int organizationId, string role)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var claimManager = factoryManager.GetClaimManager();
+      return await claimManager.CreateClaimAsync(userID, Claim.CustomClaimTypeConstants.Role, role, organizationId, userID);
+    }
+
     public async Task<Claim> GetAsync(int userId, string databaseName, string inRole)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);

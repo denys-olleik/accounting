@@ -203,16 +203,16 @@ namespace Accounting.Controllers
       }
       // --- End role minimum check logic ---
 
+      if (user.UserID == GetUserId())
+      {
+        user.Email = model.Email;
+        user.FirstName = model.FirstName;
+        user.LastName = model.LastName;
+        await _tenantService.UpdateUserAsync(user.Email, model.FirstName, model.LastName);
+      }
+
       using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        if (user.UserID == GetUserId())
-        {
-          user.Email = model.Email;
-          user.FirstName = model.FirstName;
-          user.LastName = model.LastName;
-          await _tenantService.UpdateUserAsync(user.Email, model.FirstName, model.LastName);
-        }
-
         await _userOrganizationService.UpdateUserOrganizationsAsync(
             user.UserID,
             selectedOrganizationIds,
