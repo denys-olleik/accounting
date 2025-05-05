@@ -320,7 +320,9 @@ namespace Accounting.Controllers
     {
       var roles = new List<string>();
 
-      if (ConfigurationSingleton.Instance.TenantManagement)
+      if (ConfigurationSingleton.Instance.TenantManagement &&
+          additionalRoles != null &&
+          additionalRoles.Contains(UserRoleClaimConstants.TenantManager))
       {
         roles.Add(ConfigurationSingleton.ConfigurationConstants.TenantManagement);
       }
