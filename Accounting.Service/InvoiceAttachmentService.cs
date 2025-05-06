@@ -24,10 +24,16 @@ namespace Accounting.Service
       return await factoryManager.GetInvoiceAttachmentManager().GetAllAsync(ids, organizationId);
     }
 
-    public async Task<int> MoveAndUpdateInvoiceAttachmentPathAsync(InvoiceAttachment invoiceAttachment, string destinationPath, int organizationId)
+    public async Task<int> MoveAndUpdateInvoiceAttachmentPathAsync(InvoiceAttachment invoiceAttachment, string destinationPath, int organizationId, string databaseName)
     {
+      string dbSpecificPath = Path.Combine(destinationPath, databaseName);
+      if (!Directory.Exists(dbSpecificPath))
+      {
+        Directory.CreateDirectory(dbSpecificPath);
+      }
+
       string fileName = Path.GetFileName(invoiceAttachment.FilePath);
-      string newPath = Path.Combine(destinationPath, fileName);
+      string newPath = Path.Combine(dbSpecificPath, fileName);
       System.IO.File.Move(invoiceAttachment.FilePath, newPath);
 
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
@@ -47,18 +53,19 @@ namespace Accounting.Service
       return attachment > 0;
     }
 
-    public async Task<InvoiceAttachment> UploadInvoiceAttachmentAsync(Common.File fileUpload, int userId, int organizationId)
+    public async Task<InvoiceAttachment> UploadInvoiceAttachmentAsync(Common.File fileUpload, int userId, int organizationId, string databaseName)
     {
       string nameOnDisk = RandomHelper.GenerateSecureAlphanumericString(15) + Path.GetExtension(fileUpload.FileName);
 
       string temporaryDirectory = ConfigurationSingleton.Instance.TempPath;
 
-      if (!Directory.Exists(temporaryDirectory))
+      string databaseDirectory = Path.Combine(temporaryDirectory, databaseName);
+      if (!Directory.Exists(databaseDirectory))
       {
-        Directory.CreateDirectory(temporaryDirectory);
+        Directory.CreateDirectory(databaseDirectory);
       }
 
-      string fullPath = Path.Combine(temporaryDirectory, nameOnDisk);
+      string fullPath = Path.Combine(databaseDirectory, nameOnDisk);
       using (FileStream fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
       {
         await fileUpload.Stream.CopyToAsync(fileStream);

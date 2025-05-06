@@ -28,7 +28,7 @@ namespace Accounting.Controllers
         Stream = formFile.OpenReadStream()
       };
 
-      InvoiceAttachment attachment = await _invoiceAttachmentService.UploadInvoiceAttachmentAsync(fileUpload, GetUserId(), GetOrganizationId());
+      InvoiceAttachment attachment = await _invoiceAttachmentService.UploadInvoiceAttachmentAsync(fileUpload, GetUserId(), GetOrganizationId(), GetDatabaseName());
 
       return Ok(new { InvoiceAttachmentID = attachment.InvoiceAttachmentID, FileName = attachment.OriginalFileName });
     }

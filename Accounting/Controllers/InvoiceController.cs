@@ -119,7 +119,7 @@ namespace Accounting.Controllers
 
       using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
       {
-        Invoice invoice = await CreateInvoiceAttachmentsAndLedgerEntries(model);
+        Invoice invoice = await CreateInvoiceAttachmentsAndLedgerEntries(model, GetDatabaseName());
         await _invoiceService.UpdatePaymentInstructions(invoice.InvoiceID, model.PaymentInstructions, GetOrganizationId());
 
         if (model.RememberPaymentInstructions)
@@ -182,7 +182,7 @@ namespace Accounting.Controllers
       return model;
     }
 
-    private async Task<Invoice> CreateInvoiceAttachmentsAndLedgerEntries(CreateInvoiceViewModel model)
+    private async Task<Invoice> CreateInvoiceAttachmentsAndLedgerEntries(CreateInvoiceViewModel model, string databaseName)
     {
       Invoice invoice = await _invoiceService.CreateAsync(new Invoice()
       {
@@ -206,7 +206,7 @@ namespace Accounting.Controllers
       foreach (var invoiceAttachment in invoiceAttachments)
       {
         await _invoiceAttachmentService.UpdateInvoiceIdAsync(invoiceAttachment.InvoiceAttachmentID, invoice.InvoiceID, GetOrganizationId());
-        await _invoiceAttachmentService.MoveAndUpdateInvoiceAttachmentPathAsync(invoiceAttachment, ConfigurationSingleton.Instance.PermPath, GetOrganizationId());
+        await _invoiceAttachmentService.MoveAndUpdateInvoiceAttachmentPathAsync(invoiceAttachment, ConfigurationSingleton.Instance.PermPath, GetOrganizationId(), databaseName);
 
         await MoveFileFromTempToPermDirectory(invoiceAttachment);
       }
@@ -480,7 +480,7 @@ namespace Accounting.Controllers
           {
             await _invoiceAttachmentService.UpdateInvoiceIdAsync(attachment.InvoiceAttachmentID, invoice.InvoiceID, GetOrganizationId());
             //Optionally move file or update path if needed
-            await _invoiceAttachmentService.MoveAndUpdateInvoiceAttachmentPathAsync(attachment, ConfigurationSingleton.Instance.PermPath, GetOrganizationId());
+            await _invoiceAttachmentService.MoveAndUpdateInvoiceAttachmentPathAsync(attachment, ConfigurationSingleton.Instance.PermPath, GetOrganizationId(), GetDatabaseName());
           }
         }
 
