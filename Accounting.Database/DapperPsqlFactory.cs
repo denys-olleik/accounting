@@ -10,6 +10,7 @@ using Renci.SshNet.Security;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static Accounting.Business.Claim;
+using System.Diagnostics;
 
 namespace Accounting.Database
 {
@@ -5592,6 +5593,53 @@ namespace Accounting.Database
       public DatabaseManager(string connectionString)
       {
         _connectionString = connectionString;
+      }
+
+      // returns path to backup file
+      public async Task<string> BackupDatabaseAsync(string databaseName)
+      {
+        string permPath = ConfigurationSingleton.Instance.PermPath!;
+        string databaseDirectory = Path.Combine(permPath, databaseName);
+        if (!Directory.Exists(databaseDirectory))
+          Directory.CreateDirectory(databaseDirectory);
+
+        string timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
+        string backupFileName = $"backup_{timestamp}.backup";
+        string backupFilePath = Path.Combine(databaseDirectory, backupFileName);
+
+        // Build pg_dump command
+        // Assumes 'pg_dump' is available in PATH and PostgreSQL password is in the connection string or PGPASSWORD env
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
+        string host = builder.Host;
+        string user = builder.Username;
+        string password = builder.Password;
+        int port = builder.Port > 0 ? builder.Port : 5432;
+
+        var psi = new ProcessStartInfo
+        {
+          FileName = "pg_dump",
+          Arguments = $"-h {host} -U {user} -p {port} -F c -b -v -f \"{backupFilePath}\" \"{databaseName}\"",
+          RedirectStandardOutput = true,
+          RedirectStandardError = true,
+          UseShellExecute = false,
+          CreateNoWindow = true
+        };
+        psi.Environment["PGPASSWORD"] = password;
+
+        using (var process = new Process { StartInfo = psi })
+        {
+          process.Start();
+          var stdOutTask = process.StandardOutput.ReadToEndAsync();
+          var stdErrTask = process.StandardError.ReadToEndAsync();
+          await process.WaitForExitAsync();
+          string stdOut = await stdOutTask;
+          string stdErr = await stdErrTask;
+
+          if (process.ExitCode != 0)
+            throw new System.Exception($"Backup failed: {stdErr}");
+        }
+
+        return backupFilePath;
       }
 
       public DatabaseThing Create(DatabaseThing entity)

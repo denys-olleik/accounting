@@ -4,6 +4,7 @@ namespace Accounting.Database.Interfaces
 {
   public interface IDatabaseManager : IGenericRepository<DatabaseThing, string>
   {
+    Task<string> BackupDatabaseAsync(string databaseName);
     Task<DatabaseThing> CreateDatabase(string tenantId);
     Task DeleteAsync(string databaseName);
     Task ResetDatabaseAsync();
