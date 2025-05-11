@@ -90,6 +90,10 @@ input[readonly] {
   display: flex;
 }
 
+.display-none {
+  display: none;
+}
+
 .display-block {
   display: block;
 }

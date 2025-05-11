@@ -1,0 +1,24 @@
+﻿@model Accounting.Models.DatabaseViewModels.DatabaseImportViewModel
+
+@{
+  ViewData["Title"] = "Import database - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Import database";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<form asp-action="Import" asp-controller="Database" method="post" enctype="multipart/form-data" class="display-flex flex-direction-column margin-bottom-5px">
+  <div class="display-flex flex-direction-column margin-bottom-5px">
+    <label asp-for="Email" class="background-color-antiquewhite"></label>
+    <input asp-for="Email" class="font-size-20px" maxlength="100" autocomplete="off" />
+  </div>
+  <div class="display-flex margin-bottom-5px">
+    <div class="flex-1 padding-5px background-color-antiquewhite">
+      <label asp-for="UploadedFile" class="display-none"></label>
+      <input asp-for="UploadedFile" type="file" />
+    </div>
+  </div>
+  <button type="submit" class="full-width-regular-button">Import database</button>
+</form>

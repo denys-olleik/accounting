@@ -1,10 +1,49 @@
 ﻿using Accounting.Business;
+using Accounting.Common;
 using Accounting.CustomAttributes;
+using Accounting.Models.DatabaseViewModels;
 using Accounting.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Accounting.Controllers
 {
+  [AuthorizeWithOrganizationId]
+  [Route("database")]
+  public class DatabaseController : BaseController
+  {
+    [Route("import")]
+    [HttpGet]
+    public IActionResult Import()
+    {
+      return View();
+    }
+
+    [Route("import")]
+    [HttpPost]
+    public async Task<IActionResult> Import(DatabaseImportViewModel model)
+    {
+      DatabaseImportViewModel.DatabaseImportViewModelValidator validator = new();
+      var validationResult = await validator.ValidateAsync(model);
+
+      if (!validationResult.IsValid)
+      {
+        model.ValidationResult = validationResult;
+        return View(model);
+      }
+
+      TenantService tenantService = new();
+      Tenant tenant = new()
+      {
+        Email = model.Email,
+        DatabaseName = ConfigurationSingleton.Instance.DatabaseName,
+        DatabasePassword = ConfigurationSingleton.Instance.DatabasePassword
+      };
+      Tenant createdTenant = await tenantService.CreateAsync(tenant);
+
+      return RedirectToAction("Tenants", "Tenant");
+    }
+  }
+
   [AuthorizeWithOrganizationId]
   [Route("api/database")]
   [ApiController]
@@ -13,11 +52,11 @@ namespace Accounting.Controllers
     private readonly DatabaseService _databaseService;
 
     public DatabaseApiController(
-      RequestContext requestContext, 
+      RequestContext requestContext,
       DatabaseService databaseService)
     {
-      _databaseService = new (
-        requestContext.DatabaseName, 
+      _databaseService = new(
+        requestContext.DatabaseName,
         requestContext.DatabasePassword);
     }
 
