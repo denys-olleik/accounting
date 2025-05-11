@@ -66,6 +66,27 @@
         <span v-if="isExpanded && tenant.dropletId" class="display-flex margin-bottom-2px">
           <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
             <div class="flex-1"></div>
+            <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">backup:</a>
+            <div class="flex-1"></div>
+          </div>
+          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+            <div class="flex-1"></div>
+            <a href="#" class="font-size-16px font-Roboto color-white text-decoration-none">
+              export
+            </a>
+            <div class="flex-1"></div>
+          </div>
+          <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+            <div class="flex-1"></div>
+            <a href="#" class="font-size-16px font-Roboto color-white text-decoration-none">
+              import
+            </a>
+            <div class="flex-1"></div>
+          </div>
+        </span>
+        <span v-if="isExpanded && tenant.dropletId" class="display-flex margin-bottom-2px">
+          <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
+            <div class="flex-1"></div>
             <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">terminal:</a>
             <div class="flex-1"></div>
           </div>
@@ -81,7 +102,7 @@
             <input type="text" class="font-size-16px width-100 font-Roboto-Mono background-color-black color-white" @@click.prevent="removeBlinkingCursor" @@keydown="handleKeyDown" />
           </div>
         </span>
-        <span v-if="isExpanded && tenant.dropletId" class="display-flex background-color-black color-white font-Roboto-Mono">
+        <span v-if="isExpanded && tenant.dropletId" class="display-flex background-color-black color-white font-Roboto-Mono margin-bottom-2px">
           {{ tenant.terminalResponse }}
         </span>
       </div>
