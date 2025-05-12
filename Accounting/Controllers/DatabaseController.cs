@@ -23,6 +23,8 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Import(string tenantId, DatabaseImportViewModel model)
     {
+      throw new NotImplementedException("Import");
+
       var tenant = await new TenantService().GetAsync(int.Parse(tenantId));
       if (tenant == null)
       {

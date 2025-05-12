@@ -68,8 +68,6 @@ namespace Accounting.Controllers
       int page = 1,
       int pageSize = 2)
     {
-      throw new NotImplementedException("Invoices");
-
       var referer = Request.Headers["Referer"].ToString() ?? string.Empty;
 
       var vm = new InvoicesPaginatedViewModel
