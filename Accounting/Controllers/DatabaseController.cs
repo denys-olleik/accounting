@@ -22,17 +22,26 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Import(string tenantId, DatabaseImportViewModel model)
     {
-      DatabaseImportViewModel.DatabaseImportViewModelValidator validator = new();
-      var validationResult = await validator.ValidateAsync(model);
+      var validator = new DatabaseImportViewModel.DatabaseImportViewModelValidator();
+      var result = await validator.ValidateAsync(model);
 
-      if (!validationResult.IsValid)
+      if (model.DatabaseBackup == null || model.DatabaseBackup.Length == 0)
+        result.Errors.Add(new FluentValidation.Results.ValidationFailure("DatabaseBackup", "Database backup file is required."));
+
+      if (!result.IsValid)
       {
-        model.ValidationResult = validationResult;
+        model.ValidationResult = result;
         return View(model);
       }
 
-      TenantService tenantService = new();
-      Tenant tenant = await tenantService.GetAsync(int.Parse(tenantId));
+      var tenant = await new TenantService().GetAsync(int.Parse(tenantId));
+      if (tenant == null)
+      {
+        result.Errors.Add(new FluentValidation.Results.ValidationFailure("Tenant", "Tenant not found."));
+        model.ValidationResult = result;
+        return View(model);
+      }
+
 
 
       return RedirectToAction("Tenants", "Tenant");
