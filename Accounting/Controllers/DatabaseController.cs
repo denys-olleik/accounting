@@ -11,16 +11,16 @@ namespace Accounting.Controllers
   [Route("database")]
   public class DatabaseController : BaseController
   {
-    [Route("import")]
+    [Route("import/{tenantId}")]
     [HttpGet]
-    public IActionResult Import()
+    public IActionResult Import(string tenantId)
     {
       return View();
     }
 
-    [Route("import")]
+    [Route("import/{tenantId}")]
     [HttpPost]
-    public async Task<IActionResult> Import(DatabaseImportViewModel model)
+    public async Task<IActionResult> Import(string tenantId, DatabaseImportViewModel model)
     {
       DatabaseImportViewModel.DatabaseImportViewModelValidator validator = new();
       var validationResult = await validator.ValidateAsync(model);
