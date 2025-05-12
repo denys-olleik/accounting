@@ -45,5 +45,11 @@ namespace Accounting.Service
       var factoryManager = new FactoryManager(null, _databasePassword);
       return await factoryManager.GetDatabaseManager().BackupDatabaseAsync(databaseName);
     }
+
+    public async Task RestoreDatabase(string databaseName, Common.File file)
+    {
+      var factoryManager = new FactoryManager(null, _databasePassword);
+      await factoryManager.GetDatabaseManager().RestoreDatabase(databaseName, file);
+    }
   }
 }

@@ -8,6 +8,7 @@ namespace Accounting.Database.Interfaces
     Task<DatabaseThing> CreateDatabase(string tenantId);
     Task DeleteAsync(string databaseName);
     Task ResetDatabaseAsync();
+    Task RestoreDatabase(string databaseName, Common.File file);
     Task RunSQLScript(string script, string databaseName);
   }
 }

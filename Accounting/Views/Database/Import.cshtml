@@ -10,10 +10,6 @@
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <form asp-action="Import" asp-controller="Database" method="post" enctype="multipart/form-data" class="display-flex flex-direction-column margin-bottom-5px">
-  <div class="display-flex flex-direction-column margin-bottom-5px">
-    <label asp-for="Email" class="background-color-antiquewhite"></label>
-    <input asp-for="Email" class="font-size-20px" maxlength="100" autocomplete="off" />
-  </div>
   <div class="display-flex margin-bottom-5px">
     <div class="flex-1 padding-5px background-color-antiquewhite">
       <label asp-for="DatabaseBackup" class="display-none"></label>

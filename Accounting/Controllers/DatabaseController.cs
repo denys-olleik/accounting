@@ -3,6 +3,7 @@ using Accounting.Common;
 using Accounting.CustomAttributes;
 using Accounting.Models.DatabaseViewModels;
 using Accounting.Service;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Accounting.Controllers
@@ -22,27 +23,31 @@ namespace Accounting.Controllers
     [HttpPost]
     public async Task<IActionResult> Import(string tenantId, DatabaseImportViewModel model)
     {
-      var validator = new DatabaseImportViewModel.DatabaseImportViewModelValidator();
-      var result = await validator.ValidateAsync(model);
-
-      if (model.DatabaseBackup == null || model.DatabaseBackup.Length == 0)
-        result.Errors.Add(new FluentValidation.Results.ValidationFailure("DatabaseBackup", "Database backup file is required."));
-
-      if (!result.IsValid)
-      {
-        model.ValidationResult = result;
-        return View(model);
-      }
-
       var tenant = await new TenantService().GetAsync(int.Parse(tenantId));
       if (tenant == null)
       {
-        result.Errors.Add(new FluentValidation.Results.ValidationFailure("Tenant", "Tenant not found."));
+        ValidationResult result = new ValidationResult();
+        result.Errors.Add(new ValidationFailure("Tenant", "Tenant not found."));
         model.ValidationResult = result;
         return View(model);
       }
 
+      if (model.DatabaseBackup == null || model.DatabaseBackup.Length == 0)
+      {
+        ValidationResult result = new ValidationResult();
+        result.Errors.Add(new ValidationFailure("File", "File is required."));
+        model.ValidationResult = result;
+        return View(model);
+      }
 
+      Common.File file = new()
+      {
+        FileName = model.DatabaseBackup.FileName,
+        Stream = model.DatabaseBackup.OpenReadStream()
+      };
+
+      DatabaseService databaseService = new();
+      await databaseService.RestoreDatabase(tenant.DatabaseName!, file);
 
       return RedirectToAction("Tenants", "Tenant");
     }

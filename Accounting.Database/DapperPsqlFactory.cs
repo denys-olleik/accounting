@@ -5750,6 +5750,81 @@ namespace Accounting.Database
         }
       }
 
+      public async Task RestoreDatabase(string databaseName, Common.File file)
+      {
+        // Get connection parameters from the connection string
+        var builder = new NpgsqlConnectionStringBuilder(_connectionString);
+        string host = builder.Host;
+        string user = builder.Username;
+        int port = builder.Port > 0 ? builder.Port : 5432;
+
+        // Use password from configuration singleton, as in your startup code
+        string password = ConfigurationSingleton.Instance.DatabasePassword;
+
+        // Ensure backup file is in the permanent directory
+        string permPath = ConfigurationSingleton.Instance.PermPath!;
+        string backupDir = Path.Combine(permPath, databaseName);
+        if (!Directory.Exists(backupDir))
+          Directory.CreateDirectory(backupDir);
+
+        string backupFilePath = Path.Combine(backupDir, file.FileName);
+
+        // Save the stream to the permanent directory
+        using (var fileStream = new FileStream(backupFilePath, FileMode.Create, FileAccess.Write))
+        {
+          file.Stream.Seek(0, SeekOrigin.Begin);
+          await file.Stream.CopyToAsync(fileStream);
+        }
+
+        // Connect to admin DB to drop and recreate the target database
+        builder.Database = DatabaseThing.DatabaseConstants.DatabaseNameAdmin;
+        builder.Password = password;
+        string adminConnStr = builder.ConnectionString;
+
+        using (var con = new NpgsqlConnection(adminConnStr))
+        {
+          // Drop the database if it exists (FORCE if PostgreSQL >= 13)
+          await con.ExecuteAsync($"""DROP DATABASE IF EXISTS "{databaseName}" WITH (FORCE);""");
+
+          // Recreate the database with your exact settings
+          await con.ExecuteAsync($$"""
+            CREATE DATABASE "{{databaseName}}"
+            WITH
+              OWNER = postgres
+              TEMPLATE = template0
+              ENCODING = 'UTF8'
+              LC_COLLATE = 'en_US.utf8'
+              LC_CTYPE = 'en_US.utf8'
+              CONNECTION LIMIT = -1;
+          """);
+        }
+
+        // Use pg_restore to restore the backup into the newly created DB
+        var psi = new ProcessStartInfo
+        {
+          FileName = "pg_restore",
+          Arguments = $"-h {host} -U {user} -p {port} -d \"{databaseName}\" -v \"{backupFilePath}\"",
+          RedirectStandardOutput = true,
+          RedirectStandardError = true,
+          UseShellExecute = false,
+          CreateNoWindow = true
+        };
+        psi.Environment["PGPASSWORD"] = password;
+
+        using (var process = new Process { StartInfo = psi })
+        {
+          process.Start();
+          var stdOutTask = process.StandardOutput.ReadToEndAsync();
+          var stdErrTask = process.StandardError.ReadToEndAsync();
+          await process.WaitForExitAsync();
+          string stdOut = await stdOutTask;
+          string stdErr = await stdErrTask;
+
+          if (process.ExitCode != 0)
+            throw new System.Exception($"Restore failed: {stdErr}");
+        }
+      }
+
       public async Task RunSQLScript(string script, string databaseName)
       {
         var builder = new NpgsqlConnectionStringBuilder(_connectionString);
