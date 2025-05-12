@@ -32,13 +32,8 @@ namespace Accounting.Controllers
       }
 
       TenantService tenantService = new();
-      Tenant tenant = new()
-      {
-        Email = model.Email,
-        DatabaseName = ConfigurationSingleton.Instance.DatabaseName,
-        DatabasePassword = ConfigurationSingleton.Instance.DatabasePassword
-      };
-      Tenant createdTenant = await tenantService.CreateAsync(tenant);
+      Tenant tenant = await tenantService.GetAsync(int.Parse(tenantId));
+
 
       return RedirectToAction("Tenants", "Tenant");
     }

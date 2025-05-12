@@ -15,7 +15,7 @@ namespace Accounting.Models.DatabaseViewModels
       set => _email = value?.Trim();
     }
 
-    public IFormFile? UploadedFile { get; set; }
+    public IFormFile? DatabaseBackup { get; set; }
 
     public class DatabaseImportViewModelValidator : AbstractValidator<DatabaseImportViewModel>
     {
