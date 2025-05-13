@@ -66,20 +66,20 @@
         <span v-if="isExpanded && tenant.databaseName" class="display-flex margin-bottom-2px">
           <div class="display-flex flex-direction-column background-color-333333 padding-left-5px padding-right-5px">
             <div class="flex-1"></div>
-            <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">backup:</a>
+            <a class="font-size-12px font-Roboto color-white text-decoration-none cursor-default">database:</a>
             <div class="flex-1"></div>
           </div>
           <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
             <a :href="'/api/database/download-backup/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
-              export
+              eject
             </a>
             <div class="flex-1"></div>
           </div>
           <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
             <div class="flex-1"></div>
             <a :href="'/database/import/' + tenant.tenantID" class="font-size-16px font-Roboto color-white text-decoration-none">
-              import
+              insert
             </a>
             <div class="flex-1"></div>
           </div>
