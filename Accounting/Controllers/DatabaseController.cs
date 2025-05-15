@@ -47,7 +47,7 @@ namespace Accounting.Controllers
       };
 
       DatabaseService databaseService = new();
-      await databaseService.RestoreDatabase(tenant.DatabaseName!, file);
+      await databaseService.RestoreDatabase(tenant.DatabaseName!, file, tenant.TenantID);
 
       return RedirectToAction("Tenants", "Tenant");
     }

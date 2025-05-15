@@ -46,10 +46,15 @@ namespace Accounting.Service
       return await factoryManager.GetDatabaseManager().BackupDatabaseAsync(databaseName);
     }
 
-    public async Task RestoreDatabase(string databaseName, Common.File file)
+    public async Task RestoreDatabase(string databaseName, Common.File file, int tenantId)
     {
       var factoryManager = new FactoryManager(null, _databasePassword);
       await factoryManager.GetDatabaseManager().RestoreDatabase(databaseName, file);
+
+      // Update tenant record with localhost database password
+      var managerFactory = new FactoryManager(null, _databasePassword);
+      var tenantManager = managerFactory.GetTenantManager();
+      await tenantManager.UpdateTenantDatabasePassword(tenantId, _databasePassword);
     }
   }
 }

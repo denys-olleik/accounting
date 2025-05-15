@@ -11,6 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static Accounting.Business.Claim;
 using System.Diagnostics;
+using System.Transactions;
 
 namespace Accounting.Database
 {
@@ -6232,23 +6233,30 @@ namespace Accounting.Database
         return (result, nextPage);
       }
 
-      public async Task<RequestLog> GetByIdAsync(int requestLogId)
+      public async Task<RequestLog?> GetByIdAsync(int requestLogId)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@RequestLogId", requestLogId);
 
-        IEnumerable<RequestLog> result;
+        IEnumerable<RequestLog>? result = null;
 
-        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        try
         {
-          result = await con.QueryAsync<RequestLog>("""
-            SELECT * 
-            FROM "RequestLog" 
-            WHERE "RequestLogID" = @RequestLogId;
-            """, p);
+          using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+          {
+            result = await con.QueryAsync<RequestLog>("""
+              SELECT * 
+              FROM "RequestLog" 
+              WHERE "RequestLogID" = @RequestLogId;
+              """, p);
+          }
+        }
+        catch (NpgsqlException)
+        {
+
         }
 
-        return result.SingleOrDefault()!;
+        return result?.SingleOrDefault();
       }
 
       public int Update(RequestLog entity)
@@ -6982,6 +6990,27 @@ namespace Accounting.Database
         }
 
         return result.SingleOrDefault();
+      }
+
+      public async Task UpdateTenantDatabasePassword(int tenantId, string databasePassword)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@TenantId", tenantId);
+        p.Add("@DatabasePassword", databasePassword);
+
+        NpgsqlConnectionStringBuilder builder = new NpgsqlConnectionStringBuilder(_connectionString)
+        {
+          Database = DatabaseThing.DatabaseConstants.DatabaseName
+        };
+
+        using (NpgsqlConnection con = new NpgsqlConnection(builder.ConnectionString))
+        {
+          await con.ExecuteAsync("""
+            UPDATE "Tenant" 
+            SET "DatabasePassword" = @DatabasePassword
+            WHERE "TenantID" = @TenantId
+            """, p);
+        }
       }
     }
 
@@ -7954,9 +7983,9 @@ namespace Accounting.Database
         p.Add("@UserId", userId);
         p.Add("@ClaimType", CustomClaimTypeConstants.Role);
         p.Add("@OrganizationId", organizationId);
-        
+
         int rowsAffected;
-        
+
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
           rowsAffected = await con.ExecuteAsync("""

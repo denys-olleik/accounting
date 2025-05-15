@@ -34,5 +34,6 @@ namespace Accounting.Database.Interfaces
     Task<int> GetCurrentDropletCountAsync();
     Task<int> UpdateUserEmailAsync(string oldEmail, string newEmail);
     Task<Tenant?> GetByDomainAsync(string fullyQualifiedDomainName);
+    Task UpdateTenantDatabasePassword(int tenantId, string databasePassword);
   }
 }

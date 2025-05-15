@@ -39,10 +39,8 @@ namespace Accounting.Service
         requestLog.ResponseLengthBytes = responseLength;
         return await factoryManager.GetRequestLogManager().UpdateResponseAsync(requestLog.RequestLogID, statusCode, responseLength);
       }
-      else
-      {
-        throw new System.Exception("Request log not found");
-      }
+
+      return 0;
     }
   }
 }
