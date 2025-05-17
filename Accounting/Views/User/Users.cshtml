@@ -81,18 +81,15 @@
     </tbody>
   </table>
 
-  <div v-if="(page > 1 || nextPage) && !isFiltered"
-    class="margin-bottom-5px display-flex font-Roboto font-size-16px background-color-antiquewhite">
-    <div>
-      <a :href="`/u/users?page=${page - 1}&pageSize=${pageSize}`" v-if="page > 1" class="color-blue">prev</a>
-    </div>
-    <div class="flex-1"></div>
-    <div>
-      <a :href="`/u/users?page=${nextPage}&pageSize=${pageSize}`" v-if="nextPage" class="color-blue">next</a>
-    </div>
-  </div>
+  <pagination-component
+    :prev-page-url="`/u/users?page=${page - 1}&pageSize=${pageSize}`"
+    :next-page-url="nextPage ? `/u/users?page=${nextPage}&pageSize=${pageSize}` : ''"
+    :is-filtered="isFiltered"
+    :page="page">
+  </pagination-component>
 </div>
 
+<script src="~/js/PaginationComponent.js" asp-append-version="true"></script>
 <script>
   const { createApp } = Vue;
 
@@ -110,6 +107,7 @@
   const app = createApp({
     components: {
       'user-action': UserAction,
+      'pagination-component': PaginationComponent,
     },
     data() {
       return {
@@ -132,6 +130,10 @@
 				this.expandedUserId = this.expandedUserId === userId ? null : userId;
 			},
       fetchUsers() {
+        const storedPageSize = parseInt(localStorage.getItem('pageSize'));
+        if (storedPageSize) {
+          this.pageSize = storedPageSize;
+        }
         let apiUrl;
 
         if (this.userFilter) {
@@ -156,6 +158,9 @@
       }
     },
     mounted() {
+      if (this.rememberPageSize) {
+        localStorage.setItem('pageSize', this.pageSize);
+      }
       this.fetchUsers();
     }
   });
