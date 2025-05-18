@@ -106,9 +106,7 @@
 
 <script src="~/js/vue-3-5-13.js" asp-append-version="true"></script>
 <script>
-  const { createApp } = Vue;
-
-  const app = createApp({
+  const app = Vue.createApp({
     data() {
       return {
         organizations: @Html.Raw(Json.Serialize(Model.AvailableOrganizations)),
