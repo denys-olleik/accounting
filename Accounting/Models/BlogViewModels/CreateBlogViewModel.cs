@@ -8,6 +8,7 @@ namespace Accounting.Models.BlogViewModels
     public string? Title { get; set; }
     public string? Content { get; set; }
     public bool Public { get; set; }
+    public bool FrontPagePost { get; set; }
 
     public ValidationResult ValidationResult { get; set; } = new();
 

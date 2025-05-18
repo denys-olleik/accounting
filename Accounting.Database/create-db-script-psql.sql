@@ -640,12 +640,17 @@ CREATE TABLE "Blog"
 (
 	"BlogID" SERIAL PRIMARY KEY NOT NULL,
 	"PublicId" VARCHAR(10) NULL UNIQUE,
+	"FrontPagePost" BOOLEAN NOT NULL DEFAULT FALSE,
 	"Title" VARCHAR(2000) NOT NULL,
 	"Content" TEXT NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
 	FOREIGN KEY ("CreatedById") REFERENCES "User"("UserID")
 );
+
+CREATE UNIQUE INDEX unique_front_page_post
+ON "Blog" ("FrontPagePost")
+WHERE "FrontPagePost" = TRUE;
 
 -- sudo -i -u postgres psql -d Accounting -c 'SELECT * FROM "Exception";'
 CREATE TABLE "Exception"

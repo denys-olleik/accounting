@@ -11,7 +11,7 @@
 }
 <partial name="_H1HeaderPartial" model="@headerText" />
 
-<form asp-action="Create" asp-controller="Blog" method="post" class="display-flex flex-direction-column margin-bottom-5px">
+<form id="app" asp-action="Create" asp-controller="Blog" method="post" class="display-flex flex-direction-column margin-bottom-5px">
   <div class="display-flex flex-direction-column margin-bottom-5px">
     <label asp-for="Title" class="background-color-antiquewhite"></label>
     <input asp-for="Title" class="font-size-20px" maxlength="100" autocomplete="off" />
@@ -23,6 +23,23 @@
       <input asp-for="Public" type="checkbox" class="margin-bottom-5px" />
       <label asp-for="Public">public</label>
     </span>
+    <span>
+      <input asp-for="FrontPagePost" type="checkbox" class="margin-bottom-5px" />
+      <label asp-for="FrontPagePost">front page post</label>
+    </span>
   </div>
   <button type="submit" class="full-width-regular-button">Create post</button>
 </form>
+
+<script>
+  const app = Vue.createApp({
+    data() {
+      return {
+        public: false,
+        frontPagePost: false
+      };
+    }
+  });
+
+  app.mount('#app');
+</script>
