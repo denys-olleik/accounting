@@ -125,144 +125,144 @@ namespace Accounting.Controllers
       return RedirectToAction("RegistrationComplete", "Registration");
     }
 
-    [AllowAnonymous]
-    [HttpPost]
-    [Route("register-dedicated")]
-    public async Task<IActionResult> RegisterDedicated(DedicatedRegistrationViewModel model)
-    {
-      var validator = new DedicatedRegistrationViewModel.DedicatedRegistrationViewModelValidator();
-      var validationResult = await validator.ValidateAsync(model);
-      if (!validationResult.IsValid)
-      {
-        var compositeModel = new CompositeRegistrationViewModel
-        {
-          SelectedRegistrationType = RegistrationType.Dedicated,
-          Dedicated = model,
-          ValidationResult = validationResult
-        };
-        return View("Register", compositeModel);
-      }
+    //[AllowAnonymous]
+    //[HttpPost]
+    //[Route("register-dedicated")]
+    //public async Task<IActionResult> RegisterDedicated(DedicatedRegistrationViewModel model)
+    //{
+    //  var validator = new DedicatedRegistrationViewModel.DedicatedRegistrationViewModelValidator();
+    //  var validationResult = await validator.ValidateAsync(model);
+    //  if (!validationResult.IsValid)
+    //  {
+    //    var compositeModel = new CompositeRegistrationViewModel
+    //    {
+    //      SelectedRegistrationType = RegistrationType.Dedicated,
+    //      Dedicated = model,
+    //      ValidationResult = validationResult
+    //    };
+    //    return View("Register", compositeModel);
+    //  }
 
-      if (await _tenantService.ExistsAsync(model.Email!))
-      {
-        validationResult.Errors.Add(new ValidationFailure("Email", "Email already exists"));
-        var compositeModel = new CompositeRegistrationViewModel
-        {
-          SelectedRegistrationType = RegistrationType.Dedicated,
-          Dedicated = model,
-          ValidationResult = validationResult
-        };
-        return View("Register", compositeModel);
-      }
+    //  if (await _tenantService.ExistsAsync(model.Email!))
+    //  {
+    //    validationResult.Errors.Add(new ValidationFailure("Email", "Email already exists"));
+    //    var compositeModel = new CompositeRegistrationViewModel
+    //    {
+    //      SelectedRegistrationType = RegistrationType.Dedicated,
+    //      Dedicated = model,
+    //      ValidationResult = validationResult
+    //    };
+    //    return View("Register", compositeModel);
+    //  }
 
-      if (!string.IsNullOrWhiteSpace(model.FullyQualifiedDomainName))
-      {
-        var existingTenant = await _tenantService.GetByDomainAsync(model.FullyQualifiedDomainName);
-        if (existingTenant != null)
-        {
-          validationResult.Errors.Add(new ValidationFailure("FullyQualifiedDomainName", "Domain already exists"));
-          var compositeModel = new CompositeRegistrationViewModel
-          {
-            SelectedRegistrationType = RegistrationType.Dedicated,
-            Dedicated = model,
-            ValidationResult = validationResult
-          };
-          return View("Register", compositeModel);
-        }
-      }
+    //  if (!string.IsNullOrWhiteSpace(model.FullyQualifiedDomainName))
+    //  {
+    //    var existingTenant = await _tenantService.GetByDomainAsync(model.FullyQualifiedDomainName);
+    //    if (existingTenant != null)
+    //    {
+    //      validationResult.Errors.Add(new ValidationFailure("FullyQualifiedDomainName", "Domain already exists"));
+    //      var compositeModel = new CompositeRegistrationViewModel
+    //      {
+    //        SelectedRegistrationType = RegistrationType.Dedicated,
+    //        Dedicated = model,
+    //        ValidationResult = validationResult
+    //      };
+    //      return View("Register", compositeModel);
+    //    }
+    //  }
 
-      Tenant tenant;
-      using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-      {
-        tenant = await _tenantService.CreateAsync(new Tenant()
-        {
-          Email = model.Email,
-          FullyQualifiedDomainName = model.FullyQualifiedDomainName,
-          DatabasePassword = RandomHelper.GenerateSecureAlphanumericString(20),
-        });
-        scope.Complete();
-      }
+    //  Tenant tenant;
+    //  using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+    //  {
+    //    tenant = await _tenantService.CreateAsync(new Tenant()
+    //    {
+    //      Email = model.Email,
+    //      FullyQualifiedDomainName = model.FullyQualifiedDomainName,
+    //      DatabasePassword = RandomHelper.GenerateSecureAlphanumericString(20),
+    //    });
+    //    scope.Complete();
+    //  }
 
-      // Retrieve secrets
-      Secret? cloudSecret = null;
-      string? emailSecretValue = null;
-      Secret? noReplySecret = null;
-      var defaultTenant = await _tenantService.GetByDatabaseNameAsync(DatabaseThing.DatabaseConstants.DatabaseName);
+    //  // Retrieve secrets
+    //  Secret? cloudSecret = null;
+    //  string? emailSecretValue = null;
+    //  Secret? noReplySecret = null;
+    //  var defaultTenant = await _tenantService.GetByDatabaseNameAsync(DatabaseThing.DatabaseConstants.DatabaseName);
 
-      cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, defaultTenant.TenantID);
-      if (cloudSecret == null)
-      {
-        validationResult.Errors.Add(new ValidationFailure("Dedicated", "Cloud secret not found."));
-        var compositeModel = new CompositeRegistrationViewModel
-        {
-          SelectedRegistrationType = RegistrationType.Dedicated,
-          Dedicated = model,
-          ValidationResult = validationResult
-        };
-        return View("Register", compositeModel);
-      }
+    //  cloudSecret = await _secretService.GetAsync(Secret.SecretTypeConstants.Cloud, defaultTenant.TenantID);
+    //  if (cloudSecret == null)
+    //  {
+    //    validationResult.Errors.Add(new ValidationFailure("Dedicated", "Cloud secret not found."));
+    //    var compositeModel = new CompositeRegistrationViewModel
+    //    {
+    //      SelectedRegistrationType = RegistrationType.Dedicated,
+    //      Dedicated = model,
+    //      ValidationResult = validationResult
+    //    };
+    //    return View("Register", compositeModel);
+    //  }
 
-      noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, defaultTenant.TenantID);
-      if (noReplySecret == null)
-      {
-        validationResult.Errors.Add(new ValidationFailure("Dedicated", "No-reply secret not found."));
-        var compositeModel = new CompositeRegistrationViewModel
-        {
-          SelectedRegistrationType = RegistrationType.Dedicated,
-          Dedicated = model,
-          ValidationResult = validationResult
-        };
-        return View("Register", compositeModel);
-      }
+    //  noReplySecret = await _secretService.GetAsync(Secret.SecretTypeConstants.NoReply, defaultTenant.TenantID);
+    //  if (noReplySecret == null)
+    //  {
+    //    validationResult.Errors.Add(new ValidationFailure("Dedicated", "No-reply secret not found."));
+    //    var compositeModel = new CompositeRegistrationViewModel
+    //    {
+    //      SelectedRegistrationType = RegistrationType.Dedicated,
+    //      Dedicated = model,
+    //      ValidationResult = validationResult
+    //    };
+    //    return View("Register", compositeModel);
+    //  }
 
-      emailSecretValue = await GetEmailSecretAsync(defaultTenant.TenantID);
-      if (string.IsNullOrEmpty(emailSecretValue))
-      {
-        validationResult.Errors.Add(new ValidationFailure("EmailKey", "Email secret not found or invalid."));
-        var compositeModel = new CompositeRegistrationViewModel
-        {
-          SelectedRegistrationType = RegistrationType.Dedicated,
-          Dedicated = model,
-          ValidationResult = validationResult
-        };
-        return View("Register", compositeModel);
-      }
+    //  emailSecretValue = await GetEmailSecretAsync(defaultTenant.TenantID);
+    //  if (string.IsNullOrEmpty(emailSecretValue))
+    //  {
+    //    validationResult.Errors.Add(new ValidationFailure("EmailKey", "Email secret not found or invalid."));
+    //    var compositeModel = new CompositeRegistrationViewModel
+    //    {
+    //      SelectedRegistrationType = RegistrationType.Dedicated,
+    //      Dedicated = model,
+    //      ValidationResult = validationResult
+    //    };
+    //    return View("Register", compositeModel);
+    //  }
 
-      var cloudServices = new CloudServices(_secretService, _tenantService);
-      try
-      {
-        await cloudServices.GetDigitalOceanService().CreateDropletAsync(
-          tenant,
-          tenant.DatabasePassword!,
-          model.Email!,
-          model.Password!,
-          model.FirstName!,
-          model.LastName!,
-          false,
-          emailSecretValue,
-          model.FullyQualifiedDomainName!,
-          null!,
-          noReplySecret?.Value!
-        );
-      }
-      catch (ApiException e)
-      {
-        if (e.Message != "Access Denied")
-        {
-          throw;
-        }
-        validationResult.Errors.Add(new ValidationFailure("Dedicated", "Access denied"));
-        var compositeModel = new CompositeRegistrationViewModel
-        {
-          SelectedRegistrationType = RegistrationType.Dedicated,
-          Dedicated = model,
-          ValidationResult = validationResult
-        };
-        return View("Register", compositeModel);
-      }
+    //  var cloudServices = new CloudServices(_secretService, _tenantService);
+    //  try
+    //  {
+    //    await cloudServices.GetDigitalOceanService().CreateDropletAsync(
+    //      tenant,
+    //      tenant.DatabasePassword!,
+    //      model.Email!,
+    //      model.Password!,
+    //      model.FirstName!,
+    //      model.LastName!,
+    //      false,
+    //      emailSecretValue,
+    //      model.FullyQualifiedDomainName!,
+    //      null!,
+    //      noReplySecret?.Value!
+    //    );
+    //  }
+    //  catch (ApiException e)
+    //  {
+    //    if (e.Message != "Access Denied")
+    //    {
+    //      throw;
+    //    }
+    //    validationResult.Errors.Add(new ValidationFailure("Dedicated", "Access denied"));
+    //    var compositeModel = new CompositeRegistrationViewModel
+    //    {
+    //      SelectedRegistrationType = RegistrationType.Dedicated,
+    //      Dedicated = model,
+    //      ValidationResult = validationResult
+    //    };
+    //    return View("Register", compositeModel);
+    //  }
 
-      return RedirectToAction("RegistrationComplete", "Registration");
-    }
+    //  return RedirectToAction("RegistrationComplete", "Registration");
+    //}
 
     [AllowAnonymous]
     [HttpPost]
