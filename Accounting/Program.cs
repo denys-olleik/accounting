@@ -77,6 +77,7 @@ builder.Services.AddScoped<BlogService>();
 builder.Services.AddScoped<RequestLogService>();
 builder.Services.AddScoped<ExceptionService>();
 builder.Services.AddScoped<ClaimService>();
+builder.Services.AddScoped<PlayerService>();
 
 ConfigurationSingleton.Instance.ApplicationName =
     !string.IsNullOrEmpty(builder.Configuration["Whitelabel"])

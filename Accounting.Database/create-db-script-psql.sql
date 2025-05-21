@@ -716,3 +716,16 @@ CREATE TABLE "PlaylistSubmissionTrack"
 		"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
     UNIQUE ("PlaylistSubmissionID", "TrackID")
 );
+
+CREATE TABLE "Player"
+(
+		"PlayerID" SERIAL PRIMARY KEY,
+		"Guid" UUID NOT NULL UNIQUE,
+		"IpAddress" VARCHAR(50) NOT NULL,
+		"Country" VARCHAR(5) NOT NULL,
+		"CurrentX" INT NOT NULL,
+		"CurrentY" INT NOT NULL,
+		"RequestedX" INT NOT NULL,
+		"RequestedY" INT NOT NULL,
+		"Updated" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+);

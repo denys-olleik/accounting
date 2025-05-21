@@ -43,5 +43,6 @@ namespace Accounting.Database
     IBlogManager GetBlogManager();
     IExceptionManager GetExceptionManager();
     IClaimManager GetClaimManager();
+    IPlayerManager GetPlayerManager();
   }
 }

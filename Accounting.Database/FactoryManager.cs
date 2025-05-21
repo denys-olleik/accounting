@@ -211,5 +211,10 @@ namespace Accounting.Database
     {
       return databaseFactoryDefinition.GetClaimManager();
     }
+
+    public IPlayerManager GetPlayerManager()
+    {
+      return databaseFactoryDefinition.GetPlayerManager();
+    }
   }
 }

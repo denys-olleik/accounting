@@ -1,17 +1,18 @@
-﻿using Dapper;
-using Accounting.Business;
+﻿using Accounting.Business;
 using Accounting.Common;
 using Accounting.Database.Interfaces;
+using Dapper;
 using Npgsql;
-using System.Data;
-using System.Text.RegularExpressions;
-using static Dapper.SqlMapper;
 using Renci.SshNet.Security;
+using System;
+using System.Data;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+using System.Transactions;
+using static Accounting.Business.Claim;
+using static Dapper.SqlMapper;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using static Accounting.Business.Claim;
-using System.Diagnostics;
-using System.Transactions;
 
 namespace Accounting.Database
 {
@@ -8085,6 +8086,163 @@ namespace Accounting.Database
       }
 
       public int Update(Claim entity)
+      {
+        throw new NotImplementedException();
+      }
+    }
+
+    public IPlayerManager GetPlayerManager()
+    {
+      return new PlayerManager(_connectionString);
+    }
+
+    public class PlayerManager : IPlayerManager
+    {
+      private readonly string _connectionString;
+
+      public PlayerManager(string connectionString)
+      {
+        _connectionString = connectionString;
+      }
+
+      public Player Create(Player entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Task<Player> CreateAsync(Player entity)
+      {
+        throw new NotImplementedException();
+      }
+
+      public async Task<Player> CreateWithinBoundingBoxOfExistingPlayers(Guid guid, string country, string ipAddress)
+      {
+        using (var con = new NpgsqlConnection(_connectionString))
+        {
+          // Only consider friendlies active in last 5 minutes
+          var fiveMinutesAgo = DateTime.UtcNow.AddMinutes(-5);
+
+          var friendlyCells = await con.QueryAsync<(int x, int y)>("""
+      SELECT "CurrentX" AS x, "CurrentY" AS y
+      FROM "Player"
+      WHERE "Country" = @Country
+        AND "Updated" > @FiveMinutesAgo
+      """, new { Country = country, FiveMinutesAgo = fiveMinutesAgo });
+
+          // All occupied cells (positions of any player, don't filter by Updated)
+          var occupiedCells = await con.QueryAsync<(int x, int y)>("""
+      SELECT "CurrentX" AS x, "CurrentY" AS y
+      FROM "Player"
+      """);
+
+          var occupiedSet = new HashSet<(int, int)>(occupiedCells);
+
+          (int x, int y) spawnPos;
+
+          if (friendlyCells.Any())
+          {
+            var candidateSpots = new List<(int x, int y)>();
+            foreach (var fc in friendlyCells)
+            {
+              for (int dx = -1; dx <= 1; dx++)
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                  if (dx == 0 && dy == 0) continue;
+                  var nx = fc.x + dx;
+                  var ny = fc.y + dy;
+                  var cellOccupiedByOther =
+                    occupiedSet.Contains((nx, ny)) &&
+                    !friendlyCells.Any(f => f.x == nx && f.y == ny);
+                  if (!cellOccupiedByOther)
+                    candidateSpots.Add((nx, ny));
+                }
+            }
+            var trulyUnoccupied = candidateSpots
+              .Where(pos => !occupiedSet.Contains(pos))
+              .ToList();
+            spawnPos = trulyUnoccupied.Any()
+              ? trulyUnoccupied.First()
+              : candidateSpots.First();
+          }
+          else
+          {
+            spawnPos = (0, 0);
+          }
+
+          var player = new Player
+          {
+            Guid = guid,
+            Country = country,
+            CurrentX = spawnPos.x,
+            CurrentY = spawnPos.y,
+            RequestedX = spawnPos.x,
+            RequestedY = spawnPos.y,
+            IpAddress = ipAddress,
+            Updated = DateTime.UtcNow
+          };
+
+          var sql = """
+      INSERT INTO "Player" ("Guid", "Country", "CurrentX", "CurrentY", "RequestedX", "RequestedY", "IpAddress", "Updated")
+      VALUES (@Guid, @Country, @CurrentX, @CurrentY, @RequestedX, @RequestedY, @IpAddress, @Updated)
+      RETURNING *
+      """;
+
+          var inserted = await con.QuerySingleAsync<Player>(sql, player);
+          return inserted;
+        }
+      }
+
+      public int Delete(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public Player Get(int id)
+      {
+        throw new NotImplementedException();
+      }
+
+      public IEnumerable<Player> GetAll()
+      {
+        throw new NotImplementedException();
+      }
+
+      public Player GetAsync(Guid guid)
+      {
+        throw new NotImplementedException();
+      }
+
+      //CREATE TABLE "Player"
+      //(
+      //		"PlayerID" SERIAL PRIMARY KEY,
+      //		"Guid" UUID NOT NULL,
+      //		"Country" VARCHAR(5) NOT NULL,
+      //		"CurrentX" INT NOT NULL,
+      //		"CurrentY" INT NOT NULL,
+      //		"RequestedX" INT NOT NULL,
+      //		"RequestedY" INT NOT NULL,
+      //		"Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
+      //);
+
+      //participating player is player active within 7 days.
+      public Player GetParticipatingPlayerAsync(Guid guid)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@Guid", guid);
+        IEnumerable<Player> result;
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = con.Query<Player>("""
+            SELECT * 
+            FROM "Player" 
+            WHERE "Guid" = @Guid
+            AND "Created" > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 days'
+            """, p);
+        }
+        return result.SingleOrDefault();
+      }
+
+      public int Update(Player entity)
       {
         throw new NotImplementedException();
       }
