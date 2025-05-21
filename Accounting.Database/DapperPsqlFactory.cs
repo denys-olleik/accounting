@@ -8212,6 +8212,157 @@ namespace Accounting.Database
         throw new NotImplementedException();
       }
 
+      public async Task<List<BoardCell>> GetBoardCellsForActivePlayersAsync(string requestingCountry)
+      {
+        using (var con = new NpgsqlConnection(_connectionString))
+        {
+          var fiveMinutesAgo = DateTime.UtcNow.AddMinutes(-5);
+
+          var players = await con.QueryAsync<Player>(
+            """
+      SELECT "CurrentX", "CurrentY", "Country"
+      FROM "Player"
+      WHERE "Updated" > @FiveMinutesAgo
+      """,
+            new { FiveMinutesAgo = fiveMinutesAgo });
+
+          var cells = players
+            .GroupBy(p => new { p.CurrentX, p.CurrentY })
+            .Select(g =>
+            {
+              var countryFriendlies = g.Where(p => p.Country == requestingCountry).ToList();
+              int friendlyCount = countryFriendlies.Count;
+              bool hasEnemy = g.Any(p => p.Country != requestingCountry);
+              string country = friendlyCount > 0 ? requestingCountry : null;
+
+              return new BoardCell
+              {
+                X = g.Key.CurrentX,
+                Y = g.Key.CurrentY,
+                Country = country,
+                FriendlyPlayerCount = friendlyCount,
+                OccupiedByEnemy = hasEnemy
+              };
+            })
+            .ToList();
+
+          return cells;
+        }
+      }
+
+      public async Task<List<BoardCell>> GetBoardCellsForActivePlayersAsync(string requestingCountry)
+      {
+        using (var con = new NpgsqlConnection(_connectionString))
+        {
+          var fiveMinutesAgo = DateTime.UtcNow.AddMinutes(-5);
+
+          var players = await con.QueryAsync<Player>(
+            """
+      SELECT "CurrentX", "CurrentY", "Country"
+      FROM "Player"
+      WHERE "Updated" > @FiveMinutesAgo
+      """,
+            new { FiveMinutesAgo = fiveMinutesAgo });
+
+          var cells = players
+            .GroupBy(p => new { p.CurrentX, p.CurrentY })
+            .Select(g =>
+            {
+              var countryFriendlies = g.Where(p => p.Country == requestingCountry).ToList();
+              int friendlyCount = countryFriendlies.Count;
+              bool hasEnemy = g.Any(p => p.Country != requestingCountry);
+              string country = friendlyCount > 0 ? requestingCountry : null;
+
+              return new BoardCell
+              {
+                X = g.Key.CurrentX,
+                Y = g.Key.CurrentY,
+                Country = country,
+                FriendlyPlayerCount = friendlyCount,
+                OccupiedByEnemy = hasEnemy
+              };
+            })
+            .ToList();
+
+          return cells;
+        }
+      }
+
+      public async Task<List<BoardCell>> GetBoardCellsForActivePlayersAsync(string requestingCountry)
+      {
+        using (var con = new NpgsqlConnection(_connectionString))
+        {
+          var fiveMinutesAgo = DateTime.UtcNow.AddMinutes(-5);
+
+          var players = await con.QueryAsync<Player>(
+            """
+      SELECT "CurrentX", "CurrentY", "Country"
+      FROM "Player"
+      WHERE "Updated" > @FiveMinutesAgo
+      """,
+            new { FiveMinutesAgo = fiveMinutesAgo });
+
+          var cells = players
+            .GroupBy(p => new { p.CurrentX, p.CurrentY })
+            .Select(g =>
+            {
+              var countryFriendlies = g.Where(p => p.Country == requestingCountry).ToList();
+              int friendlyCount = countryFriendlies.Count;
+              bool hasEnemy = g.Any(p => p.Country != requestingCountry);
+              string country = friendlyCount > 0 ? requestingCountry : null;
+
+              return new BoardCell
+              {
+                X = g.Key.CurrentX,
+                Y = g.Key.CurrentY,
+                Country = country,
+                FriendlyPlayerCount = friendlyCount,
+                OccupiedByEnemy = hasEnemy
+              };
+            })
+            .ToList();
+
+          return cells;
+        }
+      }
+
+      public async Task<List<BoardCell>> GetBoardCellsForActivePlayersAsync(string requestingCountry)
+      {
+        using (var con = new NpgsqlConnection(_connectionString))
+        {
+          var fiveMinutesAgo = DateTime.UtcNow.AddMinutes(-5);
+
+          var players = await con.QueryAsync<Player>("""
+            SELECT "CurrentX", "CurrentY", "Country"
+            FROM "Player"
+            WHERE "Updated" > @FiveMinutesAgo
+            """,
+            new { FiveMinutesAgo = fiveMinutesAgo });
+
+          var cells = players
+            .GroupBy(p => new { p.CurrentX, p.CurrentY })
+            .Select(g =>
+            {
+              var countryFriendlies = g.Where(p => p.Country == requestingCountry).ToList();
+              int friendlyCount = countryFriendlies.Count;
+              bool hasEnemy = g.Any(p => p.Country != requestingCountry);
+              string country = friendlyCount > 0 ? requestingCountry : null;
+
+              return new BoardCell
+              {
+                X = g.Key.CurrentX,
+                Y = g.Key.CurrentY,
+                Country = country,
+                FriendlyPlayerCount = friendlyCount,
+                OccupiedByEnemy = hasEnemy
+              };
+            })
+            .ToList();
+
+          return cells;
+        }
+      }
+
       //CREATE TABLE "Player"
       //(
       //		"PlayerID" SERIAL PRIMARY KEY,

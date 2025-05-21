@@ -17,7 +17,9 @@ namespace Accounting.Service
 
     public async Task<BoardState> GetFullBoardState()
     {
-      throw new NotImplementedException();
+      FactoryManager factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var cells = await factoryManager.GetPlayerManager().GetBoardCellsForActivePlayersAsync();
+      return new BoardState { State = cells };
     }
 
     public async Task<Player> RequestPosition(int? x, int? y, Guid guid)
