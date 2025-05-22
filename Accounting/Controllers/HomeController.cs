@@ -88,7 +88,7 @@ namespace Accounting.Controllers
       }
 
       Player playerResult = await _playerService.RequestPosition(model.RequestedX, model.RequestedY, guid.Value);
-      var boardState = await _playerService.GetFullBoardState(); 
+      var boardState = await _playerService.GetFullBoardState(playerResult.Country); 
 
       return Ok(new
       {

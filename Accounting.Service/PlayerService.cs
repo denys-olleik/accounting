@@ -15,10 +15,30 @@ namespace Accounting.Service
 
     }
 
-    public async Task<BoardState> GetFullBoardState()
+    public async Task<BoardState> GetFullBoardState(string requestingCountry)
     {
       FactoryManager factoryManager = new FactoryManager(_databaseName, _databasePassword);
-      var cells = await factoryManager.GetPlayerManager().GetBoardCellsForActivePlayersAsync();
+      var players = await factoryManager.GetPlayerManager().GetActivePlayersAsync();
+
+      var cells = players
+        .GroupBy(p => new { p.CurrentX, p.CurrentY })
+        .Select(g =>
+        {
+          int friendlyCount = g.Count(p => p.Country == requestingCountry);
+          bool hasEnemy = g.Any(p => p.Country != requestingCountry);
+          string country = friendlyCount > 0 ? requestingCountry : null;
+
+          return new BoardCell
+          {
+            X = g.Key.CurrentX,
+            Y = g.Key.CurrentY,
+            Country = country,
+            FriendlyPlayerCount = friendlyCount,
+            OccupiedByEnemy = hasEnemy
+          };
+        })
+        .ToList();
+
       return new BoardState { State = cells };
     }
 
