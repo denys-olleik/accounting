@@ -47,7 +47,7 @@ namespace Accounting.Service
       FactoryManager factoryManager = new FactoryManager(_databaseName, _databasePassword);
 
       // Fetch the player by GUID
-      Player player = factoryManager.GetPlayerManager().GetParticipatingPlayerAsync(guid);
+      Player? player = await factoryManager.GetPlayerManager().GetParticipatingPlayerAsync(guid);
 
       // If player does not exist and no position is supplied, create/spawn new player
       if (player == null)

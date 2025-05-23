@@ -8169,22 +8169,20 @@ namespace Accounting.Database
       //		"Created" TIMESTAMPTZ NOT NULL DEFAULT(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
       //);
 
-      //participating player is player active within 7 days.
-      public Player GetParticipatingPlayerAsync(Guid guid)
+      public async Task<Player?> GetParticipatingPlayerAsync(Guid guid)
       {
         DynamicParameters p = new DynamicParameters();
         p.Add("@Guid", guid);
-        IEnumerable<Player> result;
         using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
         {
-          result = con.Query<Player>("""
+          var result = await con.QueryAsync<Player>("""
             SELECT * 
             FROM "Player" 
             WHERE "Guid" = @Guid
             AND "Created" > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '1 hour'
             """, p);
+          return result.SingleOrDefault(); // Returns null if not found
         }
-        return result.SingleOrDefault();
       }
 
       public int Update(Player entity)

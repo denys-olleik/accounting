@@ -6,6 +6,6 @@ namespace Accounting.Database.Interfaces
   {
     Task<Player> CreateWithinBoundingBoxOfExistingPlayers(Guid guid, string country, string ipAddress);
     Task<List<Player>> GetActivePlayersAsync();
-    Player GetParticipatingPlayerAsync(Guid guid);
+    Task<Player?> GetParticipatingPlayerAsync(Guid guid);
   }
 }
