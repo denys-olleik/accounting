@@ -8117,79 +8117,7 @@ namespace Accounting.Database
 
       public async Task<Player> CreateWithinBoundingBoxOfExistingPlayers(Guid guid, string country, string ipAddress)
       {
-        using (var con = new NpgsqlConnection(_connectionString))
-        {
-          // Only consider friendlies active in last 5 minutes
-          var fiveMinutesAgo = DateTime.UtcNow.AddMinutes(-5);
-
-          var friendlyCells = await con.QueryAsync<(int x, int y)>("""
-      SELECT "CurrentX" AS x, "CurrentY" AS y
-      FROM "Player"
-      WHERE "Country" = @Country
-        AND "Updated" > @FiveMinutesAgo
-      """, new { Country = country, FiveMinutesAgo = fiveMinutesAgo });
-
-          // All occupied cells (positions of any player, don't filter by Updated)
-          var occupiedCells = await con.QueryAsync<(int x, int y)>("""
-      SELECT "CurrentX" AS x, "CurrentY" AS y
-      FROM "Player"
-      """);
-
-          var occupiedSet = new HashSet<(int, int)>(occupiedCells);
-
-          (int x, int y) spawnPos;
-
-          if (friendlyCells.Any())
-          {
-            var candidateSpots = new List<(int x, int y)>();
-            foreach (var fc in friendlyCells)
-            {
-              for (int dx = -1; dx <= 1; dx++)
-                for (int dy = -1; dy <= 1; dy++)
-                {
-                  if (dx == 0 && dy == 0) continue;
-                  var nx = fc.x + dx;
-                  var ny = fc.y + dy;
-                  var cellOccupiedByOther =
-                    occupiedSet.Contains((nx, ny)) &&
-                    !friendlyCells.Any(f => f.x == nx && f.y == ny);
-                  if (!cellOccupiedByOther)
-                    candidateSpots.Add((nx, ny));
-                }
-            }
-            var trulyUnoccupied = candidateSpots
-              .Where(pos => !occupiedSet.Contains(pos))
-              .ToList();
-            spawnPos = trulyUnoccupied.Any()
-              ? trulyUnoccupied.First()
-              : candidateSpots.First();
-          }
-          else
-          {
-            spawnPos = (0, 0);
-          }
-
-          var player = new Player
-          {
-            Guid = guid,
-            Country = country,
-            CurrentX = spawnPos.x,
-            CurrentY = spawnPos.y,
-            RequestedX = spawnPos.x,
-            RequestedY = spawnPos.y,
-            IpAddress = ipAddress,
-            Updated = DateTime.UtcNow
-          };
-
-          var sql = """
-      INSERT INTO "Player" ("Guid", "Country", "CurrentX", "CurrentY", "RequestedX", "RequestedY", "IpAddress", "Updated")
-      VALUES (@Guid, @Country, @CurrentX, @CurrentY, @RequestedX, @RequestedY, @IpAddress, @Updated)
-      RETURNING *
-      """;
-
-          var inserted = await con.QuerySingleAsync<Player>(sql, player);
-          return inserted;
-        }
+        throw new NotImplementedException();
       }
 
       public int Delete(int id)
@@ -8253,7 +8181,7 @@ namespace Accounting.Database
             SELECT * 
             FROM "Player" 
             WHERE "Guid" = @Guid
-            AND "Created" > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '7 days'
+            AND "Created" > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '1 hour'
             """, p);
         }
         return result.SingleOrDefault();

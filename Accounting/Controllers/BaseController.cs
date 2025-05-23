@@ -8,6 +8,18 @@ namespace Accounting.Controllers
   public abstract class BaseController : Controller
   {
     [NonAction]
+    public string GetClientIpAddress()
+    {
+      if (HttpContext.Request.Headers.ContainsKey("X-Forwarded-For"))
+      {
+        var ip = HttpContext.Request.Headers["X-Forwarded-For"].ToString();
+        if (!string.IsNullOrEmpty(ip))
+          return ip.Split(',')[0].Trim();
+      }
+      return HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
+    }
+
+    [NonAction]
     public int GetUserId()
     {
       var identity = User?.Identity as ClaimsIdentity;

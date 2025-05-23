@@ -87,7 +87,7 @@ namespace Accounting.Controllers
         Response.Cookies.Append("PlayerGuid", guid.ToString(), new CookieOptions { HttpOnly = true });
       }
 
-      Player playerResult = await _playerService.RequestPosition(model.RequestedX, model.RequestedY, guid.Value);
+      Player playerResult = await _playerService.RequestPosition(guid.Value, GetClientIpAddress());
       var boardState = await _playerService.GetFullBoardState(playerResult.Country); 
 
       return Ok(new

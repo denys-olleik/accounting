@@ -42,7 +42,7 @@ namespace Accounting.Service
       return new BoardState { State = cells };
     }
 
-    public async Task<Player> RequestPosition(int? x, int? y, Guid guid)
+    public async Task<Player> RequestPosition(Guid guid, string ipAddress)
     {
       FactoryManager factoryManager = new FactoryManager(_databaseName, _databasePassword);
 
@@ -50,7 +50,7 @@ namespace Accounting.Service
       Player player = factoryManager.GetPlayerManager().GetParticipatingPlayerAsync(guid);
 
       // If player does not exist and no position is supplied, create/spawn new player
-      if (player == null && (!x.HasValue || !y.HasValue))
+      if (player == null)
       {
         player = await factoryManager.GetPlayerManager()
             .CreateWithinBoundingBoxOfExistingPlayers(guid, player.Country, player.IpAddress);
