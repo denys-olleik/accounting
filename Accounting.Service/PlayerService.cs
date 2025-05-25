@@ -44,19 +44,23 @@ namespace Accounting.Service
 
     public async Task<Player> RequestPosition(Guid guid, string ipAddress)
     {
-      FactoryManager factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      throw new NotImplementedException();
+      //FactoryManager factoryManager = new FactoryManager(_databaseName, _databasePassword);
 
-      // Fetch the player by GUID
-      Player? player = await factoryManager.GetPlayerManager().GetParticipatingPlayerAsync(guid);
+      //Player? player = await factoryManager.GetPlayerManager().GetParticipatingPlayerAsync(guid);
 
-      // If player does not exist and no position is supplied, create/spawn new player
-      if (player == null)
-      {
-        player = await factoryManager.GetPlayerManager()
-            .CreateWithinBoundingBoxOfExistingPlayers(guid, player.Country, player.IpAddress);
-      }
+      //// If player does not exist and no position is supplied, create/spawn new player
+      //if (player == null)
+      //{
+      //  player = await factoryManager.GetPlayerManager()
+      //      .CreateWithinBoundingBoxOfExistingPlayers(guid, player.Country, ipAddress);
+      //}
+      //else
+      //{
+      //  player = 
+      //}
 
-      return player;
+      //  return player;
     }
   }
 }
