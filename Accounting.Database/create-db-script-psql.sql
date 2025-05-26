@@ -448,6 +448,7 @@ CREATE TABLE "InvoiceAttachment"
 	"PrintOrder" INT NULL,
 	"OriginalFileName" VARCHAR(255) NOT NULL,
 	"FilePath" VARCHAR(1000) NOT NULL,
+	"LastDownloaded" TIMESTAMPTZ NULL,
 	"Created" TIMESTAMPTZ NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
 	"CreatedById" INT NOT NULL,
 	"OrganizationId" INT NOT NULL,
