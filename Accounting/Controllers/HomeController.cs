@@ -75,31 +75,10 @@ namespace Accounting.Controllers
         requestContext.DatabasePassword);
     }
 
-    [HttpPost("request-position")]
-    public async Task<IActionResult> RequestPosition(RequestPositionModel model)
+    [HttpPost("play-250ms")]
+    public async Task<IActionResult> Play250ms(Play250msViewModel model)
     {
-      Guid? guid = null;
-      if (Request.Cookies.TryGetValue("PlayerGuid", out string guidString) && Guid.TryParse(guidString, out Guid parsedGuid))
-        guid = parsedGuid;
-      else
-      {
-        guid = Guid.NewGuid();
-        Response.Cookies.Append("PlayerGuid", guid.ToString(), new CookieOptions { HttpOnly = true });
-      }
-
-      Player playerResult = await _playerService.RequestPosition(guid.Value, GetClientIpAddress());
-      var boardState = await _playerService.GetFullBoardState(playerResult.Country); 
-
-      return Ok(new
-      {
-        player = new
-        {
-          guid = guid,
-          position = new { x = playerResult.CurrentX, y = playerResult.CurrentY },
-          assignmentStatus = playerResult.AssignmentStatus // e.g., "confirmed", "pending"
-        },
-        board = boardState // e.g., list or map of all occupied cells and their info
-      });
+      throw new NotImplementedException();
     }
   }
 }

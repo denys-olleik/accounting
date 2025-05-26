@@ -163,7 +163,16 @@
         </div>
         <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
           <div class="flex-1"></div>
-          <a href="#" @@click.prevent="$emit('remove', attachment.invoiceAttachmentID)" class="font-size-16px font-Roboto color-white text-decoration-none">remove</a>
+          <a :href="'/api/attachments/download/' + attachment.invoiceAttachmentID"
+             class="font-size-16px font-Roboto color-white text-decoration-none"
+             download>download</a>
+          <div class="flex-1"></div>
+        </div>
+        <div class="display-flex flex-direction-column background-color-333333 padding-right-5px padding-left-5px margin-left-2px">
+          <div class="flex-1"></div>
+          <a href="#"
+             @@click.prevent="$emit('remove', attachment.invoiceAttachmentID)"
+             class="font-size-16px font-Roboto color-white text-decoration-none">remove</a>
           <div class="flex-1"></div>
         </div>
       </span>
