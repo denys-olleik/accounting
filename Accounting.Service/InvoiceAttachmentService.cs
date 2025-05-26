@@ -109,5 +109,21 @@ namespace Accounting.Service
         }
       }
     }
+
+    public async Task<InvoiceAttachment> GetInvoiceAttachmentAsync(int invoiceAttachmentId, int organizationId)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      return await factoryManager.GetInvoiceAttachmentManager().GetAsync(invoiceAttachmentId, organizationId);
+    }
+
+    public async Task<byte[]> GetAttachmentFileBytesAsync(InvoiceAttachment attachment)
+    {
+      if (attachment == null || string.IsNullOrEmpty(attachment.FilePath) || !System.IO.File.Exists(attachment.FilePath))
+      {
+        throw new FileNotFoundException("Attachment file not found.", attachment?.FilePath);
+      }
+
+      return await System.IO.File.ReadAllBytesAsync(attachment.FilePath);
+    }
   }
 }

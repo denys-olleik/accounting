@@ -18,6 +18,22 @@ namespace Accounting.Controllers
       _invoiceAttachmentService = new InvoiceAttachmentService(requestContext.DatabaseName, requestContext.DatabasePassword);
     }
 
+    [HttpGet("download/{invoiceAttachmentId}")]
+    public async Task<IActionResult> Download(int invoiceAttachmentId)
+    {
+      InvoiceAttachment attachment = await _invoiceAttachmentService.GetInvoiceAttachmentAsync(invoiceAttachmentId, GetOrganizationId());
+      if (attachment == null)
+      {
+        return NotFound();
+      }
+
+      var fileBytes = await _invoiceAttachmentService.GetAttachmentFileBytesAsync(attachment);
+      var contentType = "application/octet-stream";
+      var fileName = attachment.OriginalFileName ?? "attachment";
+
+      return File(fileBytes, contentType, fileName);
+    }
+
     [Route("upload")]
     [HttpPost]
     public async Task<IActionResult> UploadFile(IFormFile formFile)

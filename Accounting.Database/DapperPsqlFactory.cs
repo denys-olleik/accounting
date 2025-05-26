@@ -1428,6 +1428,26 @@ namespace Accounting.Database
         return result.ToList();
       }
 
+      public async Task<InvoiceAttachment> GetAsync(int invoiceAttachmentId, int organizationId)
+      {
+        DynamicParameters p = new DynamicParameters();
+        p.Add("@InvoiceAttachmentID", invoiceAttachmentId);
+        p.Add("@OrganizationId", organizationId);
+
+        IEnumerable<InvoiceAttachment> result;
+
+        using (NpgsqlConnection con = new NpgsqlConnection(_connectionString))
+        {
+          result = await con.QueryAsync<InvoiceAttachment>("""
+            SELECT * 
+            FROM "InvoiceAttachment" 
+            WHERE "InvoiceAttachmentID" = @InvoiceAttachmentID 
+            AND "OrganizationId" = @OrganizationId
+            """, p);
+        }
+
+        return result.SingleOrDefault()!;
+      }
 
       public int Update(InvoiceAttachment entity)
       {
