@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Ganss.Xss;
 using Accounting.Common;
 using Markdig;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Accounting.Controllers
 {
@@ -71,26 +72,20 @@ namespace Accounting.Controllers
       return RedirectToAction("Blogs");
     }
 
+    [AllowAnonymous]
     [HttpGet("view/{id}")]
     public async Task<IActionResult> View(string id)
     {
       Blog blog;
 
-      if (int.TryParse(id, out int blogId))
-      {
-        blog = await _blogService.GetAsync(blogId);
-      }
-      else
-      {
-        blog = await _blogService.GetByPublicIdAsync(id);
-      }
+      blog = await _blogService.GetByPublicIdAsync(id);
 
       if (blog == null)
       {
         return NotFound();
       }
 
-      var markdownPipeline = new Markdig.MarkdownPipelineBuilder().Build();
+      var markdownPipeline = new MarkdownPipelineBuilder().Build();
 
       var viewBlogViewModel = new ViewBlogViewModel
       {
@@ -98,7 +93,7 @@ namespace Accounting.Controllers
         PublicId = blog.PublicId,
         Title = blog.Title,
         Content = blog.Content,
-        ContentHtml = new HtmlSanitizer().Sanitize(Markdig.Markdown.ToHtml(blog.Content, markdownPipeline))
+        ContentHtml = new HtmlSanitizer().Sanitize(Markdown.ToHtml(blog.Content, markdownPipeline))
       };
 
       return View(viewBlogViewModel);
@@ -145,7 +140,7 @@ namespace Accounting.Controllers
     {
       var validator = new CreateBlogViewModel.CreateBlogViewModelValidator();
       var validationResult = await validator.ValidateAsync(model);
-      
+
       if (!validationResult.IsValid)
       {
         model.ValidationResult = validationResult;
