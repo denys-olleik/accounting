@@ -46,42 +46,6 @@
     }
   </fieldset>
 
-  <fieldset class="margin-bottom-5px">
-    <legend>Task Status</legend>
-    @if (Model != null && Model.ToDoStatuses != null)
-    {
-      foreach (var status in Model.ToDoStatuses)
-      {
-        <div>
-          <input type="radio" id="status-@status" name="SelectedToDoStatus" value="@status" @(status == "open" ? "checked" : "")>
-          <label for="status-@status">@status</label>
-        </div>
-      }
-    }
-  </fieldset>
-
-  <fieldset class="margin-bottom-5px">
-    <legend>Selected Tags</legend>
-    <div class="display-flex flex-wrap-wrap">
-      <tag v-for="tag in selectedTags"
-           :tag="tag"
-           :key="tag.id"
-           @@select="moveToAvailable">
-      </tag>
-    </div>
-  </fieldset>
-
-  <fieldset class="margin-bottom-5px">
-    <legend>Available Tags</legend>
-    <div class="display-flex flex-wrap-wrap">
-      <tag v-for="tag in availableTags"
-           :tag="tag"
-           :key="tag.id"
-           @@select="moveToSelected">
-      </tag>
-    </div>
-  </fieldset>
-
   <button type="submit" class="full-width-regular-button">Create Task</button>
 </form>
 

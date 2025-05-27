@@ -145,7 +145,7 @@ namespace Accounting.Controllers
           Title = model.Title,
           Content = model.Content,
           ParentToDoId = model.ParentToDoId,
-          Status = model.SelectedToDoStatus,
+          Status = ToDo.ToDoStatuses.Open,
           CreatedById = GetUserId(),
           OrganizationId = GetOrganizationId()
         });
