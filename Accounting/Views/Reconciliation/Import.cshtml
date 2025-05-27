@@ -1,7 +1,7 @@
 ﻿@model Accounting.Models.ReconciliationViewModels.ImportViewModel
 
 @{
-    ViewData["Title"] = "Reconciliation - Import - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Reconciliation - Import - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 @{
@@ -10,9 +10,9 @@
 <partial name="_H1HeaderPartial" model="@headerText" />
 
 <form asp-action="Import" asp-controller="Reconciliation" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-        <label for="file">Upload CSV File:</label>
-        <input type="file" id="file" name="file" class="form-control" required />
-    </div>
-    <button type="submit" class="btn btn-primary">Import</button>
+  <div class="form-group">
+    <label for="file">Upload CSV File:</label>
+    <input type="file" id="file" name="file" class="form-control" required />
+  </div>
+  <button type="submit" class="btn btn-primary">Import</button>
 </form>
