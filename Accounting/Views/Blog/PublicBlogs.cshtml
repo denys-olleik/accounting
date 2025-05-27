@@ -1,0 +1,134 @@
+﻿@model Accounting.Models.BlogViewModels.BlogsPaginatedViewModel
+
+@{
+  ViewData["Title"] = "Public Blogs - " + ConfigurationSingleton.Instance.ApplicationName;
+}
+
+@{
+  string headerText = "Public Blogs";
+}
+<partial name="_H1HeaderPartial" model="@headerText" />
+
+<script src="~/js/vue-3-5-13.js" asp-append-version="true"></script>
+
+<template id="public-blog-action-template">
+  <div class="display-flex padding-top-bottom-2px">
+    <div class="display-flex flex-direction-column flex-1">
+      <a :href="'/blog/view/' + (blog.publicId || blog.blogID)" class="margin-right-5px font-size-16px font-Roboto color-blue">
+        {{ blog.title }}
+      </a>
+    </div>
+  </div>
+</template>
+
+<div class="display-flex margin-bottom-5px background-color-antiquewhite">
+  <div class="margin-left-20px flex-1 text-align-right">
+    <a asp-action="Index" asp-controller="Home" class="font-Roboto font-size-16px color-blue margin-left-20px">Home</a>
+  </div>
+</div>
+
+<div id="public-app">
+  <table class="border-collapse width-100 margin-bottom-5px background-color-antiquewhite">
+    <thead class="border-bottom-1px-solid-1a3b56 font-Roboto">
+      <tr>
+        <th class="fitwidth"></th>
+        <th>
+          <input type="text" v-model="blogsFilter" @@input="fetchBlogs" placeholder="Search"
+                 class="font-size-16px width-100" />
+        </th>
+      </tr>
+      <tr>
+        <th class="text-align-left padding-right-20px"></th>
+        <th class="text-align-left padding-right-20px">Title</th>
+      </tr>
+    </thead>
+    <tbody class="font-Roboto-Mono">
+      <template v-for="blog in blogs" :key="blog.blogID">
+        <tr>
+          <td class="vertical-align-top">{{ blog.rowNumber }}</td>
+          <td>
+            <public-blog-action :blog="blog"></public-blog-action>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+
+  <pagination-component :prev-page-url="`/blog/public-blogs?page=${page - 1}&pageSize=${pageSize}`"
+                        :next-page-url="nextPage ? `/blog/public-blogs?page=${nextPage}&pageSize=${pageSize}` : ''" :is-filtered="isFiltered"
+                        :page="page">
+  </pagination-component>
+</div>
+
+<script src="~/js/PaginationComponent.js" asp-append-version="true"></script>
+
+<script>
+  const { createApp } = Vue;
+
+  const PublicBlogAction = {
+    name: 'PublicBlogAction',
+    props: ['blog'],
+    template: '#public-blog-action-template'
+  };
+
+  const publicApp = createApp({
+    components: {
+      'public-blog-action': PublicBlogAction,
+      'pagination-component': PaginationComponent
+    },
+    data() {
+      return {
+        blogs: [],
+        blogsFilter: '',
+        page: @Model.Page,
+        pageSize: @Model.PageSize,
+        nextPage: null,
+        rememberPageSize: @(Model.RememberPageSize ? "true" : "false")
+      };
+    },
+    computed: {
+      isFiltered() {
+        return !!this.blogsFilter;
+      }
+    },
+    methods: {
+      fetchBlogs() {
+        const storedPageSize = parseInt(localStorage.getItem('pageSize'));
+        if (storedPageSize) {
+          this.pageSize = storedPageSize;
+        }
+        let apiUrl = this.isFiltered
+          ? `/api/blog/get-public-blogs-filtered`
+          : `/api/blog/get-public-blogs?page=${this.page}&pageSize=${this.pageSize}`;
+        const queryParams = [];
+        if (this.isFiltered && this.blogsFilter) {
+          queryParams.push(`blogTitles=${encodeURIComponent(this.blogsFilter)}`);
+        }
+        if (queryParams.length > 0) {
+          apiUrl += (apiUrl.includes('?') ? '&' : '?') + queryParams.join('&');
+        }
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            this.blogs = data.blogs;
+            if (data.page > 0) {
+              this.page = data.page;
+            }
+            if (data.nextPage > 0) {
+              this.nextPage = data.nextPage;
+            } else {
+              this.nextPage = null;
+            }
+          });
+      }
+    },
+    mounted() {
+      if (this.rememberPageSize) {
+        localStorage.setItem('publicPageSize', this.pageSize);
+      }
+      this.fetchBlogs();
+    },
+  });
+
+  publicApp.mount('#public-app');
+</script>

@@ -180,6 +180,23 @@ namespace Accounting.Controllers
 
       return View(vm);
     }
+
+    [HttpGet]
+    [Route("public-blogs")]
+    [AllowAnonymous]
+    public IActionResult PublicBlogs(
+      int page = 1,
+      int pageSize = 2)
+    {
+      var referer = Request.Headers["Referer"].ToString() ?? string.Empty;
+      var vm = new BlogsPaginatedViewModel
+      {
+        Page = page,
+        PageSize = pageSize,
+        RememberPageSize = string.IsNullOrEmpty(referer),
+      };
+      return View(vm);
+    }
   }
 
   [AuthorizeWithOrganizationId]
@@ -194,6 +211,36 @@ namespace Accounting.Controllers
       _blogService = new BlogService(
         requestContext.DatabaseName,
         requestContext.DatabasePassword);
+    }
+
+    [HttpGet("get-public-blogs")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetPublicBlogs(
+      int page = 1,
+      int pageSize = 2)
+    {
+      var (blogs, nextPage) = await _blogService.GetAllPublicAsync(page, pageSize);
+
+      var markdownPipeline = new Markdig.MarkdownPipelineBuilder()
+          .Build();
+
+      var sanitizer = new HtmlSanitizer();
+
+      GetBlogsViewModel getBlogsViewModel = new GetBlogsViewModel
+      {
+        Blogs = blogs.Select(b => new GetBlogsViewModel.BlogViewModel
+        {
+          BlogID = b.BlogID,
+          PublicId = b.PublicId,
+          Title = b.Title,
+          Content = sanitizer.Sanitize(Markdig.Markdown.ToHtml(b.Content, markdownPipeline)),
+          RowNumber = b.RowNumber
+        }).ToList(),
+        Page = page,
+        NextPage = nextPage,
+      };
+
+      return Ok(getBlogsViewModel);
     }
 
     [HttpGet("get-blogs")]

@@ -41,6 +41,16 @@ namespace Accounting.Service
       return (blogs, nextPage);
     }
 
+    public async Task<(List<Blog> blogs, int? nextPage)> GetAllPublicAsync(
+      int page, 
+      int pageSize)
+    {
+      var factoryManager = new FactoryManager(_databaseName, _databasePassword);
+      var blogManager = factoryManager.GetBlogManager();
+      var (blogs, nextPage) = await blogManager.GetAllPublicAsync(page, pageSize);
+      return (blogs, nextPage);
+    }
+
     public async Task<Blog> GetAsync(int blogID)
     {
       var factoryManager = new FactoryManager(_databaseName, _databasePassword);
