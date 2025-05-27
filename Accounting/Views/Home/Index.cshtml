@@ -36,19 +36,6 @@
       <a asp-action="Register" asp-controller="Registration" class="font-Oswald color-white font-size-40px">demo</a>
     </div>
   </div>
-  @if (!string.IsNullOrEmpty(Model.BlogHtmlSanitizedContent))
-  {
-    <div class="background-color-antiquewhite padding-sides-10px margin-bottom-5px padding-bottom-5px">
-      <div class="display-flex">
-        <div class="flex-1 font-size-20px font-Oswald">@Model.Title</div>
-        <div class="width-5px"></div>
-        <div class="font-size-20px font-Oswald text-align-right">@Model.Created?.ToString("MMMM dd yyyy")</div>
-      </div>
-      <div class="background-color-antiquewhite font-Roboto-Mono-all-children-elemetns no-top-margin-for-children padding-5px">
-        @Html.Raw(Model.BlogHtmlSanitizedContent)
-      </div>
-    </div>
-  }
   <div class="background-color-antiquewhite padding-sides-10px padding-bottom-10px font-Oswald">
     <div class="font-size-20px">Hosting options</div>
     <table class="border-collapse width-100 background-color-antiquewhite">
