@@ -84,10 +84,6 @@
         <th class="text-align-left padding-right-20px"></th>
         <th class="text-align-left padding-right-20px">Title</th>
       </tr>
-      <tr>
-        <th class="text-align-left padding-right-20px">#</th>
-        <th class="text-align-left padding-right-20px">Content preview</th>
-      </tr>
     </thead>
     <tbody class="font-Roboto-Mono">
       <template v-for="blog in blogs" :key="blog.blogID">
@@ -98,10 +94,6 @@
                          :is-expanded="expandedBlogId === blog.blogID"
                          @@expand="handleBlogExpand(blog.blogID)"></blog-action>
           </td>
-        </tr>
-        <tr>
-          <td></td>
-          <td v-html="blog.content" class="font-Roboto-Mono-all-children-elemetns no-top-margin-for-children"></td>
         </tr>
       </template>
     </tbody>
