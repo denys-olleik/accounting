@@ -71,13 +71,12 @@
     </tbody>
   </table>
 
-  <pagination-component
-    :prev-page-url="`/diagnostics/request-logs?page=${page - 1}&pageSize=${pageSize}`"
-    :next-page-url="nextPage ? `/diagnostics/request-logs?page=${nextPage}&pageSize=${pageSize}` : ''"
-    :is-filtered="false"
-    :page="page">
+  <!-- Updated Pagination Section -->
+  <pagination-component :prev-page-url="`/diagnostics/request-logs?page=${page - 1}&pageSize=${pageSize}`"
+                        :next-page-url="nextPage ? `/diagnostics/request-logs?page=${nextPage}&pageSize=${pageSize}` : ''"
+                        :is-filtered="false"
+                        :page="page">
   </pagination-component>
-
 </div>
 
 <script src="~/js/PaginationComponent.js" asp-append-version="true"></script>
@@ -95,6 +94,7 @@
         page: @Model.Page,
         pageSize: @Model.PageSize,
         nextPage: null,
+        rememberPageSize: @(Model.RememberPageSize ? "true" : "false"),
         headerWidths: []
       };
     },
@@ -114,6 +114,10 @@
         });
       },
       fetchRequestLogs() {
+        const storedPageSize = parseInt(localStorage.getItem('pageSize'));
+        if (storedPageSize) {
+          this.pageSize = storedPageSize;
+        }
         fetch(`/api/diagnostics/get-request-logs?page=${this.page}&pageSize=${this.pageSize}`)
           .then(response => response.json())
           .then(data => {
@@ -142,6 +146,9 @@
       }
     },
     mounted() {
+      if (this.rememberPageSize) {
+        localStorage.setItem('pageSize', this.pageSize);
+      }
       this.$nextTick(() => {
         this.recordHeaderWidths();
       });
