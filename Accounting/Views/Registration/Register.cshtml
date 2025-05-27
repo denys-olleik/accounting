@@ -1,11 +1,11 @@
 @model Accounting.Models.RegistrationViewModels.CompositeRegistrationViewModel
 
 @{
-  ViewData["Title"] = "Register - " + ConfigurationSingleton.Instance.ApplicationName;
+  ViewData["Title"] = "Demo registration - " + ConfigurationSingleton.Instance.ApplicationName;
 }
 
 @{
-  string headerText = "Register";
+  string headerText = "Demo registration";
 }
 
 <partial name="_H1HeaderPartial" model="@headerText" />
@@ -16,7 +16,7 @@
   <div class="display-flex flex-direction-column margin-bottom-5px background-color-antiquewhite">
     <div class="display-flex flex-direction-column background-color-antiquewhite margin-bottom-5px">
       <label class="background-color-antiquewhite">Email</label>
-      <input name="Email" v-model="email" class="font-size-20px font-Roboto-Mono" autocomplete="off" tabindex="1" placeholder="Email" />
+      <input name="Email" v-model="email" class="font-size-20px font-Roboto-Mono" autofocus autocomplete="off" tabindex="1" placeholder="Email" />
     </div>
     <span>
       <div class="display-flex margin-bottom-10px">
@@ -41,15 +41,15 @@
     <input type="hidden" name="Email" :value="getEmail()" />
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">First name</label>
-      <input name="FirstName" v-model="firstName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="First name" autocomplete="off" />
+      <input name="FirstName" v-model="firstName" tabindex="2" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="First name" autocomplete="off" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Last name</label>
-      <input name="LastName" v-model="lastName" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Last name" autocomplete="off" />
+      <input name="LastName" v-model="lastName" tabindex="3" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Last name" autocomplete="off" />
     </div>
     <div class="display-flex flex-direction-column">
       <label class="background-color-antiquewhite">Password</label>
-      <input name="Password" type="password" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Password" />
+      <input name="Password" type="password" tabindex="4" class="margin-bottom-5px font-size-20px font-Roboto-Mono" placeholder="Password" />
     </div>
     <button type="submit" class="full-width-regular-button">Register</button>
   </form>

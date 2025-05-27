@@ -33,7 +33,7 @@
     </div>
     <div class="width-5px"></div>
     <div class="flex-1 background-color-A62626 text-align-center">
-      <a asp-action="Register" asp-controller="Registration" class="font-Oswald color-white font-size-40px">register</a>
+      <a asp-action="Register" asp-controller="Registration" class="font-Oswald color-white font-size-40px">demo</a>
     </div>
   </div>
   @if (!string.IsNullOrEmpty(Model.BlogHtmlSanitizedContent))
@@ -257,12 +257,6 @@
         </ul>
       </li>
       <li>
-        <a href="@Url.Action("PaymentInstructions", "PaymentInstruction")">Payment instructions</a>
-        <ul>
-          <li><a href="@Url.Action("Create", "PaymentInstruction")">Create payment instruction</a></li>
-        </ul>
-      </li>
-      <li>
         <a href="@Url.Action("Items", "Item")">Items</a>
         <ul>
           <li><a href="@Url.Action("Create", "Item")">Create item</a></li>
@@ -289,9 +283,9 @@
           <li><a href="@Url.Action("Create", "Account")">Create account</a></li>
         </ul>
       </li>
-      <li>
+      @* <li>
         <a href="@Url.Action("ShippingAndReceiving", "ShippingAndReceiving")">Shipping and receiving</a>
-      </li>
+      </li> *@
       <li>
         <a href="@Url.Action("Blogs", "Blog")">Blog</a>
         <ul>
