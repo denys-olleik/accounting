@@ -151,9 +151,11 @@
             {{ tenant.databaseName }}
           </td>
           <template v-else>
-            <td class="padding-right-20px background-color-lightpink filter-blur-5px">{{ tenant.dropletId }}</td>
-            <td class="padding-right-20px background-color-lightpink filter-blur-5px">
-              {{ tenant.ipv4 }}
+            <td class="padding-right-20px background-color-lightpink ">
+              <a style="pointer-events: none;" class="filter-blur-5px">{{ tenant.dropletId }}</a>
+            </td>
+            <td class="padding-right-20px background-color-lightpink ">
+              <a style="pointer-events: none;" class="filter-blur-5px">{{ tenant.ipv4 }}</a>
             </td>
             <td class="white-space-nowrap background-color-lightpink">
               <a :href="'/tenant/download-private-key/' + tenant.tenantID" class="color-blue">get</a>
